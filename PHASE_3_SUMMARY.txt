@@ -1,0 +1,82 @@
+================================================================================
+                    PHASE 3 SUMMARY & TESTING GUIDE
+                    Sorting Algorithm Visualizer
+================================================================================
+
+[1] KI KI KORA HOYECHE (WHAT WAS BUILT IN PHASE 3)
+--------------------------------------------------------------------------------
+1. Comparison Matrix Page (src/app/compare/page.tsx):
+   - Side-by-side matrix table comparing all 5 algorithms across 8 dimensions:
+     * Best, Average, and Worst Time Complexity
+     * Space Complexity
+     * Stability (Yes/No)
+     * In-Place sorting (Yes/No)
+     * Adaptive behavior (Yes/No)
+     * Divide & Conquer paradigm (Yes/No)
+     * Best use case summaries
+   - "Which Algorithm Should I Use?" practical guidance cards with 2–3 sentence 
+     engineering recommendations for real-world scenarios.
+   - Smooth seamless navigation between Visualizer (/) and Comparison Matrix (/compare).
+
+2. Landing Page Hero Animation (HeroAnimation.tsx):
+   - A subtle, non-distracting looping mini-visualizer embedded in the hero section 
+     that continuously demonstrates the sorting engine.
+   - Respects user accessibility preferences (`prefers-reduced-motion`).
+
+3. Visual Polish & Premium UI:
+   - Cohesive dark-mode theme, glassmorphism card surfaces, and refined typography.
+   - Glowing indicators and color-coded status badges for all algorithm states.
+
+4. Accessibility & Keyboard Navigation Pass:
+   - Full keyboard accessibility with high-contrast visible focus rings 
+     (`focus-visible:ring-2 focus-visible:ring-cyan-400`).
+   - Descriptive ARIA labels on all control buttons, sliders, input forms, and 
+     visualizer regions.
+   - `prefers-reduced-motion` support in `ArrayBars.tsx` and `HeroAnimation.tsx` 
+     (replaces animated physics with instant transitions when enabled).
+
+5. Performance & Responsiveness:
+   - Memoized `ArrayBars.tsx` with smooth spring motion up to array size 50.
+   - Fully responsive layout that gracefully stacks on mobile devices 
+     (Controls → Visualizer → Algorithms & Complexity → Code Viewer).
+
+--------------------------------------------------------------------------------
+[2] KIVABE TEST KORBEN (HOW TO TEST & VERIFY)
+--------------------------------------------------------------------------------
+
+A. AUTOMATED TEST SUITE:
+   Run the following command:
+   $ npm run test:algorithms
+   
+   Expected Result: 
+   - 30 / 30 tests pass across all 5 algorithms and all 6 edge cases.
+
+B. PRODUCTION BUILD TEST:
+   Run:
+   $ npm run build
+   
+   Expected Result:
+   - 5/5 static pages generate cleanly with 0 TypeScript/Lint errors.
+
+C. MANUAL INTERACTIVE BROWSER TESTING:
+   1. Start the development server (if not already running):
+      $ npm run dev
+   
+   2. Open http://localhost:3000 in your browser:
+      - [ ] Hero Section: Observe the looping mini sorting animation in the hero card.
+      - [ ] Comparison Link: Click "Compare All 5 Algorithms" in the hero or 
+            "Compare Matrix" in the top navbar.
+      - [ ] Comparison Matrix Page (/compare):
+            * Review the side-by-side comparison table for Bubble, Selection, 
+              Insertion, Merge, and Quick Sort.
+            * Review the "Which Algorithm Should I Use?" practical guidance cards.
+            * Click "Back to Visualizer" to return to the home workspace.
+      - [ ] Keyboard Navigation: Use the `Tab` key on your keyboard to navigate 
+            through Start Sort, Pause, Resume, Step, Reset, Sliders, and Custom Array. 
+            Notice the clear cyan focus rings.
+      - [ ] Responsive Layout: Resize your browser window or open DevTools mobile view 
+            (375px width) to confirm seamless stacking and readable controls.
+
+================================================================================
+All 3 Phases are 100% completed and fully verified!
+================================================================================
