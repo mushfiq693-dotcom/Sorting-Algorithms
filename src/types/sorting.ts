@@ -1,12 +1,14 @@
 export type SortOperation =
-  | { type: "compare"; indices: number[]; description?: string }
-  | { type: "swap"; indices: [number, number]; description?: string }
-  | { type: "overwrite"; index: number; value: number; description?: string }
-  | { type: "pivot"; index: number; description?: string }
-  | { type: "range"; left: number; right: number; description?: string }
-  | { type: "merge-start"; left: number; mid: number; right: number; description?: string }
-  | { type: "merge-compare"; leftIndex: number; rightIndex: number; description?: string }
-  | { type: "sorted"; indices: number[]; description?: string };
+  | { type: "compare"; indices: number[]; description?: string; snapshot?: Record<string, any> }
+  | { type: "swap"; indices: [number, number]; description?: string; snapshot?: Record<string, any> }
+  | { type: "overwrite"; index: number; value: number; description?: string; snapshot?: Record<string, any> }
+  | { type: "pivot"; index: number; description?: string; snapshot?: Record<string, any> }
+  | { type: "range"; left: number; right: number; description?: string; snapshot?: Record<string, any> }
+  | { type: "merge-start"; left: number; mid: number; right: number; description?: string; snapshot?: Record<string, any> }
+  | { type: "merge-compare"; leftIndex: number; rightIndex: number; description?: string; snapshot?: Record<string, any> }
+  | { type: "sorted"; indices: number[]; description?: string; snapshot?: Record<string, any> }
+  | { type: "call-enter"; fn: string; args: number[]; description?: string; snapshot?: Record<string, any> }
+  | { type: "call-exit"; fn: string; description?: string; snapshot?: Record<string, any> };
 
 export type AlgorithmId =
   | "bubble"
@@ -48,4 +50,11 @@ export interface VisualizerState {
   explanation: string;
   comparisonsCount: number;
   swapsCount: number;
+}
+
+export interface CallStackFrame {
+  id: string;
+  fn: string;
+  args: number[];
+  label: string;
 }

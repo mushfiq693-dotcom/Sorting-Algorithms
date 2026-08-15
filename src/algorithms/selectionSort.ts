@@ -1,8 +1,7 @@
 import { SortOperation } from "@/types/sorting";
 
 /**
- * Pure Selection Sort implementation that records step-by-step operations.
- * Matches the C++ reference logic.
+ * Pure Selection Sort implementation recording operations and variable snapshots.
  */
 export function selectionSort(inputArray: number[]): SortOperation[] {
   const operations: SortOperation[] = [];
@@ -15,6 +14,7 @@ export function selectionSort(inputArray: number[]): SortOperation[] {
         type: "sorted",
         indices: [0],
         description: "Single element array is already sorted.",
+        snapshot: { i: 0, minIdx: 0, j: 0, n, arr: [...arr] },
       });
     }
     return operations;
@@ -25,12 +25,12 @@ export function selectionSort(inputArray: number[]): SortOperation[] {
   for (let i = 0; i < n - 1; i++) {
     let minIdx = i;
 
-    // Scan for minimum element in remaining unsorted portion
     for (let j = i + 1; j < n; j++) {
       operations.push({
         type: "compare",
         indices: [j, minIdx],
-        description: `Comparing arr[${j}] (${arr[j]}) with current minimum arr[${minIdx}] (${arr[minIdx]})`,
+        description: `Comparing arr[${j}] (${arr[j]}) with current min arr[${minIdx}] (${arr[minIdx]})`,
+        snapshot: { i, minIdx, j, n, arr: [...arr] },
       });
 
       if (arr[j] < arr[minIdx]) {
@@ -39,36 +39,37 @@ export function selectionSort(inputArray: number[]): SortOperation[] {
           type: "compare",
           indices: [minIdx, i],
           description: `New minimum found: arr[${minIdx}] (${arr[minIdx]})`,
+          snapshot: { i, minIdx, j, n, arr: [...arr] },
         });
       }
     }
 
-    // Swap the found minimum element with the first element of unsorted portion
     operations.push({
       type: "swap",
       indices: [i, minIdx],
       description: `Swapping index ${i} (${arr[i]}) with minimum element index ${minIdx} (${arr[minIdx]})`,
+      snapshot: { i, minIdx, j: n, n, arr: [...arr] },
     });
 
     const temp = arr[i];
     arr[i] = arr[minIdx];
     arr[minIdx] = temp;
 
-    // Mark element at i as sorted
     sortedSet.add(i);
     operations.push({
       type: "sorted",
       indices: Array.from(sortedSet),
       description: `Element ${arr[i]} at index ${i} is in its sorted position`,
+      snapshot: { i, minIdx, j: n, n, arr: [...arr] },
     });
   }
 
-  // Last remaining element is sorted
   for (let k = 0; k < n; k++) sortedSet.add(k);
   operations.push({
     type: "sorted",
     indices: Array.from(sortedSet),
     description: "Array is completely sorted!",
+    snapshot: { i: n - 1, minIdx: n - 1, j: n, n, arr: [...arr] },
   });
 
   return operations;

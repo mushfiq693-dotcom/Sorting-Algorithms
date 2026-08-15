@@ -1,8 +1,7 @@
 import { SortOperation } from "@/types/sorting";
 
 /**
- * Pure Bubble Sort implementation that records step-by-step operations.
- * Matches the C++ reference logic with early break optimization.
+ * Pure Bubble Sort implementation recording operations and variable snapshots for debugger.
  */
 export function bubbleSort(inputArray: number[]): SortOperation[] {
   const operations: SortOperation[] = [];
@@ -15,6 +14,7 @@ export function bubbleSort(inputArray: number[]): SortOperation[] {
         type: "sorted",
         indices: [0],
         description: "Single element array is already sorted.",
+        snapshot: { i: 0, j: 0, n, swapped: false, arr: [...arr] },
       });
     }
     return operations;
@@ -29,7 +29,8 @@ export function bubbleSort(inputArray: number[]): SortOperation[] {
       operations.push({
         type: "compare",
         indices: [j, j + 1],
-        description: `Comparing elements at index ${j} (${arr[j]}) and index ${j + 1} (${arr[j + 1]})`,
+        description: `Comparing arr[${j}] (${arr[j]}) and arr[${j + 1}] (${arr[j + 1]})`,
+        snapshot: { i, j, n, swapped, arr: [...arr] },
       });
 
       if (arr[j] > arr[j + 1]) {
@@ -37,7 +38,8 @@ export function bubbleSort(inputArray: number[]): SortOperation[] {
         operations.push({
           type: "swap",
           indices: [j, j + 1],
-          description: `${arr[j]} > ${arr[j + 1]}, so swapping indices ${j} and ${j + 1}`,
+          description: `${arr[j]} > ${arr[j + 1]}: Swapping indices ${j} and ${j + 1}`,
+          snapshot: { i, j, n, swapped: true, arr: [...arr] },
         });
         const temp = arr[j];
         arr[j] = arr[j + 1];
@@ -46,13 +48,13 @@ export function bubbleSort(inputArray: number[]): SortOperation[] {
       }
     }
 
-    // The element at n - i - 1 is now in its sorted position
     const sortedIdx = n - i - 1;
     sortedSet.add(sortedIdx);
     operations.push({
       type: "sorted",
       indices: Array.from(sortedSet),
-      description: `Element ${arr[sortedIdx]} at index ${sortedIdx} is now in its final sorted position`,
+      description: `Element ${arr[sortedIdx]} at index ${sortedIdx} is in sorted position`,
+      snapshot: { i, j: n - i - 1, n, swapped, arr: [...arr] },
     });
 
     if (!swapped) {
@@ -60,17 +62,18 @@ export function bubbleSort(inputArray: number[]): SortOperation[] {
         type: "sorted",
         indices: Array.from({ length: n }, (_, k) => k),
         description: "No swaps made in pass; entire array is fully sorted early!",
+        snapshot: { i, j: 0, n, swapped: false, arr: [...arr] },
       });
       return operations;
     }
   }
 
-  // Ensure index 0 is also added
   for (let k = 0; k < n; k++) sortedSet.add(k);
   operations.push({
     type: "sorted",
     indices: Array.from(sortedSet),
     description: "Array is completely sorted!",
+    snapshot: { i: n - 1, j: 0, n, swapped: false, arr: [...arr] },
   });
 
   return operations;
