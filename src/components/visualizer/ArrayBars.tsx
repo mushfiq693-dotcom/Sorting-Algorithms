@@ -30,13 +30,21 @@ export const ArrayBars = memo(function ArrayBars({
 
   if (array.length === 0) {
     return (
-      <div className="flex h-72 w-full items-center justify-center rounded-xl border border-dashed border-border/60 bg-card/40 p-8 text-center text-muted-foreground">
-        <div>
-          <p className="text-sm font-medium">Array is empty.</p>
-          <p className="text-xs text-muted-foreground/70 mt-1">
-            Generate a random array or input custom numbers above.
-          </p>
+      <div className="flex h-80 w-full flex-col items-center justify-center rounded-2xl border border-dashed border-slate-800 bg-[#070b14]/70 p-8 text-center backdrop-blur-md">
+        {/* Array-Bar Motif Empty State Graphic */}
+        <div className="flex items-end gap-1.5 h-12 mb-3 opacity-30" aria-hidden="true">
+          <div className="w-2.5 h-4 rounded-t bg-cyan-400" />
+          <div className="w-2.5 h-7 rounded-t bg-cyan-400" />
+          <div className="w-2.5 h-11 rounded-t bg-cyan-400" />
+          <div className="w-2.5 h-6 rounded-t bg-cyan-400" />
+          <div className="w-2.5 h-9 rounded-t bg-cyan-400" />
         </div>
+        <p className="text-xs font-mono font-semibold text-slate-300">
+          Array is uninitialized [length: 0]
+        </p>
+        <p className="text-[11px] text-muted-foreground mt-1">
+          Click &quot;Random Array&quot; or type custom values in the controls above to start.
+        </p>
       </div>
     );
   }
@@ -48,10 +56,10 @@ export const ArrayBars = memo(function ArrayBars({
     <div
       role="region"
       aria-label="Sorting Array Bars Visualization"
-      className="relative flex h-80 w-full items-end justify-center gap-1 sm:gap-2 rounded-2xl border border-border/60 bg-gradient-to-b from-card/80 via-card/50 to-background/90 p-4 sm:p-6 shadow-2xl backdrop-blur-md overflow-hidden"
+      className="relative flex h-80 w-full items-end justify-center gap-1 sm:gap-2 rounded-2xl border border-white/[0.08] bg-gradient-to-b from-[#0c1220]/90 via-[#070b14]/95 to-[#050811] p-4 sm:p-6 shadow-2xl backdrop-blur-xl overflow-hidden"
     >
-      {/* Background Grid Lines */}
-      <div className="absolute inset-0 pointer-events-none bg-[linear-gradient(to_right,#1f29370f_1px,transparent_1px),linear-gradient(to_bottom,#1f29370f_1px,transparent_1px)] bg-[size:2rem_2rem]" />
+      {/* Precision Dev-Tool Background Grid Lines */}
+      <div className="absolute inset-0 pointer-events-none bg-[linear-gradient(to_right,#38bdf808_1px,transparent_1px),linear-gradient(to_bottom,#38bdf808_1px,transparent_1px)] bg-[size:1.5rem_1.5rem]" />
 
       {array.map((value, idx) => {
         const isPivot = pivotIndex === idx;
@@ -73,42 +81,42 @@ export const ArrayBars = memo(function ArrayBars({
           if (idx > mergeRange.mid && idx <= mergeRange.right) isRightMerge = true;
         }
 
-        // Determine bar color and glow styling
-        let barColor = "from-cyan-500 to-blue-600 shadow-cyan-500/20";
-        let glowBorder = "border-cyan-400/30";
+        // Canonical Dev-Tool Color Tokens
+        let barColor = "from-cyan-500 to-blue-600 shadow-[0_0_12px_rgba(56,189,248,0.15)]";
+        let glowBorder = "border-cyan-400/40";
         let badgeText: string | null = null;
         let badgeColor = "";
 
         if (isPivot) {
-          barColor = "from-purple-500 via-violet-500 to-indigo-600 shadow-purple-500/60";
-          glowBorder = "border-purple-300 ring-2 ring-purple-400/60";
+          barColor = "from-purple-500 via-violet-500 to-indigo-600 shadow-[0_0_20px_rgba(168,85,247,0.5)]";
+          glowBorder = "border-purple-300 ring-2 ring-purple-400/80";
           badgeText = "Pivot";
           badgeColor = "bg-purple-500 text-white";
         } else if (isSwapping) {
-          barColor = "from-rose-500 via-red-500 to-amber-500 shadow-rose-500/50";
-          glowBorder = "border-rose-300 ring-2 ring-rose-400/60";
+          barColor = "from-rose-500 via-red-500 to-amber-500 shadow-[0_0_20px_rgba(244,63,94,0.6)]";
+          glowBorder = "border-rose-300 ring-2 ring-rose-400/80";
           badgeText = "Swap";
           badgeColor = "bg-rose-500 text-white";
         } else if (isOverwriting) {
-          barColor = "from-amber-500 via-orange-500 to-rose-500 shadow-orange-500/50";
-          glowBorder = "border-amber-300 ring-2 ring-amber-400/60";
+          barColor = "from-amber-500 via-orange-500 to-rose-500 shadow-[0_0_16px_rgba(249,115,22,0.5)]";
+          glowBorder = "border-amber-300 ring-2 ring-amber-400/80";
           badgeText = "Write";
           badgeColor = "bg-orange-500 text-white";
         } else if (isComparing) {
-          barColor = "from-amber-400 to-yellow-500 shadow-yellow-400/40";
-          glowBorder = "border-amber-200 ring-2 ring-amber-400/50";
+          barColor = "from-amber-400 to-yellow-500 shadow-[0_0_16px_rgba(251,191,36,0.5)]";
+          glowBorder = "border-amber-200 ring-2 ring-amber-400/80";
         } else if (isSorted) {
-          barColor = "from-emerald-400 to-teal-500 shadow-emerald-500/30";
-          glowBorder = "border-emerald-300/60";
+          barColor = "from-emerald-400 to-teal-500 shadow-[0_0_14px_rgba(16,185,129,0.35)]";
+          glowBorder = "border-emerald-300/70";
         } else if (isLeftMerge) {
-          barColor = "from-sky-400 to-blue-500 shadow-sky-400/20";
-          glowBorder = "border-sky-300/40";
+          barColor = "from-sky-400 to-blue-500 shadow-[0_0_12px_rgba(56,189,248,0.2)]";
+          glowBorder = "border-sky-300/50";
         } else if (isRightMerge) {
-          barColor = "from-fuchsia-400 to-purple-600 shadow-fuchsia-400/20";
-          glowBorder = "border-fuchsia-300/40";
+          barColor = "from-fuchsia-400 to-purple-600 shadow-[0_0_12px_rgba(217,70,239,0.2)]";
+          glowBorder = "border-fuchsia-300/50";
         }
 
-        // Height percentage (minimum 8% height so small values remain clearly visible)
+        // Height percentage (minimum 8% height)
         const heightPercent = Math.max(8, Math.round((value / maxVal) * 86));
 
         return (
@@ -134,18 +142,18 @@ export const ArrayBars = memo(function ArrayBars({
                   isPivot
                     ? "text-purple-300 scale-110 font-bold"
                     : isSwapping
-                    ? "text-rose-300 scale-110"
+                    ? "text-rose-300 scale-110 font-bold"
                     : isOverwriting
-                    ? "text-orange-300 scale-110"
+                    ? "text-orange-300 scale-110 font-bold"
                     : isComparing
-                    ? "text-amber-300 scale-110"
+                    ? "text-amber-300 scale-110 font-bold"
                     : isSorted
                     ? "text-emerald-300"
                     : isLeftMerge
                     ? "text-sky-300"
                     : isRightMerge
                     ? "text-fuchsia-300"
-                    : "text-muted-foreground/80 group-hover:text-foreground"
+                    : "text-slate-400 group-hover:text-white"
                 }`}
               >
                 {value}
@@ -171,15 +179,15 @@ export const ArrayBars = memo(function ArrayBars({
                       mass: 0.8,
                     }
               }
-              className={`w-full rounded-t-lg bg-gradient-to-t ${barColor} ${glowBorder} border shadow-lg relative overflow-hidden transition-all duration-200`}
+              className={`w-full rounded-t-lg bg-gradient-to-t ${barColor} ${glowBorder} border shadow-lg relative overflow-hidden transition-all duration-150`}
             >
-              {/* Top highlight cap */}
-              <div className="absolute inset-x-0 top-0 h-1.5 bg-white/30 rounded-t-lg" />
+              {/* Glassmorphic Top Highlight Cap */}
+              <div className="absolute inset-x-0 top-0 h-1.5 bg-white/40 rounded-t-lg" />
             </motion.div>
 
             {/* Index Label Below */}
             {showIndices && (
-              <span className="mt-1 text-[9px] sm:text-[10px] font-mono text-muted-foreground/60 select-none">
+              <span className="mt-1 text-[9px] sm:text-[10px] font-mono text-slate-500 select-none">
                 {idx}
               </span>
             )}

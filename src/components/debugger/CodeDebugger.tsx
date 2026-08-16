@@ -152,15 +152,15 @@ export function CodeDebugger({ algorithmId, initialArray }: CodeDebuggerProps) {
   const isRecursive = algorithmId === "merge" || algorithmId === "quick";
 
   return (
-    <div className="flex flex-col gap-5 rounded-2xl border border-border/60 bg-card/70 p-4 sm:p-6 backdrop-blur-md shadow-2xl">
+    <div className="flex flex-col gap-5 rounded-2xl border border-white/[0.08] bg-[#0b101d]/90 p-4 sm:p-6 backdrop-blur-xl shadow-2xl">
       {/* Header & Controls */}
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/40 pb-4">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800 pb-4">
         <div>
-          <h3 className="text-base font-bold text-white flex items-center gap-2">
+          <h3 className="text-sm sm:text-base font-bold text-white flex items-center gap-2">
             <Terminal className="h-4 w-4 text-cyan-400" />
             <span>Interactive Code Debugger</span>
           </h3>
-          <p className="text-xs text-muted-foreground mt-0.5">
+          <p className="text-xs text-slate-400 mt-0.5">
             Step through C++ execution line-by-line with live scope variables & call stack.
           </p>
         </div>
@@ -172,7 +172,7 @@ export function CodeDebugger({ algorithmId, initialArray }: CodeDebuggerProps) {
             disabled={isAtStart || isPlaying}
             aria-label="Step Back one operation"
             title="Step Back one operation"
-            className="inline-flex items-center gap-1.5 rounded-xl border border-border/80 bg-secondary/80 px-3 py-2 text-xs font-semibold text-foreground hover:bg-secondary hover:text-cyan-400 transition-all disabled:opacity-30 disabled:cursor-not-allowed active:scale-95"
+            className="inline-flex items-center gap-1.5 rounded-xl border border-slate-700 bg-slate-800/80 px-3 py-2 text-xs font-bold text-slate-200 hover:bg-slate-700 hover:text-cyan-300 transition-all disabled:opacity-30 disabled:cursor-not-allowed active:scale-95"
           >
             <StepBack className="h-3.5 w-3.5" />
             <span>Step Back</span>
@@ -183,7 +183,7 @@ export function CodeDebugger({ algorithmId, initialArray }: CodeDebuggerProps) {
             disabled={isAtEnd || isPlaying}
             aria-label="Step Into next operation"
             title="Step Into next operation"
-            className="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 px-3.5 py-2 text-xs font-semibold text-white hover:from-blue-500 hover:to-cyan-500 shadow-md shadow-cyan-500/20 transition-all disabled:opacity-30 disabled:cursor-not-allowed active:scale-95"
+            className="btn-compare-hover inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-500 px-3.5 py-2 text-xs font-extrabold text-slate-950 shadow-md shadow-cyan-500/20 transition-all disabled:opacity-30 disabled:cursor-not-allowed active:scale-95"
           >
             <StepForward className="h-3.5 w-3.5" />
             <span>Step Into</span>

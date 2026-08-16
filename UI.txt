@@ -1,0 +1,190 @@
+# PHASE 6 — Full UI Polish: Dark Dev-Tool Aesthetic + Algorithm-Themed Micro-Interactions
+
+> **Standalone add-on.** Give this to Claude Code after the core product (Phases 1–3 minimum,
+> ideally 1–5) is functionally complete. This phase does NOT add features — it re-skins and
+> polishes what already exists. Paste the original "GLOBAL CONTEXT" block first if starting a
+> fresh session.
+
+---
+
+## Goal
+
+Restyle the entire site into a cohesive, distinctive dark developer-tool aesthetic (think
+VSCode / Linear / Vercel — precise, confident, information-dense but never cluttered) where the
+**subject matter itself — arrays, comparisons, swaps, recursion, pivots — visibly shapes the UI**,
+not just the visualizer panel. Someone should be able to tell this is a *sorting algorithms* site
+from the shape of its buttons and loading states, not just from reading the text.
+
+This is not "add more animations everywhere" — it's "let algorithm concepts inform the actual
+design language." Read the design principles below before writing any code.
+
+---
+
+## Design Process (do this before touching code)
+
+Work in two passes, same as any serious design work:
+
+**Pass 1 — Design plan.** Before generating any UI code, produce a compact design plan:
+- **Color:** 4–6 named hex values. Avoid the generic near-black-plus-single-acid-green-accent
+  combination — that's a common default, not a choice made for this subject. Instead, ground the
+  palette in something concrete from the domain (e.g. distinct, meaningful colors for the
+  recurring visualizer states — comparing, swapping, sorted, pivot — that then echo throughout the
+  rest of the UI as the accent system, so the visualizer's own color language becomes the site's
+  color language, not a separate palette invented for chrome/nav/buttons).
+- **Type:** a display face used for headings/hero (with real character, not a generic geometric
+  sans), a body face for prose (docs, explanations), and a monospace face for code AND for select
+  UI numerals/labels where a "systems" feel is appropriate (e.g. stat counters, complexity badges).
+  Name the actual font choices.
+- **Layout:** how the existing dashboard split (sidebar + main panel) and docs layout get refined
+  — describe in one or two sentences plus a rough ASCII wireframe.
+- **Signature element:** pick ONE genuinely memorable, subject-specific visual device this site
+  will be recognized by (see "Signature element" section below for constraints/ideas). Everything
+  else should stay disciplined and quiet around it.
+
+**Pass 2 — Self-critique.** Check the plan: does any part of it look like what any generic
+dark-mode dev-tool redesign would produce, regardless of the fact that this is a sorting
+visualizer? If so, revise that part specifically. Only after this check, proceed to implementation.
+
+---
+
+## Design Principles to Follow
+
+- **Ground everything in the subject.** This site is about arrays, ordering, comparison, and
+  motion. Let those ideas suggest UI shapes — not just in the visualizer, but in navigation,
+  loading states, empty states, and buttons too (see sections below for concrete direction).
+- **Spend boldness in one place.** The signature element carries the personality. Surrounding UI
+  (forms, nav, docs prose) should be quiet, precise, and disciplined — not competing for attention.
+- **Motion should be deliberate, not scattered.** Prefer a few well-placed, meaningful
+  micro-interactions over animation on every single element. Each animation should reference an
+  actual algorithmic concept (see below) rather than being generic hover-lift/fade-in decoration.
+- **Respect the existing information architecture.** This phase restyles; it does not restructure
+  navigation, remove existing functionality, or change component behavior — only appearance and
+  interaction polish.
+- **Maintain the quality floor throughout:** fully responsive down to mobile, visible keyboard
+  focus states on every interactive element, and `prefers-reduced-motion` respected everywhere
+  (already required in earlier phases for the visualizer — extend that same discipline to every
+  new micro-interaction added in this phase).
+
+---
+
+## PART A — Signature Element
+
+Choose and fully execute **one** of the following (or propose an equally specific alternative
+grounded in the subject — do not default to something generic like "gradient orbs" or "floating
+blobs" that could belong to any SaaS site):
+
+- **Option 1 — The array-bar motif as a UI primitive.** The vertical bar (already the core visual
+  in the visualizer) becomes a recurring shape used deliberately elsewhere: loading indicators are
+  a small row of bars animating into sorted order, section dividers are subtle bar-height
+  silhouettes, the scrollbar or progress indicators echo the same bar shape. One motif, used with
+  restraint, everywhere it can meaningfully fit.
+- **Option 2 — Live "ambient sort" in structural UI.** A very small, continuously-but-subtly
+  animating sort (a handful of tiny bars/dots) embedded in unexpected structural places — e.g. next
+  to the site logo, in the tab favicon-adjacent header area — always slowly sorting and reshuffling
+  in the background, never distracting, a constant reminder of the subject.
+- **Option 3 — Complexity-as-visual-rhythm.** Use the actual O(1)/O(n)/O(n log n)/O(n²) complexity
+  classes as a literal design system for animation timing/easing across the site — e.g. simple
+  UI transitions (button press) use linear/O(1)-style instant easing, list reveals use an O(n)-style
+  staggered linear reveal, page-level transitions use a curve that visually "fans out" the way a
+  recursion tree does. This is more abstract/risky — only choose this if you're confident you can
+  execute it so it reads as intentional rather than confusing.
+
+Pick one, commit to it, and reference it explicitly in code comments where used so its intent is
+clear to future readers of the codebase.
+
+---
+
+## PART B — Algorithm-Themed Micro-Interactions (site-wide, not just the visualizer)
+
+Apply these across the whole site, matching each interaction to a genuine algorithmic concept —
+avoid interactions that are just generic polish with an algorithm-flavored name slapped on:
+
+1. **Buttons that "compare" on hover.** Primary action buttons (Start, Generate, Submit, etc.) get
+   a subtle hover state that visually references a "comparison" — e.g. a brief highlight pulse
+   similar to the visualizer's compare-state color, reinforcing the site's own color language from
+   Part A rather than introducing a new hover treatment.
+
+2. **Navigation as "traversal."** When moving between algorithm pages or docs levels, use a
+   directional transition that reads like moving through a sequence/array (e.g. content slides in
+   from the direction of travel) rather than a generic fade — since progressing through algorithms
+   and levels IS a sequence, this has actual meaning here (unlike arbitrary numbered-step motifs,
+   which the general design guidance above cautions against using without real justification —
+   this one is justified because there genuinely is an ordered sequence).
+
+3. **Loading/skeleton states shaped like arrays.** Any loading state (initial page load, docs
+   content loading) uses skeleton bars of varying height, not generic gray rectangles or spinners
+   — tying back to the array-bar visual language.
+
+4. **Card hover states reference "swap."** Algorithm selector cards, comparison cards, quiz option
+   cards — on hover/selection, a small subtle transform (e.g. slight vertical shift) that echoes
+   the swap motion from the visualizer, at a much smaller/subtler scale appropriate for UI chrome
+   rather than the main visualization.
+
+5. **Success/completion states reference "sorted."** When a quiz is completed correctly, a bug is
+   fixed, or coding practice tests pass, use a completion animation that echoes the visualizer's
+   own "sorted" marker/color (a satisfying settle-into-place motion) rather than a generic confetti
+   burst or checkmark pop unrelated to the rest of the site's visual language.
+
+6. **Empty/error states stay in voice, not decoration.** Where there's no custom array entered yet,
+   or a quiz has no more questions, or code execution fails — write these states in the interface's
+   own voice (clear, direct, explains what happened and what to do next) rather than defaulting to
+   a generic empty-state illustration. If a small illustrative element is used, it should be built
+   from the same bar/array visual language, not a generic stock-style icon.
+
+Do not add micro-interactions beyond what's listed here without a clear, specific rationale tying
+it to an actual algorithmic concept — resist the urge to animate everything just because motion is
+available. Restraint is part of the brief.
+
+---
+
+## PART C — Component-by-Component Polish Pass
+
+Go through the existing site systematically and apply the design plan from Part A/B. Do not skip
+components — but do not restructure their function, only their visual treatment:
+
+1. **Landing page** — hero treatment following the new type/color system; the existing hero sort
+   animation (built in Phase 3) restyled to match the new palette exactly (reuse the visualizer's
+   own compare/swap/sorted color language here specifically, so the very first thing a visitor
+   sees establishes the site's visual vocabulary).
+2. **Sidebar / algorithm selector** — refined spacing, active-state treatment, and the signature
+   element integrated if applicable (e.g. Option 1's bar motif as a subtle active-item indicator).
+3. **Main visualizer panel** — this already has functional color-coding (compare/swap/sorted/pivot)
+   from earlier phases; polish spacing, bar styling (subtle rounded tops, refined shadow/depth),
+   and ensure the palette here is the canonical source that the rest of the site's accent colors
+   are drawn from, per the Part A color plan.
+4. **Code viewer** — refined syntax highlighting theme that fits the overall palette (don't use an
+   unrelated stock theme), polished line-highlight treatment for the current-execution line,
+   refined copy-button micro-interaction.
+5. **Controls panel** — sliders, buttons, inputs restyled consistently; ensure disabled/active/
+   focus states are all clearly, consistently styled.
+6. **Docs section (Phase 5)** — typography-focused polish: clear heading hierarchy, comfortable
+   prose measure (line length), refined collapsible Bangla-note boxes (distinct but not jarring
+   styling — should feel like a natural part of the page, not a bolted-on widget), sidebar nav
+   tree with clear current-position and completion-state indicators.
+7. **Practice modes (Phase 4/5)** — Quiz, Prediction, Coding Practice, Bug Hunt all restyled
+   consistently with each other (a user moving between practice modes should feel continuity, not
+   four differently-designed mini-apps).
+8. **Comparison page (Phase 3)** — table/card treatment refined for readability and visual
+   consistency with the rest of the site.
+9. **Mobile responsive pass** — re-verify every component above at mobile widths after restyling;
+   restyling can break responsive behavior that worked before, so this needs explicit re-testing,
+   not just an assumption that it still works.
+
+---
+
+## Definition of done for Phase 6
+
+- A written design plan (Pass 1) exists and was self-critiqued (Pass 2) before implementation, per
+  the Design Process section.
+- One clearly identifiable signature element (Part A) is implemented and used with restraint.
+- Every component listed in Part C has been visually polished and matches the new design system —
+  no component left in its old, unstyled/default-shadcn appearance.
+- The visualizer's own compare/swap/sorted/pivot color language is the source the rest of the
+  site's accent colors are drawn from — not a separate, disconnected palette.
+- Micro-interactions from Part B are present but restrained — each one traceable to a genuine
+  algorithmic concept, not generic decoration.
+- Keyboard focus states are visible and consistent site-wide.
+- `prefers-reduced-motion` is respected for every new animation/transition added in this phase.
+- Full site re-tested at mobile, tablet, and desktop widths after restyling.
+- No functional behavior changed — this phase is visual/interaction polish only; every feature
+  built in Phases 1–5 still works exactly as before.

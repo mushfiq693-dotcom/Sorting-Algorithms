@@ -13,7 +13,10 @@ import {
   ShieldCheck,
   HardDrive,
   Compass,
+  BookOpen,
+  GraduationCap,
 } from "lucide-react";
+import { AmbientSortLogo } from "@/components/brand/AmbientSortLogo";
 
 export default function ComparePage() {
   return (
@@ -26,24 +29,38 @@ export default function ComparePage() {
               <div className="h-9 w-9 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg shadow-cyan-500/20 group-hover:scale-105 transition-transform">
                 <Layers className="h-5 w-5 text-white" />
               </div>
-              <div>
+              <div className="flex items-center gap-2">
                 <span className="font-bold text-base tracking-tight bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent">
                   SortViz
                 </span>
-                <span className="ml-2 text-[10px] font-mono font-medium px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
-                  Comparison Matrix
-                </span>
+                <AmbientSortLogo />
               </div>
             </Link>
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <Link
+              href="/docs"
+              className="inline-flex items-center gap-1.5 rounded-xl border border-cyan-500/30 bg-cyan-500/10 px-3 py-1.5 text-xs font-semibold text-cyan-300 hover:bg-cyan-500/20 transition-all active:scale-95 shadow-sm"
+            >
+              <BookOpen className="h-3.5 w-3.5" />
+              <span>Docs & Course</span>
+            </Link>
+
+            <Link
+              href="/learn"
+              className="inline-flex items-center gap-1.5 rounded-xl border border-border/80 bg-secondary/80 px-3 py-1.5 text-xs font-semibold text-foreground hover:bg-secondary hover:text-cyan-400 transition-all active:scale-95"
+            >
+              <GraduationCap className="h-3.5 w-3.5" />
+              <span className="hidden sm:inline">Learning Path</span>
+            </Link>
+
             <Link
               href="/"
-              className="inline-flex items-center gap-2 rounded-xl border border-border/80 bg-secondary/80 px-3.5 py-2 text-xs font-semibold text-foreground hover:bg-secondary hover:text-cyan-400 transition-all active:scale-95"
+              className="inline-flex items-center gap-2 rounded-xl border border-border/80 bg-secondary/80 px-3.5 py-1.5 text-xs font-semibold text-foreground hover:bg-secondary hover:text-cyan-400 transition-all active:scale-95"
             >
               <ArrowLeft className="h-4 w-4" />
-              Back to Visualizer
+              <span>Visualizer</span>
             </Link>
           </div>
         </div>
@@ -211,12 +228,13 @@ export default function ComparePage() {
       <footer className="border-t border-border/50 bg-background/80 py-8 text-center text-xs text-muted-foreground mt-12">
         <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p>© 2026 Sorting Algorithm Visualizer. Full 5-Algorithm Comparison Matrix.</p>
-          <Link
-            href="/"
-            className="text-cyan-400 hover:text-cyan-300 font-medium"
-          >
-            ← Return to Interactive Visualizer
-          </Link>
+          <div className="flex items-center gap-4 text-xs">
+            <Link href="/docs" className="hover:text-foreground">Docs & Course</Link>
+            <span>•</span>
+            <Link href="/" className="hover:text-foreground">Visualizer</Link>
+            <span>•</span>
+            <Link href="/learn" className="hover:text-foreground">Learning Path</Link>
+          </div>
         </div>
       </footer>
     </div>

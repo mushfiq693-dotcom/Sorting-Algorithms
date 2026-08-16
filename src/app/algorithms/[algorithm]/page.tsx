@@ -6,12 +6,18 @@ import Link from "next/link";
 import { AlgorithmId } from "@/types/sorting";
 import { LEARNING_PATH, LearningStep } from "@/data/learningPath";
 import { ALGORITHMS } from "@/data/algorithms";
+import { DOCS_ARTICLES } from "@/data/docs";
 import { SortingVisualizer } from "@/components/visualizer/SortingVisualizer";
 import { CodeDebugger } from "@/components/debugger/CodeDebugger";
 import { BugHunt } from "@/components/challenge/BugHunt";
+import { PredictNext } from "@/components/practice/PredictNext";
+import { CodingPractice } from "@/components/practice/CodingPractice";
+import { Quiz } from "@/components/practice/Quiz";
+import { BanglaNote } from "@/components/docs/BanglaNote";
 import { GlossaryModal } from "@/components/glossary/GlossaryModal";
 import { ComplexityCard } from "@/components/algorithms/ComplexityCard";
 import { CodeViewer } from "@/components/code/CodeViewer";
+import { AmbientSortLogo } from "@/components/brand/AmbientSortLogo";
 import {
   ArrowLeft,
   Lightbulb,
@@ -25,6 +31,9 @@ import {
   Sparkles,
   Layers,
   Clock,
+  Compass,
+  FileCode,
+  HelpCircle,
 } from "lucide-react";
 
 export default function AlgorithmDetailPage() {
@@ -33,13 +42,16 @@ export default function AlgorithmDetailPage() {
 
   const stepData = LEARNING_PATH.find((s) => s.id === algorithmId);
   const meta = ALGORITHMS[algorithmId];
+  const docsArticle = DOCS_ARTICLES.find((a) => a.slug === `${algorithmId}-sort` || a.slug === algorithmId);
 
   if (!stepData || !meta) {
     notFound();
   }
 
   const [activeStep, setActiveStep] = useState<number>(1);
-  const [activePracticeTab, setActivePracticeTab] = useState<"debugger" | "bughunt">("debugger");
+  const [activePracticeTab, setActivePracticeTab] = useState<
+    "debugger" | "bughunt" | "predict" | "coding" | "quiz"
+  >("debugger");
   const [isGlossaryOpen, setIsGlossaryOpen] = useState<boolean>(false);
 
   const stepsList = [
@@ -61,24 +73,35 @@ export default function AlgorithmDetailPage() {
               <span>Learning Path</span>
             </Link>
             <span className="text-border">/</span>
-            <span className="text-sm font-bold text-white font-mono">{meta.name}</span>
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-bold text-white font-mono">{meta.name}</span>
+              <AmbientSortLogo />
+            </div>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <Link
+              href={`/docs/${algorithmId}-sort`}
+              className="inline-flex items-center gap-1.5 rounded-xl border border-cyan-500/30 bg-cyan-500/10 px-3 py-1.5 text-xs font-semibold text-cyan-300 hover:bg-cyan-500/20 transition-all active:scale-95"
+            >
+              <BookOpen className="h-3.5 w-3.5" />
+              <span className="hidden sm:inline">Docs & Theory</span>
+            </Link>
+
             <button
               onClick={() => setIsGlossaryOpen(true)}
-              className="inline-flex items-center gap-1.5 rounded-xl border border-border/80 bg-secondary/80 px-3.5 py-2 text-xs font-semibold text-foreground hover:bg-secondary hover:text-cyan-400 transition-all active:scale-95"
+              className="inline-flex items-center gap-1.5 rounded-xl border border-border/80 bg-secondary/80 px-3 py-1.5 text-xs font-semibold text-foreground hover:bg-secondary hover:text-cyan-400 transition-all active:scale-95"
             >
-              <BookOpen className="h-4 w-4 text-cyan-400" />
-              <span>Glossary</span>
+              <BookOpen className="h-3.5 w-3.5 text-cyan-400" />
+              <span className="hidden sm:inline">Glossary</span>
             </button>
 
             <Link
               href="/"
-              className="inline-flex items-center gap-1.5 rounded-xl border border-border/80 bg-secondary/80 px-3.5 py-2 text-xs font-semibold text-foreground hover:bg-secondary hover:text-cyan-400 transition-all active:scale-95"
+              className="inline-flex items-center gap-1.5 rounded-xl border border-border/80 bg-secondary/80 px-3 py-1.5 text-xs font-semibold text-foreground hover:bg-secondary hover:text-cyan-400 transition-all active:scale-95"
             >
-              <Layers className="h-4 w-4" />
-              <span>Main Visualizer</span>
+              <Layers className="h-3.5 w-3.5" />
+              <span className="hidden sm:inline">Visualizer</span>
             </Link>
           </div>
         </div>
@@ -168,6 +191,14 @@ export default function AlgorithmDetailPage() {
                   {stepData.analogy}
                 </p>
               </div>
+
+              {/* Collapsible Bangla Note if available */}
+              {docsArticle?.banglaNote && (
+                <BanglaNote
+                  topic={docsArticle.banglaNote.topic}
+                  banglaText={docsArticle.banglaNote.banglaText}
+                />
+              )}
 
               <div className="pt-4 border-t border-border/40 flex justify-end">
                 <button
@@ -331,54 +362,103 @@ export default function AlgorithmDetailPage() {
                   onClick={() => setActiveStep(5)}
                   className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 px-5 py-2.5 text-xs font-semibold text-white hover:from-blue-500 transition-all active:scale-95 shadow-md shadow-cyan-500/20"
                 >
-                  <span>Next: Try It (Practice) →</span>
+                  <span>Next: Try It (Practice Hub) →</span>
                 </button>
               </div>
             </div>
           )}
 
-          {/* STEP 5: Try It (Debugger & Bug Hunt) */}
+          {/* STEP 5: Try It (Multi-Mode Practice Hub) */}
           {activeStep === 5 && (
             <div className="space-y-6 animate-in fade-in">
-              {/* Toggle practice modes */}
-              <div className="flex items-center justify-between bg-card/60 p-2 rounded-2xl border border-border/60">
-                <div className="flex items-center gap-2">
+              {/* 5-Tab Practice Mode Selector */}
+              <div className="flex flex-wrap items-center justify-between gap-2 bg-card/60 p-2 rounded-2xl border border-border/60">
+                <div className="flex flex-wrap items-center gap-2">
                   <button
                     onClick={() => setActivePracticeTab("debugger")}
-                    className={`inline-flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-bold transition-all ${
+                    className={`inline-flex items-center gap-2 rounded-xl px-3.5 py-2 text-xs font-bold transition-all ${
                       activePracticeTab === "debugger"
                         ? "bg-cyan-500 text-slate-950 shadow-md shadow-cyan-500/20"
                         : "text-muted-foreground hover:text-foreground hover:bg-secondary"
                     }`}
                   >
                     <Terminal className="h-3.5 w-3.5" />
-                    <span>Live Code Debugger</span>
+                    <span>Live Debugger</span>
+                  </button>
+
+                  <button
+                    onClick={() => setActivePracticeTab("predict")}
+                    className={`inline-flex items-center gap-2 rounded-xl px-3.5 py-2 text-xs font-bold transition-all ${
+                      activePracticeTab === "predict"
+                        ? "bg-purple-500 text-white shadow-md shadow-purple-500/20"
+                        : "text-muted-foreground hover:text-foreground hover:bg-secondary"
+                    }`}
+                  >
+                    <Compass className="h-3.5 w-3.5" />
+                    <span>Predict Next</span>
                   </button>
 
                   <button
                     onClick={() => setActivePracticeTab("bughunt")}
-                    className={`inline-flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-bold transition-all ${
+                    className={`inline-flex items-center gap-2 rounded-xl px-3.5 py-2 text-xs font-bold transition-all ${
                       activePracticeTab === "bughunt"
                         ? "bg-rose-500 text-white shadow-md shadow-rose-500/20"
                         : "text-muted-foreground hover:text-foreground hover:bg-secondary"
                     }`}
                   >
                     <Bug className="h-3.5 w-3.5" />
-                    <span>Bug-Hunt Challenge</span>
+                    <span>Bug-Hunt</span>
+                  </button>
+
+                  <button
+                    onClick={() => setActivePracticeTab("coding")}
+                    className={`inline-flex items-center gap-2 rounded-xl px-3.5 py-2 text-xs font-bold transition-all ${
+                      activePracticeTab === "coding"
+                        ? "bg-blue-600 text-white shadow-md shadow-blue-500/20"
+                        : "text-muted-foreground hover:text-foreground hover:bg-secondary"
+                    }`}
+                  >
+                    <FileCode className="h-3.5 w-3.5" />
+                    <span>Coding Practice</span>
+                  </button>
+
+                  <button
+                    onClick={() => setActivePracticeTab("quiz")}
+                    className={`inline-flex items-center gap-2 rounded-xl px-3.5 py-2 text-xs font-bold transition-all ${
+                      activePracticeTab === "quiz"
+                        ? "bg-amber-500 text-slate-950 shadow-md shadow-amber-500/20"
+                        : "text-muted-foreground hover:text-foreground hover:bg-secondary"
+                    }`}
+                  >
+                    <HelpCircle className="h-3.5 w-3.5" />
+                    <span>Quiz</span>
                   </button>
                 </div>
 
-                <span className="text-[11px] font-mono text-muted-foreground px-3">
-                  Hands-On Interactive Practice
+                <span className="text-[11px] font-mono text-muted-foreground px-2 hidden sm:inline">
+                  Interactive Practice Hub
                 </span>
               </div>
 
+              {/* Render Active Practice Mode */}
               {activePracticeTab === "debugger" && (
                 <CodeDebugger algorithmId={algorithmId} initialArray={stepData.sampleArray} />
               )}
 
+              {activePracticeTab === "predict" && (
+                <PredictNext algorithmId={algorithmId} sampleArray={stepData.sampleArray} />
+              )}
+
               {activePracticeTab === "bughunt" && (
                 <BugHunt algorithmId={algorithmId} />
+              )}
+
+              {activePracticeTab === "coding" && (
+                <CodingPractice algorithmId={algorithmId} />
+              )}
+
+              {activePracticeTab === "quiz" && (
+                <Quiz topicId={algorithmId} />
               )}
 
               <div className="pt-4 border-t border-border/40 flex justify-between">
