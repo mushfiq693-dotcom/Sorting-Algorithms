@@ -8,6 +8,7 @@ import { LEARNING_PATH, LearningStep } from "@/data/learningPath";
 import { ALGORITHMS } from "@/data/algorithms";
 import { DOCS_ARTICLES } from "@/data/docs";
 import { SortingVisualizer } from "@/components/visualizer/SortingVisualizer";
+import { AlgorithmDiagram } from "@/components/diagrams/AlgorithmDiagram";
 import { CodeDebugger } from "@/components/debugger/CodeDebugger";
 import { BugHunt } from "@/components/challenge/BugHunt";
 import { PredictNext } from "@/components/practice/PredictNext";
@@ -18,10 +19,14 @@ import { GlossaryModal } from "@/components/glossary/GlossaryModal";
 import { ComplexityCard } from "@/components/algorithms/ComplexityCard";
 import { CodeViewer } from "@/components/code/CodeViewer";
 import { AmbientSortLogo } from "@/components/brand/AmbientSortLogo";
+import { MathDerivation } from "@/components/complexity/MathDerivation";
+import { ComplexityCalculator } from "@/components/complexity/ComplexityCalculator";
+import { GrowthChart } from "@/components/complexity/GrowthChart";
 import {
   ArrowLeft,
   Lightbulb,
   Eye,
+  Image as ImageIcon,
   Code2,
   Zap,
   Terminal,
@@ -57,9 +62,10 @@ export default function AlgorithmDetailPage() {
   const stepsList = [
     { num: 1, label: "The Idea", icon: Lightbulb },
     { num: 2, label: "Watch It Work", icon: Eye },
-    { num: 3, label: "Read the Code", icon: Code2 },
-    { num: 4, label: "Why It's Fast/Slow", icon: Zap },
-    { num: 5, label: "Try It (Practice)", icon: Terminal },
+    { num: 3, label: "The Full Picture", icon: ImageIcon },
+    { num: 4, label: "Read the Code", icon: Code2 },
+    { num: 5, label: "Why It's Fast/Slow", icon: Zap },
+    { num: 6, label: "Try It (Practice)", icon: Terminal },
   ];
 
   return (
@@ -128,8 +134,8 @@ export default function AlgorithmDetailPage() {
           </div>
         </div>
 
-        {/* 5-Step Stepper Tabs */}
-        <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 mb-8">
+        {/* 6-Step Stepper Tabs */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 mb-8">
           {stepsList.map((step) => {
             const Icon = step.icon;
             const isActive = activeStep === step.num;
@@ -237,117 +243,75 @@ export default function AlgorithmDetailPage() {
                   onClick={() => setActiveStep(3)}
                   className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 px-5 py-2.5 text-xs font-semibold text-white hover:from-blue-500 transition-all active:scale-95 shadow-md shadow-cyan-500/20"
                 >
-                  <span>Next: Read the Code →</span>
+                  <span>Next: The Full Picture (Diagram) →</span>
                 </button>
               </div>
             </div>
           )}
 
-          {/* STEP 3: Read the Code */}
+          {/* STEP 3: The Full Picture (Signature Static Diagram) */}
           {activeStep === 3 && (
-            <div className="rounded-2xl border border-border/60 bg-card/60 p-6 sm:p-8 backdrop-blur-md shadow-xl space-y-6 animate-in fade-in">
-              <div className="flex items-center gap-2 text-cyan-400 font-mono text-xs uppercase tracking-wider font-semibold">
-                <Code2 className="h-4 w-4" />
-                <span>Step 3: Logical Code Dissection</span>
-              </div>
-
-              <div>
-                <h2 className="text-xl font-bold text-white mb-2">
-                  C++ Implementation Breakdown
-                </h2>
-                <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
-                  Notice how each logical block maps directly to the mental model explained earlier.
-                </p>
-              </div>
-
-              <div className="grid grid-cols-1 gap-4">
-                {stepData.codeBlocks.map((block, idx) => (
-                  <div
-                    key={idx}
-                    className="rounded-2xl border border-border/60 bg-[#0d1117] p-4 sm:p-5 space-y-2.5"
-                  >
-                    <div className="flex items-center justify-between">
-                      <h4 className="text-xs font-bold font-mono text-cyan-400 uppercase tracking-wider">
-                        {block.title}
-                      </h4>
-                      <span className="text-[10px] font-mono text-muted-foreground bg-secondary px-2 py-0.5 rounded">
-                        Block 0{idx + 1}
-                      </span>
-                    </div>
-
-                    <pre className="p-3 rounded-xl bg-black/50 border border-border/50 font-mono text-xs text-slate-200 overflow-x-auto">
-                      <code>{block.lines}</code>
-                    </pre>
-
-                    <p className="text-xs text-muted-foreground/90 leading-relaxed font-sans">
-                      {block.explanation}
-                    </p>
-                  </div>
-                ))}
-              </div>
+            <div className="space-y-6 animate-in fade-in">
+              <AlgorithmDiagram algorithmId={algorithmId} />
 
               <div className="pt-4 border-t border-border/40 flex justify-between">
                 <button
                   onClick={() => setActiveStep(2)}
                   className="text-xs font-medium text-muted-foreground hover:text-foreground"
                 >
-                  ← Back to Visualizer
+                  ← Back to Watch It Work
                 </button>
                 <button
                   onClick={() => setActiveStep(4)}
                   className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 px-5 py-2.5 text-xs font-semibold text-white hover:from-blue-500 transition-all active:scale-95 shadow-md shadow-cyan-500/20"
                 >
-                  <span>Next: Why It&apos;s Fast/Slow →</span>
+                  <span>Next: Read the Code →</span>
                 </button>
               </div>
             </div>
           )}
 
-          {/* STEP 4: Why It's Fast/Slow */}
+          {/* STEP 4: Read the Code */}
           {activeStep === 4 && (
             <div className="rounded-2xl border border-border/60 bg-card/60 p-6 sm:p-8 backdrop-blur-md shadow-xl space-y-6 animate-in fade-in">
               <div className="flex items-center gap-2 text-cyan-400 font-mono text-xs uppercase tracking-wider font-semibold">
-                <Zap className="h-4 w-4" />
-                <span>Step 4: Complexity Analysis</span>
+                <Code2 className="h-4 w-4" />
+                <span>Step 4: Annotated C++ Code Walkthrough</span>
               </div>
 
-              <div>
-                <h2 className="text-xl font-bold text-white mb-2">
-                  Why {meta.name} Has These Complexity Bounds
-                </h2>
-                <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
-                  Understand complexity based on what the loops and recursion tree are physically doing.
-                </p>
-              </div>
-
-              <ComplexityCard metadata={meta} />
-
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
-                <div className="rounded-2xl border border-border/60 bg-background/60 p-4 space-y-1.5">
-                  <span className="text-xs font-bold font-mono text-amber-400 block">
-                    Time Complexity Rationale
-                  </span>
-                  <p className="text-xs text-muted-foreground/90 leading-relaxed">
-                    {stepData.complexityWhy.time}
-                  </p>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div className="h-[380px]">
+                  <CodeViewer
+                    code={meta.cppCode}
+                    activeLineNumber={null}
+                    algorithmName={algorithmId}
+                  />
                 </div>
 
-                <div className="rounded-2xl border border-border/60 bg-background/60 p-4 space-y-1.5">
-                  <span className="text-xs font-bold font-mono text-cyan-400 block">
-                    Space Complexity Rationale
-                  </span>
-                  <p className="text-xs text-muted-foreground/90 leading-relaxed">
-                    {stepData.complexityWhy.space}
-                  </p>
-                </div>
-
-                <div className="rounded-2xl border border-border/60 bg-background/60 p-4 space-y-1.5">
-                  <span className="text-xs font-bold font-mono text-indigo-400 block">
-                    Stability Rationale
-                  </span>
-                  <p className="text-xs text-muted-foreground/90 leading-relaxed">
-                    {stepData.complexityWhy.stability}
-                  </p>
+                <div className="flex flex-col gap-3 justify-center">
+                  <h3 className="text-sm font-bold text-white font-mono uppercase tracking-wider">
+                    Key Logical Building Blocks
+                  </h3>
+                  <div className="space-y-2.5">
+                    {stepData.codeBlocks.map((block, idx) => (
+                      <div
+                        key={idx}
+                        className="p-3 rounded-xl border border-border/60 bg-background/50 space-y-1"
+                      >
+                        <div className="flex items-center justify-between text-xs">
+                          <span className="font-bold text-cyan-300 font-mono">
+                            {block.title}
+                          </span>
+                        </div>
+                        <pre className="text-[10px] font-mono text-cyan-200 bg-slate-900/60 p-1.5 rounded overflow-x-auto">
+                          <code>{block.lines}</code>
+                        </pre>
+                        <p className="text-xs text-muted-foreground leading-relaxed">
+                          {block.explanation}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
 
@@ -356,97 +320,152 @@ export default function AlgorithmDetailPage() {
                   onClick={() => setActiveStep(3)}
                   className="text-xs font-medium text-muted-foreground hover:text-foreground"
                 >
-                  ← Back to Code Breakdown
+                  ← Back to The Full Picture
                 </button>
                 <button
                   onClick={() => setActiveStep(5)}
                   className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 px-5 py-2.5 text-xs font-semibold text-white hover:from-blue-500 transition-all active:scale-95 shadow-md shadow-cyan-500/20"
                 >
-                  <span>Next: Try It (Practice Hub) →</span>
+                  <span>Next: Why It's Fast/Slow →</span>
                 </button>
               </div>
             </div>
           )}
 
-          {/* STEP 5: Try It (Multi-Mode Practice Hub) */}
+          {/* STEP 5: Why It's Fast/Slow */}
           {activeStep === 5 && (
             <div className="space-y-6 animate-in fade-in">
-              {/* 5-Tab Practice Mode Selector */}
-              <div className="flex flex-wrap items-center justify-between gap-2 bg-card/60 p-2 rounded-2xl border border-border/60">
-                <div className="flex flex-wrap items-center gap-2">
-                  <button
-                    onClick={() => setActivePracticeTab("debugger")}
-                    className={`inline-flex items-center gap-2 rounded-xl px-3.5 py-2 text-xs font-bold transition-all ${
-                      activePracticeTab === "debugger"
-                        ? "bg-cyan-500 text-slate-950 shadow-md shadow-cyan-500/20"
-                        : "text-muted-foreground hover:text-foreground hover:bg-secondary"
-                    }`}
-                  >
-                    <Terminal className="h-3.5 w-3.5" />
-                    <span>Live Debugger</span>
-                  </button>
-
-                  <button
-                    onClick={() => setActivePracticeTab("predict")}
-                    className={`inline-flex items-center gap-2 rounded-xl px-3.5 py-2 text-xs font-bold transition-all ${
-                      activePracticeTab === "predict"
-                        ? "bg-purple-500 text-white shadow-md shadow-purple-500/20"
-                        : "text-muted-foreground hover:text-foreground hover:bg-secondary"
-                    }`}
-                  >
-                    <Compass className="h-3.5 w-3.5" />
-                    <span>Predict Next</span>
-                  </button>
-
-                  <button
-                    onClick={() => setActivePracticeTab("bughunt")}
-                    className={`inline-flex items-center gap-2 rounded-xl px-3.5 py-2 text-xs font-bold transition-all ${
-                      activePracticeTab === "bughunt"
-                        ? "bg-rose-500 text-white shadow-md shadow-rose-500/20"
-                        : "text-muted-foreground hover:text-foreground hover:bg-secondary"
-                    }`}
-                  >
-                    <Bug className="h-3.5 w-3.5" />
-                    <span>Bug-Hunt</span>
-                  </button>
-
-                  <button
-                    onClick={() => setActivePracticeTab("coding")}
-                    className={`inline-flex items-center gap-2 rounded-xl px-3.5 py-2 text-xs font-bold transition-all ${
-                      activePracticeTab === "coding"
-                        ? "bg-blue-600 text-white shadow-md shadow-blue-500/20"
-                        : "text-muted-foreground hover:text-foreground hover:bg-secondary"
-                    }`}
-                  >
-                    <FileCode className="h-3.5 w-3.5" />
-                    <span>Coding Practice</span>
-                  </button>
-
-                  <button
-                    onClick={() => setActivePracticeTab("quiz")}
-                    className={`inline-flex items-center gap-2 rounded-xl px-3.5 py-2 text-xs font-bold transition-all ${
-                      activePracticeTab === "quiz"
-                        ? "bg-amber-500 text-slate-950 shadow-md shadow-amber-500/20"
-                        : "text-muted-foreground hover:text-foreground hover:bg-secondary"
-                    }`}
-                  >
-                    <HelpCircle className="h-3.5 w-3.5" />
-                    <span>Quiz</span>
-                  </button>
+              {/* Top Overview Grid */}
+              <div className="rounded-2xl border border-border/60 bg-card/60 p-6 sm:p-8 backdrop-blur-md shadow-xl space-y-6">
+                <div className="flex items-center gap-2 text-cyan-400 font-mono text-xs uppercase tracking-wider font-semibold">
+                  <Zap className="h-4 w-4" />
+                  <span>Step 5: Algorithmic Efficiency & Complexity Deep Dive</span>
                 </div>
 
-                <span className="text-[11px] font-mono text-muted-foreground px-2 hidden sm:inline">
-                  Interactive Practice Hub
-                </span>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+                  <ComplexityCard metadata={meta} />
+
+                  <div className="space-y-4">
+                    <div className="p-5 rounded-2xl border border-cyan-500/30 bg-cyan-500/10 space-y-2">
+                      <h3 className="text-xs font-bold font-mono text-cyan-300 uppercase tracking-wider">
+                        Why does it behave this way?
+                      </h3>
+                      <p className="text-sm text-foreground/90 leading-relaxed">
+                        {stepData.complexityWhy.time}
+                      </p>
+                    </div>
+
+                    <div className="p-5 rounded-2xl border border-border/60 bg-card/40 space-y-2">
+                      <h4 className="text-xs font-bold font-mono text-muted-foreground uppercase tracking-wider">
+                        Algorithmic Behavior Summary
+                      </h4>
+                      <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+                        {meta.description}
+                      </p>
+                    </div>
+                  </div>
+                </div>
               </div>
 
-              {/* Render Active Practice Mode */}
+              {/* 1. Step-by-Step Mathematical Derivation */}
+              <MathDerivation algorithmId={algorithmId} />
+
+              {/* 2. Interactive Calculator */}
+              <ComplexityCalculator initialAlgorithm={algorithmId} showAllAlgorithmsToggle={true} />
+
+              {/* 3. Asymptotic Growth Curves */}
+              <GrowthChart highlightAlgorithm={algorithmId} />
+
+              <div className="pt-4 border-t border-border/40 flex justify-between">
+                <button
+                  onClick={() => setActiveStep(4)}
+                  className="text-xs font-medium text-muted-foreground hover:text-foreground"
+                >
+                  ← Back to Read the Code
+                </button>
+                <button
+                  onClick={() => setActiveStep(6)}
+                  className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 px-5 py-2.5 text-xs font-semibold text-white hover:from-blue-500 transition-all active:scale-95 shadow-md shadow-cyan-500/20"
+                >
+                  <span>Next: Practice Suite →</span>
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* STEP 6: Try It (Practice Suite) */}
+          {activeStep === 6 && (
+            <div className="space-y-6 animate-in fade-in">
+              {/* Practice Mode Navigation Tabs */}
+              <div className="flex flex-wrap items-center gap-2 p-1.5 rounded-2xl border border-border/70 bg-card/60 backdrop-blur-md">
+                <button
+                  onClick={() => setActivePracticeTab("debugger")}
+                  className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all ${
+                    activePracticeTab === "debugger"
+                      ? "bg-cyan-500 text-slate-950 shadow-md font-bold"
+                      : "text-muted-foreground hover:text-foreground hover:bg-secondary/60"
+                  }`}
+                >
+                  <Terminal className="h-3.5 w-3.5" />
+                  <span>1. Live Debugger</span>
+                </button>
+
+                <button
+                  onClick={() => setActivePracticeTab("predict")}
+                  className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all ${
+                    activePracticeTab === "predict"
+                      ? "bg-cyan-500 text-slate-950 shadow-md font-bold"
+                      : "text-muted-foreground hover:text-foreground hover:bg-secondary/60"
+                  }`}
+                >
+                  <HelpCircle className="h-3.5 w-3.5" />
+                  <span>2. Predict Next</span>
+                </button>
+
+                <button
+                  onClick={() => setActivePracticeTab("bughunt")}
+                  className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all ${
+                    activePracticeTab === "bughunt"
+                      ? "bg-cyan-500 text-slate-950 shadow-md font-bold"
+                      : "text-muted-foreground hover:text-foreground hover:bg-secondary/60"
+                  }`}
+                >
+                  <Bug className="h-3.5 w-3.5" />
+                  <span>3. Bug-Hunt</span>
+                </button>
+
+                <button
+                  onClick={() => setActivePracticeTab("coding")}
+                  className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all ${
+                    activePracticeTab === "coding"
+                      ? "bg-cyan-500 text-slate-950 shadow-md font-bold"
+                      : "text-muted-foreground hover:text-foreground hover:bg-secondary/60"
+                  }`}
+                >
+                  <FileCode className="h-3.5 w-3.5" />
+                  <span>4. Coding Practice</span>
+                </button>
+
+                <button
+                  onClick={() => setActivePracticeTab("quiz")}
+                  className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all ${
+                    activePracticeTab === "quiz"
+                      ? "bg-cyan-500 text-slate-950 shadow-md font-bold"
+                      : "text-muted-foreground hover:text-foreground hover:bg-secondary/60"
+                  }`}
+                >
+                  <Sparkles className="h-3.5 w-3.5" />
+                  <span>5. Knowledge Quiz</span>
+                </button>
+              </div>
+
+              {/* Render Active Practice Component */}
               {activePracticeTab === "debugger" && (
-                <CodeDebugger algorithmId={algorithmId} initialArray={stepData.sampleArray} />
+                <CodeDebugger algorithmId={algorithmId} />
               )}
 
               {activePracticeTab === "predict" && (
-                <PredictNext algorithmId={algorithmId} sampleArray={stepData.sampleArray} />
+                <PredictNext algorithmId={algorithmId} />
               )}
 
               {activePracticeTab === "bughunt" && (
@@ -458,21 +477,23 @@ export default function AlgorithmDetailPage() {
               )}
 
               {activePracticeTab === "quiz" && (
-                <Quiz topicId={algorithmId} />
+                <Quiz topicId={`${algorithmId}-sort`} />
               )}
 
               <div className="pt-4 border-t border-border/40 flex justify-between">
                 <button
-                  onClick={() => setActiveStep(4)}
+                  onClick={() => setActiveStep(5)}
                   className="text-xs font-medium text-muted-foreground hover:text-foreground"
                 >
-                  ← Back to Complexity
+                  ← Back to Why It's Fast/Slow
                 </button>
+
                 <Link
                   href="/learn"
-                  className="inline-flex items-center gap-2 rounded-xl bg-secondary px-5 py-2.5 text-xs font-semibold text-foreground hover:bg-secondary/80 transition-all"
+                  className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 px-5 py-2.5 text-xs font-semibold text-white hover:from-blue-500 transition-all active:scale-95 shadow-md shadow-cyan-500/20"
                 >
-                  <span>Return to Learning Path Roadmap</span>
+                  <CheckCircle2 className="h-4 w-4" />
+                  <span>Return to Learning Path</span>
                 </Link>
               </div>
             </div>

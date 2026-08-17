@@ -11,6 +11,7 @@ import { OperationIndicator } from "./OperationIndicator";
 import { AlgorithmSelector } from "@/components/algorithms/AlgorithmSelector";
 import { ComplexityCard } from "@/components/algorithms/ComplexityCard";
 import { CodeViewer } from "@/components/code/CodeViewer";
+import { LiveComplexityTracker } from "@/components/complexity/LiveComplexityTracker";
 
 const DEFAULT_INITIAL_ARRAY = [48, 15, 86, 34, 92, 28, 65, 12, 54, 78, 23, 95, 41, 60, 31];
 
@@ -391,6 +392,16 @@ export function SortingVisualizer() {
         onCustomArraySubmit={handleCustomArray}
         onSpeedChange={setSpeed}
         onArraySizeChange={handleArraySizeChange}
+      />
+
+      {/* Live Big-O Tracking */}
+      <LiveComplexityTracker
+        algorithmId={selectedAlgorithm}
+        arraySize={array.length}
+        comparisonsCount={comparisonsCount}
+        swapsCount={swapsCount}
+        isFinished={isFinished}
+        initialArray={originalArray}
       />
 
       {/* Bottom 2-Column Section: Left (Algorithms & Complexity), Right (Code Viewer) */}

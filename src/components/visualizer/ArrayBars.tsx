@@ -138,7 +138,7 @@ export const ArrayBars = memo(function ArrayBars({
             {/* Value Label on Top */}
             {showValues && (
               <span
-                className={`mb-1 text-[10px] sm:text-xs font-mono font-semibold transition-colors duration-150 ${
+                className={`mb-1 text-[10px] sm:text-xs font-mono font-semibold shrink-0 transition-colors duration-150 ${
                   isPivot
                     ? "text-purple-300 scale-110 font-bold"
                     : isSwapping
@@ -160,34 +160,26 @@ export const ArrayBars = memo(function ArrayBars({
               </span>
             )}
 
-            {/* Visual Bar with Motion */}
-            <motion.div
-              layout={!prefersReducedMotion}
-              initial={{ height: 0, opacity: 0 }}
-              animate={{
-                height: `${heightPercent}%`,
-                opacity: 1,
-                scale: isSwapping || isOverwriting ? 1.05 : isComparing || isPivot ? 1.02 : 1,
-              }}
-              transition={
-                prefersReducedMotion
-                  ? { duration: 0 }
-                  : {
-                      type: "spring",
-                      damping: 24,
-                      stiffness: 300,
-                      mass: 0.8,
-                    }
-              }
-              className={`w-full rounded-t-lg bg-gradient-to-t ${barColor} ${glowBorder} border shadow-lg relative overflow-hidden transition-all duration-150`}
-            >
-              {/* Glassmorphic Top Highlight Cap */}
-              <div className="absolute inset-x-0 top-0 h-1.5 bg-white/40 rounded-t-lg" />
-            </motion.div>
+            {/* Vertical Bar Track & Animated Bar */}
+            <div className="relative w-full flex-1 flex items-end justify-center min-h-0">
+              <div
+                style={{ height: `${heightPercent}%` }}
+                className={`w-full rounded-t-lg bg-gradient-to-t ${barColor} ${glowBorder} border shadow-lg relative overflow-hidden transition-all duration-150 ${
+                  isSwapping || isOverwriting
+                    ? "scale-105"
+                    : isComparing || isPivot
+                    ? "scale-102"
+                    : "scale-100"
+                }`}
+              >
+                {/* Glassmorphic Top Highlight Cap */}
+                <div className="absolute inset-x-0 top-0 h-1.5 bg-white/40 rounded-t-lg" />
+              </div>
+            </div>
 
             {/* Index Label Below */}
             {showIndices && (
-              <span className="mt-1 text-[9px] sm:text-[10px] font-mono text-slate-500 select-none">
+              <span className="mt-1 text-[9px] sm:text-[10px] font-mono text-slate-500 shrink-0 select-none">
                 {idx}
               </span>
             )}

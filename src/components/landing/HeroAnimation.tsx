@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { useReducedMotion } from "framer-motion";
 import { Sparkles } from "lucide-react";
 
 const INITIAL_HERO_ARRAY = [32, 14, 58, 22, 70, 45, 18, 88, 39, 62, 28, 76, 50, 12, 65];
@@ -28,7 +28,7 @@ export function HeroAnimation() {
         setSortedIndices([]);
         await new Promise((r) => setTimeout(r, 1200));
 
-        // Perform simple animated bubble sort pass
+        // Perform live animated bubble sort pass
         const n = arr.length;
         const sorted = new Set<number>();
 
@@ -45,7 +45,7 @@ export function HeroAnimation() {
               arr[j + 1] = temp;
               setArray([...arr]);
               swapped = true;
-              await new Promise((r) => setTimeout(r, 100));
+              await new Promise((r) => setTimeout(r, 95));
             }
           }
           sorted.add(n - i - 1);
@@ -70,37 +70,44 @@ export function HeroAnimation() {
   const maxVal = Math.max(...INITIAL_HERO_ARRAY);
 
   return (
-    <div className="relative w-full max-w-xl mx-auto rounded-2xl border border-border/60 bg-gradient-to-b from-card/60 via-card/30 to-background/80 p-4 sm:p-5 shadow-2xl backdrop-blur-md overflow-hidden">
-      {/* Decorative badge */}
-      <div className="flex items-center justify-between mb-3 text-xs text-muted-foreground">
-        <span className="flex items-center gap-1.5 font-mono text-[11px] text-cyan-400">
-          <Sparkles className="h-3 w-3" /> Live Engine Preview
+    <div className="relative w-full max-w-lg mx-auto rounded-2xl border border-white/[0.08] bg-gradient-to-b from-[#0c1220]/90 via-[#070b14]/95 to-[#050811] p-3 sm:p-3.5 shadow-xl backdrop-blur-xl overflow-hidden">
+      {/* Precision Dev-Tool Background Grid */}
+      <div className="absolute inset-0 pointer-events-none bg-[linear-gradient(to_right,#38bdf806_1px,transparent_1px),linear-gradient(to_bottom,#38bdf806_1px,transparent_1px)] bg-[size:1.2rem_1.2rem]" />
+
+      {/* Decorative Header Banner */}
+      <div className="flex items-center justify-between mb-2 text-xs font-mono relative z-10">
+        <span className="flex items-center gap-1.5 text-[11px] text-cyan-400 font-bold">
+          <Sparkles className="h-3 w-3 text-cyan-400" /> Live Engine Preview
         </span>
-        <span className="text-[10px] font-mono bg-cyan-500/10 text-cyan-400 px-2 py-0.5 rounded-full border border-cyan-500/20">
+        <span className="text-[10px] bg-cyan-500/10 text-cyan-300 px-2 py-0.5 rounded-full border border-cyan-500/20 font-semibold">
           Continuous Demonstration
         </span>
       </div>
 
-      {/* Mini Bars */}
-      <div className="flex h-32 items-end justify-center gap-1 sm:gap-1.5">
+      {/* Mini Bars Track: Compact height (h-20 sm:h-24) to save vertical space */}
+      <div className="flex h-20 sm:h-24 items-end justify-center gap-1 sm:gap-1.5 relative z-10 px-1">
         {array.map((val, idx) => {
           const isActive = activeIndices.includes(idx);
           const isSorted = sortedIndices.includes(idx);
-          const heightPercent = Math.max(12, Math.round((val / maxVal) * 90));
+          const heightPercent = Math.max(14, Math.round((val / maxVal) * 92));
 
-          let barColor = "from-cyan-500/70 to-blue-600/70";
-          if (isActive) barColor = "from-amber-400 to-rose-500 shadow-lg shadow-rose-500/40";
-          if (isSorted) barColor = "from-emerald-400/80 to-teal-500/80 shadow-sm shadow-emerald-500/20";
+          let barColor = "from-cyan-500 to-blue-600 shadow-[0_0_8px_rgba(56,189,248,0.2)]";
+          if (isActive) barColor = "from-amber-400 via-rose-500 to-red-500 shadow-[0_0_14px_rgba(244,63,94,0.6)]";
+          else if (isSorted) barColor = "from-emerald-400 to-teal-500 shadow-[0_0_10px_rgba(16,185,129,0.4)]";
 
           return (
-            <motion.div
+            <div
               key={idx}
-              layout={!prefersReducedMotion}
-              className="flex-1 max-w-[28px] rounded-t-md relative overflow-hidden"
-              style={{ height: `${heightPercent}%` }}
+              className="flex-1 max-w-[24px] h-full flex items-end justify-center"
             >
-              <div className={`w-full h-full rounded-t-md bg-gradient-to-t ${barColor} transition-colors duration-150`} />
-            </motion.div>
+              <div
+                style={{ height: `${heightPercent}%` }}
+                className={`w-full rounded-t-md bg-gradient-to-t ${barColor} transition-all duration-150 relative overflow-hidden`}
+              >
+                {/* Top Shine */}
+                <div className="absolute inset-x-0 top-0 h-1 bg-white/40 rounded-t-md" />
+              </div>
+            </div>
           );
         })}
       </div>

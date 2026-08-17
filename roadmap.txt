@@ -1,24 +1,24 @@
-# Sorting Algorithm Visualizer — Build Prompt (Phase-Wise)
+# AlgoHub — Complete Master Roadmap (Phases 1 - 8 + Beta Polish)
 
-> **How to use this file:** Give Claude Code **one phase at a time**, not the whole file at once.
-> After each phase, run the app, verify it works, then paste the next phase.
-> This prevents incomplete/broken output from scope overload.
+> **Project Architecture & Specification Document**
+> Covers all sequential phases for building **AlgoHub** — an interactive algorithm learning and visualization platform
+> featuring visual execution engines, step debuggers, zero-to-advanced documentation course, practice hub,
+> signature infographic diagrams, deep complexity visualizations, and GSTU CSE Beta-ready landing page.
 
 ---
 
-## GLOBAL CONTEXT (paste this once at the start of Phase 1, and keep it pinned)
+## GLOBAL CONTEXT
 
-I'm building a **Sorting Algorithm Visualizer** — an interactive educational web app that teaches
-beginners how 5 sorting algorithms actually work internally, with real-time visualization,
-synchronized C++ code highlighting, and complexity analysis. This is a portfolio centerpiece project.
+**AlgoHub** is an interactive algorithm learning and visualization platform designed to help beginners and students
+understand algorithms by seeing, debugging, and practicing them.
 
 **Tech stack:**
 - Next.js 15+ (App Router)
-- React + TypeScript
+- React 19 + TypeScript
 - Tailwind CSS
-- shadcn/ui
 - Framer Motion (animations)
 - Lucide React (icons)
+- Canvas Confetti & PrismJS
 
 **Algorithms covered (all 5, across phases):**
 1. Bubble Sort
@@ -27,312 +27,62 @@ synchronized C++ code highlighting, and complexity analysis. This is a portfolio
 4. Merge Sort
 5. Quick Sort
 
-**Non-negotiable rules (apply to every phase):**
+**Non-negotiable rules:**
 - Real algorithm logic only. Never hardcode or fake animation sequences — every visual step must come
   from actual execution of the algorithm, captured as a sequence of operations.
-- Algorithm logic must live in pure, UI-independent TypeScript functions (`src/algorithms/*.ts`),
-  each returning an array of typed operations. No React state manipulation inside algorithm files.
-- Keep components small and focused — aim under ~150 lines each. Split when a component grows past that.
-- No placeholder buttons, no TODO comments, no fake/mocked functionality. If something can't be
-  finished in this phase, don't add the button/UI for it yet — add it in the phase where it's built.
-- If any requirement is ambiguous, ask me before proceeding rather than guessing.
-- Test every algorithm against: random array, already sorted, reverse sorted, duplicates, single
-  element, empty array. Confirm correct sorted output in every case.
-
-**Shared operation type (define once, reuse across all algorithms):**
-```typescript
-type SortOperation =
-  | { type: "compare"; indices: number[] }
-  | { type: "swap"; indices: [number, number] }
-  | { type: "overwrite"; index: number; value: number }
-  | { type: "pivot"; index: number }
-  | { type: "range"; left: number; right: number }        // active subarray range
-  | { type: "merge-start"; left: number; mid: number; right: number }
-  | { type: "merge-compare"; leftIndex: number; rightIndex: number }
-  | { type: "sorted"; indices: number[] }
-```
-
-**Suggested file structure (build incrementally, don't create empty stub files ahead of need):**
-```
-src/
-├── app/
-│   ├── page.tsx
-│   └── algorithms/[algorithm]/page.tsx
-├── components/
-│   ├── visualizer/
-│   │   ├── SortingVisualizer.tsx
-│   │   ├── ArrayBars.tsx
-│   │   ├── VisualizerControls.tsx
-│   │   └── OperationIndicator.tsx
-│   ├── code/
-│   │   └── CodeViewer.tsx
-│   ├── algorithms/
-│   │   ├── AlgorithmSelector.tsx
-│   │   ├── AlgorithmExplanation.tsx
-│   │   └── ComplexityCard.tsx
-│   └── ui/  (shadcn components)
-├── algorithms/
-│   ├── bubbleSort.ts
-│   ├── selectionSort.ts
-│   ├── insertionSort.ts
-│   ├── mergeSort.ts
-│   └── quickSort.ts
-├── data/
-│   └── algorithms.ts   (metadata: name, description, complexity, C++ code strings, line-mapping)
-└── types/
-    └── sorting.ts
-```
+- Algorithm logic lives in pure, UI-independent TypeScript functions (`src/algorithms/*.ts`),
+  each returning an array of typed operations.
+- Authentic positioning: No fake statistics, fake user counts, or fake reviews.
+- Restricted beta scope: Specifically tailored for Gopalganj Science and Technology University (GSTU) CSE department.
 
 ---
 
-## PHASE 1 — Core Engine + Bubble Sort + Selection Sort (foundation, must be rock solid)
+## IMPLEMENTED PHASES OVERVIEW
 
-**Goal:** A fully working end-to-end visualizer for 2 algorithms. This phase proves the architecture
-works before scaling to 5 algorithms and extra features.
+### PHASE 1 — Core Foundation & Visualizer Workspace (Bubble & Selection Sort)
+- Pure algorithm engines exporting typed `SortOperation[]`.
+- Vertical animated array bars with state color-coding.
+- Playback controls (Start, Pause, Resume, Step, Reset), Speed/Size sliders, Custom array input.
+- Line-by-line synchronized C++ code viewer.
 
-Build:
+### PHASE 2 — Expanding Algorithm Engines (Insertion, Merge, Quick Sort)
+- Insertion Sort: Key extraction and shifting.
+- Merge Sort: Divide & Conquer subarray ranges, left/right merge comparisons, array overwrite.
+- Quick Sort: Lomuto partitioning, pivot glow, active subarray range dimming.
+- 5-algorithm selector and Big-O complexity card.
 
-1. **Project setup** — Next.js 15 App Router + TypeScript + Tailwind + shadcn/ui installed and configured.
+### PHASE 3 — Comparison Matrix & Polish
+- Comparison matrix page (`/compare`) with 8 evaluation criteria and practical engineering guidance.
+- Hero sorting animation, responsive layout, visible keyboard focus states, `prefers-reduced-motion`.
 
-2. **Landing page** (`app/page.tsx`) — simple, clean:
-   - Headline: "Sorting Algorithms, Visualized."
-   - Subheading: "Understand how sorting algorithms actually work — one comparison and swap at a time."
-   - CTA button: "Start Visualizing →" linking to the visualizer
-   - No hero animation yet — keep it static for this phase.
+### PHASE 4 — Beginner Learning Path, Code Debugger & Bug-Hunt Challenge
+- Guided pedagogical curriculum (`/learn`) with time estimates and completion checks.
+- Step-by-step C++ Code Debugger with live variable inspector and recursive call stack.
+- Interactive Bug-Hunt Challenge with real flawed algorithm engines and in-line fix verification.
 
-3. **Algorithm engine** — `src/algorithms/bubbleSort.ts` and `src/algorithms/selectionSort.ts`.
-   Each exports a function `(arr: number[]) => SortOperation[]` that runs the real algorithm and
-   records every compare/swap/sorted operation in order. Pure functions, fully unit-testable,
-   zero UI dependencies.
+### PHASE 5 — Full Documentation (Zero → Advanced) + Bangla Notes + Practice Modes
+- 17 course lessons across 5 levels (`/docs`) covering definitions, recursion, and formal Big-O proofs.
+- Collapsible `"বাংলায় বুঝি 🇧🇩"` callout notes for hard concepts.
+- 3 new practice modes: Quiz Mode, Prediction Exercises, and TypeScript Coding Practice.
 
-4. **Main visualizer** (`components/visualizer/SortingVisualizer.tsx` + `ArrayBars.tsx`):
-   - Array rendered as vertical bars, height proportional to value, using Framer Motion for
-     position/height transitions.
-   - Visual states: default, comparing (highlight both), swapping (animate position swap),
-     sorted (distinct color/marker).
-   - Sequentially executes the operations array produced by the algorithm engine.
+### PHASE 6 — Full UI Polish (Dark Dev-Tool Aesthetic + Micro-Interactions)
+- Palette strictly derived from visualizer states (Cyan, Amber, Rose, Emerald, Violet) on Obsidian (`#050811`).
+- Ambient Sort Logo: Live 5-bar micro-sorting engine in header.
+- Compare hover shimmers, card swap transitions, and sorted settlement waves.
 
-5. **Controls** (`VisualizerControls.tsx`):
-   - Generate Random Array (choose size, sensible default e.g. 15–20 bars)
-   - Custom array input (comma-separated, e.g. `8, 3, 5, 1, 9`) with validation (reject non-numeric,
-     empty, or absurdly long input with a clear inline error message)
-   - Start / Pause / Resume / Step / Reset
-   - Speed slider (slow–fast, controls delay between operations)
-   - Array size slider (10–50)
+### PHASE 7 — Signature Static Diagrams ("The Full Picture" / At a Glance)
+- Static, infographic-style, non-animated, screenshot-ready reference diagrams for every algorithm.
+- Merge Sort recursion tree, Quick Sort asymmetric partition tree, Bubble Sort pass timeline, Selection Sort moving split, Insertion Sort shift zone.
 
-6. **State management** — track: `array`, `originalArray`, `selectedAlgorithm`, `operations`,
-   `currentOperationIndex`, `isPlaying`, `speed`, `arraySize`, `statistics` (comparisons, swaps count).
-   Requirements:
-   - Pause must stop exactly where it is, Resume must continue from that exact operation index
-     (no restart, no skipped/duplicated operations).
-   - Reset restores the original (pre-sort) array and clears statistics.
-   - Changing the algorithm or generating/entering a new array fully resets operation history.
-   - Guard against race conditions from animation timers (e.g. clear timeouts/intervals properly
-     on pause/unmount/algorithm change).
+### PHASE 8 — Deep Complexity Visualization: Math Derivations, Interactive Calculator, Growth Graphs
+- Mathematical Derivations (`MathDerivation.tsx`): Step-by-step arithmetic series expansions and proofs.
+- Interactive Big-O Calculator (`ComplexityCalculator.tsx`): Single & cross-algorithm predicted counts.
+- Growth Rate Comparison Graph (`GrowthChart.tsx`): Zoomable curves for $O(1), O(\log n), O(n), O(n \log n), O(n^2)$.
+- Live Operation Counter & Post-Run Diagnostics (`LiveComplexityTracker.tsx`): Real-time tracking vs theoretical bounds.
 
-7. **Algorithm selector sidebar** (`AlgorithmSelector.tsx`) — lists only Bubble Sort and Selection
-   Sort for now (structure it so adding more later is trivial). Each entry shows name and one-line
-   description.
-
-8. **Code viewer** (`CodeViewer.tsx`):
-   - Displays the C++ implementation for the selected algorithm, with line numbers and syntax
-     highlighting (use a lightweight approach — e.g. `shiki` or a simple regex-based highlighter;
-     avoid heavy unnecessary dependencies).
-   - Copy-to-clipboard button.
-   - Current-line highlighting that stays in sync with the operation currently animating (build a
-     mapping from operation type/context → source line number for each algorithm; define this
-     mapping explicitly in `data/algorithms.ts`).
-
-9. **Explanation panel** (below/beside visualizer) — dynamically updates per current operation, e.g.:
-   - "Comparing index 2 and 3 (values 5 and 3)"
-   - "5 > 3, so Bubble Sort swaps them"
-   - Running counters: Comparisons: N, Swaps: N
-
-10. **Complexity card** (`ComplexityCard.tsx`) — for the selected algorithm show Best/Average/Worst
-    time, Space, Stable (yes/no), In-place (yes/no).
-
-**C++ reference implementations to embed (use exactly these, they're already verified correct):**
-
-```cpp
-void bubbleSort(vector<int>& arr) {
-    int n = arr.size();
-    for (int i = 0; i < n - 1; i++) {
-        bool swapped = false;
-        for (int j = 0; j < n - i - 1; j++) {
-            if (arr[j] > arr[j + 1]) {
-                swap(arr[j], arr[j + 1]);
-                swapped = true;
-            }
-        }
-        if (!swapped) break;
-    }
-}
-```
-
-```cpp
-void selectionSort(vector<int>& arr) {
-    int n = arr.size();
-    for (int i = 0; i < n - 1; i++) {
-        int minIdx = i;
-        for (int j = i + 1; j < n; j++) {
-            if (arr[j] < arr[minIdx]) minIdx = j;
-        }
-        swap(arr[i], arr[minIdx]);
-    }
-}
-```
-
-**Definition of done for Phase 1:**
-- App runs with no errors.
-- Both algorithms visibly, correctly sort random/sorted/reverse/duplicate/single/empty arrays.
-- Pause/Resume/Step/Reset all work reliably with no desync.
-- Code line highlighting visibly tracks the current operation for both algorithms.
-- Stop here and let me review before starting Phase 2.
-
----
-
-## PHASE 2 — Add Insertion, Merge, Quick Sort
-
-**Prerequisite:** Phase 1 is verified working. Reuse all existing architecture — do not rebuild
-the visualizer, controls, or state management.
-
-Build:
-
-1. **Insertion Sort engine + explanation:**
-   - Mechanism to convey in the explanation panel: like arranging playing cards — take the next
-     unsorted element (the "key") and shift sorted elements right until the correct slot is found.
-   - Visualizer must distinguish: sorted portion, current key, elements actively shifting.
-   - Animate as an actual shift (element moving to a new slot), not a generic swap — this matters
-     for accuracy.
-
-   ```cpp
-   void insertionSort(vector<int>& arr) {
-       int n = arr.size();
-       for (int i = 1; i < n; i++) {
-           int key = arr[i];
-           int j = i - 1;
-           while (j >= 0 && arr[j] > key) {
-               arr[j + 1] = arr[j];
-               j--;
-           }
-           arr[j + 1] = key;
-       }
-   }
-   ```
-
-2. **Merge Sort engine + explanation:**
-   - This needs `merge-start` and `merge-compare` operations (already defined in the shared type)
-     to represent divide-and-conquer correctly — don't reduce it to plain compare/swap, that would
-     misrepresent the algorithm.
-   - Visualizer must show: the array splitting into subarrays (divide phase), then during merge:
-     left subarray highlighted, right subarray highlighted, which element is currently being
-     compared/selected, and the merged result being written back.
-   - A simple division diagram (even static, per the example below) helps beginners — include one
-     in the explanation panel for this algorithm specifically.
-
-   ```cpp
-   void merge(vector<int>& arr, int left, int mid, int right) {
-       vector<int> temp;
-       int i = left, j = mid + 1;
-       while (i <= mid && j <= right) {
-           if (arr[i] <= arr[j]) temp.push_back(arr[i++]);
-           else temp.push_back(arr[j++]);
-       }
-       while (i <= mid) temp.push_back(arr[i++]);
-       while (j <= right) temp.push_back(arr[j++]);
-       for (int k = left; k <= right; k++) arr[k] = temp[k - left];
-   }
-
-   void mergeSort(vector<int>& arr, int left, int right) {
-       if (left >= right) return;
-       int mid = left + (right - left) / 2;
-       mergeSort(arr, left, mid);
-       mergeSort(arr, mid + 1, right);
-       merge(arr, left, mid, right);
-   }
-   ```
-
-3. **Quick Sort engine + explanation:**
-   - Use the `pivot` and `range` operations to clearly mark the pivot element and the active
-     partition range during recursion.
-   - Visualizer must show: pivot clearly marked (distinct color), the active subarray range dimmed
-     differently from the rest of the array, partitioning happening in place.
-   - Skip the recursion tree diagram for now (that's Phase 3, optional) — focus on correctness and
-     clarity of the partition step itself.
-
-   ```cpp
-   int partition(vector<int>& arr, int low, int high) {
-       int pivot = arr[high];
-       int i = low - 1;
-       for (int j = low; j < high; j++) {
-           if (arr[j] < pivot) {
-               i++;
-               swap(arr[i], arr[j]);
-           }
-       }
-       swap(arr[i + 1], arr[high]);
-       return i + 1;
-   }
-
-   void quickSort(vector<int>& arr, int low, int high) {
-       if (low < high) {
-           int pi = partition(arr, low, high);
-           quickSort(arr, low, pi - 1);
-           quickSort(arr, pi + 1, high);
-       }
-   }
-   ```
-
-4. **Update algorithm selector** — now lists all 5 algorithms.
-
-5. **Complexity table for all 5** (can now build the shared reference table):
-
-   | Algorithm | Best | Average | Worst | Space | Stable |
-   |---|---|---|---|---|---|
-   | Bubble | O(n) | O(n²) | O(n²) | O(1) | Yes |
-   | Selection | O(n²) | O(n²) | O(n²) | O(1) | No |
-   | Insertion | O(n) | O(n²) | O(n²) | O(1) | Yes |
-   | Merge | O(n log n) | O(n log n) | O(n log n) | O(n) | Yes |
-   | Quick | O(n log n) | O(n log n) | O(n²) | O(log n)* | No |
-
-   *Quick Sort space note: O(log n) average recursion depth, degrades to O(n) worst case on
-   already-sorted input with poor pivot choice — mention this explicitly in the UI.
-
-**Definition of done for Phase 2:**
-- All 5 algorithms visibly correct on the same test cases as Phase 1 (random, sorted, reverse,
-  duplicates, single, empty).
-- Merge and Quick Sort visuals genuinely reflect divide-and-conquer / partitioning — not just
-  generic compare-swap animations reused from Bubble Sort.
-- Code sync works for all 5.
-- Stop here and let me review before starting Phase 3.
-
----
-
-## PHASE 3 — Comparison Page + Polish (only after Phase 2 is confirmed solid)
-
-1. **Comparison page** (`app/compare/page.tsx`):
-   - Side-by-side table: all 5 algorithms × (time complexity, space, stable, in-place, adaptive,
-     divide & conquer, best use case).
-   - Short "which should I use" guidance per algorithm (2–3 sentences each, e.g. Insertion Sort
-     for small/nearly-sorted data, Merge Sort when stability + guaranteed O(n log n) matters,
-     Quick Sort as general-purpose in-memory default, Bubble/Selection as educational baselines).
-
-2. **Visual polish:**
-   - Dark theme, glassmorphism used sparingly (not overused), subtle gradients, monospace font
-     for code sections, generous spacing. Should look like a professional dev-tool, not a template.
-   - Hero section animation on the landing page — a subtle, non-distracting looping sort animation.
-
-3. **Responsive layout** — verify sidebar/visualizer split works on desktop, and reflows to a
-   stacked layout (selector → visualizer → controls → explanation → code → complexity) on mobile.
-
-4. **Accessibility pass** — keyboard-operable controls, visible focus states, ARIA labels on
-   icon-only buttons, adequate color contrast, and a reduced-motion fallback (respect
-   `prefers-reduced-motion` — replace animated transitions with instant state changes).
-
-5. **Performance pass** — confirm no unnecessary re-renders on each animation tick (memoize bar
-   components keyed by index/value), confirm smoothness up to array size 50.
-
-**Explicitly out of scope unless I ask for it later:** Learning Mode (guided step-by-step wizard),
-Challenge Mode (click-to-sort game with correctness validation), recursion tree diagram for Quick
-Sort. These are meaningfully separate features with their own state/validation logic — request
-them as their own follow-up prompts once the core product is solid.
+### BETA POLISH — Product Positioning & Landing Page Upgrade (AlgoHub Rebrand)
+- Complete global rebrand from SortViz to **AlgoHub**.
+- Hero headline *"Algorithms, Visualized."* and tagline *"Don't just learn Algorithms. See them. Break them. Fix them. Master them."*
+- 4-Stage Learning Journey: `01 LEARN` $\to$ `02 VISUALIZE` $\to$ `03 DEBUG` $\to$ `04 PRACTICE`.
+- Outcome-focused value proposition cards and 5-algorithm curriculum showcase.
+- Department-restricted beta positioning for GSTU CSE students with active feedback & bug report channels.

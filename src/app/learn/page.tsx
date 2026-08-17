@@ -63,7 +63,7 @@ export default function LearnPage() {
               </div>
               <div className="flex items-center gap-2">
                 <span className="font-bold text-base tracking-tight bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent">
-                  SortViz
+                  AlgoHub
                 </span>
                 <AmbientSortLogo />
               </div>
@@ -246,7 +246,7 @@ export default function LearnPage() {
       {/* Footer */}
       <footer className="border-t border-border/50 bg-background/80 py-8 text-center text-xs text-muted-foreground mt-12">
         <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p>© 2026 Sorting Algorithm Visualizer. Structured Curriculum Mode.</p>
+          <p>© 2026 AlgoHub. Interactive Algorithm Learning Platform.</p>
           <div className="flex items-center gap-4 text-xs">
             <Link href="/docs" className="hover:text-foreground">Docs & Course</Link>
             <span>•</span>

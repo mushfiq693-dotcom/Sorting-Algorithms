@@ -41,7 +41,7 @@ export default function DocsLayout({
               </div>
               <div className="flex items-center gap-2">
                 <span className="font-bold text-base tracking-tight bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent">
-                  SortViz
+                  AlgoHub
                 </span>
                 <AmbientSortLogo />
               </div>

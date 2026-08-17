@@ -17,6 +17,8 @@ import {
   GraduationCap,
 } from "lucide-react";
 import { AmbientSortLogo } from "@/components/brand/AmbientSortLogo";
+import { GrowthChart } from "@/components/complexity/GrowthChart";
+import { ComplexityCalculator } from "@/components/complexity/ComplexityCalculator";
 
 export default function ComparePage() {
   return (
@@ -31,7 +33,7 @@ export default function ComparePage() {
               </div>
               <div className="flex items-center gap-2">
                 <span className="font-bold text-base tracking-tight bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent">
-                  SortViz
+                  AlgoHub
                 </span>
                 <AmbientSortLogo />
               </div>
@@ -182,6 +184,18 @@ export default function ComparePage() {
           </div>
         </div>
 
+        {/* Phase 8: Growth Curves & Cross-Algorithm Operation Estimator */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+          <GrowthChart
+            title="Asymptotic Divergence"
+            subtitle="Comparing growth curves across O(n²), O(n log n), O(n), and O(log n)."
+          />
+          <ComplexityCalculator
+            initialAlgorithm="bubble"
+            showAllAlgorithmsToggle={true}
+          />
+        </div>
+
         {/* Practical Guidance Section: "Which Algorithm Should I Use?" */}
         <div>
           <div className="mb-6 flex items-center gap-2">
@@ -227,7 +241,7 @@ export default function ComparePage() {
       {/* Footer */}
       <footer className="border-t border-border/50 bg-background/80 py-8 text-center text-xs text-muted-foreground mt-12">
         <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p>© 2026 Sorting Algorithm Visualizer. Full 5-Algorithm Comparison Matrix.</p>
+          <p>© 2026 AlgoHub. Full 5-Algorithm Comparison Matrix.</p>
           <div className="flex items-center gap-4 text-xs">
             <Link href="/docs" className="hover:text-foreground">Docs & Course</Link>
             <span>•</span>

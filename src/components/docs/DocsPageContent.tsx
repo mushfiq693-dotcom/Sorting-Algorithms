@@ -5,6 +5,7 @@ import Link from "next/link";
 import { DocsArticle, DOCS_ARTICLES } from "@/data/docs";
 import { BanglaNote } from "@/components/docs/BanglaNote";
 import { Quiz } from "@/components/practice/Quiz";
+import { AlgorithmDiagram } from "@/components/diagrams/AlgorithmDiagram";
 import {
   Clock,
   BookOpen,
@@ -220,6 +221,26 @@ export function DocsPageContent({ article }: DocsPageContentProps) {
       <article className="prose prose-invert max-w-none text-foreground/90 leading-relaxed font-sans space-y-4">
         {renderFormattedContent(article.content)}
       </article>
+
+      {/* Signature Static Diagram for Algorithm Lessons */}
+      {(() => {
+        const algoMap: Record<string, "bubble" | "selection" | "insertion" | "merge" | "quick"> = {
+          "bubble-sort": "bubble",
+          "selection-sort": "selection",
+          "insertion-sort": "insertion",
+          "merge-sort": "merge",
+          "quick-sort": "quick",
+        };
+        const algoId = algoMap[article.slug];
+        if (algoId) {
+          return (
+            <div className="my-6">
+              <AlgorithmDiagram algorithmId={algoId} />
+            </div>
+          );
+        }
+        return null;
+      })()}
 
       {/* Collapsible Bangla Explanation Box */}
       {article.banglaNote && (
