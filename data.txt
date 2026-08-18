@@ -1,0 +1,1026 @@
+# AlgoHub — Supabase & Database Architecture + Implementation Master Prompt (Final)
+
+You are working on my existing **AlgoHub** project.
+
+Your task is to take the current project architecture, understand it completely, and then design
+and implement the **production-grade Supabase/PostgreSQL database foundation for the AlgoHub Beta
+Version**.
+
+## CRITICAL RULE
+
+**Do NOT start by writing SQL.**
+
+First inspect and understand the existing project.
+
+You must treat the existing codebase as the source of truth for the application's current
+architecture, routes, components, types, authentication flow, data models, and feature
+requirements.
+
+Do not blindly introduce a new architecture if an existing implementation already solves the same
+problem.
+
+---
+
+# 1. FULL PROJECT AUDIT FIRST
+
+Before making any changes, inspect the entire repository.
+
+Analyze at minimum:
+
+* `package.json`
+* `src/`
+* `src/app/`
+* `src/components/`
+* `src/lib/`
+* existing API routes
+* existing server actions
+* existing hooks
+* existing TypeScript types/interfaces
+* existing authentication-related code
+* middleware
+* route protection
+* existing state management
+* existing forms
+* existing mock/static data
+* existing database-related code
+* existing Supabase code, if any
+* `.env.local` and `.env.example` — specifically check what Supabase-related keys, if any, are
+  already present and configured, so Step 2 below isn't guessed at
+* `.gitignore`
+* `next.config.*`
+* TypeScript configuration
+* any existing documentation/specification files
+* existing migration files/directory, if any (e.g. `supabase/migrations/`)
+
+Also identify:
+
+1. Which features already exist.
+2. Which features are incomplete.
+3. Which features currently use mock/static data.
+4. Which features will eventually require persistent database data.
+5. Which routes are public.
+6. Which routes should be protected.
+7. Which actions require authentication.
+8. Which actions require admin privileges.
+9. Which data belongs to a user.
+10. Which data is shared globally across users.
+11. **Whether a Supabase project is already provisioned and connected** (vs. this being the first
+    time Supabase is being wired into the project) — this changes whether you're initializing
+    fresh or extending an existing connection, and must be confirmed before Section 3.
+
+Do NOT modify anything during this initial audit.
+
+Create a concise internal architecture understanding before implementation.
+
+---
+
+# 2. UNDERSTAND THE EXISTING ALGOHUB PRODUCT
+
+AlgoHub is intended to be a programming/algorithm learning platform.
+
+The Beta version must have a proper foundation for features such as:
+
+* authentication
+* user profiles
+* learning content
+* algorithms
+* algorithm explanations/documentation
+* code examples
+* comparisons
+* progress tracking
+* user activity
+* future learning features
+* admin-controlled Beta access
+
+However:
+
+**Do NOT create tables simply because these features might exist someday.**
+
+Only create database structures that are justified by:
+
+* the current codebase
+* existing UI/routes
+* existing product architecture
+* clearly defined Beta requirements
+* obvious relationships required by the current application
+
+Future extensibility is important, but unnecessary database complexity is not.
+
+---
+
+# 3. SUPABASE ARCHITECTURE
+
+Use Supabase as the backend platform.
+
+The architecture should use:
+
+* Supabase Auth
+* PostgreSQL
+* Row Level Security (RLS)
+* Supabase client for browser-side operations where appropriate
+* Supabase server client for server-side operations
+* secure server-side/admin operations where required
+
+Environment variables should remain:
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=...
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=...
+```
+
+Before adding or changing anything here, confirm against the Section 1 audit whether these already
+exist and are populated — do not overwrite a working existing connection, and do not assume fresh
+setup is needed without checking first.
+
+Never hardcode credentials.
+
+Never expose a service-role key to the browser.
+
+Never place secrets in client-side code.
+
+---
+
+# 4. DESIGN THE DATABASE BEFORE IMPLEMENTING IT
+
+Based on the repository audit, design the required PostgreSQL schema.
+
+For each table determine:
+
+* purpose
+* primary key
+* foreign keys
+* nullable/non-nullable fields
+* unique constraints
+* indexes
+* timestamps
+* relationships
+* delete/update behavior — explicitly decide, per table, whether related rows should
+  `CASCADE DELETE`, be prevented from deletion while dependents exist (`RESTRICT`), or have the
+  foreign key nulled out (`SET NULL`) when a parent row (especially a user) is deleted; don't leave
+  this as an unstated default
+* whether the table is user-owned or public
+* whether the table requires RLS
+
+Prefer normalized relational design.
+
+Avoid:
+
+* unnecessary duplication
+* giant JSON blobs when relational fields are appropriate
+* redundant user information
+* storing authorization decisions in client state
+* unnecessary tables
+* unnecessary abstractions
+
+Use PostgreSQL constraints wherever possible instead of relying only on frontend validation.
+
+---
+
+# 5. USER PROFILE ARCHITECTURE
+
+Supabase Auth's:
+
+```text
+auth.users
+```
+
+must remain the authentication source of truth.
+
+Do NOT duplicate the authentication system.
+
+Create/use an application-level profile table only where necessary.
+
+The profile identity should be strongly linked to:
+
+```text
+auth.users.id
+```
+
+The profile architecture must support at minimum:
+
+```text
+role
+status
+created_at
+updated_at
+```
+
+Use the following Beta authorization model unless the existing architecture clearly requires a
+safer equivalent:
+
+### Roles
+
+```text
+student
+admin
+```
+
+### Account/Beta status
+
+```text
+pending
+approved
+rejected
+suspended
+```
+
+New users must NOT be able to choose their own role or Beta status.
+
+Default new-user state should be:
+
+```text
+role   = student
+status = pending
+```
+
+The client must never be trusted to determine authorization.
+
+---
+
+# 6. PROFILE CREATION
+
+Implement a secure mechanism so that when a new Supabase Auth user is created, the corresponding
+application profile is automatically created.
+
+The mechanism must ensure:
+
+* the authenticated user's identity comes from Supabase Auth
+* role cannot be supplied maliciously by the client
+* status cannot be supplied maliciously by the client
+* default role is `student`
+* default status is `pending`
+
+Handle failure cases carefully.
+
+Do not create duplicate profiles.
+
+Use appropriate uniqueness/primary-key constraints.
+
+---
+
+# 7. ROW LEVEL SECURITY
+
+RLS is a **mandatory security boundary**.
+
+Do NOT rely on:
+
+* React conditionals
+* hidden buttons
+* client-side role checks
+* Zustand state
+* localStorage
+* middleware alone
+* URL protection alone
+
+for database security.
+
+Every user-facing table must be evaluated for RLS requirements.
+
+For each table explicitly determine:
+
+### SELECT
+
+Who can read?
+
+### INSERT
+
+Who can create?
+
+### UPDATE
+
+Who can modify?
+
+### DELETE
+
+Who can delete?
+
+Use the principle of least privilege.
+
+---
+
+# 8. USER PROFILE SECURITY
+
+A normal student should be able to access only the profile information they are authorized to
+access.
+
+A normal user must NOT be able to modify:
+
+```text
+role
+status
+```
+
+through normal client-side operations.
+
+A malicious request such as:
+
+```text
+UPDATE profiles
+SET role = 'admin'
+```
+
+must fail for a normal user.
+
+Likewise:
+
+```text
+UPDATE profiles
+SET status = 'approved'
+```
+
+must fail for a normal user.
+
+Authorization must be enforced at the database/security layer.
+
+---
+
+# 9. ADMIN ACCESS
+
+The Beta architecture must support an admin-controlled approval system.
+
+Admins should eventually be able to:
+
+* view pending users
+* approve users
+* reject users
+* suspend users
+* restore eligible users
+* manage appropriate platform data
+
+But do NOT automatically give every authenticated user admin privileges.
+
+Admin authorization must be securely determined.
+
+Do not trust:
+
+```text
+localStorage
+```
+
+or:
+
+```text
+role stored in frontend state
+```
+
+or:
+
+```text
+query parameters
+```
+
+or arbitrary request bodies.
+
+## 9.1 BOOTSTRAPPING THE FIRST ADMIN
+
+Because no user can grant admin access if no admin exists yet, this needs an explicit, deliberate
+mechanism rather than being left unspecified:
+
+* Create a **one-time seed script** (e.g. `scripts/seed-admin.ts` or a dedicated seed migration)
+  that promotes a specific, explicitly-provided user (identified by email or user ID that I supply
+  at run time — never hardcoded into a committed file with real credentials) to `role = admin` and
+  `status = approved`.
+* This script must only be runnable with direct database/service-role access (i.e. it's an
+  operator-run script, not an exposed API route or client-callable function) — it must NOT be
+  reachable from the deployed application in any form.
+* Document the exact command I need to run to bootstrap the first admin after this task is
+  complete, since I'll need to do this once manually after deployment.
+* Do not create any other mechanism (env var flag, magic first-signup-becomes-admin logic, etc.)
+  that could let the first admin be established implicitly or automatically — this must be a
+  deliberate, auditable, manually-triggered action.
+
+---
+
+# 10. DATABASE FUNCTIONS / SECURITY DEFINER
+
+If PostgreSQL functions are required for secure authorization or admin operations, use them
+carefully.
+
+Any `SECURITY DEFINER` function must:
+
+* have a controlled `search_path`
+* avoid unnecessary privileges
+* validate authorization
+* avoid privilege escalation
+* expose only the minimum functionality required
+
+Do not create SECURITY DEFINER functions just because they are convenient.
+
+---
+
+# 11. AUTHENTICATION ARCHITECTURE
+
+Inspect the existing authentication implementation.
+
+If authentication is incomplete, integrate Supabase Auth without unnecessarily rewriting the
+existing application.
+
+The final architecture should distinguish:
+
+### Public
+
+Examples:
+
+```text
+/
+login
+signup
+```
+
+### Authenticated
+
+Examples:
+
+```text
+profile
+```
+
+### Beta-approved
+
+Examples:
+
+```text
+learn
+algorithms
+compare
+other protected learning features
+```
+
+### Admin
+
+Examples:
+
+```text
+admin dashboard
+user management
+content management
+```
+
+Do not assume every route listed above currently exists.
+
+Use the repository as the source of truth.
+
+---
+
+# 12. MIDDLEWARE
+
+Inspect the current middleware.
+
+The middleware should handle lightweight route/session protection where appropriate.
+
+Do NOT turn middleware into a huge database authorization layer.
+
+Database authorization must remain enforced through PostgreSQL/RLS.
+
+Avoid unnecessary database queries on every request.
+
+Keep the middleware architecture maintainable and performant.
+
+---
+
+# 13. SERVER VS CLIENT SUPABASE CLIENT
+
+Inspect the existing Supabase client implementation.
+
+Maintain a clear separation between:
+
+### Browser client
+
+Used for safe client-side authenticated interactions.
+
+### Server client
+
+Used for server components/server actions/API routes where appropriate.
+
+### Admin/service-role access
+
+Only if absolutely required.
+
+Never expose service-role credentials through:
+
+```text
+NEXT_PUBLIC_*
+```
+
+Never import server-only secrets into client components.
+
+---
+
+# 14. MIGRATIONS
+
+Do NOT manually modify the production database through random SQL snippets if the repository
+already has a migration system.
+
+Create proper version-controlled database migrations.
+
+Migration files must be:
+
+* deterministic
+* ordered
+* repeatable in a fresh environment
+* easy to review
+* safe to apply
+
+If migrations already exist, inspect them first and extend them instead of creating conflicting
+duplicate structures.
+
+## 14.1 ROLLBACK STRATEGY
+
+For every migration created in this task:
+
+* Provide a corresponding **down/rollback migration** (or, if the project's migration tooling
+  doesn't support down-migrations natively, provide an explicit rollback SQL script alongside it)
+  that safely reverses the change without destroying unrelated data.
+* Before applying any migration to a real (even beta-stage) database, state clearly whether it is
+  **additive/safe** (new tables/columns, safe to apply anytime) or **potentially destructive**
+  (drops/renames a column, changes a constraint that could reject existing rows, etc.) — flag
+  destructive migrations explicitly and confirm with me before applying them.
+* If a migration fails partway through application, explain what state the database would be left
+  in and how to recover, rather than assuming migrations always apply cleanly.
+
+---
+
+# 15. TYPESCRIPT DATABASE TYPES
+
+After creating the database schema, determine whether the project already uses generated Supabase
+TypeScript types.
+
+If it does:
+
+* update/regenerate them properly.
+
+If it does not:
+
+* determine whether adding generated database types is appropriate for the existing architecture.
+
+The application should avoid having manually duplicated database models that can drift from
+PostgreSQL.
+
+---
+
+# 16. DATA VALIDATION
+
+Database constraints and application validation should complement each other.
+
+Use:
+
+* PostgreSQL constraints for data integrity
+* Zod or existing validation architecture for application-level validation
+
+Do not rely exclusively on frontend validation.
+
+---
+
+# 17. INDEXING
+
+Add indexes only where justified.
+
+Consider indexes for:
+
+* foreign keys
+* frequently queried user IDs
+* status filtering
+* role/status administrative queries
+* relationships used frequently by the application
+
+Do NOT blindly index every column.
+
+---
+
+# 18. AUDITABILITY
+
+Where appropriate, include:
+
+```text
+created_at
+updated_at
+```
+
+Use database-generated timestamps where possible.
+
+For important administrative actions, consider whether an audit mechanism is justified.
+
+Do not create an unnecessarily complicated audit system for Beta unless the current product
+actually requires it.
+
+---
+
+# 19. ABUSE PREVENTION (SIGNUP / PENDING-REQUEST RATE LIMITING)
+
+Because this is a restricted, invite/approval-based beta, consider basic abuse prevention at the
+database/application boundary — not full production-grade rate-limiting infrastructure, but
+reasonable guardrails appropriate for a beta:
+
+* Prevent a single email/user from creating multiple `pending` profile rows (should already be
+  naturally prevented if profile creation is tied 1:1 to `auth.users.id`, but confirm this
+  explicitly rather than assuming it).
+* Consider whether Supabase Auth's built-in signup rate limiting is sufficient for beta scale, or
+  whether an additional lightweight guard (e.g. a simple check on repeated signup attempts from
+  the same source in a short window) is justified — do not build a custom rate-limiting system
+  from scratch unless the existing architecture has nothing usable; prefer Supabase's built-in
+  protections first.
+* This is explicitly scoped to **basic guardrails appropriate for a department-restricted beta**,
+  not enterprise abuse-prevention — do not over-engineer this.
+
+---
+
+# 20. SECURITY AUDIT
+
+## 20.1 TEST ENVIRONMENT
+
+All security testing in this section must be performed against a **local or staging Supabase
+project/database — never the production/beta database that real students will use**. Confirm which
+environment you're testing against before running any of the attack simulations below, and if only
+a single (production) Supabase project currently exists with no local/staging separation, flag
+this to me before proceeding — setting up a local Supabase instance (via the Supabase CLI) or a
+separate staging project may be a prerequisite step.
+
+## 20.2 ATTACK SIMULATIONS
+
+After implementation, actively test security assumptions.
+
+Attempt to simulate:
+
+### Attack 1
+
+Normal student attempts:
+
+```text
+role = admin
+```
+
+Expected:
+
+```text
+DENIED
+```
+
+### Attack 2
+
+Normal student attempts:
+
+```text
+status = approved
+```
+
+Expected:
+
+```text
+DENIED
+```
+
+### Attack 3
+
+Unauthenticated user attempts to access protected data.
+
+Expected:
+
+```text
+DENIED
+```
+
+### Attack 4
+
+Student attempts to access admin-only data.
+
+Expected:
+
+```text
+DENIED
+```
+
+### Attack 5
+
+User attempts to read another user's private data.
+
+Expected:
+
+```text
+DENIED
+```
+
+where the data is intended to be private.
+
+### Attack 6
+
+Client attempts to inject arbitrary role/status during signup.
+
+Expected:
+
+```text
+IGNORED / REJECTED
+```
+
+### Attack 7
+
+Attempt to call any `SECURITY DEFINER` function (Section 10) or the admin-bootstrap path
+(Section 9.1) from an unauthenticated or normal-student client context.
+
+Expected:
+
+```text
+DENIED / NOT REACHABLE FROM CLIENT
+```
+
+---
+
+# 21. DO NOT BREAK EXISTING UI
+
+This is extremely important.
+
+The current AlgoHub frontend is already being developed.
+
+Do NOT:
+
+* redesign the UI
+* rewrite unrelated components
+* change visual styling unnecessarily
+* replace existing pages
+* remove working features
+* change routing unnecessarily
+* introduce unrelated dependencies
+
+Only modify the frontend where database/auth integration genuinely requires it.
+
+---
+
+# 22. MOCK DATA MIGRATION
+
+Search the repository for:
+
+* hardcoded algorithm data
+* mock users
+* fake authentication
+* local arrays
+* placeholder API responses
+* temporary database abstractions
+
+For each one determine:
+
+1. Should it now come from Supabase?
+2. Should it remain static?
+3. Is it intentionally mock data for Beta UI?
+
+Do not automatically migrate every static object into PostgreSQL.
+
+Some algorithm metadata/content may legitimately remain version-controlled content depending on
+the existing architecture.
+
+---
+
+# 23. ERROR HANDLING
+
+Database failures must not produce ugly or misleading UI errors.
+
+Implement appropriate handling for:
+
+* unauthorized requests
+* RLS violations
+* missing records
+* duplicate records
+* database connection errors
+* malformed requests
+
+Do not leak:
+
+* database internals
+* SQL statements
+* secrets
+* service-role credentials
+* sensitive user information
+
+into client-facing errors.
+
+---
+
+# 24. PERFORMANCE
+
+Keep the Beta architecture lightweight.
+
+Avoid:
+
+* unnecessary database calls
+* repeated profile queries
+* N+1 queries
+* fetching entire tables when only a few fields are needed
+* unnecessary realtime subscriptions
+
+Do not introduce Redis or another caching layer unless the existing application actually requires
+it.
+
+---
+
+# 25. IMPLEMENTATION WORKFLOW
+
+Follow this exact workflow:
+
+### STEP 1
+
+Audit repository (including the Section 1.11 check on existing Supabase connection state).
+
+### STEP 2
+
+Produce a concise architecture report.
+
+### STEP 3
+
+Identify existing database/auth implementation.
+
+### STEP 4
+
+Design the required schema, including explicit delete/update behavior per table (Section 4).
+
+### STEP 5
+
+Explain the schema and security model briefly.
+
+### STEP 6
+
+Create/update migrations, including rollback migrations (Section 14.1).
+
+### STEP 7
+
+Implement Supabase integration.
+
+### STEP 8
+
+Implement RLS.
+
+### STEP 9
+
+Implement authentication/profile integration, including the admin-bootstrap seed script
+(Section 9.1).
+
+### STEP 10
+
+Update TypeScript database types.
+
+### STEP 11
+
+Connect existing application code where necessary.
+
+### STEP 12
+
+Run tests/build/type-check/lint.
+
+### STEP 13
+
+Perform security testing against a local/staging environment only (Section 20.1), including all
+attacks in Section 20.2.
+
+### STEP 14
+
+Fix any issues discovered.
+
+### STEP 15
+
+Give me a final implementation report, including the admin-bootstrap command I need to run
+(Section 9.1).
+
+---
+
+# 26. IMPORTANT: DO NOT STOP AFTER DATABASE CREATION
+
+The task is NOT complete simply because tables exist.
+
+The final result must be an integrated system:
+
+```text
+Supabase Auth
+      ↓
+auth.users
+      ↓
+profiles
+      ↓
+role + status
+      ↓
+RLS
+      ↓
+Server/Client Supabase access
+      ↓
+AlgoHub application
+```
+
+Everything must work together.
+
+---
+
+# 27. FINAL REPORT
+
+After implementation, provide:
+
+## Architecture Summary
+
+What database architecture was implemented?
+
+## Tables
+
+List every table created/modified and its purpose, including the delete/update behavior decided
+for each (Section 4).
+
+## Relationships
+
+Explain the important foreign-key relationships.
+
+## Authentication
+
+Explain how Supabase Auth integrates with the application.
+
+## Authorization
+
+Explain:
+
+```text
+student
+admin
+```
+
+and:
+
+```text
+pending
+approved
+rejected
+suspended
+```
+
+## Admin Bootstrap
+
+Provide the exact command/steps I need to run to create the first admin account (Section 9.1).
+
+## RLS
+
+For every table, summarize:
+
+* SELECT
+* INSERT
+* UPDATE
+* DELETE
+
+policies.
+
+## Migrations
+
+List migration files created/modified, and confirm rollback migrations exist for each
+(Section 14.1). Flag any migration that is potentially destructive.
+
+## Files Changed
+
+Provide a concise list of changed files.
+
+## Security Tests
+
+Show which authorization attacks were tested (Section 20.2, including Attack 7), what environment
+they were run against (Section 20.1), and their results.
+
+## Validation
+
+Run and report:
+
+```text
+npm run lint
+npm run build
+```
+
+and any relevant type-check/test commands already defined by the project.
+
+## Problems
+
+If anything could not be implemented because of an existing architectural issue, clearly explain
+it.
+
+## Next Recommended Step
+
+Do NOT start implementing the next feature automatically.
+
+Instead, tell me the safest and most logical next Beta milestone based on the actual state of the
+repository.
+
+---
+
+# FINAL RULES
+
+1. **Inspect first.**
+2. **Understand existing architecture before designing the database.**
+3. **Do not blindly overwrite existing work.**
+4. **Do not create unnecessary tables.**
+5. **Use Supabase Auth as the identity source.**
+6. **Use PostgreSQL constraints for integrity.**
+7. **Use RLS as the actual database security boundary.**
+8. **Never trust client-provided roles or permissions.**
+9. **Never expose service-role credentials.**
+10. **Do not redesign the existing UI.**
+11. **Do not introduce unnecessary dependencies.**
+12. **Use migrations for database changes, with rollback migrations for each.**
+13. **Test both functionality and security, against local/staging — never production.**
+14. **If something already exists, improve/integrate it instead of duplicating it.**
+15. **If you discover an architectural conflict, stop and explain it before making a destructive
+    change.**
+16. **The first admin account is created only through the deliberate, manually-triggered seed
+    script — never automatically or implicitly.**
+
+The goal is not merely to "connect Supabase".
+
+The goal is to create a **secure, maintainable, extensible database + authentication +
+authorization foundation for the AlgoHub Beta Version**, while preserving the existing project
+architecture and functionality.

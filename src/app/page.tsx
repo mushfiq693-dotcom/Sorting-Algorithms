@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { SortingVisualizer } from "@/components/visualizer/SortingVisualizer";
+import { LockedVisualizerGate } from "@/components/landing/LockedVisualizerGate";
 import { HeroAnimation } from "@/components/landing/HeroAnimation";
 import { ValueProposition } from "@/components/landing/ValueProposition";
 import { LearningJourney } from "@/components/landing/LearningJourney";
@@ -10,6 +10,8 @@ import { CurriculumShowcase } from "@/components/landing/CurriculumShowcase";
 import { BetaBanner } from "@/components/landing/BetaBanner";
 import { GlossaryModal } from "@/components/glossary/GlossaryModal";
 import { AmbientSortLogo } from "@/components/brand/AmbientSortLogo";
+import { AuthButton } from "@/components/auth/AuthButton";
+import { LINKS } from "@/config/links";
 import {
   ArrowDown,
   Code2,
@@ -59,52 +61,53 @@ export default function Home() {
           </div>
 
           {/* Desktop Nav Links */}
-          <div className="hidden lg:flex items-center gap-2 sm:gap-3">
-            <Link
-              href="/docs"
-              className="inline-flex items-center gap-1.5 rounded-xl border border-border/70 bg-card/40 px-3 py-1.5 text-xs font-semibold text-slate-300 hover:text-cyan-400 hover:bg-card/70 transition-all active:scale-95 shadow-sm"
-            >
-              <BookOpen className="h-3.5 w-3.5 text-cyan-400" />
-              <span>Docs & Course</span>
-            </Link>
+          <div className="flex items-center gap-2 sm:gap-3">
+            <div className="hidden lg:flex items-center gap-2 sm:gap-3">
+              <Link
+                href="/docs"
+                className="inline-flex items-center gap-1.5 rounded-xl border border-border/70 bg-card/40 px-3 py-1.5 text-xs font-semibold text-slate-300 hover:text-cyan-400 hover:bg-card/70 transition-all active:scale-95 shadow-sm"
+              >
+                <BookOpen className="h-3.5 w-3.5 text-cyan-400" />
+                <span>Docs & Course</span>
+              </Link>
 
-            <Link
-              href="/learn"
-              className="inline-flex items-center gap-1.5 rounded-xl border border-border/70 bg-card/40 px-3 py-1.5 text-xs font-semibold text-slate-300 hover:text-cyan-400 hover:bg-card/70 transition-all active:scale-95"
-            >
-              <GraduationCap className="h-3.5 w-3.5 text-blue-400" />
-              <span>Learning Path</span>
-            </Link>
+              <Link
+                href="/learn"
+                className="inline-flex items-center gap-1.5 rounded-xl border border-border/70 bg-card/40 px-3 py-1.5 text-xs font-semibold text-slate-300 hover:text-cyan-400 hover:bg-card/70 transition-all active:scale-95"
+              >
+                <GraduationCap className="h-3.5 w-3.5 text-blue-400" />
+                <span>Learning Path</span>
+              </Link>
 
-            <Link
-              href="/compare"
-              className="inline-flex items-center gap-1.5 rounded-xl border border-border/70 bg-card/40 px-3 py-1.5 text-xs font-semibold text-slate-300 hover:text-cyan-400 hover:bg-card/70 transition-all active:scale-95"
-            >
-              <Table className="h-3.5 w-3.5 text-purple-400" />
-              <span>Compare</span>
-            </Link>
+              <Link
+                href="/compare"
+                className="inline-flex items-center gap-1.5 rounded-xl border border-border/70 bg-card/40 px-3 py-1.5 text-xs font-semibold text-slate-300 hover:text-cyan-400 hover:bg-card/70 transition-all active:scale-95"
+              >
+                <Table className="h-3.5 w-3.5 text-purple-400" />
+                <span>Compare</span>
+              </Link>
 
-            <button
-              onClick={() => setIsGlossaryOpen(true)}
-              className="inline-flex items-center gap-1.5 rounded-xl border border-border/70 bg-card/40 px-3 py-1.5 text-xs font-semibold text-slate-300 hover:text-cyan-400 hover:bg-card/70 transition-all active:scale-95"
-            >
-              <BookOpen className="h-3.5 w-3.5 text-emerald-400" />
-              <span>Glossary</span>
-            </button>
+              <button
+                onClick={() => setIsGlossaryOpen(true)}
+                className="inline-flex items-center gap-1.5 rounded-xl border border-border/70 bg-card/40 px-3 py-1.5 text-xs font-semibold text-slate-300 hover:text-cyan-400 hover:bg-card/70 transition-all active:scale-95"
+              >
+                <BookOpen className="h-3.5 w-3.5 text-emerald-400" />
+                <span>Glossary</span>
+              </button>
+            </div>
 
-            <Link
-              href="/learn"
-              className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 px-4 py-1.5 text-xs font-semibold text-white shadow-md shadow-cyan-500/20 hover:shadow-cyan-500/35 hover:scale-[1.02] active:scale-[0.98] transition-all"
-            >
-              <Sparkles className="h-3.5 w-3.5" />
-              <span>Start Learning</span>
-            </Link>
+            {/* Always Visible Auth Button */}
+            <AuthButton />
           </div>
         </div>
 
         {/* Mobile Dropdown Menu */}
         {isMobileMenuOpen && (
           <div className="lg:hidden border-b border-slate-800 bg-[#070b14]/95 p-4 space-y-2 backdrop-blur-xl animate-in slide-in-from-top-2">
+            <div className="pb-2 border-b border-slate-800">
+              <AuthButton />
+            </div>
+
             <Link
               href="/learn"
               onClick={() => setIsMobileMenuOpen(false)}
@@ -325,7 +328,7 @@ export default function Home() {
               </div>
             </div>
 
-            <SortingVisualizer />
+            <LockedVisualizerGate />
           </div>
         </section>
 
@@ -368,10 +371,12 @@ export default function Home() {
             </button>
             <span>•</span>
             <a
-              href="mailto:mushfiq693@gmail.com?subject=AlgoHub%20Beta%20Feedback%20[GSTU%20CSE]"
+              href={LINKS.GOOGLE_FEEDBACK_FORM_URL}
+              target="_blank"
+              rel="noopener noreferrer"
               className="text-amber-400 hover:text-amber-300 font-semibold"
             >
-              💬 Feedback
+              💬 Feedback (Google Form)
             </a>
           </div>
         </div>

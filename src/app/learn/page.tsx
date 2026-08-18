@@ -18,11 +18,15 @@ import {
   Zap,
 } from "lucide-react";
 
+import { useProgressSync } from "@/hooks/useProgressSync";
+import { AuthButton } from "@/components/auth/AuthButton";
+
 export default function LearnPage() {
   const [isGlossaryOpen, setIsGlossaryOpen] = useState(false);
   const [completedSteps, setCompletedSteps] = useState<string[]>([]);
+  const { syncStep } = useProgressSync();
 
-  // Load completed steps from localStorage
+  // Load completed steps from localStorage and sync
   useEffect(() => {
     try {
       const saved = localStorage.getItem("sortviz_completed_steps");
@@ -40,6 +44,9 @@ export default function LearnPage() {
         : [...prev, id];
       try {
         localStorage.setItem("sortviz_completed_steps", JSON.stringify(updated));
+        if (!prev.includes(id)) {
+          syncStep(id);
+        }
       } catch {
         // ignore
       }
@@ -94,6 +101,8 @@ export default function LearnPage() {
               <ArrowLeft className="h-4 w-4" />
               <span>Visualizer</span>
             </Link>
+
+            <AuthButton />
           </div>
         </div>
       </header>

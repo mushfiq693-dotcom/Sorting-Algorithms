@@ -7,14 +7,19 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test:algorithms": "tsx src/algorithms/__tests__/test-algorithms.ts"
+    "test:algorithms": "tsx src/algorithms/__tests__/test-algorithms.ts",
+    "test:worker": "tsx src/lib/__tests__/test-coding-worker.ts"
   },
   "dependencies": {
+    "@supabase/ssr": "^0.12.4",
+    "@supabase/supabase-js": "^2.112.3",
+    "@types/pg": "^8.23.1",
     "canvas-confetti": "^1.9.4",
     "clsx": "^2.1.1",
     "framer-motion": "^12.4.7",
     "lucide-react": "^0.475.0",
     "next": "^15.1.7",
+    "pg": "^8.23.0",
     "prismjs": "^1.29.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
@@ -27,9 +32,13 @@
     "@types/react": "^19.0.8",
     "@types/react-dom": "^19.0.3",
     "autoprefixer": "^10.4.20",
-    "postcss": "^8.5.2",
+    "postcss": "^8.5.26",
     "tailwindcss": "^3.4.17",
     "tsx": "^4.19.2",
     "typescript": "^5.7.3"
+  },
+  "overrides": {
+    "postcss": "^8.5.26",
+    "sharp": "^0.35.3"
   }
 }

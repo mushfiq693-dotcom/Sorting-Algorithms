@@ -36,6 +36,8 @@ export const metadata: Metadata = {
   },
 };
 
+import { FeedbackWidget } from "@/components/feedback/FeedbackWidget";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -45,6 +47,7 @@ export default function RootLayout({
     <html lang="en" className="dark scroll-smooth">
       <body className={`${outfit.variable} ${jetbrainsMono.variable} font-sans bg-[#050811] text-foreground min-h-screen flex flex-col antialiased selection:bg-cyan-500/30 selection:text-cyan-200`}>
         {children}
+        <FeedbackWidget />
       </body>
     </html>
   );

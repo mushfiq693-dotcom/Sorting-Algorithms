@@ -19,6 +19,8 @@ import {
   Check,
 } from "lucide-react";
 
+import { useProgressSync } from "@/hooks/useProgressSync";
+
 interface DocsPageContentProps {
   article: DocsArticle;
 }
@@ -26,6 +28,7 @@ interface DocsPageContentProps {
 export function DocsPageContent({ article }: DocsPageContentProps) {
   const [isCompleted, setIsCompleted] = useState<boolean>(false);
   const [copiedLink, setCopiedLink] = useState<boolean>(false);
+  const { syncDoc } = useProgressSync();
 
   // Find index in global articles for next / previous links
   const currentIndex = DOCS_ARTICLES.findIndex((a) => a.slug === article.slug);
@@ -54,6 +57,7 @@ export function DocsPageContent({ article }: DocsPageContentProps) {
       } else {
         list.push(article.slug);
         setIsCompleted(true);
+        syncDoc(article.slug);
       }
       localStorage.setItem("sortviz_docs_completed", JSON.stringify(list));
     } catch {
