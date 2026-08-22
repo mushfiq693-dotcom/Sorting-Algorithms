@@ -10,31 +10,42 @@ export type SortOperation =
   | { type: "call-enter"; fn: string; args: number[]; description?: string; snapshot?: Record<string, any> }
   | { type: "call-exit"; fn: string; description?: string; snapshot?: Record<string, any> };
 
-export type AlgorithmId =
+export type SortingAlgorithmId =
   | "bubble"
   | "selection"
   | "insertion"
   | "merge"
   | "quick";
 
+export type DataStructureId = "stack" | "queue";
+
+export type AlgorithmId = SortingAlgorithmId | DataStructureId;
+
 export interface AlgorithmComplexity {
   best: string;
   average: string;
   worst: string;
   space: string;
-  stable: boolean;
-  inPlace: boolean;
+  stable?: boolean;
+  inPlace?: boolean;
   spaceNote?: string;
+  operations?: {
+    name: string;
+    time: string;
+    space: string;
+    description: string;
+  }[];
 }
 
 export interface AlgorithmMetadata {
   id: AlgorithmId;
   name: string;
+  category?: "sorting" | "data-structure";
   shortDescription: string;
   description: string;
   complexity: AlgorithmComplexity;
   cppCode: string;
-  highlightLine: (operation: SortOperation) => number | null;
+  highlightLine?: (operation: SortOperation) => number | null;
 }
 
 export interface VisualizerState {

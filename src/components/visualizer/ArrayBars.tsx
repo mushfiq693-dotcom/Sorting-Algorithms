@@ -13,6 +13,8 @@ interface ArrayBarsProps {
   overwritingIndex: number | null;
   mergeRange?: { left: number; mid: number; right: number } | null;
   maxVal?: number;
+  containerHeight?: string;
+  className?: string;
 }
 
 export const ArrayBars = memo(function ArrayBars({
@@ -25,21 +27,23 @@ export const ArrayBars = memo(function ArrayBars({
   overwritingIndex,
   mergeRange,
   maxVal = Math.max(...(array.length ? array : [100]), 100),
+  containerHeight = "h-80",
+  className = "",
 }: ArrayBarsProps) {
   const prefersReducedMotion = useReducedMotion();
 
   if (array.length === 0) {
     return (
-      <div className="flex h-80 w-full flex-col items-center justify-center rounded-2xl border border-dashed border-slate-800 bg-[#070b14]/70 p-8 text-center backdrop-blur-md">
+      <div className={`flex ${containerHeight} w-full flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-secondary/50 p-8 text-center backdrop-blur-md ${className}`}>
         {/* Array-Bar Motif Empty State Graphic */}
         <div className="flex items-end gap-1.5 h-12 mb-3 opacity-30" aria-hidden="true">
-          <div className="w-2.5 h-4 rounded-t bg-cyan-400" />
-          <div className="w-2.5 h-7 rounded-t bg-cyan-400" />
-          <div className="w-2.5 h-11 rounded-t bg-cyan-400" />
-          <div className="w-2.5 h-6 rounded-t bg-cyan-400" />
-          <div className="w-2.5 h-9 rounded-t bg-cyan-400" />
+          <div className="w-2.5 h-4 rounded-t bg-cyan-500" />
+          <div className="w-2.5 h-7 rounded-t bg-cyan-500" />
+          <div className="w-2.5 h-11 rounded-t bg-cyan-500" />
+          <div className="w-2.5 h-6 rounded-t bg-cyan-500" />
+          <div className="w-2.5 h-9 rounded-t bg-cyan-500" />
         </div>
-        <p className="text-xs font-mono font-semibold text-slate-300">
+        <p className="text-xs font-mono font-semibold text-foreground">
           Array is uninitialized [length: 0]
         </p>
         <p className="text-[11px] text-muted-foreground mt-1">
@@ -56,9 +60,9 @@ export const ArrayBars = memo(function ArrayBars({
     <div
       role="region"
       aria-label="Sorting Array Bars Visualization"
-      className="relative flex h-80 w-full items-end justify-center gap-1 sm:gap-2 rounded-2xl border border-white/[0.08] bg-gradient-to-b from-[#0c1220]/90 via-[#070b14]/95 to-[#050811] p-4 sm:p-6 shadow-2xl backdrop-blur-xl overflow-hidden"
+      className={`relative flex ${containerHeight} w-full items-end justify-center gap-1 sm:gap-2 rounded-2xl border border-border bg-card p-4 sm:p-6 shadow-sm dark:shadow-2xl backdrop-blur-xl overflow-hidden ${className}`}
     >
-      {/* Precision Dev-Tool Background Grid Lines */}
+      {/* Precision Background Grid Lines */}
       <div className="absolute inset-0 pointer-events-none bg-[linear-gradient(to_right,#38bdf808_1px,transparent_1px),linear-gradient(to_bottom,#38bdf808_1px,transparent_1px)] bg-[size:1.5rem_1.5rem]" />
 
       {array.map((value, idx) => {

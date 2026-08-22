@@ -23,6 +23,9 @@ import {
   GraduationCap,
   ShieldCheck,
   Code2,
+  Award,
+  UserCheck,
+  UserX,
 } from "lucide-react";
 
 interface ProfileBetaUser {
@@ -36,6 +39,24 @@ interface ProfileBetaUser {
   status: "pending" | "approved" | "rejected" | "suspended";
   approved_at: string | null;
   notes: string | null;
+}
+
+interface MentorApplicationItem {
+  id: string;
+  user_id: string;
+  reason: string;
+  status: "pending" | "approved" | "rejected";
+  reviewed_by: string | null;
+  reviewed_at: string | null;
+  notes: string | null;
+  created_at: string;
+  profiles?: {
+    email: string;
+    full_name: string | null;
+    department: string | null;
+    student_id: string | null;
+    role: string;
+  };
 }
 
 interface FeedbackItem {
@@ -74,10 +95,11 @@ export default function AdminModerationPage() {
   const supabase = createClient();
 
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
-  const [activeTab, setActiveTab] = useState<"users" | "feedback" | "bugs">("users");
+  const [activeTab, setActiveTab] = useState<"users" | "mentors" | "feedback" | "bugs">("users");
 
   // Data states
   const [users, setUsers] = useState<ProfileBetaUser[]>([]);
+  const [mentorApps, setMentorApps] = useState<MentorApplicationItem[]>([]);
   const [feedbackList, setFeedbackList] = useState<FeedbackItem[]>([]);
   const [bugsList, setBugsList] = useState<BugReportItem[]>([]);
 
@@ -112,7 +134,7 @@ export default function AdminModerationPage() {
       }
       setIsAdmin(true);
 
-      // 2. Fetch all profiles joined with beta_access (using explicit user_id foreign key)
+      // 2. Fetch all profiles joined with beta_access
       const { data: profilesData, error: profilesErr } = await (supabase.from("profiles") as any)
         .select("id, email, full_name, department, student_id, role, created_at, beta_access!beta_access_user_id_fkey(status, approved_at, notes)")
         .order("created_at", { ascending: false });
@@ -140,14 +162,23 @@ export default function AdminModerationPage() {
         setUsers(formattedUsers);
       }
 
-      // 3. Fetch Feedback
+      // 3. Fetch Mentor Applications
+      const { data: mentorAppsData } = await (supabase.from("mentor_applications") as any)
+        .select("id, user_id, reason, status, reviewed_by, reviewed_at, notes, created_at, profiles(email, full_name, department, student_id, role)")
+        .order("created_at", { ascending: false });
+
+      if (mentorAppsData) {
+        setMentorApps(mentorAppsData);
+      }
+
+      // 4. Fetch Feedback
       const { data: feedbackData } = await (supabase.from("feedback") as any)
         .select("id, user_id, category, rating, message, page_url, created_at, profiles(email, full_name)")
         .order("created_at", { ascending: false });
 
       if (feedbackData) setFeedbackList(feedbackData);
 
-      // 4. Fetch Bug Reports
+      // 5. Fetch Bug Reports
       const { data: bugsData } = await (supabase.from("bug_reports") as any)
         .select("id, user_id, algorithm_id, page_url, steps_to_reproduce, expected_behavior, actual_behavior, browser_info, status, created_at, profiles(email, full_name)")
         .order("created_at", { ascending: false });
@@ -163,6 +194,81 @@ export default function AdminModerationPage() {
   useEffect(() => {
     loadData();
   }, [loadData]);
+
+  // Mentor Application Action Handlers
+  const handleApproveMentor = async (appId: string, userId: string) => {
+    setActionLoadingId(appId);
+    try {
+      const {
+        data: { user: currentAdmin },
+      } = await supabase.auth.getUser();
+
+      // 1. Update application status
+      const { error: appErr } = await (supabase.from("mentor_applications") as any)
+        .update({
+          status: "approved",
+          reviewed_by: currentAdmin?.id,
+          reviewed_at: new Date().toISOString(),
+        })
+        .eq("id", appId);
+
+      if (appErr) throw appErr;
+
+      // 2. Update user profile role to 'mentor'
+      const { error: roleErr } = await (supabase.from("profiles") as any)
+        .update({ role: "mentor" })
+        .eq("id", userId);
+
+      if (roleErr) throw roleErr;
+
+      // Update local state
+      setMentorApps((prev) =>
+        prev.map((app) =>
+          app.id === appId
+            ? { ...app, status: "approved", reviewed_at: new Date().toISOString() }
+            : app
+        )
+      );
+      setUsers((prev) =>
+        prev.map((u) => (u.id === userId ? { ...u, role: "mentor" } : u))
+      );
+    } catch (err: any) {
+      alert(`Failed to approve mentor: ${err.message}`);
+    } finally {
+      setActionLoadingId(null);
+    }
+  };
+
+  const handleRejectMentor = async (appId: string) => {
+    setActionLoadingId(appId);
+    try {
+      const {
+        data: { user: currentAdmin },
+      } = await supabase.auth.getUser();
+
+      const { error: appErr } = await (supabase.from("mentor_applications") as any)
+        .update({
+          status: "rejected",
+          reviewed_by: currentAdmin?.id,
+          reviewed_at: new Date().toISOString(),
+        })
+        .eq("id", appId);
+
+      if (appErr) throw appErr;
+
+      setMentorApps((prev) =>
+        prev.map((app) =>
+          app.id === appId
+            ? { ...app, status: "rejected", reviewed_at: new Date().toISOString() }
+            : app
+        )
+      );
+    } catch (err: any) {
+      alert(`Failed to reject mentor: ${err.message}`);
+    } finally {
+      setActionLoadingId(null);
+    }
+  };
 
   // Beta Access Action Handlers
   const handleUpdateStatus = async (userId: string, newStatus: "approved" | "rejected" | "suspended") => {
@@ -240,6 +346,7 @@ export default function AdminModerationPage() {
   // Stats Counters
   const pendingCount = users.filter((u) => u.status === "pending").length;
   const approvedCount = users.filter((u) => u.status === "approved").length;
+  const pendingMentorCount = mentorApps.filter((m) => m.status === "pending").length;
   const openBugsCount = bugsList.filter((b) => b.status === "open").length;
 
   return (
@@ -282,16 +389,27 @@ export default function AdminModerationPage() {
 
       <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 space-y-8">
         {/* KPI Stats Cards */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
           <div className="p-4 rounded-2xl border border-amber-500/30 bg-[#12070e] space-y-1">
             <div className="flex items-center justify-between text-amber-400">
-              <span className="text-xs font-mono font-semibold">Pending Requests</span>
+              <span className="text-xs font-mono font-semibold">Beta Requests</span>
               <Clock className="h-4 w-4" />
             </div>
             <div className="text-2xl sm:text-3xl font-extrabold text-white font-mono">
               {pendingCount}
             </div>
-            <p className="text-[11px] text-slate-400">Awaiting departmental verification</p>
+            <p className="text-[11px] text-slate-400">Pending admission</p>
+          </div>
+
+          <div className="p-4 rounded-2xl border border-purple-500/30 bg-[#12070e] space-y-1">
+            <div className="flex items-center justify-between text-purple-400">
+              <span className="text-xs font-mono font-semibold">Mentor Apps</span>
+              <Award className="h-4 w-4" />
+            </div>
+            <div className="text-2xl sm:text-3xl font-extrabold text-white font-mono">
+              {pendingMentorCount}
+            </div>
+            <p className="text-[11px] text-slate-400">Pending review</p>
           </div>
 
           <div className="p-4 rounded-2xl border border-emerald-500/30 bg-[#12070e] space-y-1">
@@ -302,37 +420,37 @@ export default function AdminModerationPage() {
             <div className="text-2xl sm:text-3xl font-extrabold text-white font-mono">
               {approvedCount}
             </div>
-            <p className="text-[11px] text-slate-400">Active students with full access</p>
+            <p className="text-[11px] text-slate-400">Active students</p>
           </div>
 
           <div className="p-4 rounded-2xl border border-cyan-500/30 bg-[#12070e] space-y-1">
             <div className="flex items-center justify-between text-cyan-400">
-              <span className="text-xs font-mono font-semibold">Feedback Submissions</span>
+              <span className="text-xs font-mono font-semibold">Feedback</span>
               <MessageSquare className="h-4 w-4" />
             </div>
             <div className="text-2xl sm:text-3xl font-extrabold text-white font-mono">
               {feedbackList.length}
             </div>
-            <p className="text-[11px] text-slate-400">Total in-app evaluations</p>
+            <p className="text-[11px] text-slate-400">In-app ratings</p>
           </div>
 
           <div className="p-4 rounded-2xl border border-rose-500/30 bg-[#12070e] space-y-1">
             <div className="flex items-center justify-between text-rose-400">
-              <span className="text-xs font-mono font-semibold">Open Bug Reports</span>
+              <span className="text-xs font-mono font-semibold">Bug Reports</span>
               <Bug className="h-4 w-4" />
             </div>
             <div className="text-2xl sm:text-3xl font-extrabold text-white font-mono">
               {openBugsCount}
             </div>
-            <p className="text-[11px] text-slate-400">Requires diagnostic review</p>
+            <p className="text-[11px] text-slate-400">Open diagnostics</p>
           </div>
         </div>
 
         {/* Tab Switcher */}
-        <div className="flex border-b border-rose-950/80 gap-2">
+        <div className="flex border-b border-rose-950/80 gap-2 overflow-x-auto">
           <button
             onClick={() => setActiveTab("users")}
-            className={`pb-3 px-4 text-xs sm:text-sm font-bold transition-all border-b-2 flex items-center gap-2 ${
+            className={`pb-3 px-4 text-xs sm:text-sm font-bold transition-all border-b-2 flex items-center gap-2 whitespace-nowrap ${
               activeTab === "users"
                 ? "border-rose-500 text-rose-300"
                 : "border-transparent text-slate-400 hover:text-slate-200"
@@ -343,8 +461,25 @@ export default function AdminModerationPage() {
           </button>
 
           <button
+            onClick={() => setActiveTab("mentors")}
+            className={`pb-3 px-4 text-xs sm:text-sm font-bold transition-all border-b-2 flex items-center gap-2 whitespace-nowrap ${
+              activeTab === "mentors"
+                ? "border-rose-500 text-rose-300"
+                : "border-transparent text-slate-400 hover:text-slate-200"
+            }`}
+          >
+            <Award className="h-4 w-4" />
+            <span>Mentor Applications ({mentorApps.length})</span>
+            {pendingMentorCount > 0 && (
+              <span className="px-1.5 py-0.2 rounded-full bg-purple-500 text-white text-[10px] font-mono">
+                {pendingMentorCount}
+              </span>
+            )}
+          </button>
+
+          <button
             onClick={() => setActiveTab("feedback")}
-            className={`pb-3 px-4 text-xs sm:text-sm font-bold transition-all border-b-2 flex items-center gap-2 ${
+            className={`pb-3 px-4 text-xs sm:text-sm font-bold transition-all border-b-2 flex items-center gap-2 whitespace-nowrap ${
               activeTab === "feedback"
                 ? "border-rose-500 text-rose-300"
                 : "border-transparent text-slate-400 hover:text-slate-200"
@@ -356,7 +491,7 @@ export default function AdminModerationPage() {
 
           <button
             onClick={() => setActiveTab("bugs")}
-            className={`pb-3 px-4 text-xs sm:text-sm font-bold transition-all border-b-2 flex items-center gap-2 ${
+            className={`pb-3 px-4 text-xs sm:text-sm font-bold transition-all border-b-2 flex items-center gap-2 whitespace-nowrap ${
               activeTab === "bugs"
                 ? "border-rose-500 text-rose-300"
                 : "border-transparent text-slate-400 hover:text-slate-200"
@@ -500,7 +635,121 @@ export default function AdminModerationPage() {
           </div>
         )}
 
-        {/* TAB 2: USER FEEDBACK */}
+        {/* TAB 2: MENTOR APPLICATIONS */}
+        {activeTab === "mentors" && (
+          <div className="space-y-4">
+            {mentorApps.length === 0 ? (
+              <div className="p-12 text-center text-slate-400 rounded-2xl border border-rose-950/70 bg-[#0c0409]">
+                No mentor applications submitted yet.
+              </div>
+            ) : (
+              <div className="space-y-4">
+                <div className="rounded-2xl border border-rose-950/70 bg-[#0c0409]/95 overflow-hidden">
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left text-xs">
+                      <thead className="border-b border-rose-950/80 bg-[#14060e] text-slate-400 font-mono">
+                        <tr>
+                          <th className="p-3.5">Applicant Profile</th>
+                          <th className="p-3.5">Dept & Roll ID</th>
+                          <th className="p-3.5">Motivation Statement</th>
+                          <th className="p-3.5">Current Role</th>
+                          <th className="p-3.5">Application Status</th>
+                          <th className="p-3.5 text-right">Moderation Action</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-rose-950/40 text-slate-300 font-sans">
+                        {mentorApps.map((app) => (
+                          <tr key={app.id} className="hover:bg-rose-950/20 transition-colors">
+                            <td className="p-3.5">
+                              <div className="font-bold text-white">
+                                {app.profiles?.full_name || "Anonymous Applicant"}
+                              </div>
+                              <div className="text-[11px] font-mono text-slate-400">
+                                {app.profiles?.email || "No email"}
+                              </div>
+                            </td>
+
+                            <td className="p-3.5 font-mono text-[11px]">
+                              <div>{app.profiles?.department || "CSE"}</div>
+                              <div className="text-slate-400">
+                                {app.profiles?.student_id || "N/A"}
+                              </div>
+                            </td>
+
+                            <td className="p-3.5 max-w-xs sm:max-w-sm">
+                              <p className="text-xs text-slate-200 line-clamp-3 bg-[#060204] p-2.5 rounded-xl border border-rose-950/40">
+                                {app.reason}
+                              </p>
+                              <div className="text-[10px] font-mono text-slate-500 mt-1">
+                                Applied: {new Date(app.created_at).toLocaleDateString()}
+                              </div>
+                            </td>
+
+                            <td className="p-3.5">
+                              <span className={`inline-flex items-center gap-1 font-mono text-[10px] px-2 py-0.5 rounded-full font-bold uppercase ${
+                                app.profiles?.role === "mentor"
+                                  ? "bg-purple-500/20 text-purple-300 border border-purple-500/40"
+                                  : app.profiles?.role === "admin"
+                                  ? "bg-rose-500/20 text-rose-300 border border-rose-500/40"
+                                  : "bg-slate-800 text-slate-300 border border-slate-700"
+                              }`}>
+                                {app.profiles?.role || "student"}
+                              </span>
+                            </td>
+
+                            <td className="p-3.5">
+                              <span
+                                className={`inline-flex items-center gap-1 font-mono text-[10px] px-2.5 py-0.5 rounded-full font-bold uppercase ${
+                                  app.status === "approved"
+                                    ? "bg-emerald-500/10 text-emerald-300 border border-emerald-500/30"
+                                    : app.status === "pending"
+                                    ? "bg-amber-500/10 text-amber-300 border border-amber-500/30"
+                                    : "bg-rose-500/10 text-rose-300 border border-rose-500/30"
+                                }`}
+                              >
+                                {app.status === "approved" && <CheckCircle2 className="h-3 w-3" />}
+                                {app.status === "pending" && <Clock className="h-3 w-3" />}
+                                {app.status === "rejected" && <XCircle className="h-3 w-3" />}
+                                <span>{app.status}</span>
+                              </span>
+                            </td>
+
+                            <td className="p-3.5 text-right font-mono">
+                              <div className="flex items-center justify-end gap-1.5">
+                                {app.status !== "approved" && (
+                                  <button
+                                    onClick={() => handleApproveMentor(app.id, app.user_id)}
+                                    disabled={actionLoadingId === app.id}
+                                    className="px-2.5 py-1 rounded-lg bg-purple-600/20 text-purple-300 border border-purple-500/40 font-semibold hover:bg-purple-600/40 transition-colors disabled:opacity-50 flex items-center gap-1"
+                                  >
+                                    <UserCheck className="h-3 w-3" />
+                                    <span>Approve as Mentor</span>
+                                  </button>
+                                )}
+                                {app.status !== "rejected" && (
+                                  <button
+                                    onClick={() => handleRejectMentor(app.id)}
+                                    disabled={actionLoadingId === app.id}
+                                    className="px-2.5 py-1 rounded-lg bg-rose-600/20 text-rose-300 border border-rose-500/30 font-semibold hover:bg-rose-600/40 transition-colors disabled:opacity-50 flex items-center gap-1"
+                                  >
+                                    <UserX className="h-3 w-3" />
+                                    <span>Reject</span>
+                                  </button>
+                                )}
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* TAB 3: USER FEEDBACK */}
         {activeTab === "feedback" && (
           <div className="space-y-4">
             {feedbackList.length === 0 ? (

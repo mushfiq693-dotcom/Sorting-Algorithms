@@ -18,12 +18,14 @@ import {
   Award,
 } from "lucide-react";
 
+import { useProgressSync } from "@/hooks/useProgressSync";
+
 interface PredictNextProps {
   algorithmId: AlgorithmId;
   sampleArray?: number[];
 }
 
-const DEFAULT_PREDICT_ARRAY: Record<AlgorithmId, number[]> = {
+const DEFAULT_PREDICT_ARRAY: Partial<Record<AlgorithmId, number[]>> = {
   bubble: [45, 12, 89, 34, 7, 60, 23, 19],
   selection: [35, 12, 48, 19, 7, 60, 24, 15],
   insertion: [24, 13, 9, 45, 18, 32, 7, 50],
@@ -42,6 +44,7 @@ interface PredictionRound {
 }
 
 export function PredictNext({ algorithmId, sampleArray: customArray }: PredictNextProps) {
+  const { syncActivityScore } = useProgressSync();
   const initialArr = useMemo(() => {
     return customArray || DEFAULT_PREDICT_ARRAY[algorithmId] || [45, 12, 89, 34, 7, 60, 23, 19];
   }, [algorithmId, customArray]);
@@ -193,6 +196,13 @@ export function PredictNext({ algorithmId, sampleArray: customArray }: PredictNe
   const handleNextRound = () => {
     if (currentRoundIdx === rounds.length - 1) {
       setIsFinished(true);
+      const percentScore = Math.round((score / rounds.length) * 100);
+      syncActivityScore(
+        algorithmId,
+        "prediction",
+        percentScore,
+        `${meta.name} Prediction (${percentScore}%)`
+      );
       if (score >= Math.ceil(rounds.length * 0.7)) {
         confetti({ particleCount: 90, spread: 75, origin: { y: 0.6 } });
       }
@@ -220,15 +230,15 @@ export function PredictNext({ algorithmId, sampleArray: customArray }: PredictNe
   }
 
   return (
-    <div className="rounded-2xl border border-border/80 bg-[#0c121e]/90 p-5 sm:p-7 backdrop-blur-xl shadow-2xl space-y-6">
+    <div className="rounded-2xl border border-border bg-card p-5 sm:p-7 backdrop-blur-xl shadow-sm dark:shadow-2xl space-y-6">
       {/* Header */}
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/50 pb-4">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-4">
         <div className="flex items-center gap-2.5">
-          <div className="h-8 w-8 rounded-xl bg-purple-500/20 border border-purple-400/40 flex items-center justify-center text-purple-400">
+          <div className="h-8 w-8 rounded-xl bg-purple-500/20 border border-purple-400/40 flex items-center justify-center text-purple-600 dark:text-purple-400">
             <Compass className="h-4 w-4" />
           </div>
           <div>
-            <h3 className="text-base font-bold text-white tracking-tight">
+            <h3 className="text-base font-bold text-foreground tracking-tight">
               Predict the Next Operation
             </h3>
             <p className="text-xs text-muted-foreground">
@@ -239,7 +249,7 @@ export function PredictNext({ algorithmId, sampleArray: customArray }: PredictNe
 
         {!isFinished && (
           <div className="flex items-center gap-2">
-            <span className="text-xs font-mono font-semibold px-2.5 py-1 rounded-lg bg-secondary text-purple-300 border border-border/60">
+            <span className="text-xs font-mono font-semibold px-2.5 py-1 rounded-lg bg-secondary text-purple-600 dark:text-purple-300 border border-border">
               Round {currentRoundIdx + 1} of {rounds.length}
             </span>
           </div>
@@ -253,7 +263,7 @@ export function PredictNext({ algorithmId, sampleArray: customArray }: PredictNe
             <div className="flex items-center justify-between text-xs font-mono text-muted-foreground px-1">
               <span>Current Array State (Paused at Step {activeRound.stepIndex + 1})</span>
               {isAnswered && (
-                <span className="text-purple-400 font-semibold animate-pulse">
+                <span className="text-purple-600 dark:text-purple-400 font-semibold animate-pulse">
                   Stepped Forward +1 Operation
                 </span>
               )}
@@ -271,13 +281,13 @@ export function PredictNext({ algorithmId, sampleArray: customArray }: PredictNe
           </div>
 
           {/* Question Card */}
-          <div className="p-4 sm:p-5 rounded-2xl border border-purple-500/30 bg-purple-950/20 space-y-3">
-            <div className="flex items-center gap-2 text-purple-400 font-mono text-xs uppercase tracking-wider font-semibold">
+          <div className="p-4 sm:p-5 rounded-2xl border border-purple-500/30 bg-purple-500/10 space-y-3">
+            <div className="flex items-center gap-2 text-purple-600 dark:text-purple-400 font-mono text-xs uppercase tracking-wider font-semibold">
               <HelpCircle className="h-4 w-4" />
               <span>Prediction Challenge</span>
             </div>
 
-            <p className="text-sm sm:text-base font-semibold text-white leading-relaxed">
+            <p className="text-sm sm:text-base font-semibold text-foreground leading-relaxed">
               {activeRound.question}
             </p>
           </div>
@@ -288,14 +298,14 @@ export function PredictNext({ algorithmId, sampleArray: customArray }: PredictNe
               const isSelected = selectedOption === idx;
               const isCorrect = idx === activeRound.correctOptionIndex;
 
-              let style = "border-border/60 bg-card/60 text-foreground hover:bg-card hover:border-purple-400/50";
+              let style = "border-border bg-secondary/50 text-foreground hover:bg-secondary hover:border-purple-400/50";
               if (isAnswered) {
                 if (isCorrect) {
-                  style = "border-emerald-500 bg-emerald-500/20 text-emerald-200 shadow-md shadow-emerald-500/10";
+                  style = "border-emerald-500 bg-emerald-500/20 text-emerald-800 dark:text-emerald-200 shadow-sm";
                 } else if (isSelected) {
-                  style = "border-rose-500 bg-rose-500/20 text-rose-200 shadow-md shadow-rose-500/10";
+                  style = "border-rose-500 bg-rose-500/20 text-rose-800 dark:text-rose-200 shadow-sm";
                 } else {
-                  style = "border-border/40 bg-card/30 text-muted-foreground opacity-50";
+                  style = "border-border bg-secondary/30 text-muted-foreground opacity-50";
                 }
               }
 
@@ -304,11 +314,11 @@ export function PredictNext({ algorithmId, sampleArray: customArray }: PredictNe
                   key={idx}
                   onClick={() => handleSelectOption(idx)}
                   disabled={isAnswered}
-                  className={`p-4 rounded-xl border text-left text-xs sm:text-sm font-semibold transition-all flex items-center justify-between gap-2 ${style}`}
+                  className={`p-4 rounded-xl border text-left text-xs sm:text-sm font-semibold transition-all flex items-center justify-between gap-2 cursor-pointer ${style}`}
                 >
                   <span>{option}</span>
-                  {isAnswered && isCorrect && <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />}
-                  {isAnswered && isSelected && !isCorrect && <XCircle className="h-4 w-4 text-rose-400 shrink-0" />}
+                  {isAnswered && isCorrect && <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0" />}
+                  {isAnswered && isSelected && !isCorrect && <XCircle className="h-4 w-4 text-rose-500 shrink-0" />}
                 </button>
               );
             })}
@@ -320,8 +330,8 @@ export function PredictNext({ algorithmId, sampleArray: customArray }: PredictNe
               <div
                 className={`p-4 rounded-xl border text-xs sm:text-sm leading-relaxed ${
                   selectedOption === activeRound.correctOptionIndex
-                    ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-200"
-                    : "border-amber-500/40 bg-amber-500/10 text-amber-200"
+                    ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-800 dark:text-emerald-200"
+                    : "border-amber-500/40 bg-amber-500/10 text-amber-800 dark:text-amber-200"
                 }`}
               >
                 <strong>
@@ -333,7 +343,7 @@ export function PredictNext({ algorithmId, sampleArray: customArray }: PredictNe
               <div className="flex justify-end">
                 <button
                   onClick={handleNextRound}
-                  className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 px-5 py-2.5 text-xs font-semibold text-white hover:from-purple-500 transition-all active:scale-95 shadow-md shadow-purple-500/20"
+                  className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 px-5 py-2.5 text-xs font-semibold text-white hover:from-purple-500 transition-all active:scale-95 shadow-md shadow-purple-500/20 cursor-pointer"
                 >
                   <span>{currentRoundIdx === rounds.length - 1 ? "Complete Prediction Session" : "Next Round"}</span>
                   <ArrowRight className="h-4 w-4" />
@@ -350,9 +360,9 @@ export function PredictNext({ algorithmId, sampleArray: customArray }: PredictNe
           </div>
 
           <div>
-            <h4 className="text-xl font-bold text-white">Prediction Session Completed!</h4>
+            <h4 className="text-xl font-bold text-foreground">Prediction Session Completed!</h4>
             <p className="text-sm text-muted-foreground mt-1">
-              You accurately predicted <strong className="text-purple-400">{score}</strong> out of{" "}
+              You accurately predicted <strong className="text-purple-600 dark:text-purple-400">{score}</strong> out of{" "}
               <strong>{rounds.length}</strong> operations!
             </p>
           </div>
@@ -360,7 +370,7 @@ export function PredictNext({ algorithmId, sampleArray: customArray }: PredictNe
           <div className="pt-2 flex justify-center">
             <button
               onClick={handleRestart}
-              className="inline-flex items-center gap-2 rounded-xl border border-border/80 bg-secondary px-4 py-2 text-xs font-semibold text-foreground hover:bg-secondary/80 transition-all"
+              className="inline-flex items-center gap-2 rounded-xl border border-border bg-secondary px-4 py-2 text-xs font-semibold text-foreground hover:bg-secondary/80 transition-all cursor-pointer"
             >
               <RotateCcw className="h-3.5 w-3.5" />
               <span>Try Again</span>

@@ -143,7 +143,7 @@ export function SortingVisualizer() {
     (op: SortOperation, currentArr: number[]): number[] => {
       const nextArr = [...currentArr];
       const meta = ALGORITHMS[selectedAlgorithm];
-      const line = meta.highlightLine(op);
+      const line = meta?.highlightLine ? meta.highlightLine(op) : null;
       setCurrentLineNumber(line);
 
       if (op.description) {
@@ -223,7 +223,7 @@ export function SortingVisualizer() {
     let currentOps = operations;
     if (currentOps.length === 0) {
       const runner = ALGORITHM_RUNNERS[selectedAlgorithm];
-      currentOps = runner(array);
+      currentOps = runner ? runner(array) : [];
       setOperations(currentOps);
     }
 
@@ -267,7 +267,7 @@ export function SortingVisualizer() {
   const handleStart = useCallback(() => {
     clearTimer();
     const runner = ALGORITHM_RUNNERS[selectedAlgorithm];
-    const ops = runner(originalArray);
+    const ops = runner ? runner(originalArray) : [];
     setOperations(ops);
     setArray([...originalArray]);
     setCurrentStepIndex(0);

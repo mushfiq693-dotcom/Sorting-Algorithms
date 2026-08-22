@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { LEARNING_PATH, LearningStep } from "@/data/learningPath";
-import { GlossaryModal } from "@/components/glossary/GlossaryModal";
 import { AmbientSortLogo } from "@/components/brand/AmbientSortLogo";
 import {
   GraduationCap,
@@ -12,18 +11,20 @@ import {
   ArrowRight,
   Sparkles,
   BookOpen,
-  ArrowLeft,
   Circle,
   Lightbulb,
   Zap,
+  BarChart3,
 } from "lucide-react";
 
 import { useProgressSync } from "@/hooks/useProgressSync";
 import { AuthButton } from "@/components/auth/AuthButton";
+import { NotificationBell } from "@/components/notifications/NotificationBell";
+import { ThemeToggle } from "@/components/theme/ThemeToggle";
 
 export default function LearnPage() {
-  const [isGlossaryOpen, setIsGlossaryOpen] = useState(false);
   const [completedSteps, setCompletedSteps] = useState<string[]>([]);
+  const [categoryFilter, setCategoryFilter] = useState<"all" | "sorting" | "data-structure">("all");
   const { syncStep } = useProgressSync();
 
   // Load completed steps from localStorage and sync
@@ -54,12 +55,16 @@ export default function LearnPage() {
     });
   };
 
+  const filteredSteps = LEARNING_PATH.filter((s) =>
+    categoryFilter === "all" ? true : s.category === categoryFilter
+  );
+
   const progressPercent = Math.round(
     (completedSteps.length / LEARNING_PATH.length) * 100
   );
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#070b12] text-foreground selection:bg-cyan-500/30 selection:text-cyan-200">
+    <div className="flex flex-col min-h-screen bg-background text-foreground selection:bg-cyan-500/30 selection:text-cyan-600 dark:selection:text-cyan-200 transition-colors duration-150">
       {/* Top Navbar */}
       <header className="sticky top-0 z-40 w-full border-b border-border/60 bg-background/80 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
@@ -69,7 +74,7 @@ export default function LearnPage() {
                 <GraduationCap className="h-5 w-5 text-white" />
               </div>
               <div className="flex items-center gap-2">
-                <span className="font-bold text-base tracking-tight bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent">
+                <span className="font-bold text-base tracking-tight text-foreground font-sans">
                   AlgoHub
                 </span>
                 <AmbientSortLogo />
@@ -79,29 +84,23 @@ export default function LearnPage() {
 
           <div className="flex items-center gap-2 sm:gap-3">
             <Link
-              href="/docs"
-              className="inline-flex items-center gap-1.5 rounded-xl border border-cyan-500/30 bg-cyan-500/10 px-3 py-1.5 text-xs font-semibold text-cyan-300 hover:bg-cyan-500/20 transition-all active:scale-95 shadow-sm"
+              href="/dashboard"
+              className="inline-flex items-center gap-1.5 rounded-xl border border-cyan-500/30 bg-cyan-500/10 px-3 py-1.5 text-xs font-semibold text-cyan-600 dark:text-cyan-300 hover:bg-cyan-500/20 transition-all active:scale-95 shadow-sm"
             >
-              <BookOpen className="h-3.5 w-3.5" />
-              <span>Docs & Course</span>
+              <BarChart3 className="h-3.5 w-3.5" />
+              <span>My Progress</span>
             </Link>
-
-            <button
-              onClick={() => setIsGlossaryOpen(true)}
-              className="inline-flex items-center gap-1.5 rounded-xl border border-border/80 bg-secondary/80 px-3 py-1.5 text-xs font-semibold text-foreground hover:bg-secondary hover:text-cyan-400 transition-all active:scale-95"
-            >
-              <BookOpen className="h-3.5 w-3.5 text-cyan-400" />
-              <span className="hidden sm:inline">Glossary</span>
-            </button>
 
             <Link
-              href="/"
-              className="inline-flex items-center gap-1.5 rounded-xl border border-border/80 bg-secondary/80 px-3 py-1.5 text-xs font-semibold text-foreground hover:bg-secondary hover:text-cyan-400 transition-all active:scale-95"
+              href="/docs"
+              className="inline-flex items-center gap-1.5 rounded-xl border border-border bg-secondary/80 px-3 py-1.5 text-xs font-semibold text-foreground hover:bg-secondary hover:text-cyan-500 transition-all active:scale-95"
             >
-              <ArrowLeft className="h-4 w-4" />
-              <span>Visualizer</span>
+              <BookOpen className="h-3.5 w-3.5 text-cyan-500" />
+              <span className="hidden sm:inline">Docs & Course</span>
             </Link>
 
+            <ThemeToggle />
+            <NotificationBell />
             <AuthButton />
           </div>
         </div>
@@ -110,25 +109,25 @@ export default function LearnPage() {
       <main className="flex-1 max-w-5xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-12">
         {/* Header Hero */}
         <div className="text-center max-w-3xl mx-auto mb-10">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-cyan-500/30 bg-cyan-500/10 text-cyan-400 text-xs font-medium mb-4 backdrop-blur-md">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-cyan-500/30 bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 text-xs font-medium mb-4 backdrop-blur-md">
             <Sparkles className="h-3.5 w-3.5" />
             <span>Beginner-First Structured Roadmap</span>
           </div>
 
-          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-white leading-tight">
-            Sorting Algorithms Learning Path
+          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-foreground leading-tight">
+            AlgoHub Curriculum & Learning Path
           </h1>
           <p className="mt-3 text-sm sm:text-base text-muted-foreground leading-relaxed">
-            Master the core concepts of algorithmic thinking in the ideal conceptual order. Each lesson breaks down the intuition, interactive visualization, code dissection, complexity reasoning, and live debugger.
+            Master the core concepts of algorithms and data structures in the ideal conceptual order. Each lesson breaks down intuition, interactive visualizers, code dissection, complexity, and practice.
           </p>
 
           {/* Progress Tracker Bar */}
-          <div className="mt-8 rounded-2xl border border-border/60 bg-card/60 p-4 sm:p-5 backdrop-blur-md shadow-xl text-left">
+          <div className="mt-8 rounded-2xl border border-border bg-card p-4 sm:p-5 backdrop-blur-md shadow-sm dark:shadow-xl text-left">
             <div className="flex items-center justify-between text-xs font-medium mb-2">
-              <span className="text-foreground/90 flex items-center gap-2 font-semibold">
-                <Zap className="h-4 w-4 text-cyan-400" /> Curriculum Progress
+              <span className="text-foreground flex items-center gap-2 font-semibold">
+                <Zap className="h-4 w-4 text-cyan-500" /> Overall Mastery Progress
               </span>
-              <span className="font-mono text-cyan-400 font-bold">
+              <span className="font-mono text-cyan-600 dark:text-cyan-400 font-bold">
                 {completedSteps.length} of {LEARNING_PATH.length} Completed ({progressPercent}%)
               </span>
             </div>
@@ -139,11 +138,45 @@ export default function LearnPage() {
               />
             </div>
           </div>
+
+          {/* Category Filter Tabs */}
+          <div className="mt-6 flex items-center justify-center gap-2">
+            <button
+              onClick={() => setCategoryFilter("all")}
+              className={`px-4 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+                categoryFilter === "all"
+                  ? "bg-cyan-500 text-slate-950 shadow-md font-bold"
+                  : "border border-border bg-secondary/80 text-muted-foreground hover:text-foreground hover:bg-secondary"
+              }`}
+            >
+              All Topics ({LEARNING_PATH.length})
+            </button>
+            <button
+              onClick={() => setCategoryFilter("sorting")}
+              className={`px-4 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+                categoryFilter === "sorting"
+                  ? "bg-cyan-500 text-slate-950 shadow-md font-bold"
+                  : "border border-border bg-secondary/80 text-muted-foreground hover:text-foreground hover:bg-secondary"
+              }`}
+            >
+              Sorting Algorithms (5)
+            </button>
+            <button
+              onClick={() => setCategoryFilter("data-structure")}
+              className={`px-4 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+                categoryFilter === "data-structure"
+                  ? "bg-cyan-500 text-slate-950 shadow-md font-bold"
+                  : "border border-border bg-secondary/80 text-muted-foreground hover:text-foreground hover:bg-secondary"
+              }`}
+            >
+              Data Structures (2)
+            </button>
+          </div>
         </div>
 
         {/* Sequential Path Timeline Cards */}
-        <div className="relative space-y-6 before:absolute before:inset-0 before:left-5 sm:before:left-7 before:h-full before:w-0.5 before:bg-border/60">
-          {LEARNING_PATH.map((step, idx) => {
+        <div className="relative space-y-6 before:absolute before:inset-0 before:left-5 sm:before:left-7 before:h-full before:w-0.5 before:bg-border">
+          {filteredSteps.map((step) => {
             const isCompleted = completedSteps.includes(step.id);
 
             return (
@@ -157,12 +190,12 @@ export default function LearnPage() {
                   title={isCompleted ? "Mark incomplete" : "Mark completed"}
                   className={`relative z-10 flex h-10 w-10 sm:h-14 sm:w-14 shrink-0 items-center justify-center rounded-2xl border transition-all ${
                     isCompleted
-                      ? "bg-emerald-500/20 border-emerald-400/50 text-emerald-300 shadow-lg shadow-emerald-500/20"
-                      : "bg-card border-border/80 text-foreground/80 hover:border-cyan-400 hover:text-cyan-300 shadow-md"
+                      ? "bg-emerald-500/20 border-emerald-400/50 text-emerald-600 dark:text-emerald-300 shadow-sm"
+                      : "bg-card border-border text-foreground hover:border-cyan-500 hover:text-cyan-500 shadow-sm"
                   }`}
                 >
                   {isCompleted ? (
-                    <CheckCircle2 className="h-5 w-5 sm:h-6 sm:w-6 text-emerald-400" />
+                    <CheckCircle2 className="h-5 w-5 sm:h-6 sm:w-6 text-emerald-500" />
                   ) : (
                     <span className="font-mono font-bold text-sm sm:text-base">
                       0{step.order}
@@ -172,27 +205,27 @@ export default function LearnPage() {
 
                 {/* Lesson Card */}
                 <div
-                  className={`flex-1 rounded-2xl border p-5 sm:p-6 backdrop-blur-md shadow-xl transition-all ${
+                  className={`flex-1 rounded-2xl border p-5 sm:p-6 backdrop-blur-md shadow-sm dark:shadow-xl transition-all ${
                     isCompleted
-                      ? "border-emerald-500/30 bg-card/60"
-                      : "border-border/60 bg-card/60 hover:border-cyan-500/40 hover:bg-card/80"
+                      ? "border-emerald-500/30 bg-card"
+                      : "border-border bg-card hover:border-cyan-500/40"
                   }`}
                 >
                   <div className="flex flex-wrap items-center justify-between gap-2 mb-2.5">
                     <div className="flex items-center gap-2.5">
-                      <h2 className="text-lg font-bold text-white group-hover:text-cyan-300 transition-colors">
+                      <h2 className="text-lg font-bold text-foreground group-hover:text-cyan-500 transition-colors">
                         {step.name}
                       </h2>
-                      <span className="text-[10px] font-mono font-semibold px-2 py-0.5 rounded-md bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+                      <span className="text-[10px] font-mono font-semibold px-2 py-0.5 rounded-md bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-500/20">
                         {step.badge}
                       </span>
                     </div>
 
                     <div className="flex items-center gap-3 text-xs font-mono text-muted-foreground">
                       <span className="flex items-center gap-1">
-                        <Clock className="h-3.5 w-3.5 text-amber-400" /> {step.estimatedTime}
+                        <Clock className="h-3.5 w-3.5 text-amber-500" /> {step.estimatedTime}
                       </span>
-                      <span className="px-2 py-0.5 rounded bg-secondary text-foreground/80">
+                      <span className="px-2 py-0.5 rounded bg-secondary text-foreground">
                         {step.difficulty}
                       </span>
                     </div>
@@ -246,12 +279,6 @@ export default function LearnPage() {
         </div>
       </main>
 
-      {/* Glossary Slide-out/Modal */}
-      <GlossaryModal
-        isOpen={isGlossaryOpen}
-        onClose={() => setIsGlossaryOpen(false)}
-      />
-
       {/* Footer */}
       <footer className="border-t border-border/50 bg-background/80 py-8 text-center text-xs text-muted-foreground mt-12">
         <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
@@ -259,7 +286,7 @@ export default function LearnPage() {
           <div className="flex items-center gap-4 text-xs">
             <Link href="/docs" className="hover:text-foreground">Docs & Course</Link>
             <span>•</span>
-            <Link href="/" className="hover:text-foreground">Visualizer</Link>
+            <Link href="/visualizer" className="hover:text-foreground">Visualizer</Link>
             <span>•</span>
             <Link href="/compare" className="hover:text-foreground">Comparison Matrix</Link>
             <span>•</span>

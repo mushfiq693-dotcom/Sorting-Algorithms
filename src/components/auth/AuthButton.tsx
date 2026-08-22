@@ -13,6 +13,9 @@ import {
   ShieldCheck,
   Clock,
   BookOpen,
+  BarChart3,
+  Award,
+  Bell,
 } from "lucide-react";
 
 export function AuthButton() {
@@ -144,6 +147,11 @@ export function AuthButton() {
                     <span>Review Pending</span>
                   </span>
                 )}
+                {profile?.role === "mentor" && (
+                  <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-300 border border-purple-500/30">
+                    Mentor
+                  </span>
+                )}
                 {profile?.role === "admin" && (
                   <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-300 border border-rose-500/30">
                     Admin
@@ -154,6 +162,35 @@ export function AuthButton() {
 
             {/* Links */}
             <div className="py-1 space-y-0.5 text-xs">
+              <Link
+                href="/dashboard"
+                onClick={() => setIsOpen(false)}
+                className="flex items-center gap-2 px-3 py-2 rounded-xl text-cyan-300 hover:text-white hover:bg-cyan-500/15 font-semibold transition-colors"
+              >
+                <BarChart3 className="h-3.5 w-3.5 text-cyan-400" />
+                <span>My Progress Dashboard</span>
+              </Link>
+
+              <Link
+                href="/notifications"
+                onClick={() => setIsOpen(false)}
+                className="flex items-center gap-2 px-3 py-2 rounded-xl text-slate-200 hover:text-white hover:bg-cyan-500/15 transition-colors"
+              >
+                <Bell className="h-3.5 w-3.5 text-cyan-400" />
+                <span>Notifications Hub</span>
+              </Link>
+
+              {(profile?.role === "mentor" || profile?.role === "admin") && (
+                <Link
+                  href="/mentor"
+                  onClick={() => setIsOpen(false)}
+                  className="flex items-center gap-2 px-3 py-2 rounded-xl text-purple-300 hover:text-white hover:bg-purple-500/20 font-semibold transition-colors"
+                >
+                  <Award className="h-3.5 w-3.5 text-purple-400" />
+                  <span>Mentor Portal</span>
+                </Link>
+              )}
+
               <Link
                 href="/learn"
                 onClick={() => setIsOpen(false)}

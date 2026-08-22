@@ -24,7 +24,7 @@ interface CodeDebuggerProps {
   initialArray?: number[];
 }
 
-const DEFAULT_DEBUG_ARRAY: Record<AlgorithmId, number[]> = {
+const DEFAULT_DEBUG_ARRAY: Partial<Record<AlgorithmId, number[]>> = {
   bubble: [29, 10, 14, 37, 13, 22, 45, 8],
   selection: [35, 12, 48, 19, 7, 60, 24, 15],
   insertion: [24, 13, 9, 45, 18, 32, 7, 50],
@@ -83,7 +83,7 @@ export function CodeDebugger({ algorithmId, initialArray }: CodeDebuggerProps) {
       }
 
       if (idx === limit - 1) {
-        line = meta.highlightLine(op);
+        line = meta?.highlightLine ? meta.highlightLine(op) : null;
         desc = op.description || "";
         if (op.snapshot) {
           vars = { ...op.snapshot };
@@ -152,15 +152,15 @@ export function CodeDebugger({ algorithmId, initialArray }: CodeDebuggerProps) {
   const isRecursive = algorithmId === "merge" || algorithmId === "quick";
 
   return (
-    <div className="flex flex-col gap-5 rounded-2xl border border-white/[0.08] bg-[#0b101d]/90 p-4 sm:p-6 backdrop-blur-xl shadow-2xl">
+    <div className="flex flex-col gap-5 rounded-2xl border border-border bg-card p-4 sm:p-6 backdrop-blur-xl shadow-sm dark:shadow-2xl">
       {/* Header & Controls */}
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800 pb-4">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-4">
         <div>
-          <h3 className="text-sm sm:text-base font-bold text-white flex items-center gap-2">
-            <Terminal className="h-4 w-4 text-cyan-400" />
+          <h3 className="text-sm sm:text-base font-bold text-foreground flex items-center gap-2">
+            <Terminal className="h-4 w-4 text-cyan-500" />
             <span>Interactive Code Debugger</span>
           </h3>
-          <p className="text-xs text-slate-400 mt-0.5">
+          <p className="text-xs text-muted-foreground mt-0.5">
             Step through C++ execution line-by-line with live scope variables & call stack.
           </p>
         </div>
@@ -172,7 +172,7 @@ export function CodeDebugger({ algorithmId, initialArray }: CodeDebuggerProps) {
             disabled={isAtStart || isPlaying}
             aria-label="Step Back one operation"
             title="Step Back one operation"
-            className="inline-flex items-center gap-1.5 rounded-xl border border-slate-700 bg-slate-800/80 px-3 py-2 text-xs font-bold text-slate-200 hover:bg-slate-700 hover:text-cyan-300 transition-all disabled:opacity-30 disabled:cursor-not-allowed active:scale-95"
+            className="inline-flex items-center gap-1.5 rounded-xl border border-border bg-secondary/80 px-3 py-2 text-xs font-bold text-foreground hover:bg-secondary hover:text-cyan-500 transition-all disabled:opacity-30 disabled:cursor-not-allowed active:scale-95 cursor-pointer"
           >
             <StepBack className="h-3.5 w-3.5" />
             <span>Step Back</span>
@@ -183,7 +183,7 @@ export function CodeDebugger({ algorithmId, initialArray }: CodeDebuggerProps) {
             disabled={isAtEnd || isPlaying}
             aria-label="Step Into next operation"
             title="Step Into next operation"
-            className="btn-compare-hover inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-500 px-3.5 py-2 text-xs font-extrabold text-slate-950 shadow-md shadow-cyan-500/20 transition-all disabled:opacity-30 disabled:cursor-not-allowed active:scale-95"
+            className="btn-compare-hover inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-500 px-3.5 py-2 text-xs font-extrabold text-slate-950 shadow-md shadow-cyan-500/20 transition-all disabled:opacity-30 disabled:cursor-not-allowed active:scale-95 cursor-pointer"
           >
             <StepForward className="h-3.5 w-3.5" />
             <span>Step Into</span>
@@ -193,10 +193,10 @@ export function CodeDebugger({ algorithmId, initialArray }: CodeDebuggerProps) {
             onClick={() => setIsPlaying(!isPlaying)}
             disabled={isAtEnd}
             aria-label={isPlaying ? "Pause execution" : "Run execution"}
-            className={`inline-flex items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-semibold transition-all active:scale-95 ${
+            className={`inline-flex items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-semibold transition-all active:scale-95 cursor-pointer ${
               isPlaying
-                ? "bg-amber-500/20 text-amber-300 border border-amber-500/40"
-                : "bg-secondary text-foreground hover:bg-secondary/80 border border-border/60"
+                ? "bg-amber-500/20 text-amber-600 dark:text-amber-300 border border-amber-500/40"
+                : "bg-secondary text-foreground hover:bg-secondary/80 border border-border"
             }`}
           >
             {isPlaying ? (
@@ -213,7 +213,7 @@ export function CodeDebugger({ algorithmId, initialArray }: CodeDebuggerProps) {
           <button
             onClick={handleReset}
             aria-label="Reset debugger"
-            className="inline-flex items-center gap-1.5 rounded-xl border border-border/80 bg-secondary/80 px-3 py-2 text-xs font-semibold text-muted-foreground hover:text-foreground transition-all active:scale-95"
+            className="inline-flex items-center gap-1.5 rounded-xl border border-border bg-secondary/80 px-3 py-2 text-xs font-semibold text-muted-foreground hover:text-foreground transition-all active:scale-95 cursor-pointer"
           >
             <RotateCcw className="h-3.5 w-3.5" />
             <span>Reset</span>
@@ -222,12 +222,12 @@ export function CodeDebugger({ algorithmId, initialArray }: CodeDebuggerProps) {
       </div>
 
       {/* Progress & Live Context Notice */}
-      <div className="flex flex-wrap items-center justify-between gap-3 text-xs font-mono bg-background/60 p-3 rounded-xl border border-border/50">
-        <div className="flex items-center gap-2 text-foreground/90">
-          <Activity className="h-3.5 w-3.5 text-cyan-400" />
+      <div className="flex flex-wrap items-center justify-between gap-3 text-xs font-mono bg-secondary/50 p-3 rounded-xl border border-border">
+        <div className="flex items-center gap-2 text-foreground">
+          <Activity className="h-3.5 w-3.5 text-cyan-500" />
           <span>Step {currentIndex} / {operations.length}</span>
           {isAtEnd && (
-            <span className="inline-flex items-center gap-1 text-emerald-400 font-bold ml-2">
+            <span className="inline-flex items-center gap-1 text-emerald-500 font-bold ml-2">
               <CheckCircle2 className="h-3.5 w-3.5" /> Completed
             </span>
           )}
@@ -242,7 +242,7 @@ export function CodeDebugger({ algorithmId, initialArray }: CodeDebuggerProps) {
             step="100"
             value={speed}
             onChange={(e) => setSpeed(Number(e.target.value))}
-            className="h-1.5 w-20 accent-cyan-400 bg-secondary rounded cursor-pointer"
+            className="h-1.5 w-20 accent-cyan-500 bg-secondary rounded cursor-pointer"
           />
           <span>{speed}ms</span>
         </div>
@@ -262,9 +262,9 @@ export function CodeDebugger({ algorithmId, initialArray }: CodeDebuggerProps) {
         {/* Right Column: Live Variables & Call Stack Panels */}
         <div className="lg:col-span-5 flex flex-col gap-4">
           {/* Live Scope Variables Panel */}
-          <div className="rounded-2xl border border-border/60 bg-[#0d1117] p-4 shadow-xl">
-            <div className="flex items-center justify-between border-b border-border/60 pb-2.5 mb-3">
-              <h4 className="text-xs font-bold font-mono text-cyan-400 flex items-center gap-1.5 uppercase tracking-wider">
+          <div className="rounded-2xl border border-border bg-secondary/40 p-4 shadow-sm dark:shadow-xl">
+            <div className="flex items-center justify-between border-b border-border pb-2.5 mb-3">
+              <h4 className="text-xs font-bold font-mono text-cyan-600 dark:text-cyan-400 flex items-center gap-1.5 uppercase tracking-wider">
                 <Variable className="h-3.5 w-3.5" /> Live Scope Variables
               </h4>
               <span className="text-[10px] font-mono text-muted-foreground">
@@ -281,10 +281,10 @@ export function CodeDebugger({ algorithmId, initialArray }: CodeDebuggerProps) {
                   .map(([key, val]) => (
                     <div
                       key={key}
-                      className="flex items-center justify-between py-1 px-2.5 rounded-lg bg-background/50 border border-border/40"
+                      className="flex items-center justify-between py-1 px-2.5 rounded-lg bg-card border border-border"
                     >
-                      <span className="text-slate-400 font-semibold">{key}:</span>
-                      <span className="text-cyan-300 font-bold bg-cyan-500/10 px-2 py-0.5 rounded border border-cyan-500/20">
+                      <span className="text-muted-foreground font-semibold">{key}:</span>
+                      <span className="text-cyan-700 dark:text-cyan-300 font-bold bg-cyan-500/10 px-2 py-0.5 rounded border border-cyan-500/20">
                         {String(val)}
                       </span>
                     </div>
@@ -292,7 +292,7 @@ export function CodeDebugger({ algorithmId, initialArray }: CodeDebuggerProps) {
               )}
 
               {/* Current Array Slice Snapshot */}
-              <div className="mt-3 pt-2.5 border-t border-border/40">
+              <div className="mt-3 pt-2.5 border-t border-border">
                 <span className="text-[11px] text-muted-foreground mb-1 block">
                   arr[] values:
                 </span>
@@ -300,7 +300,7 @@ export function CodeDebugger({ algorithmId, initialArray }: CodeDebuggerProps) {
                   {currentArray.map((val, idx) => (
                     <span
                       key={idx}
-                      className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-secondary/80 border border-border/60 text-slate-300"
+                      className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-card border border-border text-foreground"
                     >
                       {val}
                     </span>
@@ -312,9 +312,9 @@ export function CodeDebugger({ algorithmId, initialArray }: CodeDebuggerProps) {
 
           {/* Call Stack Panel (Merge & Quick Sort) */}
           {isRecursive && (
-            <div className="rounded-2xl border border-border/60 bg-[#0d1117] p-4 shadow-xl">
-              <div className="flex items-center justify-between border-b border-border/60 pb-2.5 mb-3">
-                <h4 className="text-xs font-bold font-mono text-purple-400 flex items-center gap-1.5 uppercase tracking-wider">
+            <div className="rounded-2xl border border-border bg-secondary/40 p-4 shadow-sm dark:shadow-xl">
+              <div className="flex items-center justify-between border-b border-border pb-2.5 mb-3">
+                <h4 className="text-xs font-bold font-mono text-purple-600 dark:text-purple-400 flex items-center gap-1.5 uppercase tracking-wider">
                   <Layers className="h-3.5 w-3.5" /> Call Stack (Recursion Depth)
                 </h4>
                 <span className="text-[10px] font-mono text-muted-foreground">
@@ -333,15 +333,15 @@ export function CodeDebugger({ algorithmId, initialArray }: CodeDebuggerProps) {
                       key={frame.id}
                       className={`flex items-center justify-between p-2 rounded-lg border text-[11px] ${
                         frameIdx === 0
-                          ? "bg-purple-500/20 border-purple-400/50 text-purple-200 font-bold"
-                          : "bg-background/40 border-border/40 text-muted-foreground"
+                          ? "bg-purple-500/20 border-purple-400/50 text-purple-700 dark:text-purple-200 font-bold"
+                          : "bg-card border-border text-muted-foreground"
                       }`}
                     >
                       <span className="flex items-center gap-1.5">
-                        <span className="text-purple-400">↳</span> {frame.label}
+                        <span className="text-purple-500">↳</span> {frame.label}
                       </span>
                       {frameIdx === 0 && (
-                        <span className="text-[9px] px-1.5 py-0.5 rounded bg-purple-500/30 text-purple-200">
+                        <span className="text-[9px] px-1.5 py-0.5 rounded bg-purple-500/30 text-purple-700 dark:text-purple-200">
                           Active Frame
                         </span>
                       )}
@@ -353,10 +353,10 @@ export function CodeDebugger({ algorithmId, initialArray }: CodeDebuggerProps) {
           )}
 
           {/* Contextual In-Context Explanation Box */}
-          <div className="rounded-2xl border border-border/60 bg-background/70 p-3.5 text-xs text-foreground/90 leading-relaxed font-mono flex items-start gap-2.5">
-            <Info className="h-4 w-4 text-cyan-400 shrink-0 mt-0.5" />
+          <div className="rounded-2xl border border-border bg-secondary/60 p-3.5 text-xs text-foreground leading-relaxed font-mono flex items-start gap-2.5">
+            <Info className="h-4 w-4 text-cyan-500 shrink-0 mt-0.5" />
             <p>
-              <strong className="text-cyan-300 font-bold block mb-0.5">
+              <strong className="text-cyan-700 dark:text-cyan-300 font-bold block mb-0.5">
                 Current Execution Step:
               </strong>
               {explanation || "Click 'Step Into' to begin stepping through code."}

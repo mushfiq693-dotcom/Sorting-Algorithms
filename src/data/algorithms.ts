@@ -9,6 +9,7 @@ export const ALGORITHMS: Record<AlgorithmId, AlgorithmMetadata> = {
   bubble: {
     id: "bubble",
     name: "Bubble Sort",
+    category: "sorting",
     shortDescription: "Repeatedly compares adjacent elements and swaps them if out of order.",
     description:
       "Bubble Sort repeatedly steps through the list, compares adjacent elements, and swaps them if they are in the wrong order. The pass through the list is repeated until the list is sorted. The largest unsorted element 'bubbles' up to its correct position at the end of each pass.",
@@ -49,6 +50,7 @@ export const ALGORITHMS: Record<AlgorithmId, AlgorithmMetadata> = {
   selection: {
     id: "selection",
     name: "Selection Sort",
+    category: "sorting",
     shortDescription: "Finds the minimum element from unsorted part and swaps it to the front.",
     description:
       "Selection Sort divides the array into a sorted and an unsorted region. In each iteration, it searches the entire unsorted region for the minimum element, and then performs a single swap to place it at the end of the sorted region.",
@@ -86,6 +88,7 @@ export const ALGORITHMS: Record<AlgorithmId, AlgorithmMetadata> = {
   insertion: {
     id: "insertion",
     name: "Insertion Sort",
+    category: "sorting",
     shortDescription: "Builds sorted array one element at a time by shifting larger elements right.",
     description:
       "Insertion Sort works similarly to the way you sort playing cards in your hands. It iterates through the array, extracts the current element ('key'), and shifts all larger elements in the sorted portion to the right until the correct slot for the key is found.",
@@ -127,6 +130,7 @@ export const ALGORITHMS: Record<AlgorithmId, AlgorithmMetadata> = {
   merge: {
     id: "merge",
     name: "Merge Sort",
+    category: "sorting",
     shortDescription: "Recursively splits array in half, sorts each half, and merges them.",
     description:
       "Merge Sort is an efficient, general-purpose, divide-and-conquer algorithm. It divides the unsorted array into n subarrays, each containing one element, and repeatedly merges subarrays to produce new sorted subarrays until there is only one remaining sorted array.",
@@ -177,6 +181,7 @@ void mergeSort(vector<int>& arr, int left, int right) {
   quick: {
     id: "quick",
     name: "Quick Sort",
+    category: "sorting",
     shortDescription: "Partitions array around a chosen pivot and recursively sorts subarrays.",
     description:
       "Quick Sort is an efficient, in-place, divide-and-conquer sorting algorithm. It selects a 'pivot' element from the array and partitions the other elements into two sub-arrays according to whether they are less than or greater than the pivot. Sub-arrays are then sorted recursively.",
@@ -227,10 +232,185 @@ void quickSort(vector<int>& arr, int low, int high) {
       }
     },
   },
+  stack: {
+    id: "stack",
+    name: "Stack",
+    category: "data-structure",
+    shortDescription: "LIFO (Last-In-First-Out) container with O(1) push, pop, and top operations.",
+    description:
+      "A Stack is a linear data structure following the Last-In, First-Out (LIFO) principle. Elements are added (pushed) and removed (popped) exclusively from one end, known as the top. Perfect for function call management, expression parsing, and backtracking undo buffers.",
+    complexity: {
+      best: "O(1)",
+      average: "O(1)",
+      worst: "O(1)",
+      space: "O(n)",
+      spaceNote: "O(1) auxiliary space per operation; O(n) total storage for n elements.",
+      operations: [
+        { name: "push(x)", time: "O(1)", space: "O(1)", description: "Inserts element x onto top of stack." },
+        { name: "pop()", time: "O(1)", space: "O(1)", description: "Removes element from top of stack." },
+        { name: "top() / peek()", time: "O(1)", space: "O(1)", description: "Returns top element without removing." },
+        { name: "empty()", time: "O(1)", space: "O(1)", description: "Checks whether stack contains 0 items." },
+      ],
+    },
+    cppCode: `// 1. Array-Based Stack Implementation
+class ArrayStack {
+private:
+    static const int MAX_SIZE = 1000;
+    int arr[MAX_SIZE];
+    int topIndex;
+public:
+    ArrayStack() : topIndex(-1) {}
+    
+    bool push(int val) {
+        if (topIndex >= MAX_SIZE - 1) return false; // Stack Overflow
+        arr[++topIndex] = val;
+        return true;
+    }
+    
+    bool pop() {
+        if (isEmpty()) return false; // Stack Underflow
+        topIndex--;
+        return true;
+    }
+    
+    int peek() const {
+        if (isEmpty()) throw runtime_error("Stack is empty");
+        return arr[topIndex];
+    }
+    
+    bool isEmpty() const { return topIndex == -1; }
 };
 
-// All 5 algorithms active in Phase 2
-export const ALL_ALGORITHMS: AlgorithmId[] = [
+// 2. Linked-List-Based Dynamic Stack
+struct Node {
+    int data;
+    Node* next;
+    Node(int val) : data(val), next(nullptr) {}
+};
+
+class LinkedListStack {
+private:
+    Node* head;
+public:
+    LinkedListStack() : head(nullptr) {}
+    
+    void push(int val) {
+        Node* newNode = new Node(val);
+        newNode->next = head;
+        head = newNode;
+    }
+    
+    bool pop() {
+        if (!head) return false;
+        Node* temp = head;
+        head = head->next;
+        delete temp;
+        return true;
+    }
+    
+    int top() const {
+        if (!head) throw runtime_error("Empty Stack");
+        return head->data;
+    }
+};`,
+  },
+  queue: {
+    id: "queue",
+    name: "Queue",
+    category: "data-structure",
+    shortDescription: "FIFO (First-In-First-Out) container with O(1) enqueue and dequeue operations.",
+    description:
+      "A Queue is a linear data structure following the First-In, First-Out (FIFO) principle. Elements enter at the rear (enqueue) and exit from the front (dequeue). Essential for breadth-first search (BFS), task scheduling, and asynchronous message buffers.",
+    complexity: {
+      best: "O(1)",
+      average: "O(1)",
+      worst: "O(1)",
+      space: "O(n)",
+      spaceNote: "O(1) auxiliary space per operation; O(n) total storage for n elements.",
+      operations: [
+        { name: "enqueue(x) / push(x)", time: "O(1)", space: "O(1)", description: "Inserts element x at rear of queue." },
+        { name: "dequeue() / pop()", time: "O(1)", space: "O(1)", description: "Removes element from front of queue." },
+        { name: "front() / peek()", time: "O(1)", space: "O(1)", description: "Returns element at front without removing." },
+        { name: "empty()", time: "O(1)", space: "O(1)", description: "Checks if queue contains 0 elements." },
+      ],
+    },
+    cppCode: `// 1. Circular Array-Based Queue (O(1) with no element shifting)
+class CircularQueue {
+private:
+    int* arr;
+    int frontIdx, rearIdx, count, capacity;
+public:
+    CircularQueue(int cap = 100) : capacity(cap), frontIdx(0), rearIdx(-1), count(0) {
+        arr = new int[capacity];
+    }
+    ~CircularQueue() { delete[] arr; }
+
+    bool enqueue(int val) {
+        if (isFull()) return false; // Overflow
+        rearIdx = (rearIdx + 1) % capacity;
+        arr[rearIdx] = val;
+        count++;
+        return true;
+    }
+
+    bool dequeue() {
+        if (isEmpty()) return false; // Underflow
+        frontIdx = (frontIdx + 1) % capacity;
+        count--;
+        return true;
+    }
+
+    int front() const {
+        if (isEmpty()) throw runtime_error("Queue is empty");
+        return arr[frontIdx];
+    }
+
+    bool isEmpty() const { return count == 0; }
+    bool isFull() const { return count == capacity; }
+};
+
+// 2. Linked-List-Based Dynamic Queue
+struct QNode {
+    int data;
+    QNode* next;
+    QNode(int val) : data(val), next(nullptr) {}
+};
+
+class LinkedListQueue {
+private:
+    QNode *head, *tail;
+public:
+    LinkedListQueue() : head(nullptr), tail(nullptr) {}
+
+    void enqueue(int val) {
+        QNode* newNode = new QNode(val);
+        if (!tail) {
+            head = tail = newNode;
+            return;
+        }
+        tail->next = newNode;
+        tail = newNode;
+    }
+
+    bool dequeue() {
+        if (!head) return false;
+        QNode* temp = head;
+        head = head->next;
+        if (!head) tail = nullptr;
+        delete temp;
+        return true;
+    }
+
+    int front() const {
+        if (!head) throw runtime_error("Empty Queue");
+        return head->data;
+    }
+};`,
+  },
+};
+
+// All 5 Sorting Algorithms
+export const SORTING_ALGORITHMS: AlgorithmId[] = [
   "bubble",
   "selection",
   "insertion",
@@ -238,9 +418,20 @@ export const ALL_ALGORITHMS: AlgorithmId[] = [
   "quick",
 ];
 
-export const ALGORITHM_RUNNERS: Record<
-  AlgorithmId,
-  (arr: number[]) => SortOperation[]
+// All Data Structures
+export const DATA_STRUCTURES: AlgorithmId[] = ["stack", "queue"];
+
+// Backward compatibility alias for sorting visualizer
+export const ALL_ALGORITHMS: AlgorithmId[] = SORTING_ALGORITHMS;
+
+// Global catalog of all topics across all categories
+export const ALL_TOPICS: AlgorithmId[] = [
+  ...SORTING_ALGORITHMS,
+  ...DATA_STRUCTURES,
+];
+
+export const ALGORITHM_RUNNERS: Partial<
+  Record<AlgorithmId, (arr: number[]) => SortOperation[]>
 > = {
   bubble: bubbleSort,
   selection: selectionSort,

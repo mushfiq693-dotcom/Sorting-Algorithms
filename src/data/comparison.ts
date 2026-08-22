@@ -92,3 +92,77 @@ export const COMPARISON_TABLE_DATA: AlgorithmComparisonData[] = [
       "The practical default for fast in-memory array sorting due to superior cache locality and small hidden constant factors. Avoid naive pivot implementations on already-sorted data, or use median-of-three / randomized pivoting.",
   },
 ];
+
+export interface DataStructureComparisonData {
+  id: string;
+  name: string;
+  category: string;
+  invariant: string;
+  insertion: string;
+  deletion: string;
+  peek: string;
+  access: string;
+  search: string;
+  space: string;
+  bestUseCase: string;
+  tradeoffs: string;
+}
+
+export const DATA_STRUCTURE_COMPARISON_DATA: DataStructureComparisonData[] = [
+  {
+    id: "stack",
+    name: "Stack",
+    category: "LIFO Container",
+    invariant: "Last-In, First-Out (LIFO)",
+    insertion: "O(1) [Push to Top]",
+    deletion: "O(1) [Pop from Top]",
+    peek: "O(1) [Top/Peek]",
+    access: "O(n) [Restricted to Top]",
+    search: "O(n)",
+    space: "O(n) total, O(1) auxiliary",
+    bestUseCase: "Function call stacks, recursion, undo/redo buffers, syntax bracket validation, DFS graph traversal.",
+    tradeoffs: "Guarantees O(1) top access with zero element shifting. Cannot inspect or delete arbitrary middle elements without popping.",
+  },
+  {
+    id: "queue",
+    name: "Queue (Circular Buffer)",
+    category: "FIFO Container",
+    invariant: "First-In, First-Out (FIFO)",
+    insertion: "O(1) [Enqueue at Rear]",
+    deletion: "O(1) [Dequeue from Front]",
+    peek: "O(1) [Front/Peek]",
+    access: "O(n) [Restricted to Front]",
+    search: "O(n)",
+    space: "O(n) total, O(1) auxiliary",
+    bestUseCase: "Breadth-First Search (BFS), task scheduling queues, asynchronous message buffers, printer spoolers.",
+    tradeoffs: "Modulo pointer wrapping avoids O(n) array element shifts. Fixed capacity in array implementations unless dynamically resized.",
+  },
+  {
+    id: "array",
+    name: "Array (Contiguous Buffer)",
+    category: "Random Access Sequence",
+    invariant: "Contiguous Memory Indexing",
+    insertion: "O(n) at middle/front, O(1) amortized append",
+    deletion: "O(n) at middle/front, O(1) at end",
+    peek: "O(1) at any index",
+    access: "O(1) [Direct Indexing]",
+    search: "O(n) unsorted, O(log n) sorted",
+    space: "O(n)",
+    bestUseCase: "Frequent random access by index, lookup tables, mathematical matrices, cache-sensitive tight loops.",
+    tradeoffs: "Blazing fast O(1) random access and cache locality, but expensive O(n) insertions and deletions in the middle.",
+  },
+  {
+    id: "linked-list",
+    name: "Singly Linked List",
+    category: "Dynamic Pointer Chain",
+    invariant: "Node Pointer References",
+    insertion: "O(1) at head / known node, O(n) at tail",
+    deletion: "O(1) at head / known node",
+    peek: "O(1) at head",
+    access: "O(n) [Sequential Pointer Hop]",
+    search: "O(n)",
+    space: "O(n) + Pointer Overhead",
+    bestUseCase: "Frequent head insertions/deletions, unbounded dynamic sizing, building blocks for stacks and queues.",
+    tradeoffs: "Dynamic memory without fixed bounds, but poor CPU cache locality and extra memory per node for pointer references.",
+  },
+];

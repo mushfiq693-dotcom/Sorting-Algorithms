@@ -70,16 +70,16 @@ export function HeroAnimation() {
   const maxVal = Math.max(...INITIAL_HERO_ARRAY);
 
   return (
-    <div className="relative w-full max-w-lg mx-auto rounded-2xl border border-white/[0.08] bg-gradient-to-b from-[#0c1220]/90 via-[#070b14]/95 to-[#050811] p-3 sm:p-3.5 shadow-xl backdrop-blur-xl overflow-hidden">
-      {/* Precision Dev-Tool Background Grid */}
-      <div className="absolute inset-0 pointer-events-none bg-[linear-gradient(to_right,#38bdf806_1px,transparent_1px),linear-gradient(to_bottom,#38bdf806_1px,transparent_1px)] bg-[size:1.2rem_1.2rem]" />
+    <div className="relative w-full max-w-lg mx-auto rounded-2xl border border-border bg-card/90 p-3 sm:p-3.5 shadow-xl backdrop-blur-xl overflow-hidden">
+      {/* Precision Background Grid */}
+      <div className="absolute inset-0 pointer-events-none bg-[linear-gradient(to_right,#38bdf808_1px,transparent_1px),linear-gradient(to_bottom,#38bdf808_1px,transparent_1px)] bg-[size:1.2rem_1.2rem]" />
 
       {/* Decorative Header Banner */}
       <div className="flex items-center justify-between mb-2 text-xs font-mono relative z-10">
-        <span className="flex items-center gap-1.5 text-[11px] text-cyan-400 font-bold">
-          <Sparkles className="h-3 w-3 text-cyan-400" /> Live Engine Preview
+        <span className="flex items-center gap-1.5 text-[11px] text-cyan-600 dark:text-cyan-400 font-bold">
+          <Sparkles className="h-3 w-3 text-cyan-500" /> Live Engine Preview
         </span>
-        <span className="text-[10px] bg-cyan-500/10 text-cyan-300 px-2 py-0.5 rounded-full border border-cyan-500/20 font-semibold">
+        <span className="text-[10px] bg-cyan-500/10 text-cyan-600 dark:text-cyan-300 px-2 py-0.5 rounded-full border border-cyan-500/20 font-semibold">
           Continuous Demonstration
         </span>
       </div>

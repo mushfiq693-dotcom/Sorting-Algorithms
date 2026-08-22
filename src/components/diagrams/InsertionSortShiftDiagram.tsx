@@ -77,24 +77,24 @@ export function InsertionSortShiftDiagram() {
   return (
     <div className="flex flex-col gap-4 w-full select-text">
       {/* Header Legend */}
-      <div className="flex flex-wrap items-center justify-between gap-3 p-3 rounded-xl border border-slate-800 bg-[#070b14]/90 text-xs font-mono">
+      <div className="flex flex-wrap items-center justify-between gap-3 p-3 rounded-xl border border-border bg-secondary/50 text-xs font-mono">
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-1.5">
             <span className="h-3 w-3 rounded bg-amber-500 text-slate-950 font-bold flex items-center justify-center text-[8px]">
               K
             </span>
-            <span className="text-amber-300 font-semibold">Lifted Key (Card)</span>
+            <span className="text-amber-700 dark:text-amber-300 font-semibold">Lifted Key (Card)</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="h-3 w-3 rounded bg-rose-500/30 border border-rose-400" />
-            <span className="text-rose-300 font-semibold">Shifted Right (→)</span>
+            <span className="h-3 w-3 rounded bg-rose-500/30 border border-rose-500" />
+            <span className="text-rose-700 dark:text-rose-300 font-semibold">Shifted Right (→)</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="h-3 w-3 rounded bg-emerald-500/30 border border-emerald-400" />
-            <span className="text-emerald-300 font-semibold">Sorted Portion</span>
+            <span className="h-3 w-3 rounded bg-emerald-500/30 border border-emerald-500" />
+            <span className="text-emerald-700 dark:text-emerald-300 font-semibold">Sorted Portion</span>
           </div>
         </div>
-        <span className="text-cyan-400 font-bold">Input: [8, 3, 5, 1, 9, 2]</span>
+        <span className="text-cyan-600 dark:text-cyan-400 font-bold">Input: [8, 3, 5, 1, 9, 2]</span>
       </div>
 
       {/* Snapshots Stack */}
@@ -107,8 +107,8 @@ export function InsertionSortShiftDiagram() {
               key={snap.step}
               className={`flex flex-col lg:flex-row lg:items-center justify-between gap-4 p-4 rounded-xl border transition-all ${
                 isFinal
-                  ? "border-emerald-500/50 bg-[#07130e]/80 shadow-[0_0_20px_rgba(16,185,129,0.1)]"
-                  : "border-slate-800/80 bg-[#0b101d]/90 hover:border-slate-700"
+                  ? "border-emerald-500/50 bg-emerald-500/10 shadow-sm"
+                  : "border-border bg-card hover:bg-secondary/40"
               }`}
             >
               {/* Left description */}
@@ -117,18 +117,18 @@ export function InsertionSortShiftDiagram() {
                   <span
                     className={`text-xs font-mono font-bold px-2 py-0.5 rounded ${
                       isFinal
-                        ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/40"
-                        : "bg-cyan-500/10 text-cyan-300 border border-cyan-500/30"
+                        ? "bg-emerald-500/20 text-emerald-800 dark:text-emerald-300 border border-emerald-500/40"
+                        : "bg-cyan-500/10 text-cyan-700 dark:text-cyan-300 border border-cyan-500/30"
                     }`}
                   >
                     {snap.label}
                   </span>
-                  <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 font-bold">
+                  <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-700 dark:text-amber-300 font-bold">
                     Key: {snap.key}
                   </span>
-                  {isFinal && <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />}
+                  {isFinal && <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0" />}
                 </div>
-                <p className="text-[11px] text-slate-300 leading-relaxed mt-0.5">
+                <p className="text-[11px] text-muted-foreground leading-relaxed mt-0.5">
                   {snap.explanation}
                 </p>
               </div>
@@ -144,22 +144,22 @@ export function InsertionSortShiftDiagram() {
                       <div
                         className={`w-10 h-11 sm:w-12 sm:h-13 rounded-xl flex items-center justify-center font-mono text-sm sm:text-base font-bold transition-all relative ${
                           isFinal
-                            ? "bg-gradient-to-t from-emerald-600 to-emerald-400 text-slate-950 shadow-[0_0_10px_rgba(16,185,129,0.3)]"
+                            ? "bg-gradient-to-t from-emerald-600 to-emerald-500 text-white shadow-sm"
                             : isInsertedKey
-                            ? "bg-amber-400 text-slate-950 font-extrabold shadow-[0_0_14px_rgba(251,191,36,0.5)] scale-105"
+                            ? "bg-amber-400 text-slate-950 font-extrabold shadow-sm scale-105"
                             : isSortedZone
-                            ? "bg-emerald-500/20 text-emerald-300 border border-emerald-400/50"
-                            : "bg-slate-800/80 text-slate-400 border border-slate-700/60"
+                            ? "bg-emerald-500/20 text-emerald-800 dark:text-emerald-300 border border-emerald-500/50"
+                            : "bg-secondary text-muted-foreground border border-border"
                         }`}
                       >
                         {isInsertedKey && !isFinal && (
-                          <span className="absolute -top-2 px-1 py-0.2 rounded bg-amber-400 text-slate-950 text-[7px] font-mono font-bold uppercase">
+                          <span className="absolute -top-2 px-1 py-0.2 rounded bg-amber-500 text-slate-950 text-[7px] font-mono font-bold uppercase">
                             INSERT
                           </span>
                         )}
                         {val}
                       </div>
-                      <span className="text-[9px] font-mono text-slate-500 select-none">
+                      <span className="text-[9px] font-mono text-muted-foreground select-none">
                         [{idx}]
                       </span>
                     </div>

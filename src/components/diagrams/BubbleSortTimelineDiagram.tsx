@@ -65,12 +65,12 @@ export function BubbleSortTimelineDiagram() {
   return (
     <div className="flex flex-col gap-4 w-full select-text">
       {/* Header Info Pill */}
-      <div className="flex flex-wrap items-center justify-between gap-2 p-3 rounded-xl border border-cyan-500/20 bg-cyan-950/20 text-xs font-mono text-cyan-300">
+      <div className="flex flex-wrap items-center justify-between gap-2 p-3 rounded-xl border border-cyan-500/20 bg-secondary/60 text-xs font-mono text-cyan-700 dark:text-cyan-300">
         <span className="flex items-center gap-1.5 font-bold">
-          <GitCompare className="h-4 w-4 text-cyan-400" />
+          <GitCompare className="h-4 w-4 text-cyan-500" />
           Pass Formula: (n - 1) + (n - 2) + ... + 1 = 10 max comparisons
         </span>
-        <span className="text-slate-400">Array length n = 5</span>
+        <span className="text-muted-foreground">Array length n = 5</span>
       </div>
 
       {/* Vertical Timeline Stack */}
@@ -83,10 +83,10 @@ export function BubbleSortTimelineDiagram() {
               key={pass.passNumber}
               className={`flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 rounded-xl border transition-all ${
                 isFinal
-                  ? "border-emerald-500/50 bg-[#07130e]/80 shadow-[0_0_20px_rgba(16,185,129,0.1)]"
+                  ? "border-emerald-500/50 bg-emerald-500/10 shadow-sm"
                   : pIdx === 0
-                  ? "border-slate-800 bg-[#070b14]/90"
-                  : "border-slate-800/80 bg-[#0b101d]/90 hover:border-slate-700"
+                  ? "border-border bg-secondary/30"
+                  : "border-border bg-card hover:bg-secondary/40"
               }`}
             >
               {/* Left: Pass Label & Metric */}
@@ -95,23 +95,23 @@ export function BubbleSortTimelineDiagram() {
                   <span
                     className={`text-xs font-mono font-bold px-2 py-0.5 rounded ${
                       isFinal
-                        ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/40"
+                        ? "bg-emerald-500/20 text-emerald-800 dark:text-emerald-300 border border-emerald-500/40"
                         : pIdx === 0
-                        ? "bg-slate-800 text-slate-300 border border-slate-700"
-                        : "bg-cyan-500/10 text-cyan-300 border border-cyan-500/30"
+                        ? "bg-secondary text-foreground border border-border"
+                        : "bg-cyan-500/10 text-cyan-700 dark:text-cyan-300 border border-cyan-500/30"
                     }`}
                   >
                     {pass.label}
                   </span>
                   {isFinal && (
-                    <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
+                    <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0" />
                   )}
                 </div>
-                <p className="text-[11px] text-slate-400 leading-relaxed">
+                <p className="text-[11px] text-muted-foreground leading-relaxed">
                   {pass.explanation}
                 </p>
                 {pass.comparisons > 0 && (
-                  <span className="text-[10px] font-mono text-amber-400/90 flex items-center gap-1 mt-0.5">
+                  <span className="text-[10px] font-mono text-amber-600 dark:text-amber-400/90 flex items-center gap-1 mt-0.5">
                     <span>Comparisons in this pass:</span>
                     <strong>{pass.comparisons}</strong>
                   </span>
@@ -131,19 +131,19 @@ export function BubbleSortTimelineDiagram() {
                   return (
                     <div key={idx} className="flex flex-col items-center gap-1">
                       <div
-                        className={`w-11 h-12 sm:w-13 sm:h-14 rounded-xl flex items-center justify-center font-mono text-sm sm:text-base font-bold shadow-md transition-all ${
+                        className={`w-11 h-12 sm:w-13 sm:h-14 rounded-xl flex items-center justify-center font-mono text-sm sm:text-base font-bold shadow-sm transition-all ${
                           isFinal
-                            ? "bg-gradient-to-t from-emerald-600 to-emerald-400 text-slate-950 shadow-[0_0_12px_rgba(16,185,129,0.35)]"
+                            ? "bg-gradient-to-t from-emerald-600 to-emerald-500 text-white"
                             : isSorted
-                            ? "bg-emerald-500/20 text-emerald-300 border border-emerald-400/60 shadow-[0_0_8px_rgba(16,185,129,0.2)]"
+                            ? "bg-emerald-500/20 text-emerald-800 dark:text-emerald-300 border border-emerald-500/60"
                             : isNewlySorted
-                            ? "bg-emerald-500/30 text-emerald-200 border-2 border-emerald-400"
-                            : "bg-slate-800/90 text-cyan-200 border border-slate-700/80"
+                            ? "bg-emerald-500/30 text-emerald-800 dark:text-emerald-200 border-2 border-emerald-500"
+                            : "bg-secondary text-foreground border border-border"
                         }`}
                       >
                         {val}
                       </div>
-                      <span className="text-[9px] font-mono text-slate-500 select-none">
+                      <span className="text-[9px] font-mono text-muted-foreground select-none">
                         [{idx}]
                       </span>
                     </div>

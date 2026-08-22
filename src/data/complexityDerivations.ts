@@ -1,4 +1,4 @@
-import { AlgorithmId } from "@/types/sorting";
+import { AlgorithmId, SortingAlgorithmId } from "@/types/sorting";
 
 export interface DerivationStep {
   stepNumber: number;
@@ -36,7 +36,7 @@ export interface AlgorithmDerivation {
   realWorldIntuition: string;
 }
 
-export const COMPLEXITY_DERIVATIONS: Record<AlgorithmId, AlgorithmDerivation> = {
+export const COMPLEXITY_DERIVATIONS: Record<SortingAlgorithmId, AlgorithmDerivation> = {
   bubble: {
     algorithmId: "bubble",
     name: "Bubble Sort",
@@ -354,6 +354,16 @@ export function calculatePredictedOperations(algorithmId: AlgorithmId, n: number
         worstSwaps: worstQuadratic,
         depth: Math.ceil(log2n),
         operationName: "Swaps",
+      };
+    default:
+      return {
+        bestComp: 1,
+        avgComp: 1,
+        worstComp: 1,
+        bestSwaps: 0,
+        worstSwaps: 0,
+        depth: 1,
+        operationName: "Operations",
       };
   }
 }

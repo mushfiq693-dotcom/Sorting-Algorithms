@@ -84,26 +84,26 @@ export function GrowthChart({
   const hoveredPoint = hoverIndex !== null && hoverIndex >= 0 && hoverIndex < dataPoints.length ? dataPoints[hoverIndex] : dataPoints[dataPoints.length - 1];
 
   return (
-    <div className="flex flex-col gap-5 rounded-2xl border border-white/[0.08] bg-[#0b101d]/90 p-5 sm:p-7 backdrop-blur-xl shadow-2xl">
+    <div className="flex flex-col gap-5 rounded-2xl border border-border bg-card p-5 sm:p-7 backdrop-blur-xl shadow-sm dark:shadow-2xl">
       {/* Header */}
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800 pb-4">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-4">
         <div>
-          <span className="text-xs font-mono font-bold uppercase tracking-wider text-cyan-400 flex items-center gap-1.5">
+          <span className="text-xs font-mono font-bold uppercase tracking-wider text-cyan-600 dark:text-cyan-400 flex items-center gap-1.5">
             <TrendingUp className="h-4 w-4" />
             <span>Growth Curves</span>
           </span>
-          <h3 className="text-lg sm:text-xl font-bold text-white font-sans mt-0.5">
+          <h3 className="text-lg sm:text-xl font-bold text-foreground font-sans mt-0.5">
             {title}
           </h3>
-          <p className="text-xs sm:text-sm text-slate-400 mt-1">
+          <p className="text-xs sm:text-sm text-muted-foreground mt-1">
             {subtitle}
           </p>
         </div>
 
         {/* Zoom Range Slider */}
-        <div className="flex items-center gap-2.5 p-2 rounded-xl bg-[#070b14] border border-slate-800">
-          <ZoomIn className="h-4 w-4 text-cyan-400" />
-          <span className="text-xs font-mono text-slate-300 font-bold">Zoom X:</span>
+        <div className="flex items-center gap-2.5 p-2 rounded-xl bg-secondary border border-border">
+          <ZoomIn className="h-4 w-4 text-cyan-500" />
+          <span className="text-xs font-mono text-foreground font-bold">Zoom X:</span>
           <input
             type="range"
             min="20"
@@ -112,16 +112,16 @@ export function GrowthChart({
             value={maxN}
             aria-label="Adjust X-axis maximum range n"
             onChange={(e) => setMaxN(Number(e.target.value))}
-            className="w-28 sm:w-36 h-2 cursor-pointer bg-slate-800 accent-cyan-400 rounded-lg"
+            className="w-28 sm:w-36 h-2 cursor-pointer bg-secondary/80 accent-cyan-500 rounded-lg"
           />
-          <span className="text-xs font-mono text-cyan-300 font-bold w-12">
+          <span className="text-xs font-mono text-cyan-600 dark:text-cyan-400 font-bold w-12">
             n={maxN}
           </span>
         </div>
       </div>
 
       {/* SVG Interactive Chart */}
-      <div className="relative w-full overflow-hidden rounded-xl bg-[#070b14]/90 p-2 sm:p-4 border border-slate-800">
+      <div className="relative w-full overflow-hidden rounded-xl bg-secondary/30 p-2 sm:p-4 border border-border">
         <svg
           viewBox={`0 0 ${svgWidth} ${svgHeight}`}
           className="w-full h-auto select-none"
@@ -148,14 +148,16 @@ export function GrowthChart({
                   y1={y}
                   x2={svgWidth - padding.right}
                   y2={y}
-                  stroke="#1e293b"
+                  stroke="currentColor"
+                  className="text-border"
                   strokeDasharray="4 4"
                 />
                 <text
                   x={padding.left - 8}
                   y={y + 4}
                   textAnchor="end"
-                  fill="#64748b"
+                  fill="currentColor"
+                  className="text-muted-foreground"
                   fontSize="10"
                   fontFamily="monospace"
                 >
@@ -177,13 +179,15 @@ export function GrowthChart({
                   y1={svgHeight - padding.bottom}
                   x2={x}
                   y2={svgHeight - padding.bottom + 5}
-                  stroke="#334155"
+                  stroke="currentColor"
+                  className="text-border"
                 />
                 <text
                   x={x}
                   y={svgHeight - padding.bottom + 18}
                   textAnchor="middle"
-                  fill="#64748b"
+                  fill="currentColor"
+                  className="text-muted-foreground"
                   fontSize="10"
                   fontFamily="monospace"
                 >
@@ -206,7 +210,7 @@ export function GrowthChart({
           <path
             d={pathN}
             fill="none"
-            stroke="#38bdf8"
+            stroke="#0284c7"
             strokeWidth={highlightAlgorithm === "insertion" || highlightAlgorithm === "bubble" ? 2.5 : 1.5}
             strokeOpacity={highlightAlgorithm === "insertion" || highlightAlgorithm === "bubble" ? 1 : 0.6}
           />
@@ -238,7 +242,8 @@ export function GrowthChart({
               y1={padding.top}
               x2={getX(hoveredPoint.n)}
               y2={svgHeight - padding.bottom}
-              stroke="#e2e8f0"
+              stroke="currentColor"
+              className="text-foreground"
               strokeDasharray="3 3"
               strokeWidth="1.5"
             />
@@ -246,26 +251,26 @@ export function GrowthChart({
         </svg>
 
         {/* Hover Inspector Tooltip */}
-        <div className="mt-3 p-3 rounded-xl border border-slate-800 bg-[#0b101d] flex flex-wrap items-center justify-between gap-3 text-xs font-mono">
-          <div className="flex items-center gap-1.5 text-cyan-300 font-bold">
+        <div className="mt-3 p-3 rounded-xl border border-border bg-card flex flex-wrap items-center justify-between gap-3 text-xs font-mono shadow-sm">
+          <div className="flex items-center gap-1.5 text-cyan-600 dark:text-cyan-300 font-bold">
             <span>At Input Size n = {hoveredPoint.n}:</span>
           </div>
 
           <div className="flex flex-wrap items-center gap-3">
-            <span className="text-rose-400 font-bold flex items-center gap-1">
+            <span className="text-rose-500 font-bold flex items-center gap-1">
               <span className="h-2 w-2 rounded-full bg-rose-500" />
               O(n²): {hoveredPoint.oNSquared.toLocaleString()}
             </span>
-            <span className="text-emerald-400 font-bold flex items-center gap-1">
+            <span className="text-emerald-500 font-bold flex items-center gap-1">
               <span className="h-2 w-2 rounded-full bg-emerald-500" />
               O(n log n): {hoveredPoint.oNLogN.toLocaleString()}
             </span>
-            <span className="text-cyan-400 font-bold flex items-center gap-1">
-              <span className="h-2 w-2 rounded-full bg-cyan-400" />
+            <span className="text-sky-500 font-bold flex items-center gap-1">
+              <span className="h-2 w-2 rounded-full bg-sky-500" />
               O(n): {hoveredPoint.oN.toLocaleString()}
             </span>
-            <span className="text-purple-400 font-bold flex items-center gap-1">
-              <span className="h-2 w-2 rounded-full bg-purple-400" />
+            <span className="text-purple-500 font-bold flex items-center gap-1">
+              <span className="h-2 w-2 rounded-full bg-purple-500" />
               O(log n): {hoveredPoint.oLogN.toLocaleString()}
             </span>
           </div>
@@ -273,10 +278,10 @@ export function GrowthChart({
       </div>
 
       {/* Educational Truth in Advertising Disclaimer */}
-      <div className="p-3.5 rounded-xl border border-slate-800 bg-[#070b14]/70 flex items-start gap-2.5 text-xs text-slate-400 font-mono leading-relaxed">
-        <Info className="h-4 w-4 text-cyan-400 shrink-0 mt-0.5" />
+      <div className="p-3.5 rounded-xl border border-border bg-secondary/50 flex items-start gap-2.5 text-xs text-muted-foreground font-mono leading-relaxed">
+        <Info className="h-4 w-4 text-cyan-500 shrink-0 mt-0.5" />
         <p>
-          <strong className="text-slate-300">Theoretical Counts Notice: </strong>
+          <strong className="text-foreground">Theoretical Counts Notice: </strong>
           These curves show exact mathematical operation bounds (comparisons & assignments), not measured wall-clock execution time. Actual CPU runtime also depends on hardware architecture, CPU cache locality, and compiler optimization.
         </p>
       </div>

@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS public.profiles (
   full_name TEXT,
   department TEXT DEFAULT 'CSE',
   student_id TEXT,
-  role TEXT NOT NULL DEFAULT 'student' CHECK (role IN ('student', 'faculty', 'admin')),
+  role TEXT NOT NULL DEFAULT 'student' CHECK (role IN ('student', 'faculty', 'mentor', 'admin')),
   created_at TIMESTAMPTZ NOT NULL DEFAULT timezone('utc'::text, now()),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT timezone('utc'::text, now())
 );
@@ -38,12 +38,54 @@ CREATE TABLE IF NOT EXISTS public.beta_access (
 CREATE INDEX IF NOT EXISTS idx_beta_access_user_id ON public.beta_access(user_id);
 CREATE INDEX IF NOT EXISTS idx_beta_access_status ON public.beta_access(status);
 
--- User Progress & Telemetry Table (Cloud sync for localStorage)
+-- Mentor Applications Table
+CREATE TABLE IF NOT EXISTS public.mentor_applications (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID UNIQUE NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
+  reason TEXT NOT NULL,
+  status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'approved', 'rejected')),
+  reviewed_by UUID REFERENCES public.profiles(id) ON DELETE SET NULL,
+  reviewed_at TIMESTAMPTZ,
+  notes TEXT,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT timezone('utc'::text, now()),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT timezone('utc'::text, now())
+);
+
+CREATE INDEX IF NOT EXISTS idx_mentor_apps_user_id ON public.mentor_applications(user_id);
+CREATE INDEX IF NOT EXISTS idx_mentor_apps_status ON public.mentor_applications(status);
+
+-- Notices Table (Broadcast messages sent by mentors/admins)
+CREATE TABLE IF NOT EXISTS public.notices (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  sender_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
+  title TEXT NOT NULL,
+  message TEXT NOT NULL,
+  target_filter TEXT DEFAULT 'all',
+  created_at TIMESTAMPTZ NOT NULL DEFAULT timezone('utc'::text, now())
+);
+
+CREATE INDEX IF NOT EXISTS idx_notices_sender_id ON public.notices(sender_id);
+CREATE INDEX IF NOT EXISTS idx_notices_created_at ON public.notices(created_at DESC);
+
+-- Notice Reads Table (Tracks per-user read/unread state)
+CREATE TABLE IF NOT EXISTS public.notice_reads (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  notice_id UUID NOT NULL REFERENCES public.notices(id) ON DELETE CASCADE,
+  user_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
+  read_at TIMESTAMPTZ NOT NULL DEFAULT timezone('utc'::text, now()),
+  CONSTRAINT uq_notice_user UNIQUE (notice_id, user_id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_notice_reads_user_id ON public.notice_reads(user_id);
+
+-- User Progress & Telemetry Table (Cloud sync for localStorage & Adaptive Dashboard)
 CREATE TABLE IF NOT EXISTS public.user_progress (
   user_id UUID PRIMARY KEY REFERENCES public.profiles(id) ON DELETE CASCADE,
   completed_steps JSONB NOT NULL DEFAULT '[]'::jsonb,
   completed_docs JSONB NOT NULL DEFAULT '[]'::jsonb,
   quiz_scores JSONB NOT NULL DEFAULT '{}'::jsonb,
+  topic_scores JSONB NOT NULL DEFAULT '{}'::jsonb,
+  activity_history JSONB NOT NULL DEFAULT '[]'::jsonb,
   last_active_at TIMESTAMPTZ NOT NULL DEFAULT timezone('utc'::text, now()),
   created_at TIMESTAMPTZ NOT NULL DEFAULT timezone('utc'::text, now()),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT timezone('utc'::text, now())
@@ -88,6 +130,9 @@ CREATE INDEX IF NOT EXISTS idx_bug_reports_created_at ON public.bug_reports(crea
 
 ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.beta_access ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.mentor_applications ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.notices ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.notice_reads ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.user_progress ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.feedback ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.bug_reports ENABLE ROW LEVEL SECURITY;
@@ -103,10 +148,21 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
 
+-- Helper function: Is Mentor Check
+CREATE OR REPLACE FUNCTION public.is_mentor()
+RETURNS BOOLEAN AS $$
+BEGIN
+  RETURN EXISTS (
+    SELECT 1 FROM public.profiles
+    WHERE id = auth.uid() AND role IN ('mentor', 'admin')
+  );
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
+
 -- Profiles Policies
-CREATE POLICY "profiles_select_own_or_admin"
+CREATE POLICY "profiles_select_own_or_staff"
   ON public.profiles FOR SELECT
-  USING (auth.uid() = id OR public.is_admin());
+  USING (auth.uid() = id OR public.is_mentor() OR public.is_admin());
 
 CREATE POLICY "profiles_update_own_fields"
   ON public.profiles FOR UPDATE
@@ -131,10 +187,24 @@ CREATE POLICY "beta_access_update_admin_only"
   USING (public.is_admin())
   WITH CHECK (public.is_admin());
 
+-- Mentor Applications Policies
+CREATE POLICY "mentor_apps_select_own_or_admin"
+  ON public.mentor_applications FOR SELECT
+  USING (auth.uid() = user_id OR public.is_admin());
+
+CREATE POLICY "mentor_apps_insert_own"
+  ON public.mentor_applications FOR INSERT
+  WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "mentor_apps_update_admin"
+  ON public.mentor_applications FOR UPDATE
+  USING (public.is_admin())
+  WITH CHECK (public.is_admin());
+
 -- User Progress Policies
-CREATE POLICY "user_progress_select_own"
+CREATE POLICY "user_progress_select_own_or_mentor"
   ON public.user_progress FOR SELECT
-  USING (auth.uid() = user_id);
+  USING (auth.uid() = user_id OR public.is_mentor() OR public.is_admin());
 
 CREATE POLICY "user_progress_update_own"
   ON public.user_progress FOR UPDATE
@@ -145,6 +215,27 @@ CREATE POLICY "user_progress_insert_own"
   ON public.user_progress FOR INSERT
   WITH CHECK (auth.uid() = user_id);
 
+-- Notices Policies
+CREATE POLICY "notices_select_authenticated"
+  ON public.notices FOR SELECT
+  USING (auth.role() = 'authenticated');
+
+CREATE POLICY "notices_insert_mentor_or_admin"
+  ON public.notices FOR INSERT
+  WITH CHECK (public.is_mentor() OR public.is_admin());
+
+-- Notice Reads Policies
+CREATE POLICY "notice_reads_select_own"
+  ON public.notice_reads FOR SELECT
+  USING (auth.uid() = user_id);
+
+CREATE POLICY "notice_reads_insert_own"
+  ON public.notice_reads FOR INSERT
+  WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "notice_reads_update_own"
+  ON public.notice_reads FOR UPDATE
+  USING (auth.uid() = user_id)
 -- Feedback Policies
 CREATE POLICY "feedback_insert_authenticated"
   ON public.feedback FOR INSERT

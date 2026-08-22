@@ -1,4 +1,4 @@
-import { AlgorithmId } from "@/types/sorting";
+import { AlgorithmId, SortingAlgorithmId } from "@/types/sorting";
 
 export interface CodingChallenge {
   algorithmId: AlgorithmId;
@@ -16,7 +16,7 @@ export interface CodingChallenge {
   };
 }
 
-export const CODING_CHALLENGES: Record<AlgorithmId, CodingChallenge> = {
+export const CODING_CHALLENGES: Record<SortingAlgorithmId, CodingChallenge> = {
   bubble: {
     algorithmId: "bubble",
     name: "Bubble Sort",

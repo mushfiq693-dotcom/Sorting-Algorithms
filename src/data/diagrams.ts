@@ -121,4 +121,41 @@ export const DIAGRAM_CONFIGS: Record<AlgorithmId, DiagramData> = {
 }`,
     highlightedLine: 7,
   },
+  stack: {
+    algorithmId: "stack",
+    title: "Stack — LIFO Push, Pop & Call Stack Anatomy",
+    subtitle: "A vertical container where insertions and deletions strictly occur at the Top pointer.",
+    caption: "The most recently added element is always the first to be retrieved (Last-In, First-Out).",
+    fixedArray: [10, 20, 30, 40],
+    complexityFormula: "All primary operations: push(x), pop(), top(), isEmpty() = O(1)",
+    complexityExplanation: "Direct index topIndex modification without shifting or scanning elements.",
+    codeSnippet: `class ArrayStack {
+    int arr[1000];
+    int topIndex = -1;
+public:
+    void push(int x) { arr[++topIndex] = x; }
+    void pop() { if (topIndex >= 0) topIndex--; }
+    int top() { return arr[topIndex]; }
+};`,
+    highlightedLine: 5,
+  },
+  queue: {
+    algorithmId: "queue",
+    title: "Queue — FIFO Circular Buffer Ring Architecture",
+    subtitle: "A horizontal container where elements enter at the Rear and exit from the Front using modulo arithmetic.",
+    caption: "The first element to arrive is the first to be processed (First-In, First-Out).",
+    fixedArray: [5, 15, 25, 35],
+    complexityFormula: "All primary operations: enqueue(x), dequeue(), front() = O(1)",
+    complexityExplanation: "Circular modulo pointer wrapping (rear + 1) % capacity avoids O(n) element shifting.",
+    codeSnippet: `class CircularQueue {
+    int arr[8], front = 0, rear = -1, count = 0;
+public:
+    void enqueue(int x) {
+        rear = (rear + 1) % 8;
+        arr[rear] = x;
+        count++;
+    }
+};`,
+    highlightedLine: 5,
+  },
 };

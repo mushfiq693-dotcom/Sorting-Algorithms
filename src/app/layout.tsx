@@ -37,6 +37,7 @@ export const metadata: Metadata = {
 };
 
 import { FeedbackWidget } from "@/components/feedback/FeedbackWidget";
+import { DeveloperCredit } from "@/components/brand/DeveloperCredit";
 
 export default function RootLayout({
   children,
@@ -44,9 +45,28 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark scroll-smooth">
-      <body className={`${outfit.variable} ${jetbrainsMono.variable} font-sans bg-[#050811] text-foreground min-h-screen flex flex-col antialiased selection:bg-cyan-500/30 selection:text-cyan-200`}>
+    <html lang="en" className="dark scroll-smooth" suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  var saved = localStorage.getItem('algohub_theme');
+                  if (saved === 'light') {
+                    document.documentElement.classList.remove('dark');
+                  } else {
+                    document.documentElement.classList.add('dark');
+                  }
+                } catch(e) {}
+              })();
+            `,
+          }}
+        />
+      </head>
+      <body className={`${outfit.variable} ${jetbrainsMono.variable} font-sans bg-background dark:bg-[#050811] text-foreground min-h-screen flex flex-col antialiased selection:bg-cyan-500/30 selection:text-cyan-200`}>
         {children}
+        <DeveloperCredit />
         <FeedbackWidget />
       </body>
     </html>

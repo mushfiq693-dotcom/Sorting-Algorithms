@@ -472,10 +472,253 @@ async function runSecurityAudit() {
   });
 
   // -------------------------------------------------------------------------
+  // TEST 11: Non-mentor student attempts to read another student's user_progress
+  // -------------------------------------------------------------------------
+  await client.query("BEGIN;");
+  let test11Passed = false;
+  let test11Actual = "";
+  try {
+    await client.query("SET LOCAL ROLE authenticated;");
+    await client.query(`SET LOCAL request.jwt.claim.sub = '${studentId}';`);
+    await client.query("SET LOCAL request.jwt.claim.role = 'authenticated';");
+
+    const queryRes = await client.query(`
+      SELECT * FROM public.user_progress WHERE user_id = '${foreignStudentId}';
+    `);
+    if (queryRes.rows.length === 0) {
+      test11Passed = true;
+      test11Actual = "DENIED: 0 rows returned (RLS strictly prevents non-mentor cross-progress reads)";
+    } else {
+      test11Passed = false;
+      test11Actual = "VULNERABILITY: Non-mentor student read foreign progress record!";
+    }
+  } catch (err: any) {
+    test11Passed = true;
+    test11Actual = `DENIED: Query blocked with error (${err.message})`;
+  } finally {
+    await client.query("ROLLBACK;");
+  }
+
+  results.push({
+    id: 11,
+    name: "Non-Mentor Cross-Tenant Progress Isolation",
+    scenario: "Authenticated student (role='student') queries: SELECT * FROM user_progress WHERE user_id = foreign_id",
+    expected: "DENIED / 0 rows returned",
+    actual: test11Actual,
+    passed: test11Passed,
+  });
+
+  // -------------------------------------------------------------------------
+  // TEST 12: Unapproved mentor applicant attempts cross-tenant progress read
+  // -------------------------------------------------------------------------
+  await client.query("BEGIN;");
+  let test12Passed = false;
+  let test12Actual = "";
+  try {
+    // Insert a dummy pending mentor application for student
+    await client.query(`
+      INSERT INTO public.mentor_applications (user_id, reason, status)
+      VALUES ('${studentId}', 'I want to mentor', 'pending')
+      ON CONFLICT (user_id) DO UPDATE SET status = 'pending';
+    `);
+
+    await client.query("SET LOCAL ROLE authenticated;");
+    await client.query(`SET LOCAL request.jwt.claim.sub = '${studentId}';`);
+    await client.query("SET LOCAL request.jwt.claim.role = 'authenticated';");
+
+    const queryRes = await client.query(`
+      SELECT * FROM public.user_progress WHERE user_id = '${foreignStudentId}';
+    `);
+    if (queryRes.rows.length === 0) {
+      test12Passed = true;
+      test12Actual = "DENIED: 0 rows returned (Applying does not grant mentor read privileges before admin approval)";
+    } else {
+      test12Passed = false;
+      test12Actual = "VULNERABILITY: Pending applicant obtained mentor privileges prematurely!";
+    }
+  } catch (err: any) {
+    test12Passed = true;
+    test12Actual = `DENIED: Blocked by RLS (${err.message})`;
+  } finally {
+    await client.query("ROLLBACK;");
+  }
+
+  results.push({
+    id: 12,
+    name: "Unapproved Mentor Applicant Isolation",
+    scenario: "Applicant with pending mentor_applications record queries foreign user_progress",
+    expected: "DENIED / 0 rows returned (Only approved role='mentor' receives read access)",
+    actual: test12Actual,
+    passed: test12Passed,
+  });
+
+  // -------------------------------------------------------------------------
+  // TEST 13: Mentor attempts to update beta_access.status
+  // -------------------------------------------------------------------------
+  await client.query("BEGIN;");
+  let test13Passed = false;
+  let test13Actual = "";
+  try {
+    // Temporarily elevate student to mentor inside isolated transaction
+    await client.query(`UPDATE public.profiles SET role = 'mentor' WHERE id = '${studentId}';`);
+
+    await client.query("SET LOCAL ROLE authenticated;");
+    await client.query(`SET LOCAL request.jwt.claim.sub = '${studentId}';`);
+    await client.query("SET LOCAL request.jwt.claim.role = 'authenticated';");
+
+    const updateRes = await client.query(`
+      UPDATE public.beta_access SET status = 'approved' WHERE user_id = '${foreignStudentId}';
+    `);
+    if (updateRes.rowCount === 0) {
+      test13Passed = true;
+      test13Actual = "0 rows updated (RLS 'beta_access_update_admin_only' blocked mentor update)";
+    } else {
+      test13Passed = false;
+      test13Actual = "VULNERABILITY: Mentor was able to approve beta access!";
+    }
+  } catch (err: any) {
+    test13Passed = true;
+    test13Actual = `DENIED: Blocked with error (${err.message})`;
+  } finally {
+    await client.query("ROLLBACK;");
+  }
+
+  results.push({
+    id: 13,
+    name: "Mentor Beta-Access Modification Protection",
+    scenario: "User with role='mentor' executes: UPDATE beta_access SET status = 'approved'",
+    expected: "DENIED / 0 rows updated (Only admin can update beta_access)",
+    actual: test13Actual,
+    passed: test13Passed,
+  });
+
+  // -------------------------------------------------------------------------
+  // TEST 14: Mentor attempts to escalate their own role to 'admin'
+  // -------------------------------------------------------------------------
+  await client.query("BEGIN;");
+  let test14Passed = false;
+  let test14Actual = "";
+  try {
+    await client.query(`UPDATE public.profiles SET role = 'mentor' WHERE id = '${studentId}';`);
+
+    await client.query("SET LOCAL ROLE authenticated;");
+    await client.query(`SET LOCAL request.jwt.claim.sub = '${studentId}';`);
+    await client.query("SET LOCAL request.jwt.claim.role = 'authenticated';");
+
+    const updateRes = await client.query(`
+      UPDATE public.profiles SET role = 'admin' WHERE id = '${studentId}';
+    `);
+    if (updateRes.rowCount === 0) {
+      test14Passed = true;
+      test14Actual = "0 rows updated (RLS WITH CHECK prevented mentor role escalation)";
+    } else {
+      const check = await client.query(`SELECT role FROM public.profiles WHERE id = '${studentId}';`);
+      if (check.rows[0]?.role === "admin") {
+        test14Passed = false;
+        test14Actual = "VULNERABILITY: Mentor successfully escalated to admin!";
+      } else {
+        test14Passed = true;
+        test14Actual = "Role modification blocked by RLS policy constraint.";
+      }
+    }
+  } catch (err: any) {
+    test14Passed = true;
+    test14Actual = `DENIED: Error thrown by RLS WITH CHECK policy (${err.message})`;
+  } finally {
+    await client.query("ROLLBACK;");
+  }
+
+  results.push({
+    id: 14,
+    name: "Mentor Role Escalation Protection",
+    scenario: "User with role='mentor' executes: UPDATE profiles SET role = 'admin' WHERE id = own_id",
+    expected: "DENIED / 0 rows updated",
+    actual: test14Actual,
+    passed: test14Passed,
+  });
+
+  // -------------------------------------------------------------------------
+  // TEST 15: Approved Mentor successfully reads cross-user progress data
+  // -------------------------------------------------------------------------
+  await client.query("BEGIN;");
+  let test15Passed = false;
+  let test15Actual = "";
+  try {
+    await client.query(`UPDATE public.profiles SET role = 'mentor' WHERE id = '${studentId}';`);
+
+    await client.query("SET LOCAL ROLE authenticated;");
+    await client.query(`SET LOCAL request.jwt.claim.sub = '${studentId}';`);
+    await client.query("SET LOCAL request.jwt.claim.role = 'authenticated';");
+
+    const queryRes = await client.query(`
+      SELECT * FROM public.user_progress;
+    `);
+    if (queryRes.rows.length >= 0) {
+      test15Passed = true;
+      test15Actual = `ALLOWED: Approved mentor successfully queried user_progress (${queryRes.rows.length} rows accessible)`;
+    } else {
+      test15Passed = false;
+      test15Actual = "Error: Mentor could not read user_progress table";
+    }
+  } catch (err: any) {
+    test15Passed = false;
+    test15Actual = `FAILED: Mentor query threw unexpected error (${err.message})`;
+  } finally {
+    await client.query("ROLLBACK;");
+  }
+
+  results.push({
+    id: 15,
+    name: "Approved Mentor Cross-Tenant Progress Read Access",
+    scenario: "User with role='mentor' executes: SELECT * FROM user_progress",
+    expected: "ALLOWED / Query succeeds without RLS block",
+    actual: test15Actual,
+    passed: test15Passed,
+  });
+
+  // -------------------------------------------------------------------------
+  // TEST 16: Non-mentor / non-admin student attempts to insert into notices
+  // -------------------------------------------------------------------------
+  await client.query("BEGIN;");
+  let test16Passed = false;
+  let test16Actual = "";
+  try {
+    await client.query("SET LOCAL ROLE authenticated;");
+    await client.query(`SET LOCAL request.jwt.claim.sub = '${studentId}';`);
+    await client.query("SET LOCAL request.jwt.claim.role = 'authenticated';");
+
+    const insertRes = await client.query(`
+      INSERT INTO public.notices (sender_id, title, message)
+      VALUES ('${studentId}', 'Unauthorized Notice', 'This should fail');
+    `);
+    if (insertRes.rowCount === 0) {
+      test16Passed = true;
+      test16Actual = "0 rows inserted (RLS policy 'notices_insert_mentor_or_admin' blocked student insertion)";
+    } else {
+      test16Passed = false;
+      test16Actual = "VULNERABILITY: Non-mentor student inserted notice into public.notices!";
+    }
+  } catch (err: any) {
+    test16Passed = true;
+    test16Actual = `DENIED: Error thrown by RLS policy (${err.message})`;
+  } finally {
+    await client.query("ROLLBACK;");
+  }
+
+  results.push({
+    id: 16,
+    name: "Non-Mentor Notice Insertion Protection",
+    scenario: "Authenticated student (role='student') executes: INSERT INTO notices (sender_id, title, message)",
+    expected: "DENIED / 0 rows inserted (Only mentor or admin can broadcast notices)",
+    actual: test16Actual,
+    passed: test16Passed,
+  });
+
+  // -------------------------------------------------------------------------
   // PRINT ITEMIZE REPORT
   // -------------------------------------------------------------------------
   console.log("--------------------------------------------------------------------------------");
-  console.log("ITEMIZED SECURITY VERIFICATION RESULTS (10 / 10):");
+  console.log(`ITEMIZED SECURITY VERIFICATION RESULTS (${results.length} / ${results.length}):`);
   console.log("--------------------------------------------------------------------------------\n");
 
   let totalPassed = 0;

@@ -6,7 +6,7 @@ export interface DocsArticle {
   title: string;
   subtitle: string;
   estimatedReadTime: string;
-  category: "Fundamentals" | "Simple Algorithms" | "Divide and Conquer" | "Advanced Analysis" | "Decision Guide";
+  category: "Fundamentals" | "Simple Algorithms" | "Divide and Conquer" | "Advanced Analysis" | "Decision Guide" | "Data Structures";
   content: string; // Markdown / prose structure
   banglaNote?: {
     topic: string;
@@ -961,7 +961,327 @@ When designing a system, use this decision framework to select the optimal sorti
    - **Reason**: Preserves prior column sort orders through strict stability.
     `,
     quizTopicId: "advanced-analysis"
-  }
+  },
+  // ==========================================
+  // LEVEL 5: FUNDAMENTAL DATA STRUCTURES
+  // ==========================================
+  {
+    slug: "stack-data-structure",
+    level: 5,
+    levelTitle: "Level 5: Fundamental Data Structures",
+    order: 1,
+    title: "Stack: LIFO Mechanism & Applications",
+    subtitle: "Understanding Last-In First-Out mechanics, array vs linked-list implementations, call stacks, and expression parsing.",
+    estimatedReadTime: "8 min",
+    category: "Data Structures",
+    content: `
+### What Is a Stack?
+
+A **Stack** is a linear data structure that adheres to the **LIFO (Last-In, First-Out)** principle. This means that the last element added to the stack is always the very first element to be removed.
+
+Imagine a spring-loaded stack of trays in a cafeteria:
+- When clean trays are washed, they are placed on the **top** of the pile.
+- When a customer grabs a tray, they take it from the **top** of the pile.
+- The tray at the very bottom was the first one placed, but it will be the last one taken.
+
+---
+
+### Core Stack Operations & Complexity
+
+All primary stack operations target exclusively the element located at index $\\text{top}$. Because no shifting or traversal across the collection is necessary, each operation executes in strictly **$O(1)$ constant time**:
+
+| Operation | Time Complexity | Space Complexity | Description |
+| :--- | :--- | :--- | :--- |
+| $\\text{push}(x)$ | $O(1)$ | $O(1)$ | Inserts item $x$ onto the top of the stack. |
+| $\\text{pop}()$ | $O(1)$ | $O(1)$ | Removes and discards the top element. |
+| $\\text{top}()$ / $\\text{peek}()$ | $O(1)$ | $O(1)$ | Returns the top element without removal. |
+| $\\text{empty}()$ | $O(1)$ | $O(1)$ | Checks whether the stack contains 0 items. |
+| $\\text{size}()$ | $O(1)$ | $O(1)$ | Returns the current count of elements. |
+
+---
+
+### C++ Implementations: Array vs. Linked List
+
+There are two canonical ways to build a Stack in C++:
+
+#### 1. Fixed-Size Array Stack (Fast & Cache-Friendly)
+\`\`\`cpp
+class ArrayStack {
+private:
+    static const int MAX_SIZE = 1000;
+    int arr[MAX_SIZE];
+    int topIndex;
+
+public:
+    ArrayStack() : topIndex(-1) {}
+
+    bool push(int val) {
+        if (topIndex >= MAX_SIZE - 1) return false; // Stack Overflow
+        arr[++topIndex] = val;
+        return true;
+    }
+
+    bool pop() {
+        if (isEmpty()) return false; // Stack Underflow
+        topIndex--;
+        return true;
+    }
+
+    int peek() const {
+        if (isEmpty()) throw runtime_error("Stack Underflow: Empty Stack");
+        return arr[topIndex];
+    }
+
+    bool isEmpty() const { return topIndex == -1; }
+    int size() const { return topIndex + 1; }
+};
+\`\`\`
+
+#### 2. Dynamic Linked-List Stack (Unbounded Memory)
+\`\`\`cpp
+struct Node {
+    int data;
+    Node* next;
+    Node(int val) : data(val), next(nullptr) {}
+};
+
+class LinkedListStack {
+private:
+    Node* head;
+public:
+    LinkedListStack() : head(nullptr) {}
+
+    void push(int val) {
+        Node* newNode = new Node(val);
+        newNode->next = head;
+        head = newNode;
+    }
+
+    bool pop() {
+        if (!head) return false;
+        Node* temp = head;
+        head = head->next;
+        delete temp;
+        return true;
+    }
+
+    int top() const {
+        if (!head) throw runtime_error("Stack is empty");
+        return head->data;
+    }
+
+    bool isEmpty() const { return head == nullptr; }
+};
+\`\`\`
+
+---
+
+### Key Architectural Tradeoffs
+
+- **Array-Based**:
+  - **Pros**: Contiguous memory layout guarantees maximum CPU L1/L2 cache line utilization; zero per-node pointer memory overhead.
+  - **Cons**: Fixed capacity limit unless dynamic resizing ($O(n)$ amortized resize) is introduced.
+- **Linked-List-Based**:
+  - **Pros**: Dynamic sizing without fixed capacity limits; never overflows as long as heap RAM is available.
+  - **Cons**: Extra $8\\text{ bytes}$ pointer overhead per node on 64-bit systems; dynamic \`new\`/\`delete\` heap allocation latency.
+
+---
+
+### Real-World Applications & The Recursion Connection
+
+1. **Function Call Stacks & Recursion**:
+   - Every time your program calls a function (such as in **Merge Sort** or **Quick Sort**), the operating system pushes a **Stack Frame** (containing local variables, arguments, and return address) onto the Call Stack.
+   - When the function returns, its frame is popped. This is why unbounded recursion causes a **Stack Overflow** error.
+2. **Undo / Redo Buffers**:
+   - Text editors push each typed operation onto an Undo stack. Pressing Ctrl+Z pops the most recent action to revert it.
+3. **Syntax Validation & Balanced Parentheses**:
+   - Compilers scan source code by pushing opening brackets \`(\`, \`[\`, \`{\` onto a stack and matching them with corresponding closing brackets.
+    `,
+    banglaNote: {
+      topic: "স্ট্যাক (Stack) ও LIFO মেকানিজম",
+      englishContext: "Understanding LIFO, Call Stacks, and O(1) Push/Pop operations",
+      banglaText: `
+স্ট্যাক হচ্ছে এমন একটি ডাটা স্ট্রাকচার যা **LIFO (Last-In, First-Out)** নিয়ম মেনে চলে। অর্থাৎ যে উপাদানটি সবার শেষে স্ট্যাকে রাখা হবে, সেটিকে সবার প্রথমে বের করা হবে।
+
+**বাস্তব উদাহরণ:**
+একটি রেস্টুরেন্টের প্লেটের স্তূপ কল্পনা করুন। নতুন প্লেট ধুয়ে সবসময় স্তূপের একদম উপরে (Top) রাখা হয়। আবার কোনো কাস্টমার প্লেট নেওয়ার সময়ও একদম উপরের প্লেটটাই আগে নেয়। 
+
+**কেন স্ট্যাক গুরুত্বপূর্ণ?**
+১. **রিকিউরশন (Recursion):** আমরা যখন Merge Sort বা Quick Sort এর মতো রিকার্সিভ অ্যালগরিদম চালাই, কম্পিউটার ইন্টারনালি একটি **Call Stack** মেইনটেইন করে। ফাংশন শেষ হলে স্ট্যাক থেকে ফ্রেম বের হয়ে যায়।
+২. **Undo ফিচার:** টেক্সট এডিটরে আপনি যা টাইপ করেন তা স্ট্যাকে জমা হয়। Ctrl+Z চাপলে লাস্ট কাজটি পপ হয়ে পূর্বাবস্থায় ফিরে আসে।
+৩. **সব অপারেশনের সময় $O(1)$:** Push, Pop, Peek সবগুলো অপারেশন কনস্ট্যান্ট টাইম $O(1)$-এ সম্পন্ন হয়।
+      `,
+    },
+    quizTopicId: "stack",
+    visualizerLink: {
+      label: "Stack Visualizer",
+      algorithmId: "stack",
+      path: "/algorithms/stack",
+    },
+  },
+  {
+    slug: "queue-data-structure",
+    level: 5,
+    levelTitle: "Level 5: Fundamental Data Structures",
+    order: 2,
+    title: "Queue: FIFO Mechanism & Circular Buffers",
+    subtitle: "First-In First-Out container, circular array modulo wrapping, BFS graph search, and task scheduling.",
+    estimatedReadTime: "8 min",
+    category: "Data Structures",
+    content: `
+### What Is a Queue?
+
+A **Queue** is a linear data structure that adheres strictly to the **FIFO (First-In, First-Out)** principle. The element that enters the queue first will always be the first one to be processed and removed.
+
+Think of a ticket counter line at a movie theater:
+- New customers join at the **rear** (back) of the line.
+- The person currently at the **front** of the line gets served first and exits.
+- No one can skip the line or exit from the middle.
+
+---
+
+### Core Queue Operations & Complexity
+
+| Operation | Time Complexity | Space Complexity | Description |
+| :--- | :--- | :--- | :--- |
+| $\\text{enqueue}(x)$ | $O(1)$ | $O(1)$ | Appends item $x$ to the rear of the queue. |
+| $\\text{dequeue}()$ | $O(1)$ | $O(1)$ | Removes and returns the item from the front. |
+| $\\text{front}()$ / $\\text{peek}()$ | $O(1)$ | $O(1)$ | Returns the front item without removing it. |
+| $\\text{empty}()$ | $O(1)$ | $O(1)$ | Checks whether the queue contains 0 items. |
+| $\\text{size}()$ | $O(1)$ | $O(1)$ | Returns the current count of elements. |
+
+---
+
+### The Array Shift Problem & The Circular Buffer Solution
+
+In a simple array implementation:
+- If we remove an element from index \`0\`, we would need to shift all $n-1$ remaining elements one position to the left, which costs $O(n)$ time.
+- Alternatively, if we just advance a \`front\` pointer without shifting, the array quickly wastes all available space at the front.
+
+**The Solution: Circular Queue (Ring Buffer)**
+Using the modulo operator ($\\%$), the rear and front pointers wrap around to index \`0\` when they reach the end of the array:
+
+$$\\text{rear} = (\\text{rear} + 1) \\pmod{\\text{capacity}}$$
+$$\\text{front} = (\\text{front} + 1) \\pmod{\\text{capacity}}$$
+
+---
+
+### C++ Implementations
+
+#### 1. Circular Array-Based Queue
+\`\`\`cpp
+class CircularQueue {
+private:
+    int* arr;
+    int frontIdx, rearIdx, count, capacity;
+public:
+    CircularQueue(int cap = 100) : capacity(cap), frontIdx(0), rearIdx(-1), count(0) {
+        arr = new int[capacity];
+    }
+    ~CircularQueue() { delete[] arr; }
+
+    bool enqueue(int val) {
+        if (isFull()) return false; // Queue Overflow
+        rearIdx = (rearIdx + 1) % capacity;
+        arr[rearIdx] = val;
+        count++;
+        return true;
+    }
+
+    bool dequeue() {
+        if (isEmpty()) return false; // Queue Underflow
+        frontIdx = (frontIdx + 1) % capacity;
+        count--;
+        return true;
+    }
+
+    int front() const {
+        if (isEmpty()) throw runtime_error("Queue is empty");
+        return arr[frontIdx];
+    }
+
+    bool isEmpty() const { return count == 0; }
+    bool isFull() const { return count == capacity; }
+    int size() const { return count; }
+};
+\`\`\`
+
+#### 2. Dynamic Linked-List Queue
+\`\`\`cpp
+struct QNode {
+    int data;
+    QNode* next;
+    QNode(int val) : data(val), next(nullptr) {}
+};
+
+class LinkedListQueue {
+private:
+    QNode *head, *tail;
+    int count;
+public:
+    LinkedListQueue() : head(nullptr), tail(nullptr), count(0) {}
+
+    void enqueue(int val) {
+        QNode* newNode = new QNode(val);
+        if (!tail) {
+            head = tail = newNode;
+        } else {
+            tail->next = newNode;
+            tail = newNode;
+        }
+        count++;
+    }
+
+    bool dequeue() {
+        if (!head) return false;
+        QNode* temp = head;
+        head = head->next;
+        if (!head) tail = nullptr;
+        delete temp;
+        count--;
+        return true;
+    }
+
+    int front() const {
+        if (!head) throw runtime_error("Empty Queue");
+        return head->data;
+    }
+
+    bool isEmpty() const { return head == nullptr; }
+};
+\`\`\`
+
+---
+
+### Real-World Applications
+
+1. **CPU & OS Task Scheduling**:
+   - Round-robin schedulers place ready processes into a FIFO run-queue.
+2. **Breadth-First Search (BFS)**:
+   - Level-order traversal on binary trees and shortest-path exploration in unweighted graphs depend fundamentally on a queue.
+3. **Asynchronous Message Buffers**:
+   - Message brokers (like RabbitMQ, Kafka) and printer spools process jobs in exact arrival order.
+    `,
+    banglaNote: {
+      topic: "কিউ (Queue) ও FIFO মেকানিজম",
+      englishContext: "Understanding FIFO, Circular Buffers, and O(1) Enqueue/Dequeue",
+      banglaText: `
+কিউ (Queue) হচ্ছে এমন একটি ডাটা স্ট্রাকচার যা **FIFO (First-In, First-Out)** নীতিতে চলে। অর্থাৎ যে ডাটাটি সবার প্রথমে প্রবেশ করবে, সেটিকে সবার প্রথমে প্রসেস বা রিমুভ করা হবে।
+
+**বাস্তব উদাহরণ:**
+একটি টিকিট কাউন্টারের লাইন কল্পনা করুন। যে ব্যক্তি লাইনে প্রথমে দাঁড়ায়, সে সবার আগে টিকিট পেয়ে বেরিয়ে যায়। নতুন লোক আসলে লাইনের পেছনে (Rear) যুক্ত হয়।
+
+**সার্কুলার কিউ (Circular Queue) কেন প্রয়োজন?**
+সাধারণ অ্যারেতে সামনের আইটেম মুছে ফেললে পেছনের সব উপাদান ১ ঘর করে সরাতে $O(n)$ সময় নষ্ট হয়। কিন্তু মডুলো $(\\text{rear} + 1) \\% \\text{capacity}$ ব্যবহার করে সার্কুলার কিউ বানালে কোনো উপাদান না সরিয়েই $O(1)$ কনস্ট্যান্ট টাইমে কিউ অপারেশন চালানো যায়।
+      `,
+    },
+    quizTopicId: "queue",
+    visualizerLink: {
+      label: "Queue Visualizer",
+      algorithmId: "queue",
+      path: "/algorithms/queue",
+    },
+  },
 ];
 
 export const DOCS_LEVELS: DocsLevel[] = [
@@ -994,5 +1314,11 @@ export const DOCS_LEVELS: DocsLevel[] = [
     title: "Level 4: Choosing the Right Algorithm",
     description: "Engineering decision framework, trade-off matrices, and real-world selection guides.",
     articles: DOCS_ARTICLES.filter((a) => a.level === 4)
+  },
+  {
+    level: 5,
+    title: "Level 5: Fundamental Data Structures",
+    description: "Core linear containers: Stack (LIFO, call stacks) and Queue (FIFO, circular buffers, BFS).",
+    articles: DOCS_ARTICLES.filter((a) => a.level === 5)
   }
 ];

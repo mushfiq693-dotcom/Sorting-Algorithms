@@ -81,6 +81,20 @@ export async function updateSession(request: NextRequest) {
     }
   }
 
+  // If accessing /mentor routes, verify user is a Mentor or Admin
+  if (user && pathname.startsWith("/mentor")) {
+    const { data: profile } = await (supabase.from("profiles") as any)
+      .select("role")
+      .eq("id", user.id)
+      .single();
+
+    if (profile?.role !== "mentor" && profile?.role !== "admin") {
+      const url = request.nextUrl.clone();
+      url.pathname = "/";
+      return NextResponse.redirect(url);
+    }
+  }
+
   // If user is authenticated, check their Beta Access status in PostgreSQL
   if (user && !isPublicRoute && !pathname.startsWith("/admin")) {
     const { data: betaAccess } = await (supabase.from("beta_access") as any)

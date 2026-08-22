@@ -23,9 +23,9 @@ export function FeedbackWidget() {
                 setIsFeedbackOpen(true);
                 setIsExpanded(false);
               }}
-              className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-[#12070d] border border-cyan-500/40 text-cyan-300 text-xs font-semibold shadow-xl shadow-black/60 hover:bg-cyan-500/20 hover:text-white transition-all active:scale-95 cursor-pointer"
+              className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-card border border-cyan-500/40 text-cyan-700 dark:text-cyan-300 text-xs font-semibold shadow-xl hover:bg-cyan-500/10 transition-all active:scale-95 cursor-pointer"
             >
-              <MessageSquare className="h-3.5 w-3.5 text-cyan-400" />
+              <MessageSquare className="h-3.5 w-3.5 text-cyan-500" />
               <span>Give Beta Feedback</span>
             </button>
 
@@ -35,9 +35,9 @@ export function FeedbackWidget() {
                 setIsBugReportOpen(true);
                 setIsExpanded(false);
               }}
-              className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-[#12070d] border border-rose-500/40 text-rose-300 text-xs font-semibold shadow-xl shadow-black/60 hover:bg-rose-500/20 hover:text-white transition-all active:scale-95 cursor-pointer"
+              className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-card border border-rose-500/40 text-rose-700 dark:text-rose-300 text-xs font-semibold shadow-xl hover:bg-rose-500/10 transition-all active:scale-95 cursor-pointer"
             >
-              <Bug className="h-3.5 w-3.5 text-rose-400" />
+              <Bug className="h-3.5 w-3.5 text-rose-500" />
               <span>Report an Issue</span>
             </button>
           </div>

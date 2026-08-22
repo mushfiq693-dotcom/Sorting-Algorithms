@@ -155,4 +155,72 @@ export const BUG_HUNT_CHALLENGES: Record<AlgorithmId, BugHuntChallenge> = {
     },
     flawedRunner: quickSortBuggy,
   },
+
+  stack: {
+    algorithmId: "stack",
+    title: "Stack: Premature Underflow Condition on Pop",
+    description:
+      "This C++ ArrayStack pop() method has a flawed underflow check that mistakes a 1-element stack (topIndex == 0) for an empty stack.",
+    buggyCode: `class ArrayStack {
+private:
+    int arr[100];
+    int topIndex = -1;
+public:
+    void push(int val) { arr[++topIndex] = val; }
+    int pop() {
+        if (topIndex == 0) return -1;
+        return arr[topIndex--];
+    }
+};`,
+    buggyLineNumber: 7,
+    hint: "What is topIndex when the stack is completely empty? Remember that topIndex == 0 means there is 1 valid element at arr[0].",
+    explanation:
+      "Line 7 checked `if (topIndex == 0)`. When topIndex is 0, the stack has 1 element. The empty stack check must be `if (topIndex == -1)` or `if (topIndex < 0)`.",
+    validateFix: (line: string) => {
+      const trimmed = line.replace(/\s+/g, "");
+      return (
+        trimmed.includes("topIndex==-1") ||
+        trimmed.includes("topIndex<0") ||
+        trimmed.includes("isEmpty()") ||
+        trimmed.includes("topIndex<=-1")
+      );
+    },
+    flawedRunner: () => [
+      { type: "compare", indices: [0], description: "Attempting to inspect top of stack" },
+    ],
+  },
+
+  queue: {
+    algorithmId: "queue",
+    title: "Circular Queue: Missing Modulo Arithmetic on Enqueue",
+    description:
+      "This Circular Queue implementation fails to wrap the rear pointer around to index 0, causing index out-of-bounds corruption after reaching capacity.",
+    buggyCode: `class CircularQueue {
+private:
+    int arr[8];
+    int front = 0, rear = -1, count = 0, capacity = 8;
+public:
+    bool enqueue(int val) {
+        if (count >= capacity) return false;
+        rear = rear + 1;
+        arr[rear] = val;
+        count++;
+        return true;
+    }
+};`,
+    buggyLineNumber: 7,
+    hint: "How should rear advance in a circular queue when it reaches index capacity - 1? Think about the modulo operator (%).",
+    explanation:
+      "Line 7 used simple `rear = rear + 1` instead of `rear = (rear + 1) % capacity;`. Without modulo wrapping, the queue cannot reuse freed slots at the front.",
+    validateFix: (line: string) => {
+      const trimmed = line.replace(/\s+/g, "");
+      return (
+        trimmed.includes("%capacity") &&
+        (trimmed.includes("rear+1") || trimmed.includes("rear++"))
+      );
+    },
+    flawedRunner: () => [
+      { type: "compare", indices: [0, 7], description: "Rear pointer exceeded boundary without circular modulo wrapping" },
+    ],
+  },
 };

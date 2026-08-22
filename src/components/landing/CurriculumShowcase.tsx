@@ -2,7 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import { ALL_ALGORITHMS, ALGORITHMS } from "@/data/algorithms";
+import { ALL_TOPICS, ALGORITHMS } from "@/data/algorithms";
 import { LEARNING_PATH } from "@/data/learningPath";
 import {
   GraduationCap,
@@ -13,6 +13,7 @@ import {
   Clock,
   Sparkles,
   Layers,
+  Database,
 } from "lucide-react";
 
 export function CurriculumShowcase() {
@@ -30,23 +31,23 @@ export function CurriculumShowcase() {
               Your Path from Confused to Confident
             </h2>
             <p className="mt-3 text-sm sm:text-base text-muted-foreground leading-relaxed">
-              Learn algorithms progressively instead of jumping randomly between topics. Master fundamental principles before advancing to divide-and-conquer recursion.
+              Learn algorithms & data structures progressively instead of jumping randomly between topics. Master foundational mechanics before advancing to divide-and-conquer recursion.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7 gap-3 sm:gap-4">
             {LEARNING_PATH.map((step) => (
               <Link
                 key={step.id}
                 href={`/algorithms/${step.id}`}
-                className="flex flex-col justify-between p-5 rounded-2xl border border-white/[0.08] bg-[#0b101d]/90 backdrop-blur-xl shadow-xl hover:border-cyan-500/40 hover:-translate-y-1 transition-all group"
+                className="flex flex-col justify-between p-4 sm:p-5 rounded-2xl border border-white/[0.08] bg-[#0b101d]/90 backdrop-blur-xl shadow-xl hover:border-cyan-500/40 hover:-translate-y-1 transition-all group"
               >
                 <div>
-                  <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center justify-between mb-2.5">
                     <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
                       0{step.order}
                     </span>
-                    <span className="text-[11px] font-mono text-muted-foreground flex items-center gap-1">
+                    <span className="text-[10px] font-mono text-muted-foreground flex items-center gap-1">
                       <Clock className="h-3 w-3 text-amber-400" /> {step.estimatedTime}
                     </span>
                   </div>
@@ -54,16 +55,16 @@ export function CurriculumShowcase() {
                   <h3 className="text-sm font-bold text-white group-hover:text-cyan-300 transition-colors">
                     {step.name}
                   </h3>
-                  <p className="text-[11px] font-mono text-cyan-400 mt-0.5">
+                  <p className="text-[10px] font-mono text-cyan-400 mt-0.5 line-clamp-1">
                     {step.badge}
                   </p>
-                  <p className="text-xs text-muted-foreground leading-relaxed mt-2.5 line-clamp-3">
+                  <p className="text-xs text-muted-foreground leading-relaxed mt-2 line-clamp-2">
                     {step.reason}
                   </p>
                 </div>
 
-                <div className="mt-4 pt-3 border-t border-slate-800 flex items-center justify-between text-xs font-semibold text-cyan-400 group-hover:text-cyan-300">
-                  <span>Start Step</span>
+                <div className="mt-3 pt-2.5 border-t border-slate-800 flex items-center justify-between text-xs font-semibold text-cyan-400 group-hover:text-cyan-300">
+                  <span>Start</span>
                   <ArrowRight className="h-3.5 w-3.5 group-hover:translate-x-1 transition-transform" />
                 </div>
               </Link>
@@ -71,19 +72,19 @@ export function CurriculumShowcase() {
           </div>
         </div>
 
-        {/* PART 2: Algorithm Explorer Showcase */}
+        {/* PART 2: Deep-Dive Modules Showcase */}
         <div>
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
             <div>
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-purple-500/30 bg-purple-500/10 text-purple-400 text-xs font-mono font-semibold mb-3">
                 <Layers className="h-3.5 w-3.5" />
-                <span>Deep-Dive Modules</span>
+                <span>Curriculum Modules</span>
               </div>
               <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
-                Explore Available Algorithms
+                Explore Core Topics & Modules
               </h2>
               <p className="text-sm text-muted-foreground mt-1">
-                Each algorithm includes animated visualizers, step-by-step code debuggers, Bug-Hunt exercises, and signature static diagrams.
+                Each module includes animated visualizers, step-by-step code walkthroughs, Bug-Hunt exercises, and signature static diagrams.
               </p>
             </div>
 
@@ -97,8 +98,9 @@ export function CurriculumShowcase() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {ALL_ALGORITHMS.map((id) => {
+            {ALL_TOPICS.map((id) => {
               const meta = ALGORITHMS[id];
+              const isDS = meta.category === "data-structure";
 
               return (
                 <div
@@ -107,9 +109,14 @@ export function CurriculumShowcase() {
                 >
                   <div>
                     <div className="flex items-center justify-between mb-3 pb-3 border-b border-slate-800">
-                      <h3 className="text-lg font-bold text-white group-hover:text-cyan-300 transition-colors">
-                        {meta.name}
-                      </h3>
+                      <div>
+                        <h3 className="text-lg font-bold text-white group-hover:text-cyan-300 transition-colors">
+                          {meta.name}
+                        </h3>
+                        <span className="text-[10px] font-mono text-muted-foreground uppercase">
+                          {isDS ? "Data Structure" : "Sorting Algorithm"}
+                        </span>
+                      </div>
                       <span className="text-xs font-mono px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-300 border border-cyan-500/20 font-bold">
                         {meta.complexity.average}
                       </span>
@@ -134,8 +141,8 @@ export function CurriculumShowcase() {
                         <span className="text-purple-300 font-bold">{meta.complexity.space}</span>
                       </div>
                       <div>
-                        <span className="text-slate-500 block text-[10px]">Stability</span>
-                        <span className="text-cyan-300 font-bold">{meta.complexity.stable ? "Stable" : "Unstable"}</span>
+                        <span className="text-slate-500 block text-[10px]">{isDS ? "Invariant" : "Stability"}</span>
+                        <span className="text-cyan-300 font-bold">{isDS ? (id === "stack" ? "LIFO" : "FIFO") : meta.complexity.stable ? "Stable" : "Unstable"}</span>
                       </div>
                     </div>
                   </div>
@@ -150,7 +157,7 @@ export function CurriculumShowcase() {
                     </Link>
 
                     <Link
-                      href={`/docs/${id}-sort`}
+                      href={isDS ? `/docs/${id}-data-structure` : `/docs/${id}-sort`}
                       className="text-[11px] font-mono text-slate-400 hover:text-white transition-colors"
                     >
                       Read Theory →

@@ -15,13 +15,18 @@ import {
   Zap,
 } from "lucide-react";
 
+import { useProgressSync } from "@/hooks/useProgressSync";
+import { AlgorithmId } from "@/types/sorting";
+
 interface QuizProps {
   topicId: string;
   onComplete?: (score: number, total: number) => void;
 }
 
 export function Quiz({ topicId, onComplete }: QuizProps) {
-  const quizData: QuizTopic | undefined = QUIZZES[topicId];
+  const normalizedTopicId = (topicId || "").toLowerCase().replace(/-sort$/, "");
+  const quizData: QuizTopic | undefined = QUIZZES[normalizedTopicId] || QUIZZES[topicId];
+  const { syncActivityScore } = useProgressSync();
 
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
@@ -59,6 +64,13 @@ export function Quiz({ topicId, onComplete }: QuizProps) {
   const handleNextQuestion = () => {
     if (isLastQuestion) {
       setIsQuizCompleted(true);
+      const percentScore = Math.round((score / quizData.questions.length) * 100);
+      syncActivityScore(
+        normalizedTopicId as AlgorithmId,
+        "quiz",
+        percentScore,
+        `${quizData.title} (${percentScore}%)`
+      );
       if (onComplete) onComplete(score, quizData.questions.length);
       if (score >= Math.ceil(quizData.questions.length * 0.75)) {
         confetti({ particleCount: 100, spread: 80, origin: { y: 0.6 } });
@@ -80,15 +92,15 @@ export function Quiz({ topicId, onComplete }: QuizProps) {
   };
 
   return (
-    <div className="my-8 rounded-2xl border border-border/80 bg-[#0c121e]/90 p-5 sm:p-7 backdrop-blur-xl shadow-2xl space-y-6">
+    <div className="my-8 rounded-2xl border border-border bg-card p-5 sm:p-7 backdrop-blur-xl shadow-sm dark:shadow-2xl space-y-6">
       {/* Header */}
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/50 pb-4">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-4">
         <div className="flex items-center gap-2.5">
-          <div className="h-8 w-8 rounded-xl bg-cyan-500/20 border border-cyan-400/40 flex items-center justify-center text-cyan-400">
+          <div className="h-8 w-8 rounded-xl bg-cyan-500/20 border border-cyan-400/40 flex items-center justify-center text-cyan-600 dark:text-cyan-400">
             <HelpCircle className="h-4 w-4" />
           </div>
           <div>
-            <h3 className="text-base font-bold text-white tracking-tight">
+            <h3 className="text-base font-bold text-foreground tracking-tight">
               {quizData.title}
             </h3>
             <p className="text-xs text-muted-foreground">{quizData.description}</p>
@@ -97,7 +109,7 @@ export function Quiz({ topicId, onComplete }: QuizProps) {
 
         {!isQuizCompleted && (
           <div className="flex items-center gap-2">
-            <span className="text-xs font-mono font-semibold px-2.5 py-1 rounded-lg bg-secondary text-cyan-400 border border-border/60">
+            <span className="text-xs font-mono font-semibold px-2.5 py-1 rounded-lg bg-secondary text-cyan-600 dark:text-cyan-400 border border-border">
               Question {currentQuestionIndex + 1} of {quizData.questions.length}
             </span>
           </div>
@@ -114,7 +126,7 @@ export function Quiz({ topicId, onComplete }: QuizProps) {
             </h4>
 
             {currentQ.codeSnippet && (
-              <pre className="p-3 rounded-xl bg-black/60 border border-border/50 font-mono text-xs text-cyan-200 overflow-x-auto">
+              <pre className="p-3 rounded-xl bg-secondary/80 border border-border font-mono text-xs text-foreground overflow-x-auto">
                 <code>{currentQ.codeSnippet}</code>
               </pre>
             )}
@@ -126,14 +138,14 @@ export function Quiz({ topicId, onComplete }: QuizProps) {
               const isSelected = selectedOption === idx;
               const isCorrectOption = idx === currentQ.correctIndex;
 
-              let btnStyle = "border-border/60 bg-card/60 text-foreground/90 hover:bg-card hover:border-cyan-400/50";
+              let btnStyle = "border-border bg-secondary/50 text-foreground hover:bg-secondary hover:border-cyan-500/50";
               if (isAnswered) {
                 if (isCorrectOption) {
-                  btnStyle = "border-emerald-500 bg-emerald-500/15 text-emerald-200 shadow-md shadow-emerald-500/10";
+                  btnStyle = "border-emerald-500 bg-emerald-500/15 text-emerald-700 dark:text-emerald-200 shadow-sm";
                 } else if (isSelected && !isCorrectOption) {
-                  btnStyle = "border-rose-500 bg-rose-500/15 text-rose-200 shadow-md shadow-rose-500/10";
+                  btnStyle = "border-rose-500 bg-rose-500/15 text-rose-700 dark:text-rose-200 shadow-sm";
                 } else {
-                  btnStyle = "border-border/40 bg-card/30 text-muted-foreground opacity-60";
+                  btnStyle = "border-border bg-secondary/30 text-muted-foreground opacity-60";
                 }
               }
 
@@ -142,20 +154,20 @@ export function Quiz({ topicId, onComplete }: QuizProps) {
                   key={idx}
                   onClick={() => handleSelectOption(idx)}
                   disabled={isAnswered}
-                  className={`flex items-center justify-between p-3.5 sm:p-4 rounded-xl border text-left text-xs sm:text-sm font-medium transition-all ${btnStyle}`}
+                  className={`flex items-center justify-between p-3.5 sm:p-4 rounded-xl border text-left text-xs sm:text-sm font-medium transition-all cursor-pointer ${btnStyle}`}
                 >
                   <div className="flex items-center gap-3">
-                    <span className="h-6 w-6 rounded-lg bg-secondary/80 border border-border/60 flex items-center justify-center font-mono text-xs text-muted-foreground font-bold shrink-0">
+                    <span className="h-6 w-6 rounded-lg bg-background border border-border flex items-center justify-center font-mono text-xs text-muted-foreground font-bold shrink-0">
                       {String.fromCharCode(65 + idx)}
                     </span>
                     <span>{option}</span>
                   </div>
 
                   {isAnswered && isCorrectOption && (
-                    <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
+                    <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0" />
                   )}
                   {isAnswered && isSelected && !isCorrectOption && (
-                    <XCircle className="h-4 w-4 text-rose-400 shrink-0" />
+                    <XCircle className="h-4 w-4 text-rose-500 shrink-0" />
                   )}
                 </button>
               );
@@ -167,15 +179,15 @@ export function Quiz({ topicId, onComplete }: QuizProps) {
             <div
               className={`p-4 rounded-xl border leading-relaxed animate-in fade-in ${
                 selectedOption === currentQ.correctIndex
-                  ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-200"
-                  : "border-amber-500/40 bg-amber-500/10 text-amber-200"
+                  ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-800 dark:text-emerald-200"
+                  : "border-amber-500/40 bg-amber-500/10 text-amber-800 dark:text-amber-200"
               }`}
             >
               <div className="flex items-start gap-2.5">
                 {selectedOption === currentQ.correctIndex ? (
-                  <Check className="h-4 w-4 text-emerald-400 shrink-0 mt-0.5" />
+                  <Check className="h-4 w-4 text-emerald-500 shrink-0 mt-0.5" />
                 ) : (
-                  <Zap className="h-4 w-4 text-amber-400 shrink-0 mt-0.5" />
+                  <Zap className="h-4 w-4 text-amber-500 shrink-0 mt-0.5" />
                 )}
                 <div>
                   <span className="text-xs font-bold font-mono uppercase tracking-wider block mb-1">
@@ -192,7 +204,7 @@ export function Quiz({ topicId, onComplete }: QuizProps) {
             <div className="pt-2 flex justify-end">
               <button
                 onClick={handleNextQuestion}
-                className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 px-5 py-2.5 text-xs font-semibold text-white hover:from-blue-500 hover:to-cyan-500 shadow-md shadow-cyan-500/20 transition-all active:scale-95"
+                className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 px-5 py-2.5 text-xs font-semibold text-white hover:from-blue-500 hover:to-cyan-500 shadow-md shadow-cyan-500/20 transition-all active:scale-95 cursor-pointer"
               >
                 <span>{isLastQuestion ? "View Final Score" : "Next Question"}</span>
                 <ArrowRight className="h-4 w-4" />
@@ -208,9 +220,9 @@ export function Quiz({ topicId, onComplete }: QuizProps) {
           </div>
 
           <div>
-            <h4 className="text-xl font-bold text-white">Quiz Completed!</h4>
+            <h4 className="text-xl font-bold text-foreground">Quiz Completed!</h4>
             <p className="text-xs sm:text-sm text-muted-foreground mt-1">
-              You scored <strong className="text-cyan-400">{score}</strong> out of{" "}
+              You scored <strong className="text-cyan-600 dark:text-cyan-400">{score}</strong> out of{" "}
               <strong>{quizData.questions.length}</strong> (
               {Math.round((score / quizData.questions.length) * 100)}%)
             </p>
@@ -219,7 +231,7 @@ export function Quiz({ topicId, onComplete }: QuizProps) {
           <div className="pt-4 flex items-center justify-center gap-3">
             <button
               onClick={handleRestart}
-              className="inline-flex items-center gap-2 rounded-xl border border-border/80 bg-secondary px-4 py-2 text-xs font-semibold text-foreground hover:bg-secondary/80 transition-all active:scale-95"
+              className="inline-flex items-center gap-2 rounded-xl border border-border bg-secondary px-4 py-2 text-xs font-semibold text-foreground hover:bg-secondary/80 transition-all active:scale-95 cursor-pointer"
             >
               <RotateCcw className="h-3.5 w-3.5" />
               <span>Retry Quiz</span>

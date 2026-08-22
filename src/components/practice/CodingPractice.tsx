@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import confetti from "canvas-confetti";
-import { AlgorithmId } from "@/types/sorting";
+import { AlgorithmId, SortingAlgorithmId } from "@/types/sorting";
 import {
   CODING_CHALLENGES,
   STANDARD_PRACTICE_TEST_CASES,
@@ -28,9 +28,9 @@ interface CodingPracticeProps {
 }
 
 export function CodingPractice({ algorithmId }: CodingPracticeProps) {
-  const challenge: CodingChallenge = CODING_CHALLENGES[algorithmId];
+  const challenge = CODING_CHALLENGES[algorithmId as SortingAlgorithmId];
 
-  const [code, setCode] = useState<string>(challenge.starterCode);
+  const [code, setCode] = useState<string>(challenge?.starterCode || "");
   const [testResults, setTestResults] = useState<TestResult[] | null>(null);
   const [isRunning, setIsRunning] = useState<boolean>(false);
   const [showHints, setShowHints] = useState<boolean>(false);
@@ -106,6 +106,10 @@ export function CodingPractice({ algorithmId }: CodingPracticeProps) {
       setIsRunning(false);
     }
   };
+
+  if (!challenge) {
+    return null;
+  }
 
   const totalPassed = testResults ? testResults.filter((t) => t.passed).length : 0;
   const isAllPassed = testResults ? totalPassed === testResults.length : false;
@@ -209,7 +213,7 @@ export function CodingPractice({ algorithmId }: CodingPracticeProps) {
             Algorithmic Hints
           </span>
           <ul className="list-disc list-inside space-y-1.5 text-xs text-amber-200/90 leading-relaxed font-sans">
-            {challenge.hints.map((hint, idx) => (
+            {challenge.hints.map((hint: string, idx: number) => (
               <li key={idx}>{hint}</li>
             ))}
           </ul>

@@ -30,6 +30,7 @@ export function DocsSidebar({ onLinkClick }: DocsSidebarProps) {
     2: true,
     3: true,
     4: true,
+    5: true,
   });
 
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -82,23 +83,23 @@ export function DocsSidebar({ onLinkClick }: DocsSidebarProps) {
   );
 
   return (
-    <aside className="w-full h-full flex flex-col bg-[#070b12] border-r border-border/60 select-none">
+    <aside className="w-full h-full flex flex-col bg-card border-r border-border select-none">
       {/* Sidebar Header & Search */}
-      <div className="p-4 border-b border-border/50 space-y-3">
+      <div className="p-4 border-b border-border space-y-3">
         <div className="flex items-center justify-between">
           <Link
             href="/docs"
             onClick={onLinkClick}
             className="flex items-center gap-2 group"
           >
-            <div className="h-7 w-7 rounded-lg bg-cyan-500/20 border border-cyan-400/30 flex items-center justify-center text-cyan-400">
+            <div className="h-7 w-7 rounded-lg bg-cyan-500/20 border border-cyan-500/30 flex items-center justify-center text-cyan-600 dark:text-cyan-400">
               <BookOpen className="h-4 w-4" />
             </div>
-            <span className="font-bold text-sm text-white tracking-tight group-hover:text-cyan-300 transition-colors">
+            <span className="font-bold text-sm text-foreground tracking-tight group-hover:text-cyan-500 transition-colors">
               Zero → Advanced Docs
             </span>
           </Link>
-          <span className="text-[10px] font-mono font-semibold px-2 py-0.5 rounded bg-secondary text-cyan-400">
+          <span className="text-[10px] font-mono font-semibold px-2 py-0.5 rounded bg-secondary text-cyan-600 dark:text-cyan-400 border border-border">
             {DOCS_ARTICLES.length} Lessons
           </span>
         </div>
@@ -111,7 +112,7 @@ export function DocsSidebar({ onLinkClick }: DocsSidebarProps) {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search documentation..."
-            className="w-full rounded-xl bg-card/60 border border-border/60 pl-8 pr-3 py-1.5 text-xs text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-cyan-400 transition-colors"
+            className="w-full rounded-xl bg-secondary/60 border border-border pl-8 pr-3 py-1.5 text-xs text-foreground placeholder:text-muted-foreground outline-none focus:border-cyan-500 transition-colors"
           />
         </div>
 
@@ -119,7 +120,7 @@ export function DocsSidebar({ onLinkClick }: DocsSidebarProps) {
         <div className="space-y-1 pt-1">
           <div className="flex items-center justify-between text-[11px] font-mono text-muted-foreground">
             <span>Course Progress</span>
-            <span className="text-cyan-400 font-semibold">{progressPercent}%</span>
+            <span className="text-cyan-600 dark:text-cyan-400 font-semibold">{progressPercent}%</span>
           </div>
           <div className="w-full h-1.5 rounded-full bg-secondary overflow-hidden">
             <div
@@ -238,7 +239,7 @@ export function DocsSidebar({ onLinkClick }: DocsSidebarProps) {
           <span>Learning Path</span>
         </Link>
         <Link
-          href="/"
+          href="/visualizer"
           onClick={onLinkClick}
           className="flex items-center gap-1.5 text-muted-foreground hover:text-cyan-400 transition-colors font-semibold"
         >

@@ -48,7 +48,7 @@ export function AmbientSortLogo() {
   return (
     <div
       aria-hidden="true"
-      className="flex items-end gap-1 h-7 px-1.5 py-1 rounded-lg bg-slate-900/80 border border-slate-700/50 shadow-inner group-hover:border-cyan-500/40 transition-colors"
+      className="flex items-end gap-1 h-7 px-1.5 py-1 rounded-lg bg-secondary/80 border border-border shadow-inner group-hover:border-cyan-500/40 transition-colors"
     >
       {bars.map((height, idx) => {
         const isComparing = comparing && (comparing[0] === idx || comparing[1] === idx);
