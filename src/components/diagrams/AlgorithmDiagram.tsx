@@ -10,6 +10,8 @@ import { MergeSortTreeDiagram } from "./MergeSortTreeDiagram";
 import { QuickSortTreeDiagram } from "./QuickSortTreeDiagram";
 import { StackLIFODiagram } from "./StackLIFODiagram";
 import { QueueFIFODiagram } from "./QueueFIFODiagram";
+import { TimeComplexityDiagram } from "./TimeComplexityDiagram";
+import { SpaceComplexityDiagram } from "./SpaceComplexityDiagram";
 import { CodeViewer } from "@/components/code/CodeViewer";
 import { Image, Sparkles, BookOpen, Calculator, Info } from "lucide-react";
 
@@ -36,6 +38,10 @@ export function AlgorithmDiagram({ algorithmId }: AlgorithmDiagramProps) {
         return <StackLIFODiagram />;
       case "queue":
         return <QueueFIFODiagram />;
+      case "time-complexity":
+        return <TimeComplexityDiagram />;
+      case "space-complexity":
+        return <SpaceComplexityDiagram />;
       default:
         return null;
     }

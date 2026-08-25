@@ -6,7 +6,7 @@ export interface DocsArticle {
   title: string;
   subtitle: string;
   estimatedReadTime: string;
-  category: "Fundamentals" | "Simple Algorithms" | "Divide and Conquer" | "Advanced Analysis" | "Decision Guide" | "Data Structures";
+  category: "Fundamentals" | "Simple Algorithms" | "Divide and Conquer" | "Advanced Analysis" | "Decision Guide" | "Data Structures" | "Complexity";
   content: string; // Markdown / prose structure
   banglaNote?: {
     topic: string;
@@ -1282,6 +1282,402 @@ public:
       path: "/algorithms/queue",
     },
   },
+  {
+    slug: "time-complexity",
+    level: 6,
+    levelTitle: "Level 6: Algorithmic Complexity Analysis",
+    order: 1,
+    title: "Time Complexity & Asymptotic Analysis Masterclass",
+    subtitle: "Comprehensive theoretical foundations, mathematical definitions, loop analysis patterns, and practical CPU execution budgets.",
+    estimatedReadTime: "15 min",
+    category: "Complexity",
+    content: `
+### Chapter 1: The Core Philosophy of Time Complexity
+
+When evaluating the efficiency of a software algorithm, measuring execution time in wall-clock seconds (or milliseconds) is fundamentally flawed and deceptive. 
+
+#### Why Wall-Clock Time Is Inadequate:
+1. **Hardware Variability**: An algorithm running on an Intel Core i9 processor will execute faster than the same algorithm on an embedded ARM microcontroller.
+2. **System Background Load**: Operating system context-switching, active background processes, and CPU throttling distort empirical measurements.
+3. **Compiler Optimizations**: Aggressive compiler flags (such as \`-O3\` loop vectorization) alter instruction sequences.
+
+To establish an objective, machine-independent measure of algorithmic efficiency, computer science relies on the **Random Access Machine (RAM) Model of Computation**. Under this model:
+- We measure execution cost by counting the **number of primitive computational operations** (arithmetic operations, variable assignments, comparisons, pointer dereferences).
+- We study how this operational count scales as the input size $n$ approaches infinity ($n \\to \\infty$).
+
+---
+
+### Chapter 2: The Asymptotic Notation Trinity ($\\mathcal{O}, \\Omega, \\Theta$)
+
+Asymptotic notation provides a formal mathematical vocabulary to describe the growth rate of functions without being distracted by machine constants or low-order noise.
+
+\`\`\`
+  Upper Bound:  f(n) ≤ c · g(n)  ==>  f(n) = O(g(n))       [Worst-Case Guarantee]
+  Tight Bound:  c₁·g(n) ≤ f(n) ≤ c₂·g(n) ==> f(n) = Θ(g(n)) [Exact Bound]
+  Lower Bound:  f(n) ≥ c · g(n)  ==>  f(n) = Ω(g(n))       [Best-Case Floor]
+\`\`\`
+
+#### 1. Big-O ($\\mathcal{O}$) — Asymptotic Upper Bound
+Formal mathematical definition:
+$$f(n) = \\mathcal{O}(g(n)) \\iff \\exists c > 0, n_0 > 0 \\text{ such that } \\forall n \\ge n_0, \\quad 0 \\le f(n) \\le c \\cdot g(n)$$
+- **Engineering Meaning**: Big-O establishes an unbreakable **worst-case upper ceiling**. The algorithm will never perform more operations than proportional to $g(n)$ for sufficiently large inputs.
+
+#### 2. Big-Omega ($\\Omega$) — Asymptotic Lower Bound
+Formal mathematical definition:
+$$f(n) = \\Omega(g(n)) \\iff \\exists c > 0, n_0 > 0 \\text{ such that } \\forall n \\ge n_0, \\quad 0 \\le c \\cdot g(n) \\le f(n)$$
+- **Engineering Meaning**: Big-Omega establishes the **best-case baseline floor**. The algorithm will require at least proportional to $g(n)$ operations.
+
+#### 3. Big-Theta ($\\Theta$) — Asymptotically Tight Bound
+Formal mathematical definition:
+$$f(n) = \\Theta(g(n)) \\iff f(n) = \\mathcal{O}(g(n)) \\quad \\text{and} \\quad f(n) = \\Omega(g(n))$$
+- **Engineering Meaning**: The algorithm's growth is sandwiched tightly within constant multipliers of $g(n)$ in all scenarios.
+
+> **Critical Interview Distinction:**
+> Do not confuse **Best / Average / Worst Case** (which describe input arrangements) with **$\\Omega / \\Theta / \\mathcal{O}$** (which describe mathematical bounds). For example, Quick Sort's worst-case time complexity is $\\Theta(n^2)$, while its best-case is $\\Theta(n \\log n)$.
+
+---
+
+### Chapter 3: The Complete Big-O Growth Spectrum
+
+Below is the complete spectrum of algorithmic complexity classes, ordered from fastest to slowest:
+
+$$\\mathcal{O}(1) < \\mathcal{O}(\\log n) < \\mathcal{O}(\\sqrt{n}) < \\mathcal{O}(n) < \\mathcal{O}(n \\log n) < \\mathcal{O}(n^2) < \\mathcal{O}(n^3) < \\mathcal{O}(2^n) < \\mathcal{O}(n!)$$
+
+| Complexity Class | Canonical Name | Typical Real-World Examples | Scale at $n = 10^6$ | Practical CPU Runtime |
+| :--- | :--- | :--- | :--- | :--- |
+| **$\\mathcal{O}(1)$** | Constant | Hash map lookup, stack push/pop, array indexing \`arr[i]\` | 1 operation | ~1 nanosecond (Instantaneous) |
+| **$\\mathcal{O}(\\log n)$** | Logarithmic | Binary search, balanced BST lookup, Euclidean GCD | ~20 operations | ~20 nanoseconds (Instantaneous) |
+| **$\\mathcal{O}(\\sqrt{n})$** | Square Root | Primality testing, Mo's algorithm block decomposition | 1,000 operations | ~1 microsecond |
+| **$\\mathcal{O}(n)$** | Linear | Linear array scan, Kadane's algorithm, Counting Sort | $10^6$ operations | ~1 millisecond |
+| **$\\mathcal{O}(n \\log n)$** | Linearithmic | Merge Sort, Quick Sort (avg), Heap Sort | $\\approx 2 \\times 10^7$ ops | ~20 milliseconds |
+| **$\\mathcal{O}(n^2)$** | Quadratic | Nested loops, Bubble Sort, Selection Sort, Insertion Sort | $10^{12}$ operations | ~15 - 20 minutes |
+| **$\\mathcal{O}(n^3)$** | Cubic | Naive Matrix Multiplication, Floyd-Warshall shortest path | $10^{18}$ operations | ~31.7 years |
+| **$\\mathcal{O}(2^n)$** | Exponential | Naive recursive Fibonacci, generating all subsets | $2^{1000000}$ | Heat death of universe |
+| **$\\mathcal{O}(n!)$** | Factorial | Traveling Salesperson (brute force), all permutations | Undefined | Intractable |
+
+---
+
+### Chapter 4: Code Dissection — 6 Systematic Loop Analysis Patterns
+
+When reading or analyzing source code, apply these 6 structural patterns:
+
+#### Pattern 1: Single Linear Iteration $\\implies \\mathcal{O}(n)$
+\`\`\`cpp
+// Loop runs exactly n times
+for (int i = 0; i < n; i++) {
+    sum += arr[i]; // O(1) body
+}
+\`\`\`
+
+#### Pattern 2: Multiplicative / Halving Scaling $\\implies \\mathcal{O}(\\log n)$
+\`\`\`cpp
+// i doubles every iteration: 1, 2, 4, 8, ..., 2^k >= n ==> k = ceil(log2 n)
+for (int i = 1; i < n; i *= 2) {
+    cout << i << "\n";
+}
+\`\`\`
+
+#### Pattern 3: Nested Independent Loops $\\implies \\mathcal{O}(n \\cdot m)$
+\`\`\`cpp
+// Outer loop runs n times; inner loop runs m times independently
+for (int i = 0; i < n; i++) {
+    for (int j = 0; j < m; j++) {
+        matrix[i][j] = 0;
+    }
+}
+\`\`\`
+
+#### Pattern 4: Dependent Nested Loops (Arithmetic Series) $\\implies \\mathcal{O}(n^2)$
+\`\`\`cpp
+// Inner loop runs 1 + 2 + 3 + ... + n times
+// Sum = n(n + 1) / 2 = 0.5 n^2 + 0.5 n = O(n^2)
+for (int i = 0; i < n; i++) {
+    for (int j = 0; j <= i; j++) {
+        total++;
+    }
+}
+\`\`\`
+
+#### Pattern 5: Two-Pointer / Sliding Window Amortized Scan $\\implies \\mathcal{O}(n)$
+\`\`\`cpp
+// Although nested, left and right pointers each move at most n times total
+int left = 0;
+for (int right = 0; right < n; right++) {
+    currentSum += arr[right];
+    while (currentSum > target && left <= right) {
+        currentSum -= arr[left++]; // Left pointer only increments forward
+    }
+}
+\`\`\`
+
+#### Pattern 6: Divide & Conquer Recurrence (Master Theorem)
+For recurrences of the form $T(n) = a T(n/b) + \\mathcal{O}(n^d)$:
+- If $a = b^d \\implies T(n) = \\mathcal{O}(n^d \\log n)$ *(Example: Merge Sort with $a=2, b=2, d=1 \\implies T(n) = \\mathcal{O}(n \\log n)$)*
+- If $a < b^d \\implies T(n) = \\mathcal{O}(n^d)$
+- If $a > b^d \\implies T(n) = \\mathcal{O}(n^{\\log_b a})$
+
+---
+
+### Chapter 5: The $10^8$ Operations Rule in Real-World Systems
+
+In modern competitive programming (LeetCode, Codeforces) and backend API microservices, a standard modern CPU executes roughly **$10^8$ basic instructions per second** (100 million operations/sec).
+
+Use this reference table to immediately deduce the expected time complexity from the input constraints ($N$):
+
+| Constraint Value ($N$) | Required Time Complexity | Feasible Algorithmic Approach |
+| :--- | :--- | :--- |
+| $N \\le 10$ | $\\mathcal{O}(N!)$ or $\\mathcal{O}(N^2 \\cdot 2^N)$ | Brute Force Permutations, Traveling Salesperson DP |
+| $N \\le 20$ | $\\mathcal{O}(2^N)$ | Bitmask DP, Subset Recursion |
+| $N \\le 500$ | $\\mathcal{O}(N^3)$ | Floyd-Warshall, 3D Dynamic Programming |
+| $N \\le 5,000$ | $\\mathcal{O}(N^2)$ | Bubble/Insertion Sort, All-pairs nested scanning |
+| $N \\le 10^5 - 10^6$ | $\\mathcal{O}(N \\log N)$ or $\\mathcal{O}(N)$ | Merge Sort, Quick Sort, Segment Trees, Hash Maps |
+| $N \\le 10^9$ | $\\mathcal{O}(\\sqrt{N})$ or $\\mathcal{O}(\\log N)$ or $\\mathcal{O}(1)$ | Primality testing, Binary Search, Math & GCD |
+    `,
+    banglaNote: {
+      topic: "Time Complexity ও বিগ-ও অ্যানালাইসিস (গভীর ও সহজ ব্যাখ্যা)",
+      englishContext: "Deep intuitive understanding of Time Complexity, Big-O, loop patterns, and CPU execution limits",
+      banglaText: `
+### ১. টাইম কমপ্লেক্সিটি আসলে কী?
+টাইম কমপ্লেক্সিটি মানে কম্পিউটার ঘড়ির কাঁটা দেখে সেকেন্ড বা মিলি-সেকেন্ড মাপা নয়। কারণ একই সি++ কোড আপনার কোর-আই৯ ল্যাপটপে ০.১ সেকেন্ডে চললেও একটি দুর্বল সার্ভার বা পুরাতন ফোনে ৫ সেকেন্ড লাগতে পারে। 
+
+তাই অ্যালগরিদম বিশেষজ্ঞদের কাছে মূল প্রশ্ন হলো: **ইনপুট সাইজ $n$ (যেমন ১০ থেকে ১০,০০,০০০) বাড়ালে কম্পিউটারের কাজের মোট সংখ্যা (Operations) কী হারে বাড়ে?**
+
+---
+
+### ২. বাস্তব জীবনের ৪টি দারুণ অ্যানালজি:
+1. **$O(1)$ — কনস্ট্যান্ট টাইম (Constant):**
+   - একটি পাতিলে ১টি ডিম সেদ্ধ করতে যে ১০ মিনিট লাগে, একই পাতিলে একসাথে ১০টি ডিম সেদ্ধ করলেও সেই ১০ মিনিটই লাগে। ইনপুট বাড়লেও সময় বাড়ে না। (উদাহরণ: \`arr[5]\` ইন্ডেক্স রিড করা)।
+2. **$O(\\log n)$ — লগারিদমিক টাইম (Logarithmic):**
+   - একটি ১০ লক্ষ নামের মোটা ডিকশনারি থেকে একটি নাম খোঁজা। আপনি যদি প্রতিবার বইটি ঠিক মাঝামাঝি খুলে অর্ধেক অংশ বাদ দিয়ে দেন, তবে মাত্র ২০ বার পাতা উল্টালেই কাঙ্ক্ষিত নাম পেয়ে যাবেন ($2^{20} > 10^6$)!
+3. **$O(n)$ — লিনিয়ার টাইম (Linear):**
+   - ১টি আলু ছুলে পরিষ্কার করতে ১ মিনিট লাগলে, ১০০টি আলুর বস্তা পরিষ্কার করতে ১০০ মিনিট লাগবে।
+4. **$O(n^2)$ — কোয়াড্রেটিক টাইম (Quadratic):**
+   - একটি বিয়ের অনুষ্ঠানে উপস্থিত প্রত্যেক অতিথির সাথে অন্য প্রত্যেক অতিথির হ্যান্ডশেক করানো। অতিথি ১০০ জন হলে হ্যান্ডশেক হবে $\\approx 5,000$ টি, কিন্তু অতিথি দ্বিগুণ (২০০ জন) হলে হ্যান্ডশেক ৪ গুণ বেড়ে $\\approx 20,000$ হয়ে যাবে!
+
+---
+
+### ৩. গাণিতিক সংকেতত্রয়ী (Notations):
+- **Big-O ($O$):** কাজের সর্বোচ্চ সীমানা (Upper Bound)। গ্যারান্টি দেয় যে খারাপ পরিস্থিতিতেও কাজের পরিমাণ এর চেয়ে বেশি হবে না।
+- **Big-Omega ($\\Omega$):** কাজের সর্বনিম্ন সীমানা (Lower Bound / Best-Case)।
+- **Big-Theta ($\\Theta$):** একদম নিখুঁত সীমানা (Tight Bound), যেখানে আপার এবং লোয়ার বাউন্ড সমান।
+
+---
+
+### ৪. বিগ-ও হিসাব করার ২টি গোল্ডেন রুল:
+1. **ধ্রুবক (Constants) বাদ দিন:** $7n^2 + 100n + 50000$ থাকলে ধ্রুবক গুণক $7$ এবং ধ্রুবক সংখ্যা $50000$ বাদ যাবে।
+2. **সর্বোচ্চ প্রভাবশালী টার্মটি রাখুন (Dominant Term):** $n$ যখন কোটি ছোঁবে, তখন $n^2$ এর সামনে $100n$ কিছুই নয়। তাই এটি হবে $O(n^2)$।
+
+---
+
+### ৫. কম্পিটিটিভ প্রোগ্রামিংয়ে ১ সেকেন্ডের $10^8$ রুল:
+অনলাইন জাজে (যেমন LeetCode, Codeforces) ১ সেকেন্ডে প্রায় $10^8$ (১০ কোটি) অপারেশন চালানো যায়।
+- ইনপুট $N \\le 10^5$ হলে কখনো $O(N^2)$ কোড লিখবেন না (তাতে $10^{10}$ অপারেশন লেগে TLE খাবে); সবসময় $O(N \\log N)$ বা $O(N)$ সমাধান খুঁজুন।
+      `,
+    },
+    quizTopicId: "time-complexity",
+    visualizerLink: {
+      label: "Time Complexity Visualizer",
+      algorithmId: "time-complexity",
+      path: "/algorithms/time-complexity",
+    },
+  },
+  {
+    slug: "space-complexity",
+    level: 6,
+    levelTitle: "Level 6: Algorithmic Complexity Analysis",
+    order: 2,
+    title: "Space Complexity & Memory Hierarchy Masterclass",
+    subtitle: "In-depth analysis of input vs auxiliary space, stack vs heap allocations, recursive activation records, and memory optimization.",
+    estimatedReadTime: "15 min",
+    category: "Complexity",
+    content: `
+### Chapter 1: Total Space vs Auxiliary Space — The Crucial Equation
+
+When analyzing the memory consumption of an algorithm, we formulate the total memory consumption as:
+
+$$\\text{Total Space Complexity} = \\text{Input Space} + \\text{Auxiliary Space}$$
+
+#### Definitions:
+1. **Input Space**: The memory required to hold the original input data structures passed to the algorithm (for example, an input vector of $n$ numbers takes $\\mathcal{O}(n)$ input space).
+2. **Auxiliary Space**: The **extra temporary working memory** allocated by the algorithm itself to compute the solution (temporary variables, auxiliary vectors, dynamically allocated heap nodes, recursive call stack frames).
+
+> **Why Technical Interviews Focus Strictly on Auxiliary Space:**
+> Since the input data is provided by the caller, the algorithm cannot reduce the input space without changing the problem definition. Therefore, an algorithm's memory efficiency is measured exclusively by its **Auxiliary Space**.
+
+\`\`\`cpp
+// Example A: O(n) Input Space, strictly O(1) Auxiliary Space
+void printMax(const vector<int>& arr) {
+    int maxVal = arr[0]; // O(1) scalar variable
+    for (int x : arr) maxVal = max(maxVal, x);
+    cout << maxVal;
+}
+
+// Example B: O(n) Input Space, O(n) Auxiliary Space
+vector<int> duplicateArray(const vector<int>& arr) {
+    vector<int> copyArr = arr; // O(n) auxiliary heap allocation!
+    return copyArr;
+}
+\`\`\`
+
+---
+
+### Chapter 2: Program Memory Anatomy (Stack vs Heap vs Data)
+
+To master space complexity, an engineer must understand how the operating system manages application memory:
+
+\`\`\`
++-------------------------------------------------------+
+|  STACK MEMORY (Fast, Local Variables, Call Frames)    |  <-- Grows Downward
+|  - Fast allocation, size limited (typically 1MB - 8MB)|
++-------------------------------------------------------+
+|                         ▼                             |
+|                  FREE MEMORY                          |
+|                         ▲                             |
++-------------------------------------------------------+
+|  HEAP MEMORY (Dynamic 'new', 'malloc', std::vector)   |  <-- Grows Upward
+|  - Large capacity, dynamic resizing, pointers        |
++-------------------------------------------------------+
+|  DATA & BSS SEGMENT (Global & Static Variables)       |
++-------------------------------------------------------+
+|  TEXT / CODE SEGMENT (Compiled Binary Instructions)   |
++-------------------------------------------------------+
+\`\`\`
+
+1. **Stack Memory (Call Stack)**:
+   - Stores function parameters, local scalar variables, and return instruction pointers.
+   - Extremely fast (pointer bump allocation).
+   - Finite and rigid size (usually 1 MB to 8 MB). Exceeding this boundary triggers the fatal **Stack Overflow** crash.
+2. **Heap Memory (Dynamic Store)**:
+   - Stores dynamically sized structures (\`std::vector\`, \`new Node()\`, \`std::map\`).
+   - Managed manually or through smart pointers in C++, garbage-collected in Java/JavaScript/Python.
+   - Exceeding physical RAM and swap space triggers **Out Of Memory (OOM)** error.
+
+---
+
+### Chapter 3: The Hidden Memory Cost — Recursive Call Stack Frames
+
+Every time a function invokes itself recursively, the CPU allocates a new **Activation Record (Stack Frame)** containing:
+1. Formal parameters of the function.
+2. Local variable declarations.
+3. The return memory address where execution resumes after completion.
+
+#### Linear Recursion Depth $\\implies \\mathcal{O}(n)$ Auxiliary Stack Space
+\`\`\`cpp
+// Depth of recursion is n. At n = 100000, 100000 stack frames reside in RAM simultaneously.
+int linearFactorial(int n) {
+    if (n <= 1) return 1;
+    return n * linearFactorial(n - 1); // Holds n frames simultaneously -> O(n) Space
+}
+\`\`\`
+
+#### Divide & Conquer Recursion Depth $\\implies \\mathcal{O}(\\log n)$ Auxiliary Stack Space
+\`\`\`cpp
+// The recursion tree has height ceil(log2 n).
+// Only ONE root-to-leaf branch is active on the stack at any given millisecond!
+void divideAndConquer(int low, int high) {
+    if (low >= high) return;
+    int mid = low + (high - low) / 2;
+    divideAndConquer(low, mid);     // Active branch depth <= log2(n)
+    divideAndConquer(mid + 1, high);
+}
+\`\`\`
+
+---
+
+### Chapter 4: In-Place vs Out-of-Place Algorithmic Categorization
+
+#### Formal Definition of In-Place:
+An algorithm is classified as **In-Place** if its auxiliary memory usage is strictly **$\\mathcal{O}(1)$** (using only a fixed number of scalar pointers and counters), ignoring at most $\\mathcal{O}(\\log n)$ recursive call stack depth.
+
+| Algorithm | Input Space | Auxiliary Array Memory | Call Stack Space | Total Auxiliary Space | Classification |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **Bubble Sort** | $\\mathcal{O}(n)$ | $\\mathcal{O}(1)$ | $0$ | **$\\mathcal{O}(1)$** | In-Place |
+| **Selection Sort** | $\\mathcal{O}(n)$ | $\\mathcal{O}(1)$ | $0$ | **$\\mathcal{O}(1)$** | In-Place |
+| **Insertion Sort** | $\\mathcal{O}(n)$ | $\\mathcal{O}(1)$ | $0$ | **$\\mathcal{O}(1)$** | In-Place |
+| **Quick Sort** | $\\mathcal{O}(n)$ | $\\mathcal{O}(1)$ | $\\mathcal{O}(\\log n)$ avg | **$\\mathcal{O}(\\log n)$** | In-Place |
+| **Heap Sort** | $\\mathcal{O}(n)$ | $\\mathcal{O}(1)$ | $0$ | **$\\mathcal{O}(1)$** | In-Place |
+| **Merge Sort** | $\\mathcal{O}(n)$ | $\\mathcal{O}(n)$ buffer | $\\mathcal{O}(\\log n)$ | **$\\mathcal{O}(n)$** | Out-of-Place |
+| **Counting Sort** | $\\mathcal{O}(n)$ | $\\mathcal{O}(k)$ count array | $0$ | **$\\mathcal{O}(k)$** | Out-of-Place |
+
+---
+
+### Chapter 5: 4 Critical Memory Traps & Leaks in Modern Code
+
+#### Trap 1: Accidental Pass-by-Value in Recursion (Memory Explosion)
+\`\`\`cpp
+// DISASTER: Passing vector by value deep-copies all n elements at EVERY recursion level!
+// Space Complexity blows up from O(log n) to O(n^2)!
+void buggyRecursion(vector<int> arr, int l, int r) { ... }
+
+// CORRECT: Pass by reference avoids memory duplication. Auxiliary Space stays O(log n).
+void optimalRecursion(const vector<int>& arr, int l, int r) { ... }
+\`\`\`
+
+#### Trap 2: Jagged 2D Vector Overhead in C++
+A \`vector<vector<int>> matrix(n, vector<int>(m))\` creates $n$ distinct heap allocations, each with a 24-byte vector header, wrecking CPU L1/L2 cache locality.
+- **Optimization**: Flatten into a 1D vector: \`vector<int> matrix(n * m)\` and access element $(i, j)$ via \`matrix[i * m + j]\`.
+
+#### Trap 3: String Concatenation Inside Loops
+Repeatedly appending to immutable strings (or copying strings) creates intermediary allocations:
+\`\`\`cpp
+// In languages with immutable strings, this copies the entire prefix repeatedly -> O(n^2) space!
+string s = "";
+for (int i = 0; i < n; i++) s += to_string(i);
+\`\`\`
+
+#### Trap 4: Online Judge Memory Limit Exceeded (MLE)
+Standard competitive programming platforms provide **256 MB of RAM**.
+- A 32-bit integer (\`int\`) takes **4 bytes**.
+- $256 \\text{ MB} = 256 \\times 1024 \\times 1024 \\approx 2.68 \\times 10^8 \\text{ bytes} \\approx 6.7 \\times 10^7 \\text{ integers}$.
+- Attempting to allocate an array of size $> 6 \\times 10^7$ integers will trigger an immediate **Memory Limit Exceeded (MLE)** verdict.
+    `,
+    banglaNote: {
+      topic: "Space Complexity ও মেমরি অপ্টিমাইজেশন (গভীর ও সহজ ব্যাখ্যা)",
+      englishContext: "Deep intuitive understanding of Auxiliary Space, Call Stack Frames, Heap Buffers, and Memory Optimization",
+      banglaText: `
+### ১. স্পেস কমপ্লেক্সিটি আসলে কী?
+একটি প্রোগ্রাম চালাতে গিয়ে কম্পিউটারের র‍্যাম (RAM) এ কতটুকু অতিরিক্ত জায়গা খরচ হয় — সেটাই স্পেস কমপ্লেক্সিটি।
+
+কম্পিউটার সায়েন্সে মোট মেমরিকে দুটি ভাগে ভাগ করা হয়:
+$$\\text{Total Space} = \\text{Input Space} + \\text{Auxiliary Space}$$
+
+- **ইনপুট স্পেস (Input Space):** আপনাকে যে ডেটা প্রসেস করতে দেওয়া হয়েছে (যেমন $n$ সাইজের একটি অ্যারে যা $O(n)$ মেমরি দখল করে)।
+- **অক্সিলিয়ারি স্পেস (Auxiliary Space):** সমস্যাটি সমাধান করার জন্য আপনার অ্যালগরিদম নিজে থেকে যে অতিরিক্ত মেমরি তৈরি করে (যেমন: নতুন বাফার অ্যারে, রিকার্সিভ কল স্ট্যাক, ভ্যারিয়েবল)।
+👉 **মনে রাখবেন:** ইন্টারভিউতে বা কোডিং টেস্টে যখন "Space Complexity" জানতে চাওয়া হয়, তখন মূলত **Auxiliary Space** জানতে চাওয়া হয়।
+
+---
+
+### ২. বাস্তব জীবনের দারুণ অ্যানালজি:
+- **ইনপুট স্পেস:** আপনি ভ্রমণের জন্য যে স্যুটকেসে জামাকাপড় নিলেন ($O(n)$)। এটি আপনাকে বহন করতেই হবে।
+- **অক্সিলিয়ারি স্পেস:** গন্তব্যে পৌঁছে কাপড় ইস্ত্রি বা গোছানোর জন্য ঘরে অতিরিক্ত যে টেবিল বা বাস্কেট ব্যবহার করলেন। একজন দক্ষ পরিব্রাজক অতিরিক্ত টেবিল বা বাস্কেট ছাড়াই স্যুটকেসের ভেতরেই কাপড় গুছিয়ে নিতে পারেন ($O(1)$ Auxiliary Space)।
+
+---
+
+### ৩. কল স্ট্যাক ও স্ট্যাক ওভারফ্লো (Stack Overflow):
+যখন কোনো ফাংশন রিকার্সিভলি নিজেকে কল করে, প্রতিবার র‍্যামের কল স্ট্যাকে একটি করে **Activation Record (Stack Frame)** তৈরি হয়।
+- **লিনিয়ার রিকার্শনে ($O(n)$ Space):** ফাংশনটি $n$ বার কল হলে স্ট্যাকে একবারে $n$ টি ফ্রেম জমে থাকে। ইনপুট অনেক বড় হলে স্ট্যাকের মেমরি (সাধারণত ১ থেকে ৮ মেগাবাইট) পূর্ণ হয়ে প্রোগ্রাম ক্র্যাশ করে, যাকে **Stack Overflow** বা **Runtime Error** বলে।
+- **ডিভাইড অ্যান্ড কনকারে ($O(\\log n)$ Space):** মার্জ সর্ট বা কুইক সর্টে প্রতি মুহূর্তে শুধুমাত্র ১টি ব্রাঞ্চ সক্রিয় থাকে, তাই সর্বোচ্চ $\\approx \\log_2 n$ টি ফ্রেম স্ট্যাকে থাকে।
+
+---
+
+### ৪. ইন-প্লেস (In-Place) অ্যালগরিদম কেন জরুরি?
+যে অ্যালগরিদম কোনো বড় সহায়ক মেমরি না বানিয়ে মূল অ্যারের ভেতরেই উপাদানগুলোর অবস্থান সোয়াপ করে কাজ সম্পন্ন করে ($O(1)$ অক্সিলিয়ারি মেমরি), তাকে **In-Place** অ্যালগরিদম বলে (যেমন: Bubble Sort, Selection Sort, Insertion Sort, Heap Sort)।
+
+---
+
+### ৫. মেমরি বাঁচানোর ৩টি গোল্ডেন রুলস:
+1. **রিকার্শনে ভেক্টর বাই-ভ্যালু নয়, বাই-রেফারেন্স পাস করুন:** \`void func(vector<int> arr)\` লিখলে প্রতি ধাপে সম্পূর্ণ অ্যারে কপি হয়ে $O(n^2)$ মেমরি অপচয় ঘটে। সবসময় \`const vector<int>& arr\` ব্যবহার করুন।
+2. **2D ভেক্টরের বদলে 1D ফ্ল্যাট বাফার ব্যবহার করুন:** \`vector<vector<int>>\` এর চেয়ে \`vector<int> grid(n * m)\` ক্যাশ মেমরিতে অনেক দ্রুত কাজ করে।
+3. **ডাইনামিক প্রোগ্রামিংয়ে স্পেস অপ্টিমাইজেশন:** ডিপি টেবিলে যদি শুধু আগের ১ বা ২টি মান প্রয়োজন হয়, তবে পুরো $O(n)$ বা $O(n^2)$ টেবিল না রেখে মাত্র ২টি ভ্যারিয়েবল ব্যবহার করে মেমরিকে $O(1)$ এ নামিয়ে আনা যায়।
+      `,
+    },
+    quizTopicId: "space-complexity",
+    visualizerLink: {
+      label: "Space Complexity Visualizer",
+      algorithmId: "space-complexity",
+      path: "/algorithms/space-complexity",
+    },
+  },
 ];
 
 export const DOCS_LEVELS: DocsLevel[] = [
@@ -1320,5 +1716,11 @@ export const DOCS_LEVELS: DocsLevel[] = [
     title: "Level 5: Fundamental Data Structures",
     description: "Core linear containers: Stack (LIFO, call stacks) and Queue (FIFO, circular buffers, BFS).",
     articles: DOCS_ARTICLES.filter((a) => a.level === 5)
+  },
+  {
+    level: 6,
+    title: "Level 6: Algorithmic Complexity Analysis",
+    description: "Deep dive into Time Complexity growth rates, Space Complexity auxiliary memory, and call stack overhead.",
+    articles: DOCS_ARTICLES.filter((a) => a.level === 6)
   }
 ];

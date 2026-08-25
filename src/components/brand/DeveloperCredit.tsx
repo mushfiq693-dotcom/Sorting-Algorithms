@@ -35,37 +35,44 @@ export function DeveloperCredit() {
     <div ref={modalRef} className="fixed bottom-20 right-5 z-50 font-sans select-none">
       {/* Floating Popup Card */}
       {isOpen && (
-        <div className="absolute bottom-14 right-0 w-80 sm:w-88 max-w-[calc(100vw-2.5rem)] rounded-3xl border border-white/[0.12] bg-[#0c101d]/95 backdrop-blur-2xl p-5 shadow-2xl shadow-black/80 animate-in fade-in zoom-in-95 duration-200">
-          {/* Header Row: Avatar, Name, Title, and Close Button */}
-          <div className="flex items-start justify-between gap-3 pb-3 border-b border-white/[0.08]">
-            <div className="flex items-center gap-3">
-              <div className="h-11 w-11 rounded-2xl bg-[#070b14] border border-white/10 flex items-center justify-center font-bold text-white text-base shadow-inner">
-                <span>M</span>
-              </div>
-              <div>
-                <div className="flex items-center gap-1.5 font-bold text-sm text-white">
-                  <span>{dev.name}</span>
-                  <Sparkles className="h-3.5 w-3.5 text-amber-400 fill-amber-400" />
-                </div>
-                <div className="text-xs font-semibold text-amber-400 tracking-wide">
-                  {dev.role}
-                </div>
-              </div>
+        <div className="absolute bottom-14 right-0 w-80 sm:w-92 max-w-[calc(100vw-2.5rem)] rounded-3xl border border-white/[0.12] bg-[#0c101d]/95 backdrop-blur-2xl p-5 sm:p-6 shadow-2xl shadow-black/80 animate-in fade-in zoom-in-95 duration-200">
+          {/* Close Button Top-Right */}
+          <button
+            onClick={() => setIsOpen(false)}
+            className="absolute top-4 right-4 p-1.5 rounded-full text-slate-400 hover:text-white hover:bg-white/10 transition-colors z-10 cursor-pointer"
+            aria-label="Close developer card"
+          >
+            <X className="h-4 w-4" />
+          </button>
+
+          {/* Hero Profile Photo & Identity */}
+          <div className="flex flex-col items-center text-center pb-4 border-b border-white/[0.08]">
+            <div className="h-28 w-28 sm:h-32 sm:w-32 rounded-2xl overflow-hidden border border-white/20 shadow-2xl shadow-black/80 bg-[#070b14] mb-3">
+              <img
+                src="/developer.jpg"
+                alt={dev.name}
+                className="w-full h-full object-cover object-top hover:scale-105 transition-transform duration-300"
+              />
             </div>
 
-            <button
-              onClick={() => setIsOpen(false)}
-              className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-white/[0.06] transition-colors"
-              aria-label="Close developer signature"
-            >
-              <X className="h-4 w-4" />
-            </button>
-          </div>
+            <div className="flex items-center justify-center gap-1.5">
+              <h3 className="font-bold text-base text-white">{dev.name}</h3>
+              <Sparkles className="h-3.5 w-3.5 text-cyan-400 fill-cyan-400" />
+            </div>
 
-          {/* Bio Description */}
-          <p className="text-xs text-slate-300 mt-3 leading-relaxed font-sans">
-            {dev.bio}
-          </p>
+            <div className="flex flex-wrap items-center justify-center gap-2 mt-1">
+              <span className="text-xs font-semibold text-cyan-400">{dev.role}</span>
+              <span className="text-slate-600">•</span>
+              <span className="px-2 py-0.5 rounded-md bg-cyan-500/15 border border-cyan-500/30 text-[10px] font-mono font-bold text-cyan-300">
+                Creator & Architect
+              </span>
+            </div>
+
+            {/* Bio Description */}
+            <p className="text-xs text-slate-300 mt-2.5 px-2 leading-relaxed font-sans">
+              {dev.bio}
+            </p>
+          </div>
 
           {/* Social & Portfolio Links */}
           <div className="mt-4 space-y-2">
@@ -74,15 +81,15 @@ export function DeveloperCredit() {
               href={dev.portfolioUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center justify-between p-2.5 rounded-xl border border-white/[0.08] bg-white/[0.02] hover:bg-white/[0.06] hover:border-amber-500/40 transition-all text-xs font-semibold text-slate-200 hover:text-white group"
+              className="flex items-center justify-between p-2.5 rounded-xl border border-white/[0.08] bg-white/[0.02] hover:bg-white/[0.06] hover:border-cyan-500/40 transition-all text-xs font-semibold text-slate-200 hover:text-white group"
             >
               <div className="flex items-center gap-2.5">
-                <div className="p-1 rounded-lg bg-amber-500/10 text-amber-400">
+                <div className="p-1 rounded-lg bg-cyan-500/10 text-cyan-400">
                   <Globe className="h-4 w-4" />
                 </div>
                 <span>Portfolio Website</span>
               </div>
-              <ExternalLink className="h-3.5 w-3.5 text-slate-400 group-hover:text-amber-300 transition-colors" />
+              <ExternalLink className="h-3.5 w-3.5 text-slate-400 group-hover:text-cyan-300 transition-colors" />
             </a>
 
             {/* GitHub Profile */}
@@ -125,7 +132,7 @@ export function DeveloperCredit() {
           {/* Footer Signature */}
           <div className="mt-4 pt-3 border-t border-white/[0.08] flex items-center justify-between text-[10px] font-mono text-slate-500">
             <span className="flex items-center gap-1">
-              <Code2 className="h-3 w-3 text-amber-500" />
+              <Code2 className="h-3 w-3 text-cyan-500" />
               <span>Developer Signature</span>
             </span>
             <span>GSTU CSE Sync</span>
@@ -133,16 +140,18 @@ export function DeveloperCredit() {
         </div>
       )}
 
-      {/* Main Floating Trigger Button */}
+      {/* Main Floating Trigger Button (Clean, Border-free from yellow ring) */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="h-11 w-11 rounded-full bg-[#0c101a] border-2 border-amber-500/80 shadow-xl shadow-amber-500/15 flex items-center justify-center text-white font-bold text-sm hover:scale-105 active:scale-95 transition-all relative cursor-pointer"
+        className="h-12 w-12 rounded-full bg-[#0c101a] border border-white/20 shadow-2xl shadow-black/60 flex items-center justify-center overflow-hidden hover:scale-105 hover:border-cyan-500/60 active:scale-95 transition-all cursor-pointer group"
         aria-label="Open developer credit card"
-        title="Developer Credit (Mushfiqur Rahman)"
+        title={`Developer Credit (${dev.name})`}
       >
-        <span>M</span>
-        {/* Amber status dot */}
-        <span className="absolute -top-0.5 -right-0.5 h-3 w-3 rounded-full bg-amber-400 border-2 border-[#050811] shadow-sm animate-pulse" />
+        <img
+          src="/developer.jpg"
+          alt={dev.name}
+          className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform"
+        />
       </button>
     </div>
   );

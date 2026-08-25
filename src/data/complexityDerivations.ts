@@ -355,6 +355,26 @@ export function calculatePredictedOperations(algorithmId: AlgorithmId, n: number
         depth: Math.ceil(log2n),
         operationName: "Swaps",
       };
+    case "time-complexity":
+      return {
+        bestComp: 1,
+        avgComp: nLogN,
+        worstComp: worstQuadratic,
+        bestSwaps: 0,
+        worstSwaps: 0,
+        depth: Math.ceil(log2n),
+        operationName: "Instructions",
+      };
+    case "space-complexity":
+      return {
+        bestComp: 1,
+        avgComp: Math.ceil(log2n),
+        worstComp: n,
+        bestSwaps: 0,
+        worstSwaps: 0,
+        depth: Math.ceil(log2n),
+        operationName: "Allocations",
+      };
     default:
       return {
         bestComp: 1,

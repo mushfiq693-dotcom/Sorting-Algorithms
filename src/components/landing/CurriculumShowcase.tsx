@@ -101,6 +101,7 @@ export function CurriculumShowcase() {
             {ALL_TOPICS.map((id) => {
               const meta = ALGORITHMS[id];
               const isDS = meta.category === "data-structure";
+              const isComplexity = meta.category === "complexity";
 
               return (
                 <div
@@ -114,7 +115,7 @@ export function CurriculumShowcase() {
                           {meta.name}
                         </h3>
                         <span className="text-[10px] font-mono text-muted-foreground uppercase">
-                          {isDS ? "Data Structure" : "Sorting Algorithm"}
+                          {isDS ? "Data Structure" : isComplexity ? "Complexity Analysis" : "Sorting Algorithm"}
                         </span>
                       </div>
                       <span className="text-xs font-mono px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-300 border border-cyan-500/20 font-bold">
@@ -141,8 +142,8 @@ export function CurriculumShowcase() {
                         <span className="text-purple-300 font-bold">{meta.complexity.space}</span>
                       </div>
                       <div>
-                        <span className="text-slate-500 block text-[10px]">{isDS ? "Invariant" : "Stability"}</span>
-                        <span className="text-cyan-300 font-bold">{isDS ? (id === "stack" ? "LIFO" : "FIFO") : meta.complexity.stable ? "Stable" : "Unstable"}</span>
+                        <span className="text-slate-500 block text-[10px]">{isDS ? "Invariant" : isComplexity ? "Scale" : "Stability"}</span>
+                        <span className="text-cyan-300 font-bold">{isDS ? (id === "stack" ? "LIFO" : "FIFO") : isComplexity ? "Asymptotic" : meta.complexity.stable ? "Stable" : "Unstable"}</span>
                       </div>
                     </div>
                   </div>
@@ -157,7 +158,7 @@ export function CurriculumShowcase() {
                     </Link>
 
                     <Link
-                      href={isDS ? `/docs/${id}-data-structure` : `/docs/${id}-sort`}
+                      href={isDS ? `/docs/${id}-data-structure` : isComplexity ? `/docs/${id}` : `/docs/${id}-sort`}
                       className="text-[11px] font-mono text-slate-400 hover:text-white transition-colors"
                     >
                       Read Theory →

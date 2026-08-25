@@ -1,6 +1,6 @@
 import { SortOperation } from "./sorting";
 
-export type TopicCategory = "sorting" | "data-structure";
+export type TopicCategory = "sorting" | "data-structure" | "complexity";
 
 export type SortingAlgorithmId =
   | "bubble"
@@ -11,7 +11,9 @@ export type SortingAlgorithmId =
 
 export type DataStructureId = "stack" | "queue";
 
-export type TopicId = SortingAlgorithmId | DataStructureId;
+export type ComplexityTopicId = "time-complexity" | "space-complexity";
+
+export type TopicId = SortingAlgorithmId | DataStructureId | ComplexityTopicId;
 
 // Backwards compatibility alias
 export type AlgorithmId = TopicId;

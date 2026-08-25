@@ -407,6 +407,113 @@ public:
     }
 };`,
   },
+  "time-complexity": {
+    id: "time-complexity",
+    name: "Time Complexity",
+    category: "complexity",
+    shortDescription: "Mathematical evaluation of algorithm execution time and operation growth as input size n scales.",
+    description:
+      "Time Complexity measures the rate at which execution time grows relative to input size n. Expressed in Big-O asymptotic notation, it classifies algorithms from lightning-fast O(1) and O(log n) to linear O(n), log-linear O(n log n), quadratic O(n²), and intractable O(2ⁿ) exponential growth.",
+    complexity: {
+      best: "O(1)",
+      average: "O(n log n)",
+      worst: "O(n²)",
+      space: "O(1)",
+      spaceNote:
+        "Time complexity evaluates instruction operations independently of hardware clock speed or CPU differences.",
+      operations: [
+        { name: "O(1) Constant", time: "1 op", space: "O(1)", description: "Direct index access, push/pop, arithmetic operations." },
+        { name: "O(log n) Logarithmic", time: "~log₂ n ops", space: "O(1)", description: "Binary search, balanced tree lookups (halving search space)." },
+        { name: "O(n) Linear", time: "n ops", space: "O(1)", description: "Single linear scan, array traversal, counting elements." },
+        { name: "O(n log n) Linearithmic", time: "n × log₂ n ops", space: "O(n) / O(log n)", description: "Optimal comparison sorting (Merge Sort, Quick Sort avg)." },
+        { name: "O(n²) Quadratic", time: "n² ops", space: "O(1)", description: "Nested loops, pairwise comparisons (Bubble, Selection Sort)." },
+      ],
+    },
+    cppCode: `// 1. O(1) Constant Time
+int getFirstElement(const vector<int>& arr) {
+    return arr.empty() ? -1 : arr[0]; // Exactly 1 operation
+}
+
+// 2. O(log n) Logarithmic Time (Binary Search)
+int binarySearch(const vector<int>& arr, int target) {
+    int low = 0, high = (int)arr.size() - 1;
+    while (low <= high) {
+        int mid = low + (high - low) / 2;
+        if (arr[mid] == target) return mid;
+        if (arr[mid] < target) low = mid + 1;
+        else high = mid - 1; // Halves the search space each step
+    }
+    return -1;
+}
+
+// 3. O(n) Linear Time (Single Loop)
+int findMax(const vector<int>& arr) {
+    int maxVal = arr[0];
+    for (int x : arr) {
+        maxVal = max(maxVal, x); // Steps scale directly with n
+    }
+    return maxVal;
+}
+
+// 4. O(n^2) Quadratic Time (Nested Loops)
+void printPairs(const vector<int>& arr) {
+    int n = arr.size();
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            // Executes n * n = n^2 total iterations
+        }
+    }
+}`,
+  },
+  "space-complexity": {
+    id: "space-complexity",
+    name: "Space Complexity",
+    category: "complexity",
+    shortDescription: "Analysis of memory consumption, distinguishing auxiliary working memory from input memory and call stack overhead.",
+    description:
+      "Space Complexity quantifies the total extra working memory (auxiliary space) an algorithm allocates beyond the input itself. Includes stack frames created during recursive function calls, dynamically allocated arrays, hash sets, and auxiliary buffers.",
+    complexity: {
+      best: "O(1)",
+      average: "O(log n)",
+      worst: "O(n)",
+      space: "O(1) - O(n)",
+      spaceNote:
+        "Auxiliary space excludes the input storage itself and focuses strictly on extra memory allocated by the algorithm.",
+      operations: [
+        { name: "O(1) In-Place", time: "Constant Memory", space: "O(1)", description: "Variables, counters, pointers, temporary swap values." },
+        { name: "O(log n) Call Stack", time: "Tree Recursion", space: "O(log n)", description: "Divide & Conquer call frames on balanced recursion trees." },
+        { name: "O(n) Dynamic Buffer", time: "Linear Memory", space: "O(n)", description: "Auxiliary merge arrays, hash tables, linear recursion stacks." },
+        { name: "O(n²) Matrix Space", time: "Quadratic Grid", space: "O(n²)", description: "2D adjacency matrices, dynamic programming lookup grids." },
+      ],
+    },
+    cppCode: `// 1. O(1) Auxiliary Space (In-Place Mutation)
+void reverseArray(vector<int>& arr) {
+    int left = 0, right = (int)arr.size() - 1;
+    while (left < right) {
+        swap(arr[left++], arr[right--]); // Uses single temp int
+    }
+}
+
+// 2. O(log n) Auxiliary Stack Space (Recursion Depth)
+void divideAndConquer(int low, int high) {
+    if (low >= high) return;
+    int mid = low + (high - low) / 2;
+    divideAndConquer(low, mid);     // Max stack depth = log2(n)
+    divideAndConquer(mid + 1, high);
+}
+
+// 3. O(n) Auxiliary Space (Buffer Allocation)
+vector<int> copyElements(const vector<int>& arr) {
+    vector<int> clone;
+    for (int val : arr) clone.push_back(val); // Allocates n ints
+    return clone;
+}
+
+// 4. O(n^2) Matrix Auxiliary Space
+vector<vector<int>> createGrid(int n) {
+    return vector<vector<int>>(n, vector<int>(n, 0)); // n x n grid
+}`,
+  },
 };
 
 // All 5 Sorting Algorithms
@@ -421,6 +528,12 @@ export const SORTING_ALGORITHMS: AlgorithmId[] = [
 // All Data Structures
 export const DATA_STRUCTURES: AlgorithmId[] = ["stack", "queue"];
 
+// All Complexity Topics
+export const COMPLEXITY_TOPICS: AlgorithmId[] = [
+  "time-complexity",
+  "space-complexity",
+];
+
 // Backward compatibility alias for sorting visualizer
 export const ALL_ALGORITHMS: AlgorithmId[] = SORTING_ALGORITHMS;
 
@@ -428,6 +541,7 @@ export const ALL_ALGORITHMS: AlgorithmId[] = SORTING_ALGORITHMS;
 export const ALL_TOPICS: AlgorithmId[] = [
   ...SORTING_ALGORITHMS,
   ...DATA_STRUCTURES,
+  ...COMPLEXITY_TOPICS,
 ];
 
 export const ALGORITHM_RUNNERS: Partial<

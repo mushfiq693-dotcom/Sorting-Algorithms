@@ -41,10 +41,10 @@ export default function DocsIndexPage() {
         </div>
 
         <h1 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight leading-tight">
-          Complete Sorting Documentation & Course
+          Complete DSA Documentation & Theory Course
         </h1>
         <p className="text-sm sm:text-base text-muted-foreground max-w-2xl leading-relaxed">
-          A structured 5-level masterclass exploring formal definitions, asymptotic analysis, pure algorithmic implementations, and targeted Bengali explanations for complex concepts.
+          A structured 7-level masterclass exploring formal definitions, asymptotic Big-O time & space complexity, pure C++ algorithmic implementations, and targeted Bengali explanations for complex concepts.
         </p>
 
         {/* Global Progress Card */}

@@ -4,7 +4,7 @@ export interface LearningStep {
   id: AlgorithmId;
   order: number;
   name: string;
-  category: "sorting" | "data-structure";
+  category: "sorting" | "data-structure" | "complexity";
   badge: string;
   estimatedTime: string;
   difficulty: "Beginner" | "Intermediate" | "Advanced";
@@ -268,10 +268,79 @@ export const LEARNING_PATH: LearningStep[] = [
       space: "O(1) auxiliary space per operation; O(n) overall storage for n elements.",
     },
   },
+  {
+    id: "time-complexity",
+    order: 8,
+    name: "Time Complexity",
+    category: "complexity",
+    badge: "Big-O & Growth Rates",
+    estimatedTime: "~15 min",
+    difficulty: "Beginner",
+    reason: "The foundation of all algorithmic evaluation. Understand how instruction count and loops scale as input size n grows.",
+    analogy: "Cooking breakfast: Boiling 1 egg vs boiling 10 eggs takes the same 10 minutes in one pot O(1). But peeling 10 eggs individually takes 10 times longer O(n).",
+    idea: "Time Complexity mathematically models the number of basic operations executed by an algorithm as a function of the input size n. Using Big-O asymptotic notation, it categorizes algorithms into growth tiers: O(1) constant, O(log n) logarithmic, O(n) linear, O(n log n) log-linear, and O(n²) quadratic.",
+    sampleArray: [1, 2, 4, 8, 16, 32, 64, 128],
+    codeBlocks: [
+      {
+        title: "Logarithmic Step (Binary Division)",
+        lines: "while (low <= high) {\n    int mid = low + (high - low) / 2;\n    if (arr[mid] == target) return mid;\n    if (arr[mid] < target) low = mid + 1;\n    else high = mid - 1;\n}",
+        explanation: "Halves the remaining candidate elements on every step, completing in at most log₂(n) iterations.",
+      },
+      {
+        title: "Linear Loop Traversal",
+        lines: "for (int i = 0; i < n; i++) {\n    sum += arr[i];\n}",
+        explanation: "Executes the loop body exactly n times, directly proportional to input size.",
+      },
+      {
+        title: "Quadratic Nested Loops",
+        lines: "for (int i = 0; i < n; i++) {\n    for (int j = 0; j < n; j++) {\n        matrix[i][j] = 0;\n    }\n}",
+        explanation: "The inner loop runs n times for each of the outer loop's n iterations, yielding n × n = O(n²) operations.",
+      },
+    ],
+    complexityWhy: {
+      time: "Focuses on asymptotic worst-case bounds, ignoring constant hardware coefficients and CPU clock frequencies.",
+      space: "Time analysis tracks computational step transitions and loop iterations.",
+    },
+  },
+  {
+    id: "space-complexity",
+    order: 9,
+    name: "Space Complexity",
+    category: "complexity",
+    badge: "Auxiliary Memory & Stack",
+    estimatedTime: "~15 min",
+    difficulty: "Beginner",
+    reason: "Memory is a finite physical resource. Master the distinction between input storage, auxiliary working buffers, and call stack overhead.",
+    analogy: "Packing a travel suitcase: the clothes you bring are the input space O(n). The folding table or organizers you temporarily use while packing are the auxiliary space O(1) or O(n).",
+    idea: "Space Complexity measures the total extra memory (auxiliary space) required by an algorithm to execute to completion. This includes dynamic heap allocations (temporary arrays, hash tables) and the call stack frames allocated during recursive function execution.",
+    sampleArray: [10, 20, 30, 40, 50],
+    codeBlocks: [
+      {
+        title: "In-Place O(1) Auxiliary Space",
+        lines: "void reverseArray(vector<int>& arr) {\n    int l = 0, r = arr.size() - 1;\n    while (l < r) swap(arr[l++], arr[r--]);\n}",
+        explanation: "Rearranges elements directly inside the input vector using only two scalar index integers, requiring O(1) extra memory.",
+      },
+      {
+        title: "Recursive Call Stack O(log n) Space",
+        lines: "void divide(int l, int r) {\n    if (l >= r) return;\n    int mid = l + (r - l) / 2;\n    divide(l, mid);\n    divide(mid + 1, r);\n}",
+        explanation: "A balanced divide-and-conquer tree reaches a maximum stack recursion depth of log₂(n) simultaneous activation records.",
+      },
+      {
+        title: "Auxiliary Dynamic Buffer O(n) Space",
+        lines: "vector<int> temp(n);\nfor (int i = 0; i < n; i++) temp[i] = arr[i];",
+        explanation: "Allocates a new heap array of size n, consuming auxiliary memory proportional to the input size.",
+      },
+    ],
+    complexityWhy: {
+      time: "Memory management operations take time, but space complexity isolates physical byte footprint.",
+      space: "Auxiliary space measures extra working memory beyond the input array itself.",
+    },
+  },
 ];
 
 export const SORTING_PATH = LEARNING_PATH.filter((s) => s.category === "sorting");
 export const DATA_STRUCTURES_PATH = LEARNING_PATH.filter((s) => s.category === "data-structure");
+export const COMPLEXITY_PATH = LEARNING_PATH.filter((s) => s.category === "complexity");
 
 export interface GlossaryTerm {
   term: string;

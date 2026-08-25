@@ -19,7 +19,9 @@ export type SortingAlgorithmId =
 
 export type DataStructureId = "stack" | "queue";
 
-export type AlgorithmId = SortingAlgorithmId | DataStructureId;
+export type ComplexityTopicId = "time-complexity" | "space-complexity";
+
+export type AlgorithmId = SortingAlgorithmId | DataStructureId | ComplexityTopicId;
 
 export interface AlgorithmComplexity {
   best: string;
@@ -40,7 +42,7 @@ export interface AlgorithmComplexity {
 export interface AlgorithmMetadata {
   id: AlgorithmId;
   name: string;
-  category?: "sorting" | "data-structure";
+  category?: "sorting" | "data-structure" | "complexity";
   shortDescription: string;
   description: string;
   complexity: AlgorithmComplexity;

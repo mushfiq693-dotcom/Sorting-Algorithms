@@ -619,5 +619,154 @@ export const QUIZZES: Record<string, QuizTopic> = {
         explanation: "The fundamental operational distinction is removal order: Stacks remove the most recently added item (LIFO), whereas Queues remove the oldest item (FIFO)."
       }
     ]
+  },
+  "time-complexity": {
+    id: "time-complexity",
+    title: "Time Complexity & Big-O Mastery Quiz",
+    description: "Test your skills on asymptotic notation, loop growth analysis, binary division rates, and dominance rules.",
+    questions: [
+      {
+        id: "tc1",
+        question: "What does Big-O notation O(f(n)) mathematically represent?",
+        options: [
+          "The exact running time in milliseconds on an Intel i7 processor",
+          "An asymptotic upper bound on the growth rate of operations as n approaches infinity",
+          "The minimum memory consumed by the operating system",
+          "The average number of lines of code in the implementation"
+        ],
+        correctIndex: 1,
+        explanation: "Big-O provides a formal upper bound on operation count growth as input size n grows indefinitely, independent of hardware clocks."
+      },
+      {
+        id: "tc2",
+        question: "Consider a loop: `for (int i = 1; i < n; i *= 2) { ... }`. What is its time complexity?",
+        codeSnippet: "for (int i = 1; i < n; i *= 2) {\n    cout << i << endl;\n}",
+        options: ["O(n)", "O(log n)", "O(n²)", "O(1)"],
+        correctIndex: 1,
+        explanation: "The variable i doubles every iteration: 1, 2, 4, 8, ..., 2^k. The loop terminates when 2^k >= n, meaning k = ⌈log₂ n⌉ iterations."
+      },
+      {
+        id: "tc3",
+        question: "An algorithm executes f(n) = 7n³ + 250n² + 4000n + 99999 operations. What is its Big-O classification?",
+        options: ["O(n³)", "O(n²)", "O(7n³)", "O(99999)"],
+        correctIndex: 0,
+        explanation: "By the asymptotic dominance rule, we drop all lower-order terms (250n², 4000n, 99999) and constant multipliers (7), leaving strictly O(n³)."
+      },
+      {
+        id: "tc4",
+        question: "What is the time complexity of the following nested loop?\nfor (int i = 0; i < n; i++) {\n    for (int j = 0; j <= i; j++) {\n        count++;\n    }\n}",
+        codeSnippet: "for (int i = 0; i < n; i++) {\n    for (int j = 0; j <= i; j++) {\n        count++;\n    }\n}",
+        options: ["O(n)", "O(n log n)", "O(n²)", "O(2ⁿ)"],
+        correctIndex: 2,
+        explanation: "The inner loop runs 1, 2, 3, ..., n times, summing to n(n + 1) / 2 = 0.5n² + 0.5n = O(n²)."
+      },
+      {
+        id: "tc5",
+        question: "Why is Binary Search on a sorted array of size n = 1,000,000 able to find an item in at most ~20 comparisons?",
+        options: [
+          "Because 2²⁰ = 1,048,576 > 1,000,000 and it halves the search space on every step (O(log₂ n))",
+          "Because it uses multi-threaded GPU parallelism",
+          "Because it guesses the location based on memory address hashing",
+          "Because it skips all odd numbers"
+        ],
+        correctIndex: 0,
+        explanation: "With logarithmic O(log₂ n) halving, log₂(1,000,000) ≈ 19.93. At most 20 comparisons are needed to isolate any single element among one million."
+      },
+      {
+        id: "tc6",
+        question: "Why does running an O(n²) algorithm on a 4.0 GHz CPU still fail on large inputs (e.g. n = 1,000,000) compared to an O(n log n) algorithm on a 1.0 GHz CPU?",
+        options: [
+          "Because (10⁶)² = 10¹² operations takes ~250 seconds, whereas 10⁶ log₂(10⁶) ≈ 20 × 10⁶ operations takes only ~0.02 seconds",
+          "Because modern CPUs cannot perform quadratic arithmetic",
+          "Because O(n²) algorithms crash RAM immediately",
+          "Because compiler optimizations only work on O(n log n) code"
+        ],
+        correctIndex: 0,
+        explanation: "Asymptotic growth dwarfs constant hardware clock speed advantages. A trillion operations is ~50,000 times slower than 20 million operations."
+      },
+      {
+        id: "tc7",
+        question: "Which of the following correctly orders growth rates from fastest (best) to slowest (worst)?",
+        options: [
+          "O(1) < O(log n) < O(n) < O(n log n) < O(n²) < O(2ⁿ)",
+          "O(n) < O(1) < O(log n) < O(n²) < O(n log n) < O(2ⁿ)",
+          "O(1) < O(n) < O(log n) < O(n log n) < O(2ⁿ) < O(n²)",
+          "O(log n) < O(1) < O(n) < O(n log n) < O(n²) < O(2ⁿ)"
+        ],
+        correctIndex: 0,
+        explanation: "The standard hierarchy is Constant O(1) < Logarithmic O(log n) < Linear O(n) < Log-linear O(n log n) < Quadratic O(n²) < Exponential O(2ⁿ)."
+      }
+    ]
+  },
+  "space-complexity": {
+    id: "space-complexity",
+    title: "Space Complexity & Memory Allocation Quiz",
+    description: "Master auxiliary memory, stack frames, heap buffers, in-place guarantees, and memory leaks.",
+    questions: [
+      {
+        id: "sc1",
+        question: "What is the key difference between Total Space Complexity and Auxiliary Space Complexity?",
+        options: [
+          "Total space includes the original input data memory; auxiliary space strictly measures extra working memory allocated by the algorithm",
+          "Total space is measured in Gigabytes, auxiliary space in Megabytes",
+          "Auxiliary space only applies to recursive functions",
+          "There is no difference; they are exact synonyms"
+        ],
+        correctIndex: 0,
+        explanation: "Auxiliary space isolates the algorithmic overhead by subtracting the input space provided by the caller."
+      },
+      {
+        id: "sc2",
+        question: "Why is Merge Sort considered NOT in-place while Quick Sort is considered in-place?",
+        options: [
+          "Merge Sort allocates an O(n) auxiliary temporary buffer array to merge subarrays, whereas Quick Sort partitions directly within the array with O(log n) stack space",
+          "Merge Sort cannot be written in C++",
+          "Quick Sort uses 0 stack frames",
+          "Merge Sort requires external hard drive storage"
+        ],
+        correctIndex: 0,
+        explanation: "Merge Sort requires an O(n) auxiliary heap buffer during array merging, whereas Quick Sort partitions in-place using O(log n) recursive stack depth."
+      },
+      {
+        id: "sc3",
+        question: "What is the auxiliary space complexity of an in-place algorithm like Selection Sort or Bubble Sort?",
+        options: ["O(1) Auxiliary Space", "O(log n)", "O(n)", "O(n²)"],
+        correctIndex: 0,
+        explanation: "They mutate the array in-place using only a fixed number of scalar variables (i, j, temp), consuming constant O(1) extra memory."
+      },
+      {
+        id: "sc4",
+        question: "A recursive function calls itself n times linearly without returning until base case: `int count(int n) { if(n==0) return 0; return 1 + count(n-1); }`. What is its auxiliary space complexity?",
+        options: ["O(n) Call Stack Space", "O(1)", "O(log n)", "O(n²)"],
+        correctIndex: 0,
+        explanation: "Each recursive call pushes an activation record (return address, parameter n) onto the CPU call stack. With depth n, stack space is O(n)."
+      },
+      {
+        id: "sc5",
+        question: "If a C++ function passes a vector by value `void recurse(vector<int> arr, int depth)` across n recursive steps, what is the disastrous space complexity effect?",
+        options: [
+          "Each step makes a full copy of the n-element vector, resulting in O(n²) total auxiliary memory on the stack/heap",
+          "The program runs in O(1) space automatically",
+          "The compiler deletes the vector after step 1",
+          "It converts the vector to a linked list"
+        ],
+        correctIndex: 0,
+        explanation: "Passing by value deep-copies the entire array at each recursion level. To avoid O(n²) space explosion, always pass by reference `const vector<int>&`."
+      },
+      {
+        id: "sc6",
+        question: "What is the auxiliary space complexity of allocating an n × n dynamic programming 2D table in memory?",
+        options: ["O(n²)", "O(n)", "O(1)", "O(2ⁿ)"],
+        correctIndex: 0,
+        explanation: "An n × n matrix allocates n² distinct memory slots (e.g. 4n² bytes for integers), scaling quadratically O(n²)."
+      },
+      {
+        id: "sc7",
+        question: "What is the maximum recursion depth (and auxiliary stack space) of a balanced Divide & Conquer algorithm like Merge Sort on an array of size n?",
+        options: ["O(log₂ n)", "O(n)", "O(1)", "O(n²)"],
+        correctIndex: 0,
+        explanation: "A balanced binary recursion tree of size n has height ⌈log₂ n⌉. Only one root-to-leaf path is active on the call stack at any moment, consuming O(log n) stack space."
+      }
+    ]
   }
 };

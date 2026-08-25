@@ -223,4 +223,56 @@ public:
       { type: "compare", indices: [0, 7], description: "Rear pointer exceeded boundary without circular modulo wrapping" },
     ],
   },
+
+  "time-complexity": {
+    algorithmId: "time-complexity",
+    title: "Time Complexity: Infinite Loop Stall in Binary Search",
+    description:
+      "This Binary Search implementation fails to shrink the search interval, causing an infinite loop O(∞) instead of guaranteed O(log n) logarithmic termination.",
+    buggyCode: `int binarySearch(const vector<int>& arr, int target) {
+    int low = 0, high = (int)arr.size() - 1;
+    while (low <= high) {
+        int mid = low + (high - low) / 2;
+        if (arr[mid] == target) return mid;
+        if (arr[mid] < target) low = mid;
+        else high = mid - 1;
+    }
+    return -1;
+}`,
+    buggyLineNumber: 6,
+    hint: "If arr[mid] < target, we know arr[mid] cannot be the answer. Should low become mid or mid + 1?",
+    explanation:
+      "Line 6 used `low = mid;` instead of `low = mid + 1;`. When high - low == 1 and arr[low] < target, mid evaluates to low, leaving low unchanged and locking the CPU into an infinite loop.",
+    validateFix: (line: string) => {
+      const trimmed = line.replace(/\s+/g, "");
+      return trimmed.includes("low=mid+1") || trimmed.includes("low=mid+1;");
+    },
+    flawedRunner: () => [
+      { type: "compare", indices: [0, 1], description: "Search interval failed to shrink: low remained equal to mid" },
+    ],
+  },
+
+  "space-complexity": {
+    algorithmId: "space-complexity",
+    title: "Space Complexity: Pass-by-Value Memory Explosion in Recursion",
+    description:
+      "This recursive divide-and-conquer function passes the vector by value, allocating a full copy at each activation record and blowing auxiliary memory up to O(n²).",
+    buggyCode: `int recursiveSum(vector<int> arr, int low, int high) {
+    if (low > high) return 0;
+    if (low == high) return arr[low];
+    int mid = low + (high - low) / 2;
+    return recursiveSum(arr, low, mid) + recursiveSum(arr, mid + 1, high);
+}`,
+    buggyLineNumber: 1,
+    hint: "Look at the function signature for arr. How do we pass by reference in C++ to avoid cloning the array?",
+    explanation:
+      "Line 1 passed `vector<int> arr` by value, copying the entire array at each stack frame. Adding `const vector<int>& arr` or `vector<int>& arr` avoids memory allocations and preserves O(log n) stack space.",
+    validateFix: (line: string) => {
+      const trimmed = line.replace(/\s+/g, "");
+      return trimmed.includes("&arr") || trimmed.includes("&arr,");
+    },
+    flawedRunner: () => [
+      { type: "compare", indices: [0], description: "Full array duplicated onto stack frame via copy constructor" },
+    ],
+  },
 };

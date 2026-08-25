@@ -2,8 +2,8 @@
 
 import React from "react";
 import { AlgorithmId } from "@/types/sorting";
-import { ALGORITHMS, SORTING_ALGORITHMS, DATA_STRUCTURES } from "@/data/algorithms";
-import { Cpu, Layers, Database } from "lucide-react";
+import { ALGORITHMS, SORTING_ALGORITHMS, DATA_STRUCTURES, COMPLEXITY_TOPICS } from "@/data/algorithms";
+import { Cpu, Layers, Database, TrendingUp } from "lucide-react";
 
 interface AlgorithmSelectorProps {
   selectedAlgorithm: AlgorithmId;
@@ -119,6 +119,59 @@ export function AlgorithmSelector({
                   </span>
                   <span className="text-[10px] font-mono font-semibold px-2 py-0.5 rounded bg-blue-500/10 text-blue-600 dark:text-blue-300 border border-blue-500/20">
                     LIFO/FIFO O(1)
+                  </span>
+                </div>
+                <p className="mt-1 text-[11px] text-muted-foreground leading-relaxed line-clamp-1">
+                  {meta.shortDescription}
+                </p>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Category 3: Complexity Analysis */}
+      <div className="flex flex-col gap-2.5 pt-3 border-t border-border">
+        <div className="flex items-center justify-between">
+          <h2 className="text-xs font-mono font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+            <TrendingUp className="h-3.5 w-3.5 text-purple-500" />
+            <span>Complexity Analysis</span>
+          </h2>
+          <span className="text-[10px] font-mono font-semibold text-purple-500 bg-purple-500/10 border border-purple-500/20 px-2 py-0.5 rounded-md">
+            2 Topics
+          </span>
+        </div>
+
+        <div className="flex flex-col gap-1.5">
+          {COMPLEXITY_TOPICS.map((compId) => {
+            const meta = ALGORITHMS[compId];
+            const isSelected = selectedAlgorithm === compId;
+
+            return (
+              <button
+                key={compId}
+                id={`comp-btn-${compId}`}
+                disabled={disabled}
+                onClick={() => onSelectAlgorithm(compId)}
+                className={`group relative flex flex-col items-start rounded-xl p-2.5 sm:p-3 text-left transition-all ${
+                  isSelected
+                    ? "bg-purple-500/10 border border-purple-500/60 shadow-sm text-foreground"
+                    : "border border-border bg-secondary/40 hover:bg-secondary text-muted-foreground hover:text-foreground"
+                } ${disabled ? "opacity-50 cursor-not-allowed" : "active:scale-[0.99] cursor-pointer"}`}
+              >
+                <div className="flex w-full items-center justify-between">
+                  <span className="font-bold text-xs sm:text-sm text-foreground flex items-center gap-2">
+                    {meta.name}
+                    {isSelected && (
+                      <span className="flex items-end gap-0.5 h-3.5 px-1 py-0.5 rounded bg-purple-500/20 text-purple-500">
+                        <span className="w-1 h-1.5 rounded-xs bg-purple-500" />
+                        <span className="w-1 h-2.5 rounded-xs bg-purple-500" />
+                        <span className="w-1 h-3.5 rounded-xs bg-purple-500" />
+                      </span>
+                    )}
+                  </span>
+                  <span className="text-[10px] font-mono font-semibold px-2 py-0.5 rounded bg-purple-500/10 text-purple-600 dark:text-purple-300 border border-purple-500/20">
+                    {compId === "time-complexity" ? "Big-O Scale" : "Aux Space"}
                   </span>
                 </div>
                 <p className="mt-1 text-[11px] text-muted-foreground leading-relaxed line-clamp-1">

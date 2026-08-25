@@ -24,7 +24,7 @@ import { ThemeToggle } from "@/components/theme/ThemeToggle";
 
 export default function LearnPage() {
   const [completedSteps, setCompletedSteps] = useState<string[]>([]);
-  const [categoryFilter, setCategoryFilter] = useState<"all" | "sorting" | "data-structure">("all");
+  const [categoryFilter, setCategoryFilter] = useState<"all" | "sorting" | "data-structure" | "complexity">("all");
   const { syncStep } = useProgressSync();
 
   // Load completed steps from localStorage and sync
@@ -140,7 +140,7 @@ export default function LearnPage() {
           </div>
 
           {/* Category Filter Tabs */}
-          <div className="mt-6 flex items-center justify-center gap-2">
+          <div className="mt-6 flex flex-wrap items-center justify-center gap-2">
             <button
               onClick={() => setCategoryFilter("all")}
               className={`px-4 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
@@ -170,6 +170,16 @@ export default function LearnPage() {
               }`}
             >
               Data Structures (2)
+            </button>
+            <button
+              onClick={() => setCategoryFilter("complexity")}
+              className={`px-4 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+                categoryFilter === "complexity"
+                  ? "bg-cyan-500 text-slate-950 shadow-md font-bold"
+                  : "border border-border bg-secondary/80 text-muted-foreground hover:text-foreground hover:bg-secondary"
+              }`}
+            >
+              Complexity Analysis (2)
             </button>
           </div>
         </div>

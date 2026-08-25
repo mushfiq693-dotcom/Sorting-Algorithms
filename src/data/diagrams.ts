@@ -158,4 +158,43 @@ public:
 };`,
     highlightedLine: 5,
   },
+  "time-complexity": {
+    algorithmId: "time-complexity",
+    title: "Time Complexity — Asymptotic Growth Curves & Big-O Hierarchy",
+    subtitle: "Observe how instruction step counts scale across constant O(1), logarithmic O(log n), linear O(n), log-linear O(n log n), and quadratic O(n²) tiers.",
+    caption: "Big-O evaluates operation scalability by dropping constant multipliers and keeping only dominant terms.",
+    fixedArray: [1, 2, 4, 8, 16, 32, 64, 128],
+    complexityFormula: "O(1) < O(log n) < O(n) < O(n log n) < O(n²) < O(2ⁿ) < O(n!)",
+    complexityExplanation: "Asymptotic bounds evaluate algorithmic growth rate independently of hardware CPU speed.",
+    codeSnippet: `// Asymptotic Loop Growth Hierarchy
+// 1. O(log n) Binary Division
+while (low <= high) { mid = (low + high) / 2; ... }
+
+// 2. O(n) Linear Traversal
+for (int i = 0; i < n; i++) { ... }
+
+// 3. O(n^2) Quadratic Nested Loops
+for (int i = 0; i < n; i++) {
+    for (int j = 0; j < n; j++) { ... }
+}`,
+    highlightedLine: 8,
+  },
+  "space-complexity": {
+    algorithmId: "space-complexity",
+    title: "Space Complexity — Memory Hierarchy & Auxiliary Allocation",
+    subtitle: "Distinguishing input storage from auxiliary working memory, dynamic heap buffers, and recursive call stack depth.",
+    caption: "Auxiliary space measures only the extra working memory allocated by the algorithm itself.",
+    fixedArray: [10, 20, 30, 40, 50],
+    complexityFormula: "Total Space = Input Space O(n) + Auxiliary Space S(n)",
+    complexityExplanation: "In-place algorithms maintain auxiliary space at O(1) or O(log n) recursion call stack depth.",
+    codeSnippet: `// 1. O(1) Auxiliary Space (In-Place Pointers)
+void reverseInPlace(vector<int>& arr) {
+    int l = 0, r = arr.size() - 1;
+    while (l < r) swap(arr[l++], arr[r--]);
+}
+
+// 2. O(n) Auxiliary Space (Heap Vector Buffer)
+vector<int> temp(arr.size()); // Consumes n auxiliary ints`,
+    highlightedLine: 3,
+  },
 };

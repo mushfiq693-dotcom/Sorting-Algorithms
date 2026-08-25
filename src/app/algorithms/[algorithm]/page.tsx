@@ -1,15 +1,17 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useParams, notFound } from "next/navigation";
 import Link from "next/link";
 import { AlgorithmId } from "@/types/sorting";
 import { LEARNING_PATH, LearningStep } from "@/data/learningPath";
-import { ALGORITHMS } from "@/data/algorithms";
+import { ALGORITHMS, SORTING_ALGORITHMS, DATA_STRUCTURES, COMPLEXITY_TOPICS } from "@/data/algorithms";
 import { DOCS_ARTICLES } from "@/data/docs";
 import { SortingVisualizer } from "@/components/visualizer/SortingVisualizer";
 import { StackVisualizer } from "@/components/visualizer/StackVisualizer";
 import { QueueVisualizer } from "@/components/visualizer/QueueVisualizer";
+import { TimeComplexityVisualizer } from "@/components/visualizer/TimeComplexityVisualizer";
+import { SpaceComplexityVisualizer } from "@/components/visualizer/SpaceComplexityVisualizer";
 import { AlgorithmDiagram } from "@/components/diagrams/AlgorithmDiagram";
 import { CodeDebugger } from "@/components/debugger/CodeDebugger";
 import { BugHunt } from "@/components/challenge/BugHunt";
@@ -48,6 +50,8 @@ import {
   TrendingUp,
   Globe,
   Database,
+  ChevronDown,
+  Cpu,
 } from "lucide-react";
 
 export default function AlgorithmDetailPage() {
@@ -68,15 +72,36 @@ export default function AlgorithmDetailPage() {
   }
 
   const isDataStructure = meta.category === "data-structure";
+  const isComplexity = meta.category === "complexity";
+  const isSpecialTopic = isDataStructure || isComplexity;
+
+  const topicDocsUrl = isDataStructure
+    ? `/docs/${algorithmId}-data-structure`
+    : isComplexity
+    ? `/docs/${algorithmId}`
+    : `/docs/${algorithmId}-sort`;
 
   const [activeStep, setActiveStep] = useState<number>(1);
   const [activePracticeTab, setActivePracticeTab] = useState<
     "debugger" | "bughunt" | "predict" | "quiz" | "problems"
-  >(isDataStructure ? "quiz" : "debugger");
+  >(isSpecialTopic ? "quiz" : "debugger");
+  const [topicDropdownOpen, setTopicDropdownOpen] = useState<boolean>(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
   const [guidanceInfo, setGuidanceInfo] = useState<{ message: string; score: number; status: string } | null>(null);
   const [isGuidanceDismissed, setIsGuidanceDismissed] = useState<boolean>(false);
 
-  React.useEffect(() => {
+  // Close dropdown on outside click
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setTopicDropdownOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  useEffect(() => {
     try {
       const dismissed = sessionStorage.getItem(`dismissed_guidance_${algorithmId}`);
       if (dismissed) {
@@ -119,10 +144,11 @@ export default function AlgorithmDetailPage() {
       {/* Top Navbar */}
       <header className="sticky top-0 z-40 w-full border-b border-border/60 bg-background/80 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Link href="/learn" className="flex items-center gap-2 text-xs font-semibold text-muted-foreground hover:text-cyan-500 transition-colors">
-              <ArrowLeft className="h-4 w-4" />
-              <span>Learning Path</span>
+          {/* Left: Breadcrumbs */}
+          <div className="flex items-center gap-2 sm:gap-3">
+            <Link href="/learn" className="flex items-center gap-1.5 text-xs font-semibold text-muted-foreground hover:text-cyan-500 transition-colors">
+              <ArrowLeft className="h-3.5 w-3.5" />
+              <span className="hidden sm:inline">Learning Path</span>
             </Link>
             <span className="text-border">/</span>
             <div className="flex items-center gap-2">
@@ -131,14 +157,146 @@ export default function AlgorithmDetailPage() {
             </div>
           </div>
 
+          {/* Right: Actions with Topics Dropdown to the left of Docs & Theory */}
           <div className="flex items-center gap-2 sm:gap-3">
-            <Link
-              href={`/docs/${algorithmId}-sort`}
-              className="inline-flex items-center gap-1.5 rounded-xl border border-cyan-500/30 bg-cyan-500/10 px-3 py-1.5 text-xs font-semibold text-cyan-600 dark:text-cyan-300 hover:bg-cyan-500/20 transition-all active:scale-95"
-            >
-              <BookOpen className="h-3.5 w-3.5" />
-              <span className="hidden sm:inline">Docs & Theory</span>
-            </Link>
+            {/* Section-Wise Topic Switcher Dropdown */}
+            <div className="relative" ref={dropdownRef}>
+              <button
+                onClick={() => setTopicDropdownOpen(!topicDropdownOpen)}
+                className="inline-flex items-center gap-1.5 rounded-xl border border-cyan-500/30 bg-cyan-500/10 px-3 py-1.5 text-xs font-semibold text-cyan-600 dark:text-cyan-300 hover:bg-cyan-500/20 transition-all active:scale-95 shadow-sm cursor-pointer"
+                aria-expanded={topicDropdownOpen}
+                aria-label="All Topics"
+              >
+                <Layers className="h-3.5 w-3.5 text-cyan-500" />
+                <span>All Topics</span>
+                <ChevronDown
+                  className={`h-3.5 w-3.5 transition-transform duration-200 ${
+                    topicDropdownOpen ? "rotate-180 text-cyan-500" : ""
+                  }`}
+                />
+              </button>
+
+              {topicDropdownOpen && (
+                <div className="absolute right-0 mt-2 w-72 sm:w-80 rounded-2xl border border-border bg-card/95 p-3 shadow-2xl backdrop-blur-2xl animate-in fade-in slide-in-from-top-2 z-50 space-y-3">
+                  {/* Section 1: Sorting Algorithms */}
+                  <div>
+                    <div className="text-[10px] font-mono font-bold uppercase tracking-wider text-muted-foreground px-2 py-1 flex items-center justify-between">
+                      <span className="flex items-center gap-1.5 text-cyan-500">
+                        <Cpu className="h-3 w-3" />
+                        <span>Sorting Algorithms</span>
+                      </span>
+                      <span className="text-[10px] text-muted-foreground font-mono">5 Topics</span>
+                    </div>
+                    <div className="space-y-0.5 mt-1">
+                      {SORTING_ALGORITHMS.map((id) => {
+                        const topicMeta = ALGORITHMS[id];
+                        const step = LEARNING_PATH.find((s) => s.id === id);
+                        const isActive = id === algorithmId;
+
+                        return (
+                          <Link
+                            key={id}
+                            href={`/algorithms/${id}`}
+                            onClick={() => setTopicDropdownOpen(false)}
+                            className={`flex items-center justify-between p-2 rounded-xl text-xs transition-colors ${
+                              isActive
+                                ? "bg-cyan-500/15 text-cyan-600 dark:text-cyan-300 font-bold border border-cyan-500/30"
+                                : "hover:bg-secondary/80 text-muted-foreground hover:text-foreground"
+                            }`}
+                          >
+                            <div className="flex items-center gap-2">
+                              <span className="font-mono text-[10px] text-muted-foreground">0{step?.order}</span>
+                              <span>{topicMeta.name}</span>
+                            </div>
+                            <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-secondary text-muted-foreground border border-border/50">
+                              {topicMeta.complexity.average}
+                            </span>
+                          </Link>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Section 2: Data Structures */}
+                  <div className="pt-2 border-t border-border/60">
+                    <div className="text-[10px] font-mono font-bold uppercase tracking-wider text-muted-foreground px-2 py-1 flex items-center justify-between">
+                      <span className="flex items-center gap-1.5 text-blue-500">
+                        <Database className="h-3 w-3" />
+                        <span>Data Structures</span>
+                      </span>
+                      <span className="text-[10px] text-muted-foreground font-mono">2 Topics</span>
+                    </div>
+                    <div className="space-y-0.5 mt-1">
+                      {DATA_STRUCTURES.map((id) => {
+                        const topicMeta = ALGORITHMS[id];
+                        const step = LEARNING_PATH.find((s) => s.id === id);
+                        const isActive = id === algorithmId;
+
+                        return (
+                          <Link
+                            key={id}
+                            href={`/algorithms/${id}`}
+                            onClick={() => setTopicDropdownOpen(false)}
+                            className={`flex items-center justify-between p-2 rounded-xl text-xs transition-colors ${
+                              isActive
+                                ? "bg-blue-500/15 text-blue-600 dark:text-blue-300 font-bold border border-blue-500/30"
+                                : "hover:bg-secondary/80 text-muted-foreground hover:text-foreground"
+                            }`}
+                          >
+                            <div className="flex items-center gap-2">
+                              <span className="font-mono text-[10px] text-muted-foreground">0{step?.order}</span>
+                              <span>{topicMeta.name}</span>
+                            </div>
+                            <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-secondary text-muted-foreground border border-border/50">
+                              {id === "stack" ? "LIFO O(1)" : "FIFO O(1)"}
+                            </span>
+                          </Link>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Section 3: Complexity Analysis */}
+                  <div className="pt-2 border-t border-border/60">
+                    <div className="text-[10px] font-mono font-bold uppercase tracking-wider text-muted-foreground px-2 py-1 flex items-center justify-between">
+                      <span className="flex items-center gap-1.5 text-purple-500">
+                        <TrendingUp className="h-3 w-3" />
+                        <span>Complexity Analysis</span>
+                      </span>
+                      <span className="text-[10px] text-muted-foreground font-mono">2 Topics</span>
+                    </div>
+                    <div className="space-y-0.5 mt-1">
+                      {COMPLEXITY_TOPICS.map((id) => {
+                        const topicMeta = ALGORITHMS[id];
+                        const step = LEARNING_PATH.find((s) => s.id === id);
+                        const isActive = id === algorithmId;
+
+                        return (
+                          <Link
+                            key={id}
+                            href={`/algorithms/${id}`}
+                            onClick={() => setTopicDropdownOpen(false)}
+                            className={`flex items-center justify-between p-2 rounded-xl text-xs transition-colors ${
+                              isActive
+                                ? "bg-purple-500/15 text-purple-600 dark:text-purple-300 font-bold border border-purple-500/30"
+                                : "hover:bg-secondary/80 text-muted-foreground hover:text-foreground"
+                            }`}
+                          >
+                            <div className="flex items-center gap-2">
+                              <span className="font-mono text-[10px] text-muted-foreground">0{step?.order}</span>
+                              <span>{topicMeta.name}</span>
+                            </div>
+                            <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-secondary text-muted-foreground border border-border/50">
+                              {id === "time-complexity" ? "Big-O" : "Aux Space"}
+                            </span>
+                          </Link>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
 
             <Link
               href="/visualizer"
@@ -159,7 +317,7 @@ export default function AlgorithmDetailPage() {
           <div>
             <div className="flex items-center gap-2 mb-2">
               <span className="text-xs font-mono font-bold px-2.5 py-1 rounded-lg bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-500/20">
-                {isDataStructure ? "Data Structure" : "Sorting Algorithm"} • 0{stepData.order} of 07
+                {isDataStructure ? "Data Structure" : isComplexity ? "Complexity Analysis" : "Sorting Algorithm"} • 0{stepData.order} of 09
               </span>
               <span className="text-xs font-mono text-muted-foreground flex items-center gap-1">
                 <Clock className="h-3.5 w-3.5 text-amber-500" /> {stepData.estimatedTime}
@@ -270,6 +428,27 @@ export default function AlgorithmDetailPage() {
                 </p>
               </div>
 
+              {/* Dedicated In-Depth Theory & Docs Callout Card */}
+              <div className="rounded-2xl border border-cyan-500/30 bg-gradient-to-r from-cyan-500/10 via-blue-500/10 to-transparent p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2 text-xs font-mono font-bold text-cyan-600 dark:text-cyan-400 uppercase tracking-wider">
+                    <BookOpen className="h-4 w-4" />
+                    <span>In-Depth Theory & Lecture Notes</span>
+                  </div>
+                  <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+                    Read the comprehensive theoretical breakdown, mathematical proofs, and detailed lecture notes for {meta.name}.
+                  </p>
+                </div>
+
+                <Link
+                  href={topicDocsUrl}
+                  className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-cyan-500/40 bg-cyan-500/15 hover:bg-cyan-500/25 text-cyan-700 dark:text-cyan-300 text-xs font-semibold transition-all active:scale-95 shadow-sm shrink-0"
+                >
+                  <BookOpen className="h-4 w-4 text-cyan-500" />
+                  <span>Learn More ({meta.name} Docs) →</span>
+                </Link>
+              </div>
+
               {/* Collapsible Bangla Note if available */}
               {docsArticle?.banglaNote && (
                 <BanglaNote
@@ -278,7 +457,15 @@ export default function AlgorithmDetailPage() {
                 />
               )}
 
-              <div className="pt-4 border-t border-border/40 flex justify-end">
+              <div className="pt-4 border-t border-border/40 flex flex-wrap items-center justify-between gap-3">
+                <Link
+                  href={topicDocsUrl}
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-border bg-secondary/70 hover:bg-secondary text-xs font-semibold text-foreground hover:text-cyan-500 transition-all active:scale-95"
+                >
+                  <BookOpen className="h-4 w-4 text-cyan-500" />
+                  <span>Learn More (Full Docs & Theory) →</span>
+                </Link>
+
                 <button
                   onClick={() => setActiveStep(2)}
                   className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 px-5 py-2.5 text-xs font-semibold text-white hover:from-blue-500 transition-all active:scale-95 shadow-md shadow-cyan-500/20"
@@ -306,6 +493,10 @@ export default function AlgorithmDetailPage() {
                 <StackVisualizer />
               ) : algorithmId === "queue" ? (
                 <QueueVisualizer />
+              ) : algorithmId === "time-complexity" ? (
+                <TimeComplexityVisualizer />
+              ) : algorithmId === "space-complexity" ? (
+                <SpaceComplexityVisualizer />
               ) : (
                 <SortingVisualizer />
               )}
@@ -445,7 +636,7 @@ export default function AlgorithmDetailPage() {
                 </div>
               </div>
 
-              {/* Data Structure Operations Breakdown vs Sorting Growth Curves */}
+              {/* Data Structure / Complexity Operations Breakdown vs Sorting Growth Curves */}
               {isDataStructure ? (
                 <div className="p-6 rounded-2xl border border-border bg-card space-y-4">
                   <h3 className="text-sm font-mono font-bold uppercase tracking-wider text-foreground flex items-center gap-2">
@@ -461,6 +652,23 @@ export default function AlgorithmDetailPage() {
                       </div>
                     ))}
                   </div>
+                </div>
+              ) : isComplexity ? (
+                <div className="p-6 rounded-2xl border border-border bg-card space-y-4">
+                  <h3 className="text-sm font-mono font-bold uppercase tracking-wider text-foreground flex items-center gap-2">
+                    <TrendingUp className="h-4 w-4 text-purple-500" />
+                    <span>Asymptotic Operations Scale Breakdown</span>
+                  </h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+                    {meta.complexity.operations?.map((op, i) => (
+                      <div key={i} className="p-3.5 rounded-xl border border-border bg-secondary/40 space-y-1">
+                        <div className="font-mono font-bold text-xs text-foreground">{op.name}</div>
+                        <div className="text-xs font-mono font-bold text-purple-400">{op.time}</div>
+                        <div className="text-[11px] text-muted-foreground leading-tight">{op.description}</div>
+                      </div>
+                    ))}
+                  </div>
+                  <GrowthChart />
                 </div>
               ) : (
                 <>
@@ -492,7 +700,7 @@ export default function AlgorithmDetailPage() {
             <div className="space-y-6 animate-in fade-in">
               {/* Practice Mode Navigation Tabs */}
               <div className="flex flex-wrap items-center gap-2 p-1.5 rounded-2xl border border-border bg-card backdrop-blur-md shadow-sm">
-                {!isDataStructure && (
+                {!isSpecialTopic && (
                   <button
                     onClick={() => setActivePracticeTab("debugger")}
                     className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
@@ -506,7 +714,7 @@ export default function AlgorithmDetailPage() {
                   </button>
                 )}
 
-                {!isDataStructure && (
+                {!isSpecialTopic && (
                   <button
                     onClick={() => setActivePracticeTab("predict")}
                     className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
@@ -529,7 +737,7 @@ export default function AlgorithmDetailPage() {
                   }`}
                 >
                   <Sparkles className="h-3.5 w-3.5" />
-                  <span>{isDataStructure ? "1. Knowledge Quiz" : "4. Knowledge Quiz"}</span>
+                  <span>{isSpecialTopic ? "1. Knowledge Quiz" : "4. Knowledge Quiz"}</span>
                 </button>
 
                 <button
@@ -541,7 +749,7 @@ export default function AlgorithmDetailPage() {
                   }`}
                 >
                   <Bug className="h-3.5 w-3.5" />
-                  <span>{isDataStructure ? "2. Bug-Hunt" : "3. Bug-Hunt"}</span>
+                  <span>{isSpecialTopic ? "2. Bug-Hunt" : "3. Bug-Hunt"}</span>
                 </button>
 
                 <button
@@ -553,16 +761,16 @@ export default function AlgorithmDetailPage() {
                   }`}
                 >
                   <Globe className="h-3.5 w-3.5" />
-                  <span>{isDataStructure ? "3. Problem Solving" : "5. Problem Solving"}</span>
+                  <span>{isSpecialTopic ? "3. Problem Solving" : "5. Problem Solving"}</span>
                 </button>
               </div>
 
               {/* Render Active Practice Component */}
-              {!isDataStructure && activePracticeTab === "debugger" && (
+              {!isSpecialTopic && activePracticeTab === "debugger" && (
                 <CodeDebugger algorithmId={algorithmId} />
               )}
 
-              {!isDataStructure && activePracticeTab === "predict" && (
+              {!isSpecialTopic && activePracticeTab === "predict" && (
                 <PredictNext algorithmId={algorithmId} />
               )}
 

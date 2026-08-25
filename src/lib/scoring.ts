@@ -11,7 +11,7 @@ import { TopicMetrics, TopicScoresRecord, ActivityHistoryItem } from "../../back
 export interface OrderedTopicItem {
   id: AlgorithmId;
   name: string;
-  category: "sorting" | "data-structure";
+  category: "sorting" | "data-structure" | "complexity";
 }
 
 export const ORDERED_SORTING_ALGORITHMS: OrderedTopicItem[] = [
@@ -27,12 +27,18 @@ export const ORDERED_DATA_STRUCTURES: OrderedTopicItem[] = [
   { id: "queue", name: "Queue", category: "data-structure" },
 ];
 
+export const ORDERED_COMPLEXITY_TOPICS: OrderedTopicItem[] = [
+  { id: "time-complexity", name: "Time Complexity", category: "complexity" },
+  { id: "space-complexity", name: "Space Complexity", category: "complexity" },
+];
+
 // Backwards compatibility list
 export const ORDERED_ALGORITHMS = ORDERED_SORTING_ALGORITHMS;
 
 export const ORDERED_TOPICS: OrderedTopicItem[] = [
   ...ORDERED_SORTING_ALGORITHMS,
   ...ORDERED_DATA_STRUCTURES,
+  ...ORDERED_COMPLEXITY_TOPICS,
 ];
 
 export const ALGORITHM_NAME_MAP: Record<AlgorithmId, string> = {
@@ -43,6 +49,8 @@ export const ALGORITHM_NAME_MAP: Record<AlgorithmId, string> = {
   quick: "Quick Sort",
   stack: "Stack",
   queue: "Queue",
+  "time-complexity": "Time Complexity",
+  "space-complexity": "Space Complexity",
 };
 
 /**
@@ -56,6 +64,8 @@ export const ALGORITHM_DOCS_MAP: Record<AlgorithmId, string[]> = {
   quick: ["quick-sort", "why-quicksort-degrades"],
   stack: ["stack-data-structure"],
   queue: ["queue-data-structure"],
+  "time-complexity": ["time-complexity", "big-o-for-beginners"],
+  "space-complexity": ["space-complexity", "in-place-and-space-complexity"],
 };
 
 export const TOPIC_DOCS_MAP = ALGORITHM_DOCS_MAP;
@@ -204,6 +214,7 @@ export function calculateOverallProgress(topicScores: Partial<TopicScoresRecord>
   activeTopic: AlgorithmId;
   sortingScore: number;
   dataStructuresScore: number;
+  complexityScore: number;
 } {
   let totalScore = 0;
   let masteredCount = 0;
@@ -212,6 +223,7 @@ export function calculateOverallProgress(topicScores: Partial<TopicScoresRecord>
 
   let sortingTotal = 0;
   let dsTotal = 0;
+  let complexityTotal = 0;
 
   for (const { id, category } of ORDERED_TOPICS) {
     const metrics = topicScores[id];
@@ -220,8 +232,10 @@ export function calculateOverallProgress(topicScores: Partial<TopicScoresRecord>
 
     if (category === "sorting") {
       sortingTotal += score;
-    } else {
+    } else if (category === "data-structure") {
       dsTotal += score;
+    } else {
+      complexityTotal += score;
     }
 
     if (score >= 85) {
@@ -233,12 +247,13 @@ export function calculateOverallProgress(topicScores: Partial<TopicScoresRecord>
   }
 
   if (!foundActive) {
-    activeTopic = "queue";
+    activeTopic = "time-complexity";
   }
 
   const overallScore = Math.round(totalScore / ORDERED_TOPICS.length);
   const sortingScore = Math.round(sortingTotal / ORDERED_SORTING_ALGORITHMS.length);
   const dataStructuresScore = Math.round(dsTotal / ORDERED_DATA_STRUCTURES.length);
+  const complexityScore = Math.round(complexityTotal / ORDERED_COMPLEXITY_TOPICS.length);
 
   return {
     overallScore,
@@ -246,5 +261,6 @@ export function calculateOverallProgress(topicScores: Partial<TopicScoresRecord>
     activeTopic,
     sortingScore,
     dataStructuresScore,
+    complexityScore,
   };
 }

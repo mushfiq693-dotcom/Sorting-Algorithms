@@ -103,12 +103,20 @@ assertEqual(
   "Merge Sort score 90 (> 85) names next topic (Quick Sort)"
 );
 
-// Quick Sort (Final Topic) > 85
-const completedQuick = getAdaptiveGuidance("quick", 92);
+// Quick Sort > 85 names next topic (Stack)
+const readyStack = getAdaptiveGuidance("quick", 92);
 assertEqual(
-  completedQuick.message,
-  "You've mastered the core sorting algorithms!",
-  "Quick Sort score 92 (> 85) displays final mastery message"
+  readyStack.message,
+  "You're ready for Stack!",
+  "Quick Sort score 92 (> 85) names next topic (Stack)"
+);
+
+// Space Complexity (Final Topic) > 85
+const completedCurriculum = getAdaptiveGuidance("space-complexity", 95);
+assertEqual(
+  completedCurriculum.message,
+  "You've mastered the core curriculum topics!",
+  "Space Complexity score 95 (> 85) displays final curriculum mastery message"
 );
 
 // -----------------------------------------------------------------------------
@@ -157,11 +165,43 @@ const mockTopicScores = {
     computed_topic_score: 0,
     last_activity_at: new Date().toISOString(),
   },
+  stack: {
+    quiz_best_score: 0,
+    bug_hunt_best_score: 0,
+    docs_completion: 0,
+    prediction_best_score: 0,
+    computed_topic_score: 0,
+    last_activity_at: new Date().toISOString(),
+  },
+  queue: {
+    quiz_best_score: 0,
+    bug_hunt_best_score: 0,
+    docs_completion: 0,
+    prediction_best_score: 0,
+    computed_topic_score: 0,
+    last_activity_at: new Date().toISOString(),
+  },
+  "time-complexity": {
+    quiz_best_score: 0,
+    bug_hunt_best_score: 0,
+    docs_completion: 0,
+    prediction_best_score: 0,
+    computed_topic_score: 0,
+    last_activity_at: new Date().toISOString(),
+  },
+  "space-complexity": {
+    quiz_best_score: 0,
+    bug_hunt_best_score: 0,
+    docs_completion: 0,
+    prediction_best_score: 0,
+    computed_topic_score: 0,
+    last_activity_at: new Date().toISOString(),
+  },
 };
 
 const overall = calculateOverallProgress(mockTopicScores as any);
-// (82 + 100 + 0 + 0 + 0) / 5 = 182 / 5 = 36.4 => rounded 36
-assertEqual(overall.overallScore, 36, "Overall score average across 5 topics is 36%");
+// (82 + 100 + 0 + 0 + 0 + 0 + 0 + 0 + 0) / 9 = 182 / 9 = 20.22 => rounded 20
+assertEqual(overall.overallScore, 20, "Overall score average across 9 topics is 20%");
 assertEqual(overall.masteredCount, 1, "Mastered count is 1 (Selection Sort >= 85)");
 assertEqual(overall.activeTopic, "bubble", "Active topic is bubble (< 85)");
 
