@@ -1,0 +1,109 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <!-- Background Gradient -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#070d1e"/>
+      <stop offset="50%" stop-color="#0a1329"/>
+      <stop offset="100%" stop-color="#050813"/>
+    </linearGradient>
+
+    <!-- Ambient Glow Top -->
+    <radialGradient id="topGlow" cx="50%" cy="10%" r="70%">
+      <stop offset="0%" stop-color="#00f0ff" stop-opacity="0.3"/>
+      <stop offset="60%" stop-color="#3b82f6" stop-opacity="0.08"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Border Gradient -->
+    <linearGradient id="borderGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#22d3ee" stop-opacity="0.8"/>
+      <stop offset="40%" stop-color="#6366f1" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="#a855f7" stop-opacity="0.3"/>
+    </linearGradient>
+
+    <!-- Bar Gradients -->
+    <linearGradient id="bar1" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" stop-color="#0891b2"/>
+      <stop offset="100%" stop-color="#06b6d4"/>
+    </linearGradient>
+    <linearGradient id="bar2" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" stop-color="#0284c7"/>
+      <stop offset="100%" stop-color="#38bdf8"/>
+    </linearGradient>
+    <linearGradient id="bar3" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" stop-color="#4f46e5"/>
+      <stop offset="100%" stop-color="#818cf8"/>
+    </linearGradient>
+    <linearGradient id="bar4" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" stop-color="#7e22ce"/>
+      <stop offset="100%" stop-color="#c084fc"/>
+    </linearGradient>
+
+    <!-- Trail Glow Filter -->
+    <filter id="neonGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+
+    <filter id="softShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#000000" flood-opacity="0.6"/>
+    </filter>
+  </defs>
+
+  <!-- Background Base with Rounded Squircle -->
+  <rect width="512" height="512" rx="112" fill="url(#bgGrad)"/>
+  <rect width="512" height="512" rx="112" fill="url(#topGlow)"/>
+
+  <!-- Glowing Border -->
+  <rect x="6" y="6" width="500" height="500" rx="106" fill="none" stroke="url(#borderGrad)" stroke-width="10"/>
+
+  <!-- Decorative Matrix / Code Grid Dots in Background -->
+  <g opacity="0.18">
+    <circle cx="90" cy="110" r="3" fill="#38bdf8"/>
+    <circle cx="130" cy="110" r="3" fill="#38bdf8"/>
+    <circle cx="90" cy="150" r="3" fill="#38bdf8"/>
+    <circle cx="420" cy="380" r="3" fill="#818cf8"/>
+    <circle cx="380" cy="420" r="3" fill="#818cf8"/>
+    <circle cx="420" cy="420" r="3" fill="#818cf8"/>
+  </g>
+
+  <!-- Sorting Algorithm Visualizer Bars (Ascending Ordered State) -->
+  <g filter="url(#softShadow)">
+    <!-- Bar 1 (Shortest - Emerald/Cyan) -->
+    <rect x="96" y="280" width="56" height="136" rx="20" fill="url(#bar1)"/>
+    <rect x="96" y="280" width="56" height="136" rx="20" fill="none" stroke="#67e8f9" stroke-width="2" opacity="0.4"/>
+
+    <!-- Bar 2 (Medium Low - Sky Blue) -->
+    <rect x="176" y="210" width="56" height="206" rx="20" fill="url(#bar2)"/>
+    <rect x="176" y="210" width="56" height="206" rx="20" fill="none" stroke="#7dd3fc" stroke-width="2" opacity="0.4"/>
+
+    <!-- Bar 3 (Medium High - Indigo) -->
+    <rect x="256" y="145" width="56" height="271" rx="20" fill="url(#bar3)"/>
+    <rect x="256" y="145" width="56" height="271" rx="20" fill="none" stroke="#a5b4fc" stroke-width="2" opacity="0.4"/>
+
+    <!-- Bar 4 (Tallest - Purple/Magenta) -->
+    <rect x="336" y="85" width="56" height="331" rx="20" fill="url(#bar4)"/>
+    <rect x="336" y="85" width="56" height="331" rx="20" fill="none" stroke="#e9d5ff" stroke-width="2" opacity="0.4"/>
+  </g>
+
+  <!-- Connected Trajectory / Complexity Vector Curve -->
+  <path d="M 124 280 Q 200 230 284 145 T 364 85" fill="none" stroke="#00f0ff" stroke-width="7" stroke-linecap="round" filter="url(#neonGlow)"/>
+  <path d="M 124 280 Q 200 230 284 145 T 364 85" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round"/>
+
+  <!-- Algorithmic Nodes at Summit Points -->
+  <g filter="url(#neonGlow)">
+    <circle cx="124" cy="280" r="10" fill="#06b6d4" stroke="#ffffff" stroke-width="3"/>
+    <circle cx="204" cy="210" r="11" fill="#38bdf8" stroke="#ffffff" stroke-width="3.5"/>
+    <circle cx="284" cy="145" r="12" fill="#818cf8" stroke="#ffffff" stroke-width="4"/>
+    <circle cx="364" cy="85"  r="14" fill="#c084fc" stroke="#ffffff" stroke-width="4.5"/>
+  </g>
+
+  <!-- Algorithm Spark / Peak Energy Star (Top Right) -->
+  <g transform="translate(420, 75)">
+    <path d="M 0,-18 Q 0,0 18,0 Q 0,0 0,18 Q 0,0 -18,0 Q 0,0 0,-18 Z" fill="#67e8f9" filter="url(#neonGlow)"/>
+    <circle cx="0" cy="0" r="4" fill="#ffffff"/>
+  </g>
+</svg>

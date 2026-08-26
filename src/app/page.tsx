@@ -7,6 +7,7 @@ import { ValueProposition } from "@/components/landing/ValueProposition";
 import { LearningJourney } from "@/components/landing/LearningJourney";
 import { BetaBanner } from "@/components/landing/BetaBanner";
 import { AmbientSortLogo } from "@/components/brand/AmbientSortLogo";
+import { AlgoHubLogo } from "@/components/brand/AlgoHubLogo";
 import { AuthButton } from "@/components/auth/AuthButton";
 import { NotificationBell } from "@/components/notifications/NotificationBell";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
@@ -70,9 +71,7 @@ export default function Home() {
             </button>
 
             <Link href="/" className="flex items-center gap-3 group">
-              <div className="h-9 w-9 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg shadow-cyan-500/20 group-hover:scale-105 transition-transform">
-                <Code2 className="h-5 w-5 text-white" />
-              </div>
+              <AlgoHubLogo size={36} />
               <div className="flex items-center gap-2">
                 <span className="font-bold text-base tracking-tight text-foreground font-sans">
                   AlgoHub

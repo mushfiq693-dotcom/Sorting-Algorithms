@@ -47,7 +47,7 @@ export function DeveloperCredit() {
 
           {/* Hero Profile Photo & Identity */}
           <div className="flex flex-col items-center text-center pb-4 border-b border-white/[0.08]">
-            <div className="h-28 w-28 sm:h-32 sm:w-32 rounded-2xl overflow-hidden border border-white/20 shadow-2xl shadow-black/80 bg-[#070b14] mb-3">
+            <div className="h-16 w-16 sm:h-18 sm:w-18 rounded-full overflow-hidden border-2 border-cyan-500/30 ring-2 ring-white/10 shadow-xl shadow-black/80 bg-[#070b14] mb-2.5">
               <img
                 src="/developer.jpg"
                 alt={dev.name}

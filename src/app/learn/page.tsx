@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { LEARNING_PATH, LearningStep } from "@/data/learningPath";
 import { AmbientSortLogo } from "@/components/brand/AmbientSortLogo";
+import { AlgoHubLogo } from "@/components/brand/AlgoHubLogo";
 import {
   GraduationCap,
   Clock,
@@ -70,9 +71,7 @@ export default function LearnPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Link href="/" className="flex items-center gap-3 group">
-              <div className="h-9 w-9 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg shadow-cyan-500/20 group-hover:scale-105 transition-transform">
-                <GraduationCap className="h-5 w-5 text-white" />
-              </div>
+              <AlgoHubLogo size={36} />
               <div className="flex items-center gap-2">
                 <span className="font-bold text-base tracking-tight text-foreground font-sans">
                   AlgoHub

@@ -15,6 +15,9 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL || "https://algo-hub-eight.vercel.app"
+  ),
   title: "AlgoHub — Interactive Algorithm Learning Platform",
   description:
     "Learn algorithms step by step through interactive visualization, code execution, debugging, comparison, and hands-on practice.",
@@ -27,12 +30,32 @@ export const metadata: Metadata = {
     "AlgoHub",
   ],
   authors: [{ name: "AlgoHub Team" }],
+  icons: {
+    icon: [
+      { url: "/icon.svg", type: "image/svg+xml" },
+      { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+      { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+      { url: "/favicon.ico" },
+    ],
+    apple: [
+      { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
+    ],
+    shortcut: "/favicon.ico",
+  },
   openGraph: {
     title: "AlgoHub — Interactive Algorithm Learning Platform",
     description:
       "Don't just learn Algorithms. See them. Break them. Fix them. Master them.",
     type: "website",
     siteName: "AlgoHub",
+    images: [
+      {
+        url: "/icon-512.png",
+        width: 512,
+        height: 512,
+        alt: "AlgoHub Logo",
+      },
+    ],
   },
 };
 

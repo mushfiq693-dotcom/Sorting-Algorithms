@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { DocsSidebar } from "@/components/docs/DocsSidebar";
 import { AmbientSortLogo } from "@/components/brand/AmbientSortLogo";
+import { AlgoHubLogo } from "@/components/brand/AlgoHubLogo";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import {
   Menu,
@@ -37,9 +38,7 @@ export default function DocsLayout({
             </button>
 
             <Link href="/" className="flex items-center gap-3 group">
-              <div className="h-9 w-9 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg shadow-cyan-500/20 group-hover:scale-105 transition-transform">
-                <BookOpen className="h-5 w-5 text-white" />
-              </div>
+              <AlgoHubLogo size={36} />
               <div className="flex items-center gap-2">
                 <span className="font-bold text-base tracking-tight text-foreground font-sans">
                   AlgoHub
