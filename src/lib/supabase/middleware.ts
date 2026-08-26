@@ -50,9 +50,14 @@ export async function updateSession(request: NextRequest) {
 
   const pathname = request.nextUrl.pathname;
 
-  // List of public routes that bypass authentication
+  // List of public routes that bypass authentication (Public Recruiter Sandbox Mode)
   const isPublicRoute =
     pathname === "/" ||
+    pathname === "/learn" ||
+    pathname.startsWith("/algorithms") ||
+    pathname.startsWith("/compare") ||
+    pathname.startsWith("/docs") ||
+    pathname.startsWith("/visualizer") ||
     pathname.startsWith("/auth/") ||
     pathname.startsWith("/_next") ||
     pathname.startsWith("/api/public") ||

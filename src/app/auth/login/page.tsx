@@ -21,6 +21,7 @@ import {
   EyeOff,
   KeyRound,
   X,
+  Zap,
 } from "lucide-react";
 
 import { validateGenuineEmail } from "@/lib/validation/emailValidator";
@@ -145,6 +146,29 @@ function LoginForm() {
     }
   };
 
+  const handleDemoSignIn = async () => {
+    setIsLoading(true);
+    setErrorMsg(null);
+    setSuccessMsg("Authenticating recruiter demo session...");
+
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: "demo@algohub.dev",
+        password: "DemoUser2026!",
+      });
+      if (error) throw error;
+
+      if (data.user) {
+        setSuccessMsg("✓ Verified recruiter demo access granted! Redirecting...");
+        router.push(nextRoute);
+        router.refresh();
+      }
+    } catch (err: any) {
+      setErrorMsg(err.message || "Failed to start demo session. You can also explore public visualizers directly.");
+      setIsLoading(false);
+    }
+  };
+
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -219,6 +243,49 @@ function LoginForm() {
             ? "Enter your credentials to access interactive algorithm modules."
             : "Register with your student/faculty email for departmental review."}
         </p>
+      </div>
+
+      {/* Recruiter & Quick Evaluation Fast-Track Card */}
+      <div className="rounded-2xl border border-cyan-500/35 bg-gradient-to-b from-cyan-950/50 via-[#071322]/90 to-[#040a14]/98 p-4 sm:p-5 backdrop-blur-xl shadow-xl shadow-cyan-950/50 space-y-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="flex h-2 w-2 rounded-full bg-cyan-400 animate-pulse" />
+            <span className="text-xs font-bold text-cyan-300 font-mono tracking-tight">
+              👔 Recruiter & Evaluation Fast-Track
+            </span>
+          </div>
+          <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-cyan-500/15 border border-cyan-500/30 text-cyan-300 font-bold">
+            1-Click Demo
+          </span>
+        </div>
+
+        <p className="text-[11px] text-slate-300 leading-relaxed font-sans">
+          Evaluating this project for a job/internship? Bypass university beta registration with pre-approved demo credentials.
+        </p>
+
+        <div className="flex flex-col sm:flex-row gap-2 pt-1">
+          <button
+            type="button"
+            onClick={handleDemoSignIn}
+            disabled={isLoading}
+            className="flex-1 inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 px-4 py-2.5 text-xs font-bold text-white shadow-lg shadow-cyan-500/25 hover:brightness-110 active:scale-[0.98] transition-all cursor-pointer disabled:opacity-50"
+          >
+            <Zap className="h-3.5 w-3.5 fill-white" />
+            <span>1-Click Recruiter Demo Access</span>
+          </button>
+
+          <Link
+            href="/learn"
+            className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-white/10 bg-white/5 px-3 py-2.5 text-xs font-semibold text-slate-200 hover:text-white hover:bg-white/10 transition-all text-center"
+          >
+            <span>Public Sandbox &rarr;</span>
+          </Link>
+        </div>
+
+        <div className="text-[10px] text-slate-400 font-mono flex items-center justify-between pt-1.5 border-t border-white/[0.08]">
+          <span>Email: <strong className="text-slate-300">demo@algohub.dev</strong></span>
+          <span>Pass: <strong className="text-slate-300">DemoUser2026!</strong></span>
+        </div>
       </div>
 
       {/* Main Glassmorphic Auth Card */}
