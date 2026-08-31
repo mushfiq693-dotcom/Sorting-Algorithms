@@ -29,6 +29,7 @@ import {
   ChevronDown,
   Eye,
   Award,
+  Bookmark,
 } from "lucide-react";
 
 export default function Home() {
@@ -238,6 +239,15 @@ export default function Home() {
                 <BarChart3 className="h-3.5 w-3.5 text-cyan-500" />
                 <span>My Progress</span>
               </Link>
+
+              {/* 4. Course Material (Lipschutz Textbook & Teacher Notes) */}
+              <Link
+                href="/course-material"
+                className="inline-flex items-center gap-1.5 rounded-xl border border-border bg-secondary/80 px-3 py-1.5 text-xs font-semibold text-foreground hover:text-cyan-600 dark:hover:text-cyan-400 hover:bg-secondary transition-all active:scale-95 shadow-sm"
+              >
+                <Bookmark className="h-3.5 w-3.5 text-cyan-500" />
+                <span>Course Material</span>
+              </Link>
             </div>
 
             {/* Notification Bell, Theme Toggle & Auth Button */}
@@ -326,6 +336,14 @@ export default function Home() {
               >
                 <BarChart3 className="h-4 w-4 text-cyan-500" />
                 <span>My Progress Dashboard</span>
+              </Link>
+              <Link
+                href="/course-material"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="flex items-center gap-2 p-2.5 rounded-xl bg-secondary/80 text-foreground text-xs font-medium hover:bg-secondary transition-colors"
+              >
+                <Bookmark className="h-4 w-4 text-cyan-500" />
+                <span>Course Material (Assigned Topics & Problems)</span>
               </Link>
             </div>
           </div>

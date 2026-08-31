@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { useReducedMotion } from "framer-motion";
+import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { Sparkles } from "lucide-react";
 
 const INITIAL_HERO_ARRAY = [32, 14, 58, 22, 70, 45, 18, 88, 39, 62, 28, 76, 50, 12, 65];

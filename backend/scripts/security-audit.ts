@@ -715,6 +715,84 @@ async function runSecurityAudit() {
   });
 
   // -------------------------------------------------------------------------
+  // TEST 17: Non-Admin Course Material Mutation Protection (INSERT/UPDATE/DELETE)
+  // -------------------------------------------------------------------------
+  await client.query("BEGIN;");
+  let test17Passed = false;
+  let test17Actual = "";
+  try {
+    await client.query("SET LOCAL ROLE authenticated;");
+    await client.query(`SET LOCAL request.jwt.claim.sub = '${studentId}';`);
+    await client.query("SET LOCAL request.jwt.claim.role = 'authenticated';");
+
+    const insertRes = await client.query(`
+      INSERT INTO public.course_materials (title, content_type, explanation_or_solution)
+      VALUES ('Hacked Material', 'topic', 'Malicious content');
+    `);
+
+    if (insertRes.rowCount === 0) {
+      test17Passed = true;
+      test17Actual = "0 rows inserted (RLS course_materials_insert_admin prevented unauthorized insertion)";
+    } else {
+      test17Passed = false;
+      test17Actual = "VULNERABILITY: Non-admin student was able to insert course materials!";
+    }
+  } catch (err: any) {
+    test17Passed = true;
+    test17Actual = `DENIED: Error thrown by RLS policy (${err.message})`;
+  } finally {
+    await client.query("ROLLBACK;");
+  }
+
+  results.push({
+    id: 17,
+    name: "Non-Admin Course Material Mutation Protection",
+    scenario: "Authenticated student (role='student') executes: INSERT INTO course_materials",
+    expected: "DENIED / 0 rows inserted (Admin-only privilege for course content mutation)",
+    actual: test17Actual,
+    passed: test17Passed,
+  });
+
+  // -------------------------------------------------------------------------
+  // TEST 18: Unapproved User Course Material Read Isolation
+  // -------------------------------------------------------------------------
+  await client.query("BEGIN;");
+  let test18Passed = false;
+  let test18Actual = "";
+  try {
+    await client.query("SET LOCAL ROLE anon;");
+    await client.query("RESET request.jwt.claim.sub;");
+    await client.query("RESET request.jwt.claim.role;");
+
+    const selectRes = await client.query(`
+      SELECT count(*) FROM public.course_materials;
+    `);
+
+    const count = parseInt(selectRes.rows[0]?.count || "0", 10);
+    if (count === 0) {
+      test18Passed = true;
+      test18Actual = "0 rows accessible to unauthenticated/unapproved anon role";
+    } else {
+      test18Passed = false;
+      test18Actual = `VULNERABILITY: Anon role accessed ${count} course material rows!`;
+    }
+  } catch (err: any) {
+    test18Passed = true;
+    test18Actual = `DENIED: Access rejected by RLS (${err.message})`;
+  } finally {
+    await client.query("ROLLBACK;");
+  }
+
+  results.push({
+    id: 18,
+    name: "Unapproved / Anon Course Material Read Isolation",
+    scenario: "Unauthenticated anon client executes: SELECT FROM course_materials",
+    expected: "DENIED / 0 rows returned (Beta-approved authentication required)",
+    actual: test18Actual,
+    passed: test18Passed,
+  });
+
+  // -------------------------------------------------------------------------
   // PRINT ITEMIZE REPORT
   // -------------------------------------------------------------------------
   console.log("--------------------------------------------------------------------------------");

@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
-import { Check, Copy, Terminal, Info, Calculator } from "lucide-react";
+import React, { useState, memo } from "react";
+import { Check, Copy, Terminal, Info, ChevronRight } from "lucide-react";
 
 interface FormattedMarkdownProps {
   content: string;
@@ -9,7 +9,7 @@ interface FormattedMarkdownProps {
 }
 
 /**
- * Converts raw LaTeX mathematical strings to clean, beautiful, formatted Unicode mathematical notation.
+ * Converts raw LaTeX mathematical strings to clean, natural, formatted mathematical notation.
  */
 export function formatMathString(raw: string): string {
   if (!raw) return "";
@@ -22,7 +22,13 @@ export function formatMathString(raw: string): string {
     str = str.slice(1, -1).trim();
   }
 
-  // Common LaTeX Greek and Special Symbols
+  // Concatenation & Complex LaTeX symbols
+  str = str.replace(/\\mathbin\{\/\\mkern-3mu\/\}/g, " // ");
+  str = str.replace(/\\mathbin\{([^}]+)\}/g, " $1 ");
+  str = str.replace(/\\mkern[^;]*;?/g, "");
+  str = str.replace(/\\text\{([^}]+)\}/g, "$1");
+
+  // Common LaTeX Greek and Math Operators
   str = str.replace(/\\Theta/g, "Θ");
   str = str.replace(/\\Omega/g, "Ω");
   str = str.replace(/\\Sigma/g, "Σ");
@@ -35,26 +41,32 @@ export function formatMathString(raw: string): string {
   str = str.replace(/\\ge\b/g, "≥");
   str = str.replace(/\\ne\b/g, "≠");
   str = str.replace(/\\forall\b/g, "∀");
+  str = str.replace(/\\in\b/g, "∈");
   str = str.replace(/\\blacksquare\b/g, "■");
   str = str.replace(/\\approx\b/g, "≈");
   str = str.replace(/\\cdot\b/g, "·");
   str = str.replace(/\\times\b/g, "×");
-  str = str.replace(/\\implies\b/g, "⟹");
+  str = str.replace(/\\implies\b/g, " ⟹ ");
   str = str.replace(/\\quad\b/g, "   ");
   str = str.replace(/\\qquad\b/g, "      ");
   str = str.replace(/\\left\(/g, "(");
   str = str.replace(/\\right\)/g, ")");
-  str = str.replace(/\\langle/g, "⟨");
-  str = str.replace(/\\rangle/g, "⟩");
-  str = str.replace(/\\text\{([^}]+)\}/g, "$1");
+  str = str.replace(/\\lfloor\b/g, "⌊");
+  str = str.replace(/\\rfloor\b/g, "⌋");
+  str = str.replace(/\\lceil\b/g, "⌈");
+  str = str.replace(/\\rceil\b/g, "⌉");
   str = str.replace(/\\log_2\s*n/g, "log₂ n");
   str = str.replace(/\\log_2\s*([a-zA-Z0-9]+)/g, "log₂ $1");
+  str = str.replace(/\\log_b\s*([a-zA-Z0-9]+)/g, "log_b $1");
+  str = str.replace(/\\log_B\s*([a-zA-Z0-9]+)/g, "log_B $1");
   str = str.replace(/\\log\b/g, "log");
 
   // Specific Fractions
   str = str.replace(/\\frac\{1\}\{2\}/g, "½");
+  str = str.replace(/\\frac\{1\}\{3\}/g, "⅓");
   str = str.replace(/\\frac\{1\}\{4\}/g, "¼");
   str = str.replace(/\\frac\{1\}\{8\}/g, "⅛");
+  str = str.replace(/\\frac\{5\}\{6\}/g, "⅚");
   str = str.replace(/\\frac\{3\}\{4\}/g, "¾");
   str = str.replace(/\\frac\{([^}]+)\}\{([^}]+)\}/g, "($1 / $2)");
 
@@ -87,18 +99,19 @@ export function formatMathString(raw: string): string {
   str = str.replace(/_\{n\}/g, "ₙ");
   str = str.replace(/_\{([^}]+)\}/g, "($1)");
 
-  // Clean remaining isolated backslashes
+  // Clean remaining isolated backslashes and extra spaces
   str = str.replace(/\\/g, "");
+  str = str.replace(/\s+/g, " ").trim();
 
   return str;
 }
 
 /**
  * Parses inline text for bold, code, math ($...$), and italic tokens.
+ * Renders variables naturally without disruptive box borders around every letter.
  */
 function renderInlineText(text: string): React.ReactNode[] {
   // Regex to match $math$, `code`, **bold**, *italic*
-  // Order matters: match $...$ first for math, then `...`, then **...**, then *...*
   const pattern = /(\$\$[\s\S]*?\$\$|\$[^$\n]+?\$|`[^`]+?`|\*\*[^*]+?\*\*|\*[^*]+?\*)/g;
   const parts = text.split(pattern);
 
@@ -111,33 +124,33 @@ function renderInlineText(text: string): React.ReactNode[] {
       return (
         <span
           key={index}
-          className="inline-block my-1 px-3 py-1 rounded-lg bg-secondary border border-cyan-500/30 font-mono font-bold text-cyan-700 dark:text-cyan-200 text-xs sm:text-sm shadow-sm"
+          className="inline-block my-1.5 px-3 py-1 rounded-xl bg-cyan-950/30 border border-cyan-500/30 font-mono font-bold text-cyan-300 text-sm sm:text-base shadow-sm"
         >
           {math}
         </span>
       );
     }
 
-    // Inline math: $...$
+    // Inline math: $...$ (Clean, natural math typography without cluttered boxed borders)
     if (part.startsWith("$") && part.endsWith("$")) {
       const math = formatMathString(part);
       return (
         <span
           key={index}
-          className="inline-flex items-center font-mono font-bold text-cyan-700 dark:text-cyan-300 bg-cyan-500/10 border border-cyan-500/30 px-1.5 py-0.5 rounded text-[11px] sm:text-xs mx-0.5 shadow-sm"
+          className="font-serif italic font-semibold text-cyan-400 dark:text-cyan-300 mx-1 text-[1.05em] tracking-wide"
         >
           {math}
         </span>
       );
     }
 
-    // Inline code: `...`
+    // Inline code: `...` (Subtle, sleek code badge)
     if (part.startsWith("`") && part.endsWith("`")) {
       const code = part.slice(1, -1);
       return (
         <code
           key={index}
-          className="font-mono text-[11px] sm:text-xs text-amber-700 dark:text-amber-300 bg-amber-500/10 border border-amber-500/25 px-1.5 py-0.5 rounded mx-0.5"
+          className="font-mono text-[13px] sm:text-[14px] text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded-lg mx-1 font-medium"
         >
           {code}
         </code>
@@ -158,7 +171,7 @@ function renderInlineText(text: string): React.ReactNode[] {
     if (part.startsWith("*") && part.endsWith("*")) {
       const italicText = part.slice(1, -1);
       return (
-        <em key={index} className="text-muted-foreground italic">
+        <em key={index} className="text-muted-foreground italic font-serif">
           {renderInlineText(italicText)}
         </em>
       );
@@ -182,21 +195,21 @@ function CodeBlock({ code, lang }: { code: string; lang: string }) {
   };
 
   return (
-    <div className="my-5 rounded-2xl border border-border bg-card overflow-hidden shadow-sm dark:shadow-2xl">
-      <div className="flex items-center justify-between px-4 py-2.5 border-b border-border bg-secondary/70 text-xs font-mono text-muted-foreground">
+    <div className="my-6 rounded-2xl border border-border bg-[#0a0f1d] overflow-hidden shadow-xl">
+      <div className="flex items-center justify-between px-5 py-3 border-b border-border/60 bg-secondary/40 text-xs font-mono text-muted-foreground">
         <div className="flex items-center gap-2">
-          <Terminal className="h-3.5 w-3.5 text-cyan-500" />
-          <span className="text-foreground font-bold uppercase">{lang || "Code"}</span>
+          <Terminal className="h-4 w-4 text-cyan-400" />
+          <span className="text-foreground font-extrabold uppercase tracking-wider">{lang || "Code"}</span>
         </div>
         <button
           onClick={handleCopy}
-          className="inline-flex items-center gap-1 text-[11px] text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+          className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-secondary hover:bg-secondary/80 text-xs text-muted-foreground hover:text-foreground transition-all cursor-pointer"
         >
-          {copied ? <Check className="h-3 w-3 text-emerald-500" /> : <Copy className="h-3 w-3" />}
-          <span>{copied ? "Copied" : "Copy"}</span>
+          {copied ? <Check className="h-3.5 w-3.5 text-emerald-400" /> : <Copy className="h-3.5 w-3.5" />}
+          <span>{copied ? "Copied!" : "Copy"}</span>
         </button>
       </div>
-      <pre className="p-4 sm:p-5 font-mono text-xs sm:text-sm text-foreground overflow-x-auto leading-relaxed bg-background/50 selection:bg-cyan-500/30">
+      <pre className="p-5 sm:p-6 font-mono text-sm sm:text-base text-slate-100 overflow-x-auto leading-relaxed selection:bg-cyan-500/30">
         <code>{code}</code>
       </pre>
     </div>
@@ -207,17 +220,8 @@ function DisplayMathCard({ math }: { math: string }) {
   const formatted = formatMathString(math);
 
   return (
-    <div className="my-5 rounded-2xl border border-cyan-500/30 bg-secondary/50 p-4 sm:p-5 shadow-sm text-center relative overflow-hidden group">
-      <div className="flex items-center justify-between border-b border-cyan-500/20 pb-2 mb-3">
-        <div className="flex items-center gap-1.5 text-[11px] font-mono font-bold text-cyan-700 dark:text-cyan-400 uppercase tracking-wider">
-          <Calculator className="h-3.5 w-3.5 text-cyan-500" />
-          <span>Mathematical Derivation</span>
-        </div>
-        <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-700 dark:text-cyan-300 border border-cyan-500/20 font-bold">
-          Formal Bound
-        </span>
-      </div>
-      <div className="font-mono text-sm sm:text-base md:text-lg font-extrabold text-foreground tracking-wide select-text py-2 overflow-x-auto">
+    <div className="my-5 py-4 px-6 rounded-2xl border border-cyan-500/25 bg-gradient-to-r from-cyan-950/20 via-blue-950/15 to-transparent shadow-inner text-center overflow-x-auto">
+      <div className="font-mono text-base sm:text-lg md:text-xl font-black text-cyan-300 tracking-wide select-text py-1">
         {formatted}
       </div>
     </div>
@@ -238,13 +242,13 @@ function MarkdownTable({ tableLines }: { tableLines: string[] }) {
   const dataRows = tableLines.slice(2).map(parseRow);
 
   return (
-    <div className="my-6 rounded-2xl border border-border bg-card overflow-hidden shadow-sm dark:shadow-2xl backdrop-blur-xl">
+    <div className="my-6 rounded-2xl border border-border bg-card overflow-hidden shadow-lg backdrop-blur-xl">
       <div className="overflow-x-auto">
-        <table className="w-full text-left text-xs sm:text-sm border-collapse">
+        <table className="w-full text-left text-sm sm:text-base border-collapse">
           <thead>
-            <tr className="border-b border-border bg-secondary text-foreground font-bold">
+            <tr className="border-b border-border bg-secondary/80 text-foreground font-bold">
               {headerCells.map((cell, idx) => (
-                <th key={idx} className="py-3 px-4 font-mono text-cyan-700 dark:text-cyan-300 font-bold text-xs uppercase tracking-wider">
+                <th key={idx} className="py-3.5 px-5 font-mono text-cyan-400 font-extrabold text-xs sm:text-sm uppercase tracking-wider">
                   {renderInlineText(cell)}
                 </th>
               ))}
@@ -255,11 +259,11 @@ function MarkdownTable({ tableLines }: { tableLines: string[] }) {
               <tr
                 key={rIdx}
                 className={`transition-colors ${
-                  rIdx % 2 === 0 ? "bg-transparent" : "bg-secondary/30"
-                } hover:bg-cyan-500/[0.06]`}
+                  rIdx % 2 === 0 ? "bg-transparent" : "bg-secondary/20"
+                } hover:bg-cyan-500/[0.05]`}
               >
                 {row.map((cell, cIdx) => (
-                  <td key={cIdx} className="py-3 px-4 text-foreground leading-relaxed font-sans">
+                  <td key={cIdx} className="py-3.5 px-5 text-foreground/90 leading-relaxed font-sans">
                     {renderInlineText(cell)}
                   </td>
                 ))}
@@ -272,7 +276,10 @@ function MarkdownTable({ tableLines }: { tableLines: string[] }) {
   );
 }
 
-export function FormattedMarkdown({ content, className = "" }: FormattedMarkdownProps) {
+export const FormattedMarkdown = memo(function FormattedMarkdown({
+  content,
+  className = "",
+}: FormattedMarkdownProps) {
   const lines = content.trim().split("\n");
   const elements: React.ReactNode[] = [];
   let keyIndex = 0;
@@ -299,13 +306,11 @@ export function FormattedMarkdown({ content, className = "" }: FormattedMarkdown
     // 2. Display Math Block: $$...$$
     if (line.startsWith("$$")) {
       if (line.endsWith("$$") && line.length > 4) {
-        // Single-line display math: $$ formula $$
         const formula = line.slice(2, -2).trim();
         elements.push(<DisplayMathCard key={keyIndex++} math={formula} />);
         i++;
         continue;
       } else {
-        // Multi-line display math
         const mathLines: string[] = [];
         i++;
         while (i < lines.length && !lines[i].trim().endsWith("$$")) {
@@ -333,12 +338,24 @@ export function FormattedMarkdown({ content, className = "" }: FormattedMarkdown
       continue;
     }
 
-    // 4. Headings
+    // 4. Headings (H1 to H4)
+    if (line.startsWith("#### ")) {
+      const title = line.replace("#### ", "");
+      elements.push(
+        <h4 key={keyIndex++} className="text-base sm:text-lg font-bold text-cyan-400 mt-6 mb-2 flex items-center gap-2">
+          <span className="h-2 w-2 rounded-full bg-cyan-400 inline-block shadow-[0_0_8px_#38bdf8]" />
+          <span>{renderInlineText(title)}</span>
+        </h4>
+      );
+      i++;
+      continue;
+    }
+
     if (line.startsWith("### ")) {
       const title = line.replace("### ", "");
       elements.push(
         <h3 key={keyIndex++} className="text-lg sm:text-xl font-bold text-foreground mt-8 mb-3 tracking-tight flex items-center gap-2">
-          <span className="h-2 w-2 rounded-full bg-cyan-500 inline-block shadow-[0_0_6px_#38bdf8]" />
+          <ChevronRight className="h-5 w-5 text-cyan-400" />
           <span>{renderInlineText(title)}</span>
         </h3>
       );
@@ -349,7 +366,7 @@ export function FormattedMarkdown({ content, className = "" }: FormattedMarkdown
     if (line.startsWith("## ")) {
       const title = line.replace("## ", "");
       elements.push(
-        <h2 key={keyIndex++} className="text-xl sm:text-2xl font-extrabold text-foreground mt-10 mb-4 tracking-tight border-b border-border pb-2.5 flex items-center gap-2.5">
+        <h2 key={keyIndex++} className="text-xl sm:text-2xl font-extrabold text-foreground mt-9 mb-4 tracking-tight border-b border-border/80 pb-2.5">
           <span>{renderInlineText(title)}</span>
         </h2>
       );
@@ -360,7 +377,7 @@ export function FormattedMarkdown({ content, className = "" }: FormattedMarkdown
     if (line.startsWith("# ")) {
       const title = line.replace("# ", "");
       elements.push(
-        <h1 key={keyIndex++} className="text-2xl sm:text-3xl font-extrabold text-foreground mt-6 mb-4 tracking-tight">
+        <h1 key={keyIndex++} className="text-2xl sm:text-3xl font-black text-foreground mt-7 mb-4 tracking-tight">
           {renderInlineText(title)}
         </h1>
       );
@@ -370,7 +387,7 @@ export function FormattedMarkdown({ content, className = "" }: FormattedMarkdown
 
     // 5. Horizontal Rule
     if (line === "---" || line === "***") {
-      elements.push(<hr key={keyIndex++} className="my-8 border-border" />);
+      elements.push(<hr key={keyIndex++} className="my-8 border-border/70" />);
       i++;
       continue;
     }
@@ -379,9 +396,9 @@ export function FormattedMarkdown({ content, className = "" }: FormattedMarkdown
     if (line.startsWith("> ")) {
       const quoteText = line.replace(/^>\s*/, "");
       elements.push(
-        <div key={keyIndex++} className="my-4 rounded-xl border border-blue-500/30 bg-blue-500/10 p-4 flex items-start gap-3">
-          <Info className="h-4 w-4 text-blue-500 shrink-0 mt-0.5" />
-          <div className="text-xs sm:text-sm text-blue-950 dark:text-blue-100 leading-relaxed font-sans">
+        <div key={keyIndex++} className="my-5 rounded-2xl border border-blue-500/30 bg-blue-500/10 p-5 flex items-start gap-3.5">
+          <Info className="h-5 w-5 text-blue-400 shrink-0 mt-0.5" />
+          <div className="text-sm sm:text-base text-foreground leading-relaxed font-sans">
             {renderInlineText(quoteText)}
           </div>
         </div>
@@ -394,7 +411,7 @@ export function FormattedMarkdown({ content, className = "" }: FormattedMarkdown
     if (line.startsWith("- ") || line.startsWith("* ")) {
       const itemText = line.slice(2);
       elements.push(
-        <li key={keyIndex++} className="text-xs sm:text-sm text-foreground/90 ml-5 list-disc leading-relaxed my-1.5 font-sans marker:text-cyan-500">
+        <li key={keyIndex++} className="text-base sm:text-[17px] text-foreground/90 ml-6 list-disc leading-relaxed my-2 font-sans marker:text-cyan-400">
           {renderInlineText(itemText)}
         </li>
       );
@@ -408,8 +425,8 @@ export function FormattedMarkdown({ content, className = "" }: FormattedMarkdown
       const num = orderedMatch[1];
       const itemText = orderedMatch[2];
       elements.push(
-        <div key={keyIndex++} className="flex items-start gap-2.5 text-xs sm:text-sm text-foreground/90 my-2 font-sans">
-          <span className="shrink-0 h-5 w-5 rounded-md bg-cyan-500/15 border border-cyan-500/30 flex items-center justify-center font-mono text-[11px] font-bold text-cyan-700 dark:text-cyan-300 mt-0.5">
+        <div key={keyIndex++} className="flex items-start gap-3 text-base sm:text-[17px] text-foreground/90 my-2.5 font-sans">
+          <span className="shrink-0 h-6 w-6 rounded-lg bg-cyan-500/15 border border-cyan-500/30 flex items-center justify-center font-mono text-xs font-bold text-cyan-300 mt-0.5">
             {num}
           </span>
           <div className="leading-relaxed flex-1">{renderInlineText(itemText)}</div>
@@ -422,7 +439,7 @@ export function FormattedMarkdown({ content, className = "" }: FormattedMarkdown
     // 9. Paragraph
     if (line.length > 0) {
       elements.push(
-        <p key={keyIndex++} className="text-xs sm:text-sm text-foreground/90 leading-relaxed my-3 font-sans">
+        <p key={keyIndex++} className="text-base sm:text-[17px] text-foreground/90 leading-relaxed my-3 font-sans">
           {renderInlineText(line)}
         </p>
       );
@@ -431,5 +448,5 @@ export function FormattedMarkdown({ content, className = "" }: FormattedMarkdown
     i++;
   }
 
-  return <div className={`space-y-1 ${className}`}>{elements}</div>;
-}
+  return <div className={`space-y-1.5 ${className}`}>{elements}</div>;
+});

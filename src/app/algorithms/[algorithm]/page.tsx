@@ -7,28 +7,76 @@ import { AlgorithmId } from "@/types/sorting";
 import { LEARNING_PATH, LearningStep } from "@/data/learningPath";
 import { ALGORITHMS, SORTING_ALGORITHMS, DATA_STRUCTURES, COMPLEXITY_TOPICS } from "@/data/algorithms";
 import { DOCS_ARTICLES } from "@/data/docs";
+import dynamic from "next/dynamic";
 import { SortingVisualizer } from "@/components/visualizer/SortingVisualizer";
-import { StackVisualizer } from "@/components/visualizer/StackVisualizer";
-import { QueueVisualizer } from "@/components/visualizer/QueueVisualizer";
-import { TimeComplexityVisualizer } from "@/components/visualizer/TimeComplexityVisualizer";
-import { SpaceComplexityVisualizer } from "@/components/visualizer/SpaceComplexityVisualizer";
-import { AlgorithmDiagram } from "@/components/diagrams/AlgorithmDiagram";
-import { CodeDebugger } from "@/components/debugger/CodeDebugger";
-import { BugHunt } from "@/components/challenge/BugHunt";
-import { PredictNext } from "@/components/practice/PredictNext";
-import { Quiz } from "@/components/practice/Quiz";
-import { ProblemSolving } from "@/components/practice/ProblemSolving";
 import { BanglaNote } from "@/components/docs/BanglaNote";
 import { ComplexityCard } from "@/components/algorithms/ComplexityCard";
 import { CodeViewer } from "@/components/code/CodeViewer";
 import { AmbientSortLogo } from "@/components/brand/AmbientSortLogo";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
-import { MathDerivation } from "@/components/complexity/MathDerivation";
-import { ComplexityCalculator } from "@/components/complexity/ComplexityCalculator";
-import { GrowthChart } from "@/components/complexity/GrowthChart";
 import { getAdaptiveGuidance } from "@/lib/scoring";
 import { TOPIC_SCORES_KEY } from "@/hooks/useProgressSync";
 import { TopicScoresRecord } from "../../../../backend/database/types/database.types";
+
+const TabLoading = () => (
+  <div className="h-64 rounded-2xl border border-border/80 bg-card/50 flex flex-col items-center justify-center p-8 text-center animate-pulse">
+    <div className="h-8 w-8 rounded-full border-2 border-cyan-500 border-t-transparent animate-spin mb-3" />
+    <span className="text-xs text-muted-foreground font-mono">Loading interactive lab...</span>
+  </div>
+);
+
+const StackVisualizer = dynamic(
+  () => import("@/components/visualizer/StackVisualizer").then((mod) => mod.StackVisualizer),
+  { ssr: false, loading: () => <TabLoading /> }
+);
+const QueueVisualizer = dynamic(
+  () => import("@/components/visualizer/QueueVisualizer").then((mod) => mod.QueueVisualizer),
+  { ssr: false, loading: () => <TabLoading /> }
+);
+const TimeComplexityVisualizer = dynamic(
+  () => import("@/components/visualizer/TimeComplexityVisualizer").then((mod) => mod.TimeComplexityVisualizer),
+  { ssr: false, loading: () => <TabLoading /> }
+);
+const SpaceComplexityVisualizer = dynamic(
+  () => import("@/components/visualizer/SpaceComplexityVisualizer").then((mod) => mod.SpaceComplexityVisualizer),
+  { ssr: false, loading: () => <TabLoading /> }
+);
+const AlgorithmDiagram = dynamic(
+  () => import("@/components/diagrams/AlgorithmDiagram").then((mod) => mod.AlgorithmDiagram),
+  { ssr: false, loading: () => <TabLoading /> }
+);
+const CodeDebugger = dynamic(
+  () => import("@/components/debugger/CodeDebugger").then((mod) => mod.CodeDebugger),
+  { ssr: false, loading: () => <TabLoading /> }
+);
+const BugHunt = dynamic(
+  () => import("@/components/challenge/BugHunt").then((mod) => mod.BugHunt),
+  { ssr: false, loading: () => <TabLoading /> }
+);
+const PredictNext = dynamic(
+  () => import("@/components/practice/PredictNext").then((mod) => mod.PredictNext),
+  { ssr: false, loading: () => <TabLoading /> }
+);
+const Quiz = dynamic(
+  () => import("@/components/practice/Quiz").then((mod) => mod.Quiz),
+  { ssr: false, loading: () => <TabLoading /> }
+);
+const ProblemSolving = dynamic(
+  () => import("@/components/practice/ProblemSolving").then((mod) => mod.ProblemSolving),
+  { ssr: false, loading: () => <TabLoading /> }
+);
+const ComplexityCalculator = dynamic(
+  () => import("@/components/complexity/ComplexityCalculator").then((mod) => mod.ComplexityCalculator),
+  { ssr: false, loading: () => <TabLoading /> }
+);
+const GrowthChart = dynamic(
+  () => import("@/components/complexity/GrowthChart").then((mod) => mod.GrowthChart),
+  { ssr: false, loading: () => <TabLoading /> }
+);
+const MathDerivation = dynamic(
+  () => import("@/components/complexity/MathDerivation").then((mod) => mod.MathDerivation),
+  { ssr: false, loading: () => <TabLoading /> }
+);
 import {
   ArrowLeft,
   Lightbulb,

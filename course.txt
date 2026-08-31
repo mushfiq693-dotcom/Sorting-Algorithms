@@ -1,0 +1,172 @@
+# AlgoHub — Build Course Material Feature + Generate Content From Attached Screenshot(s)
+
+You are working on my existing **AlgoHub** project. This task has two parts: (1) build a new
+**Course Material** feature from scratch, and (2) populate it with real content that you generate
+yourself by reading the screenshot(s) I've attached to this message — topics/problems assigned by
+my class teacher from *Lipschutz & Seymour, "Data Structures," 2014, McGraw-Hill, Revised 4th
+Edition*.
+
+**Important clarification on workflow**: I am not building an admin content-upload UI for myself
+to type content into. Instead, **you** read the attached screenshot(s), understand what topic or
+problem is shown, write the explanation/solution yourself with real care and accuracy, and insert
+it directly into the database as part of this task. Future rounds of new material will follow the
+same pattern — I'll attach new screenshots to a short follow-up prompt, and you'll do the same
+read-and-generate-and-insert process against the feature built here.
+
+---
+
+# 1. BUILD THE FEATURE (SCHEMA, RLS, STUDENT VIEW)
+
+## 1.1 Data model
+
+```text
+public.course_materials
+  - id (UUID, PK)
+  - title (TEXT, NOT NULL)              -- descriptive title you write based on the content
+  - book_reference (TEXT)                -- "Lipschutz & Seymour, Data Structures, 4th Ed." +
+                                           chapter/section if identifiable from the screenshot
+  - topic_tag (TEXT, nullable)            -- e.g. "Stacks", "Recursion" — free-text, for filtering
+  - content_type (TEXT, CHECK: 'topic' | 'problem')
+  - problem_statement (TEXT, nullable)    -- populated when content_type = 'problem'; the exact
+                                           problem as shown in the screenshot
+  - explanation_or_solution (TEXT, NOT NULL) -- for 'topic': your explanation of the concept;
+                                           for 'problem': your fully worked solution. Markdown
+                                           format (so code blocks and step-by-step structure render
+                                           properly)
+  - difficulty (TEXT, nullable, CHECK: 'easy' | 'medium' | 'hard')  -- your honest assessment
+  - assigned_date (DATE, nullable)        -- only if visible/inferable from the screenshot, else null
+  - created_by (UUID) -> REFERENCES public.profiles(id)  -- attribute to my admin account
+  - created_at (TIMESTAMPTZ, DEFAULT now())
+  - updated_at (TIMESTAMPTZ, DEFAULT now())
+```
+
+Write this as a proper migration with rollback, consistent with the established discipline from
+earlier database work. Check existing migration/schema conventions first and follow them.
+
+## 1.2 RLS
+
+1. **SELECT**: any beta-approved user (student, mentor, admin) can read all course materials.
+2. **INSERT / UPDATE / DELETE**: admin only (since content is added via this
+   direct-database-insertion workflow, not a public-facing upload form, but the security boundary
+   should still exist in case a form is added later).
+3. Add these checks to the existing `security-audit.ts` (extend, don't duplicate):
+   - Non-admin attempts `INSERT`/`UPDATE`/`DELETE` on `course_materials` → DENIED.
+   - Unauthenticated/unapproved user attempts `SELECT` → DENIED (standard beta-gating).
+
+## 1.3 Student-facing view
+
+1. New route `/course-material`, added as its own top-level nav item (standalone section, not
+   nested under Sorting/Data Structures/Foundations).
+2. **List view**: cards/list showing title, book reference, topic tag, content type
+   (topic/problem), difficulty, assigned date. Basic filter/search by `topic_tag`.
+3. **Detail view**: for a 'problem' entry, show the problem statement, then the solution below it
+   behind a simple "Show Solution" reveal (collapsed by default, expandable) so a student can
+   attempt it first if they want. For a 'topic' entry, just show the explanation directly (no
+   reveal needed — it's not something to "solve").
+4. Markdown rendering for both problem statements and explanations/solutions — reuse the existing
+   Markdown renderer from the Docs section (Phase 5) if one exists, rather than adding a new
+   dependency. Code blocks should render consistently with the existing `CodeViewer` styling
+   pattern used elsewhere in the app.
+5. Visual style matches the established design system (Phase 6) — this should feel like a natural
+   part of AlgoHub.
+
+## 1.4 No admin upload UI needed for this task
+
+Per the confirmed workflow, skip building a form/UI for manually typing content — content is
+inserted by you (via migration/seed script/direct insert, whichever fits the existing tooling
+conventions in this project) as part of this task and future content-adding tasks. Do not build a
+teacher role, student submission, or OCR pipeline — none of that is in scope here.
+
+---
+
+# 2. READ THE ATTACHED SCREENSHOT(S) AND GENERATE REAL CONTENT
+
+This is the part that requires genuine care — I need accuracy, not a fast guess.
+
+## 2.1 For each screenshot, first classify it
+
+Determine whether it shows:
+- **A topic/concept** the teacher wants explained (→ `content_type = 'topic'`), or
+- **A specific problem** to be solved (→ `content_type = 'problem'`).
+
+If a single screenshot contains multiple distinct topics or problems, create a separate
+`course_materials` row for each one — don't merge unrelated items into a single bloated entry.
+
+## 2.2 For a topic entry
+
+Write a clear, accurate explanation of the concept as it would be covered in a Data Structures
+course at this level — grounded in what's actually shown in the screenshot (don't invent scope
+beyond what the teacher's material indicates). Include a short C++ code example if the concept
+naturally calls for one (consistent with the rest of AlgoHub using C++ as the primary teaching
+language), formatted in Markdown.
+
+## 2.3 For a problem entry — accuracy discipline (this is the critical part)
+
+Before writing the solution:
+
+1. **Transcribe the problem statement exactly** as shown in the screenshot into
+   `problem_statement` — don't paraphrase away specifics (exact numbers, exact wording of what's
+   being asked) that could change the intended answer.
+2. **Reason through the problem step by step before committing to an answer.** Don't pattern-match
+   to a "similar-looking" textbook problem you might recall and assume the same solution applies —
+   work from the actual problem as stated in the screenshot.
+3. **If the problem involves a specific data structure operation trace** (e.g. "show the stack
+   contents after this sequence of pushes and pops," or "trace this algorithm on this specific
+   input"), actually simulate it step by step in your reasoning — don't state a final answer
+   without showing (in the solution) the intermediate states that justify it. This is both for
+   your own accuracy and because showing the work is more educationally useful to a student reading
+   it later.
+4. **If anything in the screenshot is ambiguous, cut off, or hard to read**, do not guess and
+   silently proceed — tell me clearly what's unclear and either make a reasonable, explicitly-stated
+   assumption (flagged as such in your summary, not silently baked into the solution) or ask me
+   before inserting that entry.
+5. **Double-check your own solution before inserting it** — if the problem has a checkable
+   property (e.g. a sorting trace should end in sorted order, a stack trace should be
+   internally consistent, a complexity claim should match the actual operation count), verify that
+   property holds for what you're about to write, the same way earlier work in this project
+   verified formulas against hand-calculated examples rather than trusting a first-pass answer.
+6. Write the solution in Markdown with clear step-by-step structure — this should read like a
+   worked example a student could actually learn from, not just a terse final answer.
+
+## 2.4 Metadata
+
+For `title`, `topic_tag`, `difficulty`, and `assigned_date`: infer these reasonably from the
+screenshot content and any visible context (chapter headers, dates, etc.). If `assigned_date`
+isn't visible or inferable, leave it null rather than guessing a date.
+
+---
+
+# 3. INSERT THE GENERATED CONTENT
+
+Insert the entries you've written into `course_materials` (via a seed script or direct insert
+consistent with existing tooling conventions in this project — check how other seed/reference data
+in this project is typically inserted and follow that pattern).
+
+---
+
+# 4. TESTING
+
+1. Confirm the feature itself: RLS checks from Section 1.2 pass (extend and re-run
+   `security-audit.ts`).
+2. Confirm the student-facing view renders the content you generated correctly — Markdown,
+   code blocks, the "Show Solution" reveal behavior for problems.
+3. Confirm an unapproved/unauthenticated user cannot reach `/course-material`.
+4. `npm run build` passes cleanly.
+
+---
+
+# 5. SUMMARY — BE HONEST ABOUT CONFIDENCE, NOT JUST COMPLETION
+
+After implementation, tell me:
+
+1. How many `course_materials` entries you created from the attached screenshot(s), and for each
+   one: title, content_type, and a one-line description of what it covers.
+2. For any **problem** entries specifically: walk me through your reasoning/verification for the
+   solution (per Section 2.3) so I can sanity-check it myself, not just see the final answer.
+3. Anything in the screenshot(s) that was ambiguous, unclear, or where you made an assumption —
+   flag every one of these explicitly, even minor ones.
+4. Confirmation of the RLS test results — itemized.
+5. Files changed/created, and `npm run build` result.
+
+Do not present a problem's solution with confidence that isn't warranted — if you're genuinely
+unsure about any part of a solution, say so plainly rather than smoothing over the uncertainty.

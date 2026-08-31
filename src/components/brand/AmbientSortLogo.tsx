@@ -1,12 +1,12 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { useReducedMotion } from "@/hooks/useReducedMotion";
 
 /**
  * AmbientSortLogo Component (Signature Element)
  * A miniature 5-bar ambient sorting micro-visualizer embedded in the site logo header.
- * Slowly steps through sorting passes in the background, subtly reinforcing the site's domain.
+ * Optimized with pure CSS hardware-accelerated transitions to avoid bundling Framer Motion in the global navbar.
  */
 export function AmbientSortLogo() {
   const prefersReducedMotion = useReducedMotion();
@@ -54,12 +54,10 @@ export function AmbientSortLogo() {
         const isComparing = comparing && (comparing[0] === idx || comparing[1] === idx);
 
         return (
-          <motion.div
+          <div
             key={idx}
-            layout
-            transition={{ type: "spring", stiffness: 350, damping: 25 }}
             style={{ height: `${height}px` }}
-            className={`w-1 rounded-sm transition-colors duration-200 ${
+            className={`w-1 rounded-sm transition-[height,background-color,box-shadow] duration-300 ease-out will-change-[height] ${
               isComparing
                 ? "bg-amber-400 shadow-[0_0_6px_rgba(251,191,36,0.6)]"
                 : "bg-gradient-to-t from-cyan-600 to-cyan-400"
