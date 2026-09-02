@@ -4,6 +4,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { fastCache } from "@/lib/cache";
 import { CourseMaterial } from "@/types/courseMaterial";
 import { DEFAULT_COURSE_MATERIALS } from "@/data/defaultCourseMaterials";
 import dynamic from "next/dynamic";
@@ -141,7 +142,7 @@ function CustomDropdown({
       </button>
 
       {isOpen && (
-        <div className="absolute left-0 mt-1.5 w-56 p-1.5 rounded-2xl border border-border bg-card/95 backdrop-blur-xl shadow-2xl z-50 animate-in fade-in zoom-in-95 duration-150">
+        <div className="absolute top-full left-0 mt-1.5 w-56 p-1.5 rounded-2xl border border-border bg-card/95 backdrop-blur-xl shadow-2xl z-50 animate-in fade-in zoom-in-95 duration-150">
           <div className="space-y-0.5">
             {options.map((opt) => {
               const OptIcon = opt.icon || Icon;
@@ -207,8 +208,14 @@ export default function CourseMaterialPage() {
   const router = useRouter();
   const supabase = createClient();
 
-  const [materials, setMaterials] = useState<CourseMaterial[]>(DEFAULT_COURSE_MATERIALS);
-  const [isLoading, setIsLoading] = useState(true);
+  const [materials, setMaterials] = useState<CourseMaterial[]>(() => {
+    if (typeof window !== "undefined") {
+      const cached = fastCache.get<CourseMaterial[]>("course_materials");
+      if (cached && cached.length > 0) return cached;
+    }
+    return DEFAULT_COURSE_MATERIALS;
+  });
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   // Filters & Search
@@ -232,6 +239,14 @@ export default function CourseMaterialPage() {
 
   useEffect(() => {
     async function fetchCourseMaterials() {
+      // Check cache first
+      const cached = fastCache.get<CourseMaterial[]>("course_materials");
+      if (cached && cached.length > 0) {
+        setMaterials(cached);
+        setIsLoading(false);
+        return;
+      }
+
       setIsLoading(true);
       setError(null);
       try {
@@ -244,7 +259,9 @@ export default function CourseMaterialPage() {
         } else if (data && data.length > 0) {
           const existingIds = new Set(data.map((d: CourseMaterial) => d.title));
           const missingDefaults = DEFAULT_COURSE_MATERIALS.filter((d) => !existingIds.has(d.title));
-          setMaterials([...(data as CourseMaterial[]), ...missingDefaults]);
+          const consolidated = [...(data as CourseMaterial[]), ...missingDefaults];
+          setMaterials(consolidated);
+          fastCache.set("course_materials", consolidated, 600); // cache for 10 mins
         }
       } catch (err: any) {
         console.warn("Unexpected error loading materials, using fallback:", err);
@@ -254,7 +271,7 @@ export default function CourseMaterialPage() {
     }
 
     fetchCourseMaterials();
-  }, []);
+  }, [supabase]);
 
   const toggleCard = (id: string) => {
     setExpandedCards((prev) => ({
@@ -369,14 +386,11 @@ export default function CourseMaterialPage() {
       <header className="sticky top-0 z-50 w-full border-b border-border/60 bg-background/80 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <Link href="/" className="flex items-center gap-3 group">
-              <AlgoHubLogo size={36} />
-              <div className="flex items-center gap-2">
-                <span className="font-bold text-base tracking-tight text-foreground font-sans">
-                  AlgoHub
-                </span>
-                <AmbientSortLogo />
-              </div>
+            <Link href="/" className="flex items-center gap-2 group">
+              <span className="font-bold text-base sm:text-lg tracking-tight text-foreground font-sans">
+                AlgoHub
+              </span>
+              <AmbientSortLogo />
             </Link>
 
             <span className="hidden sm:inline-block px-2.5 py-0.5 rounded-full text-[11px] font-mono font-bold bg-cyan-500/10 text-cyan-500 border border-cyan-500/20">

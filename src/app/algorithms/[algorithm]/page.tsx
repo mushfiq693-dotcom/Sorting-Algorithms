@@ -225,7 +225,7 @@ export default function AlgorithmDetailPage() {
               </button>
 
               {topicDropdownOpen && (
-                <div className="absolute right-0 mt-2 w-72 sm:w-80 rounded-2xl border border-border bg-card/95 p-3 shadow-2xl backdrop-blur-2xl animate-in fade-in slide-in-from-top-2 z-50 space-y-3">
+                <div className="absolute top-full right-0 mt-2 w-72 sm:w-80 rounded-2xl border border-border bg-card/95 p-3 shadow-2xl backdrop-blur-2xl animate-in fade-in slide-in-from-top-2 z-50 space-y-3">
                   {/* Section 1: Sorting Algorithms */}
                   <div>
                     <div className="text-[10px] font-mono font-bold uppercase tracking-wider text-muted-foreground px-2 py-1 flex items-center justify-between">

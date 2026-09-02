@@ -37,14 +37,11 @@ export default function DocsLayout({
               {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </button>
 
-            <Link href="/" className="flex items-center gap-3 group">
-              <AlgoHubLogo size={36} />
-              <div className="flex items-center gap-2">
-                <span className="font-bold text-base tracking-tight text-foreground font-sans">
-                  AlgoHub
-                </span>
-                <AmbientSortLogo />
-              </div>
+            <Link href="/" className="flex items-center gap-2 group">
+              <span className="font-bold text-base sm:text-lg tracking-tight text-foreground font-sans">
+                AlgoHub
+              </span>
+              <AmbientSortLogo />
             </Link>
           </div>
 

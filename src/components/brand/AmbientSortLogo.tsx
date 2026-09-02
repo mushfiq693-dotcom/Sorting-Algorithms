@@ -4,9 +4,9 @@ import React, { useState, useEffect } from "react";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 
 /**
- * AmbientSortLogo Component (Signature Element)
+ * AmbientSortLogo Component (Classical Edition)
  * A miniature 5-bar ambient sorting micro-visualizer embedded in the site logo header.
- * Optimized with pure CSS hardware-accelerated transitions to avoid bundling Framer Motion in the global navbar.
+ * Styled with polished brass bars and aged oak housing.
  */
 export function AmbientSortLogo() {
   const prefersReducedMotion = useReducedMotion();
@@ -48,7 +48,7 @@ export function AmbientSortLogo() {
   return (
     <div
       aria-hidden="true"
-      className="flex items-end gap-1 h-7 px-1.5 py-1 rounded-lg bg-secondary/80 border border-border shadow-inner group-hover:border-cyan-500/40 transition-colors"
+      className="flex items-end gap-1 h-7 px-1.5 py-1 rounded bg-[#251E19] border border-[#4A3F35] shadow-inner group-hover:border-[#C9A962]/50 transition-colors"
     >
       {bars.map((height, idx) => {
         const isComparing = comparing && (comparing[0] === idx || comparing[1] === idx);
@@ -57,10 +57,10 @@ export function AmbientSortLogo() {
           <div
             key={idx}
             style={{ height: `${height}px` }}
-            className={`w-1 rounded-sm transition-[height,background-color,box-shadow] duration-300 ease-out will-change-[height] ${
+            className={`w-1 rounded-none transition-[height,background-color,box-shadow] duration-300 ease-out will-change-[height] ${
               isComparing
-                ? "bg-amber-400 shadow-[0_0_6px_rgba(251,191,36,0.6)]"
-                : "bg-gradient-to-t from-cyan-600 to-cyan-400"
+                ? "bg-[#8B2635] shadow-[0_0_6px_rgba(139,38,53,0.8)]"
+                : "bg-gradient-to-t from-[#B8953F] to-[#D4B872]"
             }`}
           />
         );

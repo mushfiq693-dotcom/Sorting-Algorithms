@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { AmbientSortLogo } from "@/components/brand/AmbientSortLogo";
+import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import {
   Bell,
   CheckCircle2,
@@ -176,6 +177,7 @@ export default function NotificationsPage() {
           </div>
 
           <div className="flex items-center gap-2">
+            <ThemeToggle />
             {unreadCount > 0 && (
               <button
                 onClick={handleMarkAllAsRead}

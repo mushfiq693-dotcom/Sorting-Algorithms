@@ -7,17 +7,16 @@ import {
   RotateCcw,
   StepForward,
   Shuffle,
+  Gauge,
   Sliders,
   Sparkles,
-  Gauge,
-  Check,
+  ChevronDown,
 } from "lucide-react";
-import { parseCustomArray } from "@/lib/utils";
 
 interface VisualizerControlsProps {
   isPlaying: boolean;
-  isFinished: boolean;
   isPaused: boolean;
+  isFinished: boolean;
   canStep: boolean;
   speed: number;
   arraySize: number;
@@ -27,15 +26,15 @@ interface VisualizerControlsProps {
   onStep: () => void;
   onReset: () => void;
   onGenerateRandom: () => void;
-  onCustomArraySubmit: (arr: number[]) => void;
   onSpeedChange: (speed: number) => void;
   onArraySizeChange: (size: number) => void;
+  onCustomArraySubmit: (array: number[]) => void;
 }
 
 export function VisualizerControls({
   isPlaying,
-  isFinished,
   isPaused,
+  isFinished,
   canStep,
   speed,
   arraySize,
@@ -45,43 +44,59 @@ export function VisualizerControls({
   onStep,
   onReset,
   onGenerateRandom,
-  onCustomArraySubmit,
   onSpeedChange,
   onArraySizeChange,
+  onCustomArraySubmit,
 }: VisualizerControlsProps) {
   const [customInput, setCustomInput] = useState("");
   const [inputError, setInputError] = useState<string | null>(null);
+  const [showCustomDrawer, setShowCustomDrawer] = useState(false);
 
   const handleCustomSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const result = parseCustomArray(customInput);
-    if (!result.success) {
-      setInputError(result.error);
+    if (!customInput.trim()) return;
+
+    const parts = customInput.split(",").map((s) => s.trim());
+    const nums: number[] = [];
+
+    for (const p of parts) {
+      const n = Number(p);
+      if (isNaN(n) || !Number.isInteger(n) || n < 1 || n > 500) {
+        setInputError("Please enter valid integers between 1 and 500.");
+        return;
+      }
+      nums.push(n);
+    }
+
+    if (nums.length < 3 || nums.length > 50) {
+      setInputError("Array must contain between 3 and 50 elements.");
       return;
     }
+
     setInputError(null);
-    onCustomArraySubmit(result.data);
+    onCustomArraySubmit(nums);
   };
 
   return (
-    <div className="flex flex-col gap-4 rounded-2xl border border-border bg-card p-4 sm:p-5 backdrop-blur-xl shadow-sm dark:shadow-2xl">
-      {/* Primary Action Control Bar */}
-      <div className="flex flex-wrap items-center justify-between gap-2.5">
-        <div className="flex flex-wrap items-center gap-2">
+    <div className="flex flex-col gap-2.5 rounded bg-[#251E19] border border-[#4A3F35] p-3 sm:p-3.5 backdrop-blur-xl shadow-2xl corner-flourish">
+      {/* Action Buttons & Sliders Row */}
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        {/* Left: Execution Controls */}
+        <div className="flex items-center gap-1.5">
           {!isPlaying && !isPaused && (
             <button
               id="start-button"
               onClick={onStart}
               disabled={isFinished}
               aria-label="Start sorting execution"
-              className={`btn-compare-hover inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs sm:text-sm font-bold shadow-lg focus-visible:outline-none transition-all active:scale-95 ${
+              className={`btn-brass inline-flex items-center gap-1.5 rounded px-3.5 py-1.5 text-xs font-display uppercase tracking-wider font-bold shadow-brass focus-visible:outline-none transition-all active:scale-95 cursor-pointer ${
                 isFinished
-                  ? "bg-secondary text-muted-foreground cursor-not-allowed opacity-50 border border-border"
-                  : "bg-gradient-to-r from-blue-600 via-cyan-500 to-teal-400 text-slate-950 font-extrabold hover:shadow-cyan-500/25 shadow-md shadow-cyan-500/20"
+                  ? "bg-[#1C1714] text-[#9C8B7A] cursor-not-allowed opacity-50 border border-[#4A3F35]"
+                  : ""
               }`}
             >
-              <Play className="h-4 w-4 fill-current" />
-              <span>Start Sort</span>
+              <Play className="h-3.5 w-3.5 fill-current" />
+              <span>Start</span>
             </button>
           )}
 
@@ -90,9 +105,9 @@ export function VisualizerControls({
               id="pause-button"
               onClick={onPause}
               aria-label="Pause sorting execution"
-              className="inline-flex items-center gap-2 rounded-xl bg-amber-500/20 text-amber-600 dark:text-amber-300 border border-amber-500/40 px-4 py-2.5 text-xs sm:text-sm font-bold hover:bg-amber-500/30 transition-all active:scale-95 shadow-sm"
+              className="inline-flex items-center gap-1.5 rounded bg-[#8B2635] text-[#E8DFD4] border border-[#A62D3F]/50 px-3.5 py-1.5 text-xs font-display uppercase tracking-wider font-bold hover:bg-[#A62D3F] transition-all active:scale-95 shadow-crimson cursor-pointer"
             >
-              <Pause className="h-4 w-4" />
+              <Pause className="h-3.5 w-3.5" />
               <span>Pause</span>
             </button>
           )}
@@ -102,9 +117,9 @@ export function VisualizerControls({
               id="resume-button"
               onClick={onResume}
               aria-label="Resume sorting execution"
-              className="inline-flex items-center gap-2 rounded-xl bg-emerald-500 text-slate-950 px-4 py-2.5 text-xs sm:text-sm font-extrabold hover:bg-emerald-400 transition-all active:scale-95 shadow-md shadow-emerald-500/25"
+              className="inline-flex items-center gap-1.5 rounded bg-emerald-600 text-[#E8DFD4] border border-emerald-500/50 px-3.5 py-1.5 text-xs font-display uppercase tracking-wider font-bold hover:bg-emerald-500 transition-all active:scale-95 shadow-md cursor-pointer"
             >
-              <Play className="h-4 w-4 fill-current" />
+              <Play className="h-3.5 w-3.5 fill-current" />
               <span>Resume</span>
             </button>
           )}
@@ -114,10 +129,10 @@ export function VisualizerControls({
             onClick={onStep}
             disabled={!canStep || isPlaying}
             aria-label="Execute one single step forward"
-            title="Execute one step forward"
-            className="inline-flex items-center gap-1.5 rounded-xl border border-border bg-secondary/80 px-3.5 py-2.5 text-xs sm:text-sm font-semibold text-foreground hover:bg-secondary hover:text-cyan-500 transition-all disabled:opacity-40 disabled:cursor-not-allowed active:scale-95"
+            title="Step forward"
+            className="inline-flex items-center gap-1 rounded border border-[#4A3F35] bg-[#1C1714] px-2.5 py-1.5 text-xs font-display uppercase tracking-wider font-semibold text-[#E8DFD4] hover:bg-[#251E19] hover:text-[#C9A962] hover:border-[#C9A962]/50 transition-all disabled:opacity-40 disabled:cursor-not-allowed active:scale-95 cursor-pointer"
           >
-            <StepForward className="h-4 w-4" />
+            <StepForward className="h-3.5 w-3.5 text-[#C9A962]" />
             <span>Step</span>
           </button>
 
@@ -125,36 +140,45 @@ export function VisualizerControls({
             id="reset-button"
             onClick={onReset}
             aria-label="Reset array to initial state"
-            className="inline-flex items-center gap-1.5 rounded-xl border border-border bg-secondary/80 px-3.5 py-2.5 text-xs sm:text-sm font-semibold text-foreground hover:bg-secondary hover:text-cyan-500 transition-all active:scale-95"
+            className="inline-flex items-center gap-1 rounded border border-[#4A3F35] bg-[#1C1714] px-2.5 py-1.5 text-xs font-display uppercase tracking-wider font-semibold text-[#E8DFD4] hover:bg-[#251E19] hover:text-[#C9A962] hover:border-[#C9A962]/50 transition-all active:scale-95 cursor-pointer"
           >
-            <RotateCcw className="h-4 w-4" />
+            <RotateCcw className="h-3.5 w-3.5 text-[#C9A962]" />
             <span>Reset</span>
+          </button>
+
+          <button
+            id="random-button"
+            onClick={onGenerateRandom}
+            disabled={isPlaying}
+            aria-label="Generate random array"
+            className="inline-flex items-center gap-1 rounded border border-[#C9A962]/30 bg-[#1C1714] px-2.5 py-1.5 text-xs font-display uppercase tracking-wider font-semibold text-[#C9A962] hover:bg-[#251E19] hover:border-[#C9A962] transition-all disabled:opacity-40 disabled:cursor-not-allowed active:scale-95 cursor-pointer"
+          >
+            <Shuffle className="h-3.5 w-3.5 text-[#C9A962]" />
+            <span className="hidden sm:inline">Random</span>
           </button>
         </div>
 
+        {/* Right: Custom Array Toggle Button */}
         <button
-          id="random-button"
-          onClick={onGenerateRandom}
-          disabled={isPlaying}
-          aria-label="Generate random array"
-          className="inline-flex items-center gap-2 rounded-xl border border-cyan-500/30 bg-cyan-500/10 px-3.5 py-2.5 text-xs sm:text-sm font-semibold text-cyan-600 dark:text-cyan-300 hover:bg-cyan-500/20 hover:border-cyan-500/50 transition-all disabled:opacity-40 disabled:cursor-not-allowed active:scale-95 shadow-sm"
+          type="button"
+          onClick={() => setShowCustomDrawer(!showCustomDrawer)}
+          className="inline-flex items-center gap-1.5 text-[11px] font-display uppercase tracking-wider px-2.5 py-1.5 rounded border border-[#4A3F35] bg-[#1C1714] hover:bg-[#251E19] text-[#9C8B7A] hover:text-[#C9A962] transition-colors cursor-pointer"
         >
-          <Shuffle className="h-4 w-4 text-cyan-500" />
-          <span>Random Array</span>
+          <Sparkles className="h-3 w-3 text-[#C9A962]" />
+          <span>Custom Input</span>
+          <ChevronDown className={`h-3 w-3 transition-transform duration-200 ${showCustomDrawer ? "rotate-180 text-[#C9A962]" : ""}`} />
         </button>
       </div>
 
-      {/* Sliders Section */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-border">
+      {/* Sliders Row (Instrument Panel) */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-[#4A3F35]">
         {/* Speed Slider */}
-        <div className="flex flex-col gap-1.5">
-          <div className="flex items-center justify-between text-xs font-medium text-muted-foreground">
-            <label htmlFor="speed-slider" className="flex items-center gap-1.5 text-foreground font-semibold">
-              <Gauge className="h-3.5 w-3.5 text-cyan-500" />
-              <span>Delay (Speed)</span>
-            </label>
-            <span className="font-mono text-cyan-600 dark:text-cyan-400 font-bold">{speed}ms</span>
-          </div>
+        <div className="flex items-center gap-2.5">
+          <label htmlFor="speed-slider" className="flex items-center gap-1 text-[11px] font-display uppercase tracking-wider text-[#9C8B7A] shrink-0 w-24">
+            <Gauge className="h-3 w-3 text-[#C9A962]" />
+            <span>Delay:</span>
+            <strong className="text-[#C9A962] font-mono font-bold">{speed}ms</strong>
+          </label>
           <input
             id="speed-slider"
             type="range"
@@ -164,52 +188,35 @@ export function VisualizerControls({
             value={speed}
             aria-label="Adjust execution delay in milliseconds"
             onChange={(e) => onSpeedChange(Number(e.target.value))}
-            className="h-2 w-full cursor-pointer appearance-none rounded-lg bg-secondary accent-cyan-500 transition-colors"
+            className="h-1.5 flex-1 cursor-pointer appearance-none rounded bg-[#1C1714] accent-[#C9A962] transition-colors"
           />
-          <div className="flex justify-between text-[10px] font-mono text-muted-foreground">
-            <span>Fast (20ms)</span>
-            <span>Normal</span>
-            <span>Slow (800ms)</span>
-          </div>
         </div>
 
         {/* Array Size Slider */}
-        <div className="flex flex-col gap-1.5">
-          <div className="flex items-center justify-between text-xs font-medium text-muted-foreground">
-            <label htmlFor="size-slider" className="flex items-center gap-1.5 text-foreground font-semibold">
-              <Sliders className="h-3.5 w-3.5 text-blue-500" />
-              <span>Array Size</span>
-            </label>
-            <span className="font-mono text-blue-600 dark:text-blue-400 font-bold">{arraySize} bars</span>
-          </div>
+        <div className="flex items-center gap-2.5">
+          <label htmlFor="size-slider" className="flex items-center gap-1 text-[11px] font-display uppercase tracking-wider text-[#9C8B7A] shrink-0 w-24">
+            <Sliders className="h-3 w-3 text-[#D4B872]" />
+            <span>Size:</span>
+            <strong className="text-[#D4B872] font-mono font-bold">{arraySize}</strong>
+          </label>
           <input
             id="size-slider"
             type="range"
             min="5"
-            max="50"
+            max="40"
             step="1"
             value={arraySize}
             disabled={isPlaying}
             aria-label="Adjust array bar count"
             onChange={(e) => onArraySizeChange(Number(e.target.value))}
-            className="h-2 w-full cursor-pointer appearance-none rounded-lg bg-secondary accent-blue-500 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+            className="h-1.5 flex-1 cursor-pointer appearance-none rounded bg-[#1C1714] accent-[#D4B872] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
           />
-          <div className="flex justify-between text-[10px] font-mono text-muted-foreground">
-            <span>5 bars</span>
-            <span>25 bars</span>
-            <span>50 bars</span>
-          </div>
         </div>
       </div>
 
-      {/* Custom Array Input Form */}
-      <form onSubmit={handleCustomSubmit} className="pt-2 border-t border-border">
-        <div className="flex flex-col gap-1.5">
-          <label htmlFor="custom-array-input" className="text-xs font-semibold text-muted-foreground flex items-center gap-1.5">
-            <Sparkles className="h-3.5 w-3.5 text-amber-500" />
-            <span>Custom Array Input</span>
-            <span className="text-[11px] font-normal text-muted-foreground/70">(comma-separated numbers 1–500)</span>
-          </label>
+      {/* Collapsible Custom Array Drawer */}
+      {showCustomDrawer && (
+        <form onSubmit={handleCustomSubmit} className="pt-2 border-t border-[#4A3F35] animate-in fade-in slide-in-from-top-1 duration-150">
           <div className="flex gap-2">
             <input
               id="custom-array-input"
@@ -217,30 +224,29 @@ export function VisualizerControls({
               placeholder="e.g. 45, 12, 89, 34, 7, 60"
               value={customInput}
               disabled={isPlaying}
-              aria-label="Enter comma-separated numbers for custom array"
+              aria-label="Enter comma-separated numbers"
               onChange={(e) => {
                 setCustomInput(e.target.value);
                 if (inputError) setInputError(null);
               }}
-              className="flex-1 rounded-xl border border-border bg-secondary/70 px-3.5 py-2 text-xs sm:text-sm text-foreground placeholder:text-muted-foreground focus:border-cyan-500 font-mono transition-colors"
+              className="flex-1 rounded border border-[#4A3F35] bg-[#1C1714] px-3 py-1.5 text-xs text-[#E8DFD4] placeholder:text-[#9C8B7A]/60 focus:border-[#C9A962] font-mono transition-colors"
             />
             <button
               id="apply-custom-array-btn"
               type="submit"
               disabled={isPlaying || !customInput.trim()}
-              aria-label="Apply custom array"
-              className="rounded-xl border border-border bg-secondary px-4 py-2 text-xs sm:text-sm font-bold text-foreground hover:bg-secondary/80 hover:text-cyan-500 transition-all disabled:opacity-40 disabled:cursor-not-allowed whitespace-nowrap active:scale-95"
+              className="btn-brass rounded px-4 py-1.5 text-xs font-display uppercase tracking-wider font-bold shadow-brass transition-all disabled:opacity-40 disabled:cursor-not-allowed whitespace-nowrap cursor-pointer active:scale-95"
             >
-              Apply Array
+              Apply
             </button>
           </div>
           {inputError && (
-            <p className="text-xs text-rose-500 font-mono mt-0.5" role="alert">
+            <p className="text-[11px] text-rose-500 font-mono mt-1" role="alert">
               {inputError}
             </p>
           )}
-        </div>
-      </form>
+        </form>
+      )}
     </div>
   );
 }

@@ -32,6 +32,6 @@ export const LINKS = {
       "https://github.com/mushfiq693-dotcom",
     linkedinUrl:
       process.env.NEXT_PUBLIC_DEVELOPER_LINKEDIN_URL ||
-      "https://linkedin.com/in/mushfiqur-rahman",
+      "https://www.linkedin.com/in/mushfique693",
   },
 };

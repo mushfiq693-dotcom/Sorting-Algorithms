@@ -4,6 +4,7 @@ import React, { useState, useEffect, useMemo, Suspense } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
+import { fastCache } from "@/lib/cache";
 import {
   ORDERED_TOPICS,
   ALGORITHM_NAME_MAP,
@@ -29,6 +30,7 @@ import { LEARNING_PATH } from "@/data/learningPath";
 import { AmbientSortLogo } from "@/components/brand/AmbientSortLogo";
 import { AlgoHubLogo } from "@/components/brand/AlgoHubLogo";
 import { NotificationBell } from "@/components/notifications/NotificationBell";
+import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import {
   BarChart3,
   Sparkles,
@@ -103,35 +105,46 @@ function DashboardContent() {
     async function loadDashboardData() {
       try {
         const {
-          data: { user },
-        } = await supabase.auth.getUser();
+          data: { session },
+        } = await supabase.auth.getSession();
+
+        const user = session?.user;
 
         if (!user) {
           router.push("/auth/login?next=/dashboard");
           return;
         }
 
-        // 1. Fetch Profile & Beta Status
-        const { data: prof } = await (supabase.from("profiles") as any)
-          .select("full_name, email, student_id, department, role")
-          .eq("id", user.id)
-          .single();
+        // 1. Instant cache check for fast response
+        const cachedProfile = fastCache.get<any>(`prof_${user.id}`);
+        if (cachedProfile) setProfile(cachedProfile);
 
-        if (prof) setProfile(prof);
+        // 2. Fetch Profile, Mentor Application & Progress in parallel (single roundtrip)
+        const [profRes, appRes, progRes] = await Promise.all([
+          (supabase.from("profiles") as any)
+            .select("full_name, email, student_id, department, role")
+            .eq("id", user.id)
+            .single(),
+          (supabase.from("mentor_applications") as any)
+            .select("id, status, reason")
+            .eq("user_id", user.id)
+            .maybeSingle(),
+          (supabase.from("user_progress") as any)
+            .select("topic_scores, activity_history, completed_docs, completed_steps")
+            .eq("user_id", user.id)
+            .single(),
+        ]);
 
-        // 2. Fetch Mentor Application (if any)
-        const { data: appData } = await (supabase.from("mentor_applications") as any)
-          .select("id, status, reason")
-          .eq("user_id", user.id)
-          .maybeSingle();
+        if (profRes.data) {
+          setProfile(profRes.data);
+          fastCache.set(`prof_${user.id}`, profRes.data, 300);
+        }
 
-        if (appData) setMentorApp(appData);
+        if (appRes.data) {
+          setMentorApp(appRes.data);
+        }
 
-        // 3. Fetch Progress from Supabase
-        const { data: progress } = await (supabase.from("user_progress") as any)
-          .select("topic_scores, activity_history, completed_docs, completed_steps")
-          .eq("user_id", user.id)
-          .single();
+        const progress = progRes.data;
 
         // 3. Reconcile with localStorage
         const localDocs: string[] = JSON.parse(localStorage.getItem(DOCS_KEY) || "[]");
@@ -264,14 +277,11 @@ function DashboardContent() {
       <header className="sticky top-0 z-40 border-b border-border/60 bg-background/80 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <Link href="/" className="flex items-center gap-3 group">
-              <AlgoHubLogo size={36} />
-              <div className="flex items-center gap-2">
-                <span className="font-bold text-base tracking-tight bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent">
-                  AlgoHub
-                </span>
-                <AmbientSortLogo />
-              </div>
+            <Link href="/" className="flex items-center gap-2 group">
+              <span className="font-bold text-base sm:text-lg tracking-tight bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent font-sans">
+                AlgoHub
+              </span>
+              <AmbientSortLogo />
             </Link>
           </div>
 
@@ -284,6 +294,7 @@ function DashboardContent() {
               <span className="hidden sm:inline">Docs</span>
             </Link>
 
+            <ThemeToggle />
             <NotificationBell />
 
             <Link

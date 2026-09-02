@@ -70,14 +70,11 @@ export default function LearnPage() {
       <header className="sticky top-0 z-40 w-full border-b border-border/60 bg-background/80 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <Link href="/" className="flex items-center gap-3 group">
-              <AlgoHubLogo size={36} />
-              <div className="flex items-center gap-2">
-                <span className="font-bold text-base tracking-tight text-foreground font-sans">
-                  AlgoHub
-                </span>
-                <AmbientSortLogo />
-              </div>
+            <Link href="/" className="flex items-center gap-2 group">
+              <span className="font-bold text-base sm:text-lg tracking-tight text-foreground font-sans">
+                AlgoHub
+              </span>
+              <AmbientSortLogo />
             </Link>
           </div>
 

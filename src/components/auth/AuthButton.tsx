@@ -5,17 +5,12 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import {
-  User,
   LogOut,
   Sparkles,
   ChevronDown,
-  GraduationCap,
   ShieldCheck,
   Clock,
-  BookOpen,
   BarChart3,
-  Award,
-  Bell,
 } from "lucide-react";
 
 export function AuthButton() {
@@ -34,9 +29,10 @@ export function AuthButton() {
     async function loadUserSession() {
       try {
         const {
-          data: { user: currentUser },
-        } = await supabase.auth.getUser();
+          data: { session },
+        } = await supabase.auth.getSession();
 
+        const currentUser = session?.user || null;
         setUser(currentUser);
 
         if (currentUser) {
@@ -119,117 +115,66 @@ export function AuthButton() {
       <div className="relative" ref={dropdownRef}>
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="inline-flex items-center gap-2 rounded-xl border border-rose-500/30 bg-[#12070d]/90 px-3 py-1.5 text-xs font-semibold text-slate-200 hover:text-white hover:border-rose-500/60 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-400 cursor-pointer"
+          className="inline-flex items-center gap-2 rounded border border-border bg-card/90 px-3 py-1.5 text-xs font-semibold text-foreground hover:text-primary hover:border-primary/60 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-primary cursor-pointer shadow-sm"
         >
-          <div className="h-6 w-6 rounded-lg bg-gradient-to-tr from-rose-600 to-amber-600 flex items-center justify-center text-white text-[11px] font-bold shadow-sm">
+          <div className="h-6 w-6 rounded-sm bg-gradient-to-tr from-[#8B2635] via-[#A62D3F] to-[#C9A962] flex items-center justify-center text-white text-[11px] font-sans font-bold shadow-sm">
             {initial}
           </div>
-          <span className="hidden sm:inline max-w-[100px] truncate">{displayName}</span>
-          <ChevronDown className={`h-3.5 w-3.5 text-slate-400 transition-transform ${isOpen ? "rotate-180" : ""}`} />
+          <span className="hidden sm:inline max-w-[100px] truncate font-sans font-normal">{displayName}</span>
+          <ChevronDown className={`h-3.5 w-3.5 text-muted-foreground transition-transform ${isOpen ? "rotate-180 text-primary" : ""}`} />
         </button>
 
-        {/* Dropdown Menu */}
+        {/* Dropdown Menu — 100% Solid Opaque */}
         {isOpen && (
-          <div className="absolute right-0 mt-2 w-60 rounded-2xl border border-rose-500/30 bg-[#0e0509]/95 p-2 shadow-2xl shadow-rose-950/50 backdrop-blur-2xl z-50 animate-in fade-in zoom-in-95 space-y-1 font-sans">
+          <div className="absolute top-full right-0 mt-2 w-64 rounded-lg border-2 border-[#B08422]/50 dark:border-[#C9A962]/50 bg-[#FFFFFF] dark:bg-[#251E19] p-2.5 shadow-[0_20px_50px_rgba(0,0,0,0.5)] z-50 animate-in fade-in zoom-in-95 space-y-1 corner-flourish font-sans">
             {/* User Details Header */}
-            <div className="px-3 py-2.5 border-b border-rose-950/60 space-y-1">
-              <div className="text-xs font-bold text-white truncate">{displayName}</div>
-              <div className="text-[11px] font-mono text-slate-400 truncate">{user.email}</div>
+            <div className="px-3 py-2.5 border-b border-border space-y-1">
+              <div className="text-xs font-sans font-semibold text-foreground truncate">{displayName}</div>
+              <div className="text-[11px] font-mono text-muted-foreground truncate">{user.email}</div>
               <div className="pt-1 flex items-center gap-1.5">
                 {betaStatus === "approved" ? (
-                  <span className="inline-flex items-center gap-1 text-[10px] font-mono font-semibold px-2 py-0.5 rounded-md bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">
-                    <ShieldCheck className="h-3 w-3 text-emerald-400" />
+                  <span className="inline-flex items-center gap-1 text-[10px] font-mono font-semibold px-2 py-0.5 rounded-sm bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30">
+                    <ShieldCheck className="h-3 w-3 text-emerald-600 dark:text-emerald-400" />
                     <span>Beta Approved</span>
                   </span>
                 ) : (
-                  <span className="inline-flex items-center gap-1 text-[10px] font-mono font-semibold px-2 py-0.5 rounded-md bg-amber-500/15 text-amber-300 border border-amber-500/30">
-                    <Clock className="h-3 w-3 text-amber-400" />
+                  <span className="inline-flex items-center gap-1 text-[10px] font-mono font-semibold px-2 py-0.5 rounded-sm bg-primary/15 text-primary border border-primary/30">
+                    <Clock className="h-3 w-3 text-primary" />
                     <span>Review Pending</span>
                   </span>
                 )}
                 {profile?.role === "mentor" && (
-                  <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-300 border border-purple-500/30">
+                  <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded-sm bg-[#8B2635]/20 text-[#8B2635] dark:text-[#E8DFD4] border border-[#8B2635]">
                     Mentor
                   </span>
                 )}
                 {profile?.role === "admin" && (
-                  <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-300 border border-rose-500/30">
+                  <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded-sm bg-[#8B2635] text-white border border-[#A62D3F]">
                     Admin
                   </span>
                 )}
               </div>
             </div>
 
-            {/* Links */}
+            {/* Links — Only My Progress Dashboard */}
             <div className="py-1 space-y-0.5 text-xs">
               <Link
                 href="/dashboard"
                 onClick={() => setIsOpen(false)}
-                className="flex items-center gap-2 px-3 py-2 rounded-xl text-cyan-300 hover:text-white hover:bg-cyan-500/15 font-semibold transition-colors"
+                className="flex items-center gap-2 px-3 py-2 rounded text-foreground hover:text-primary-foreground hover:bg-primary transition-colors"
               >
-                <BarChart3 className="h-3.5 w-3.5 text-cyan-400" />
-                <span>My Progress Dashboard</span>
+                <BarChart3 className="h-3.5 w-3.5 text-primary group-hover:text-primary-foreground" />
+                <span className="font-sans text-xs font-semibold tracking-wide">My Progress Dashboard</span>
               </Link>
-
-              <Link
-                href="/notifications"
-                onClick={() => setIsOpen(false)}
-                className="flex items-center gap-2 px-3 py-2 rounded-xl text-slate-200 hover:text-white hover:bg-cyan-500/15 transition-colors"
-              >
-                <Bell className="h-3.5 w-3.5 text-cyan-400" />
-                <span>Notifications Hub</span>
-              </Link>
-
-              {(profile?.role === "mentor" || profile?.role === "admin") && (
-                <Link
-                  href="/mentor"
-                  onClick={() => setIsOpen(false)}
-                  className="flex items-center gap-2 px-3 py-2 rounded-xl text-purple-300 hover:text-white hover:bg-purple-500/20 font-semibold transition-colors"
-                >
-                  <Award className="h-3.5 w-3.5 text-purple-400" />
-                  <span>Mentor Portal</span>
-                </Link>
-              )}
-
-              <Link
-                href="/learn"
-                onClick={() => setIsOpen(false)}
-                className="flex items-center gap-2 px-3 py-2 rounded-xl text-slate-200 hover:text-white hover:bg-rose-500/15 transition-colors"
-              >
-                <BookOpen className="h-3.5 w-3.5 text-rose-400" />
-                <span>Curriculum & Visualizers</span>
-              </Link>
-
-              {profile?.role === "admin" && (
-                <Link
-                  href="/admin/moderation"
-                  onClick={() => setIsOpen(false)}
-                  className="flex items-center gap-2 px-3 py-2 rounded-xl text-rose-300 hover:text-white hover:bg-rose-500/20 font-semibold transition-colors"
-                >
-                  <ShieldCheck className="h-3.5 w-3.5 text-rose-400" />
-                  <span>Admin Moderation Console</span>
-                </Link>
-              )}
-
-              {betaStatus === "pending" && (
-                <Link
-                  href="/auth/pending"
-                  onClick={() => setIsOpen(false)}
-                  className="flex items-center gap-2 px-3 py-2 rounded-xl text-amber-300 hover:text-amber-200 hover:bg-amber-500/15 transition-colors"
-                >
-                  <Clock className="h-3.5 w-3.5 text-amber-400" />
-                  <span>Check Approval Status</span>
-                </Link>
-              )}
             </div>
 
             {/* Sign Out Button */}
-            <div className="pt-1 border-t border-rose-950/60">
+            <div className="pt-1 border-t border-border">
               <button
                 onClick={handleSignOut}
-                className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold text-rose-300 hover:text-rose-200 hover:bg-rose-500/20 transition-colors text-left cursor-pointer"
+                className="w-full flex items-center gap-2 px-3 py-2 rounded text-xs font-sans font-semibold tracking-wide text-muted-foreground hover:text-white hover:bg-destructive transition-colors text-left cursor-pointer"
               >
-                <LogOut className="h-3.5 w-3.5 text-rose-400" />
+                <LogOut className="h-3.5 w-3.5" />
                 <span>Sign Out</span>
               </button>
             </div>
@@ -239,11 +184,11 @@ export function AuthButton() {
     );
   }
 
-  // Default / Unauthenticated: Always render vibrant Join Beta / Sign In CTA button
+  // Default / Unauthenticated: Polished Brass Metallic Sign In CTA Button (Manrope 600 + letter spacing)
   return (
     <Link
       href="/auth/login"
-      className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-red-600 via-rose-600 to-amber-600 px-4 py-2 text-xs font-bold text-white shadow-md shadow-rose-600/25 hover:brightness-110 active:scale-95 transition-all"
+      className="btn-brass inline-flex items-center gap-2 rounded px-4 py-2 text-xs font-sans font-semibold tracking-[0.08em] shadow-brass active:scale-95 transition-all"
     >
       <Sparkles className="h-3.5 w-3.5" />
       <span>Join Beta / Sign In</span>

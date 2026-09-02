@@ -1,8 +1,10 @@
 import { createBrowserClient } from "@supabase/ssr";
 import { Database } from "../../../backend/database/types/database.types";
 
+let browserClient: ReturnType<typeof createBrowserClient<Database>> | null = null;
+
 /**
- * Creates a browser-side Supabase client using @supabase/ssr.
+ * Creates or returns a cached singleton browser-side Supabase client using @supabase/ssr.
  * Safe to use inside React "use client" components.
  */
 export function createClient() {
@@ -15,8 +17,19 @@ export function createClient() {
     console.warn("Supabase environment variables are missing.");
   }
 
-  return createBrowserClient<Database>(
-    supabaseUrl || "",
-    supabaseAnonKey || ""
-  );
+  if (typeof window === "undefined") {
+    return createBrowserClient<Database>(
+      supabaseUrl || "",
+      supabaseAnonKey || ""
+    );
+  }
+
+  if (!browserClient) {
+    browserClient = createBrowserClient<Database>(
+      supabaseUrl || "",
+      supabaseAnonKey || ""
+    );
+  }
+
+  return browserClient;
 }

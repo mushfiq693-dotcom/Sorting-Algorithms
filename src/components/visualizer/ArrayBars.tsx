@@ -48,39 +48,39 @@ const ArrayBarItem = memo(function ArrayBarItem({
   showValues,
   showIndices,
 }: ArrayBarItemProps) {
-  // Canonical Dev-Tool Color Tokens
-  let barColor = "from-cyan-500 to-blue-600 shadow-[0_0_12px_rgba(56,189,248,0.15)]";
-  let glowBorder = "border-cyan-400/40";
+  // Canonical Academia Material Tokens
+  let barColor = "from-[#B8953F] via-[#C9A962] to-[#D4B872] shadow-[0_0_12px_rgba(201,169,98,0.25)]";
+  let glowBorder = "border-[#C9A962]/50";
   let badgeText: string | null = null;
   let badgeColor = "";
 
   if (isPivot) {
-    barColor = "from-purple-500 via-violet-500 to-indigo-600 shadow-[0_0_20px_rgba(168,85,247,0.5)]";
-    glowBorder = "border-purple-300 ring-2 ring-purple-400/80";
+    barColor = "from-[#8B2635] via-[#A62D3F] to-[#C9A962] shadow-[0_0_20px_rgba(139,38,53,0.6)]";
+    glowBorder = "border-[#C9A962] ring-2 ring-[#C9A962]/80";
     badgeText = "Pivot";
-    badgeColor = "bg-purple-500 text-white";
+    badgeColor = "bg-[#8B2635] text-[#E8DFD4] border border-[#C9A962]/40";
   } else if (isSwapping) {
-    barColor = "from-rose-500 via-red-500 to-amber-500 shadow-[0_0_20px_rgba(244,63,94,0.6)]";
-    glowBorder = "border-rose-300 ring-2 ring-rose-400/80";
+    barColor = "from-[#8B2635] via-[#A62D3F] to-[#6E1E2A] shadow-[0_0_20px_rgba(139,38,53,0.7)]";
+    glowBorder = "border-[#A62D3F] ring-2 ring-[#8B2635]/80";
     badgeText = "Swap";
-    badgeColor = "bg-rose-500 text-white";
+    badgeColor = "bg-[#8B2635] text-[#E8DFD4]";
   } else if (isOverwriting) {
-    barColor = "from-amber-500 via-orange-500 to-rose-500 shadow-[0_0_16px_rgba(249,115,22,0.5)]";
-    glowBorder = "border-amber-300 ring-2 ring-amber-400/80";
+    barColor = "from-[#D97706] via-[#B45309] to-[#8B2635] shadow-[0_0_16px_rgba(217,119,6,0.5)]";
+    glowBorder = "border-[#D4B872] ring-2 ring-[#D97706]/80";
     badgeText = "Write";
-    badgeColor = "bg-orange-500 text-white";
+    badgeColor = "bg-[#D97706] text-[#1C1714] font-bold";
   } else if (isComparing) {
-    barColor = "from-amber-400 to-yellow-500 shadow-[0_0_16px_rgba(251,191,36,0.5)]";
-    glowBorder = "border-amber-200 ring-2 ring-amber-400/80";
+    barColor = "from-[#D4B872] to-[#F59E0B] shadow-[0_0_16px_rgba(212,184,114,0.5)]";
+    glowBorder = "border-[#D4B872] ring-2 ring-[#C9A962]/80";
   } else if (isSorted) {
-    barColor = "from-emerald-400 to-teal-500 shadow-[0_0_14px_rgba(16,185,129,0.35)]";
-    glowBorder = "border-emerald-300/70";
+    barColor = "from-[#10B981] to-[#047857] shadow-[0_0_14px_rgba(16,185,129,0.35)]";
+    glowBorder = "border-[#34D399]/70";
   } else if (isLeftMerge) {
-    barColor = "from-sky-400 to-blue-500 shadow-[0_0_12px_rgba(56,189,248,0.2)]";
-    glowBorder = "border-sky-300/50";
+    barColor = "from-[#C9A962] to-[#B8953F] shadow-[0_0_12px_rgba(201,169,98,0.3)]";
+    glowBorder = "border-[#D4B872]/60";
   } else if (isRightMerge) {
-    barColor = "from-fuchsia-400 to-purple-600 shadow-[0_0_12px_rgba(217,70,239,0.2)]";
-    glowBorder = "border-fuchsia-300/50";
+    barColor = "from-[#8B2635] to-[#A62D3F] shadow-[0_0_12px_rgba(139,38,53,0.3)]";
+    glowBorder = "border-[#A62D3F]/60";
   }
 
   // Height percentage (minimum 8% height)
@@ -163,26 +163,26 @@ export const ArrayBars = memo(function ArrayBars({
   overwritingIndex,
   mergeRange,
   maxVal = Math.max(...(array.length ? array : [100]), 100),
-  containerHeight = "h-80",
+  containerHeight = "h-48 sm:h-56",
   className = "",
 }: ArrayBarsProps) {
   const prefersReducedMotion = useReducedMotion();
 
   if (array.length === 0) {
     return (
-      <div className={`flex ${containerHeight} w-full flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-secondary/50 p-8 text-center backdrop-blur-md ${className}`}>
+      <div className={`flex ${containerHeight} w-full flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-secondary/50 p-6 text-center backdrop-blur-md ${className}`}>
         {/* Array-Bar Motif Empty State Graphic */}
-        <div className="flex items-end gap-1.5 h-12 mb-3 opacity-30" aria-hidden="true">
-          <div className="w-2.5 h-4 rounded-t bg-cyan-500" />
-          <div className="w-2.5 h-7 rounded-t bg-cyan-500" />
-          <div className="w-2.5 h-11 rounded-t bg-cyan-500" />
+        <div className="flex items-end gap-1.5 h-10 mb-2 opacity-30" aria-hidden="true">
+          <div className="w-2.5 h-3 rounded-t bg-cyan-500" />
           <div className="w-2.5 h-6 rounded-t bg-cyan-500" />
           <div className="w-2.5 h-9 rounded-t bg-cyan-500" />
+          <div className="w-2.5 h-5 rounded-t bg-cyan-500" />
+          <div className="w-2.5 h-8 rounded-t bg-cyan-500" />
         </div>
         <p className="text-xs font-mono font-semibold text-foreground">
           Array is uninitialized [length: 0]
         </p>
-        <p className="text-[11px] text-muted-foreground mt-1">
+        <p className="text-[11px] text-muted-foreground mt-0.5">
           Click &quot;Random Array&quot; or type custom values in the controls above to start.
         </p>
       </div>
@@ -196,10 +196,10 @@ export const ArrayBars = memo(function ArrayBars({
     <div
       role="region"
       aria-label="Sorting Array Bars Visualization"
-      className={`relative flex ${containerHeight} w-full items-end justify-center gap-1 sm:gap-2 rounded-2xl border border-border bg-card p-4 sm:p-6 shadow-sm dark:shadow-2xl backdrop-blur-xl overflow-hidden ${className}`}
+      className={`relative flex ${containerHeight} w-full items-end justify-center gap-1 sm:gap-1.5 rounded bg-[#251E19] border border-[#4A3F35] p-3 sm:p-4 shadow-2xl backdrop-blur-xl overflow-hidden corner-flourish ${className}`}
     >
-      {/* Precision Background Grid Lines */}
-      <div className="absolute inset-0 pointer-events-none bg-[linear-gradient(to_right,#38bdf808_1px,transparent_1px),linear-gradient(to_bottom,#38bdf808_1px,transparent_1px)] bg-[size:1.5rem_1.5rem]" />
+      {/* Classical Background Grid Lines */}
+      <div className="absolute inset-0 pointer-events-none bg-[linear-gradient(to_right,#c9a96208_1px,transparent_1px),linear-gradient(to_bottom,#c9a96208_1px,transparent_1px)] bg-[size:1.5rem_1.5rem]" />
 
       {array.map((value, idx) => {
         const isPivot = pivotIndex === idx;

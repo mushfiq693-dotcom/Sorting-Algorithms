@@ -1,17 +1,30 @@
 import type { Metadata } from "next";
-import { Outfit, JetBrains_Mono } from "next/font/google";
+import { Cormorant_Garamond, Manrope, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
+import { FeedbackWidget } from "@/components/feedback/FeedbackWidget";
+import { DeveloperCredit } from "@/components/brand/DeveloperCredit";
+import { AtmosphericOverlay } from "@/components/ui/AtmosphericOverlay";
 
-const outfit = Outfit({
+// 1. Heading Font: Cormorant Garamond 600 (High-contrast serif for hero & headings)
+const cormorantGaramond = Cormorant_Garamond({
   subsets: ["latin"],
-  variable: "--font-sans",
-  weight: ["300", "400", "500", "600", "700", "800", "900"],
+  variable: "--font-heading",
+  weight: ["400", "500", "600", "700"],
+  style: ["normal", "italic"],
 });
 
+// 2. Sans & Body Font: Manrope (Clean geometric sans for UI, subtitle, buttons, badges, & body)
+const manrope = Manrope({
+  subsets: ["latin"],
+  variable: "--font-sans",
+  weight: ["400", "500", "600", "700"],
+});
+
+// 3. Monospace Font: JetBrains Mono (For code blocks & algorithms)
 const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
   variable: "--font-mono",
-  weight: ["400", "500", "600", "700", "800"],
+  weight: ["400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -20,7 +33,7 @@ export const metadata: Metadata = {
   ),
   title: "AlgoHub — Interactive Algorithm Learning Platform",
   description:
-    "Learn algorithms step by step through interactive visualization, code execution, debugging, comparison, and hands-on practice.",
+    "Interactive algorithm learning platform with real-time visualization, code execution, debugging, and hands-on practice.",
   keywords: [
     "algorithm visualizer",
     "data structures and algorithms",
@@ -59,9 +72,6 @@ export const metadata: Metadata = {
   },
 };
 
-import { FeedbackWidget } from "@/components/feedback/FeedbackWidget";
-import { DeveloperCredit } from "@/components/brand/DeveloperCredit";
-
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -87,7 +97,10 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className={`${outfit.variable} ${jetbrainsMono.variable} font-sans bg-background dark:bg-[#050811] text-foreground min-h-screen flex flex-col antialiased selection:bg-cyan-500/30 selection:text-cyan-200`}>
+      <body
+        className={`${cormorantGaramond.variable} ${manrope.variable} ${jetbrainsMono.variable} font-sans font-normal bg-background text-foreground min-h-screen flex flex-col antialiased selection:bg-[#C9A962]/35 selection:text-[#1C1714]`}
+      >
+        <AtmosphericOverlay />
         {children}
         <DeveloperCredit />
         <FeedbackWidget />

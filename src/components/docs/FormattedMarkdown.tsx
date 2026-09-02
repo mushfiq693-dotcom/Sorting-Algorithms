@@ -195,21 +195,21 @@ function CodeBlock({ code, lang }: { code: string; lang: string }) {
   };
 
   return (
-    <div className="my-6 rounded-2xl border border-border bg-[#0a0f1d] overflow-hidden shadow-xl">
-      <div className="flex items-center justify-between px-5 py-3 border-b border-border/60 bg-secondary/40 text-xs font-mono text-muted-foreground">
+    <div className="my-6 rounded bg-[#14100D] border border-[#4A3F35] overflow-hidden shadow-2xl corner-flourish">
+      <div className="flex items-center justify-between px-5 py-3 border-b border-[#4A3F35] bg-[#1C1714] text-xs font-mono text-[#9C8B7A]">
         <div className="flex items-center gap-2">
-          <Terminal className="h-4 w-4 text-cyan-400" />
-          <span className="text-foreground font-extrabold uppercase tracking-wider">{lang || "Code"}</span>
+          <Terminal className="h-4 w-4 text-[#C9A962]" />
+          <span className="text-[#E8DFD4] font-display font-bold uppercase tracking-wider">{lang || "Code"}</span>
         </div>
         <button
           onClick={handleCopy}
-          className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-secondary hover:bg-secondary/80 text-xs text-muted-foreground hover:text-foreground transition-all cursor-pointer"
+          className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded border border-[#4A3F35] bg-[#251E19] text-xs font-display uppercase tracking-wider text-[#E8DFD4] hover:text-[#C9A962] hover:border-[#C9A962] transition-all cursor-pointer"
         >
-          {copied ? <Check className="h-3.5 w-3.5 text-emerald-400" /> : <Copy className="h-3.5 w-3.5" />}
+          {copied ? <Check className="h-3.5 w-3.5 text-emerald-400" /> : <Copy className="h-3.5 w-3.5 text-[#C9A962]" />}
           <span>{copied ? "Copied!" : "Copy"}</span>
         </button>
       </div>
-      <pre className="p-5 sm:p-6 font-mono text-sm sm:text-base text-slate-100 overflow-x-auto leading-relaxed selection:bg-cyan-500/30">
+      <pre className="p-5 sm:p-6 font-mono text-sm sm:text-base text-[#E8DFD4] overflow-x-auto leading-relaxed selection:bg-[#C9A962]/30">
         <code>{code}</code>
       </pre>
     </div>
@@ -220,8 +220,8 @@ function DisplayMathCard({ math }: { math: string }) {
   const formatted = formatMathString(math);
 
   return (
-    <div className="my-5 py-4 px-6 rounded-2xl border border-cyan-500/25 bg-gradient-to-r from-cyan-950/20 via-blue-950/15 to-transparent shadow-inner text-center overflow-x-auto">
-      <div className="font-mono text-base sm:text-lg md:text-xl font-black text-cyan-300 tracking-wide select-text py-1">
+    <div className="my-6 py-4 px-6 rounded border border-[#C9A962]/40 bg-gradient-to-r from-[#251E19] via-[#1C1714] to-[#251E19] shadow-inner text-center overflow-x-auto corner-flourish">
+      <div className="font-mono text-base sm:text-lg md:text-xl font-bold text-[#C9A962] tracking-wide select-text py-1">
         {formatted}
       </div>
     </div>
@@ -242,13 +242,13 @@ function MarkdownTable({ tableLines }: { tableLines: string[] }) {
   const dataRows = tableLines.slice(2).map(parseRow);
 
   return (
-    <div className="my-6 rounded-2xl border border-border bg-card overflow-hidden shadow-lg backdrop-blur-xl">
+    <div className="my-6 rounded border border-[#4A3F35] bg-[#251E19] overflow-hidden shadow-2xl corner-flourish">
       <div className="overflow-x-auto">
         <table className="w-full text-left text-sm sm:text-base border-collapse">
           <thead>
-            <tr className="border-b border-border bg-secondary/80 text-foreground font-bold">
+            <tr className="border-b border-[#4A3F35] bg-[#1C1714] text-[#E8DFD4]">
               {headerCells.map((cell, idx) => (
-                <th key={idx} className="py-3.5 px-5 font-mono text-cyan-400 font-extrabold text-xs sm:text-sm uppercase tracking-wider">
+                <th key={idx} className="py-3.5 px-5 font-display text-[#C9A962] font-bold text-xs sm:text-sm uppercase tracking-wider">
                   {renderInlineText(cell)}
                 </th>
               ))}

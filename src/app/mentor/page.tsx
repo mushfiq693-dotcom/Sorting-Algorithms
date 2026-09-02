@@ -18,6 +18,7 @@ import {
   UserRole,
 } from "../../../backend/database/types/database.types";
 import { AmbientSortLogo } from "@/components/brand/AmbientSortLogo";
+import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import {
   Users,
   Award,
@@ -326,6 +327,7 @@ export default function MentorPortalPage() {
           </div>
 
           <div className="flex items-center gap-2 sm:gap-3">
+            <ThemeToggle />
             <button
               onClick={() => setShowNoticeModal(true)}
               className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 text-xs font-bold text-white shadow-lg shadow-purple-600/20 hover:brightness-110 active:scale-95 transition-all"

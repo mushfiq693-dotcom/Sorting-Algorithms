@@ -4,83 +4,97 @@
 
 @layer base {
   :root {
-    --background: 210 40% 98%;
-    --foreground: 222 47% 11%;
+    /* ACADEMIA / CLASSICAL — Light Mode (Scriptorium Parchment & Warm Ink) */
+    --background: 38 40% 96%;        /* Antique Parchment #FAF6F0 */
+    --foreground: 24 22% 14%;        /* Archival Deep Ink #2B211B */
 
-    --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
+    --card: 40 33% 98%;              /* Clean Vellum Card #FDFBF7 */
+    --card-foreground: 24 22% 14%;   /* Archival Ink #2B211B */
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
+    --popover: 40 33% 98%;           /* Clean Vellum #FDFBF7 */
+    --popover-foreground: 24 22% 14%;
 
-    --primary: 221 83% 53%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 41 62% 42%;           /* Burnished Antique Gold #B08422 */
+    --primary-foreground: 38 40% 96%;/* Parchment on Gold */
 
-    --secondary: 210 40% 96%;
-    --secondary-foreground: 222 47% 11%;
+    --secondary: 36 28% 90%;         /* Warm Linen #EBE3D7 */
+    --secondary-foreground: 24 22% 14%;
 
-    --muted: 210 40% 94%;
-    --muted-foreground: 215 16% 47%;
+    --muted: 35 24% 88%;             /* Muted Linen #E8DFD3 */
+    --muted-foreground: 30 16% 40%;  /* Aged Sepia Ink #786858 */
 
-    --accent: 210 40% 92%;
-    --accent-foreground: 222 47% 11%;
+    --accent: 41 62% 42%;            /* Burnished Gold #B08422 */
+    --accent-foreground: 38 40% 96%;
 
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 351 65% 42%;      /* Library Crimson #A82436 */
+    --destructive-foreground: 38 40% 96%;
 
-    --border: 214 32% 91%;
-    --input: 214 32% 91%;
-    --ring: 221 83% 53%;
+    --border: 34 25% 80%;            /* Antique Binding Border #D8CBB8 */
+    --input: 34 25% 80%;
+    --ring: 41 62% 42%;              /* Gold Ring */
 
-    --radius: 0.875rem;
+    --radius: 4px;
 
-    /* Canonical Accents in Light Mode */
-    --algo-cyan: #0284c7;
-    --algo-amber: #d97706;
-    --algo-rose: #e11d48;
-    --algo-emerald: #059669;
-    --algo-purple: #9333ea;
-    --algo-pink: #db2777;
+    /* Canonical Academia Color Codes */
+    --mahogany: #2B211B;
+    --aged-oak: #FAF6F0;
+    --parchment: #2B211B;
+    --faded-ink: #786858;
+    --worn-leather: #EBE3D7;
+    --wood-grain: #D8CBB8;
+    --brass: #B08422;
+    --brass-light: #C9A962;
+    --brass-dark: #8F6614;
+    --crimson: #A82436;
+    --crimson-light: #C43B4E;
+    --code-surface: #F5EFEB;
   }
 
   .dark {
-    --background: 222 47% 6%;
-    --foreground: 210 40% 98%;
+    /* ACADEMIA / CLASSICAL — Dark Mode (Deep Mahogany Library & Polished Brass) */
+    --background: 25 15% 9%;         /* Deep Mahogany #1C1714 */
+    --foreground: 36 30% 87%;        /* Antique Parchment #E8DFD4 */
 
-    --card: 222 47% 10%;
-    --card-foreground: 210 40% 98%;
+    --card: 24 20% 12%;              /* Aged Oak Surface #251E19 */
+    --card-foreground: 36 30% 87%;   /* Antique Parchment #E8DFD4 */
 
-    --popover: 222 47% 10%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 24 20% 12%;           /* Aged Oak #251E19 */
+    --popover-foreground: 36 30% 87%;
 
-    --primary: 199 89% 48%; /* Sky Cyan #38bdf8 */
-    --primary-foreground: 222 47% 6%;
+    --primary: 42 49% 59%;           /* Polished Brass #C9A962 */
+    --primary-foreground: 25 15% 9%; /* Dark Mahogany on Brass */
 
-    --secondary: 222 47% 13%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 26 17% 21%;         /* Worn Leather #3D332B */
+    --secondary-foreground: 36 30% 87%;
 
-    --muted: 222 47% 12%;
-    --muted-foreground: 215 20% 65%;
+    --muted: 26 17% 21%;             /* Worn Leather #3D332B */
+    --muted-foreground: 32 15% 55%;  /* Faded Ink #9C8B7A */
 
-    --accent: 222 47% 15%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 42 49% 59%;            /* Polished Brass #C9A962 */
+    --accent-foreground: 25 15% 9%;
 
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 351 57% 35%;      /* Library Crimson #8B2635 */
+    --destructive-foreground: 36 30% 87%;
 
-    --border: 217 33% 17%;
-    --input: 217 33% 17%;
-    --ring: 199 89% 48%;
+    --border: 28 16% 25%;            /* Wood Grain #4A3F35 */
+    --input: 28 16% 25%;
+    --ring: 42 49% 59%;              /* Brass Ring */
 
-    --radius: 0.875rem;
+    --radius: 4px;
 
-    /* Canonical Accents in Dark Mode */
-    --algo-cyan: #38bdf8;
-    --algo-amber: #fbbf24;
-    --algo-rose: #f43f5e;
-    --algo-emerald: #10b981;
-    --algo-purple: #a855f7;
-    --algo-pink: #ec4899;
+    /* Canonical Academia Color Codes */
+    --mahogany: #1C1714;
+    --aged-oak: #251E19;
+    --parchment: #E8DFD4;
+    --faded-ink: #9C8B7A;
+    --worn-leather: #3D332B;
+    --wood-grain: #4A3F35;
+    --brass: #C9A962;
+    --brass-light: #D4B872;
+    --brass-dark: #B8953F;
+    --crimson: #8B2635;
+    --crimson-light: #A62D3F;
+    --code-surface: #14100E;
   }
 }
 
@@ -90,114 +104,247 @@
   }
 
   body {
-    @apply bg-background text-foreground antialiased selection:bg-cyan-500/30 selection:text-cyan-600 dark:selection:text-cyan-200 transition-colors duration-150;
+    @apply bg-background text-foreground antialiased selection:bg-[#C9A962]/35 selection:text-[#1C1714] transition-colors duration-200 font-sans font-normal;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
 
-  /* High-Contrast Accessible Focus Rings */
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading tracking-tight;
+  }
+
+  /* High-Contrast Accessible Brass Focus Rings */
   *:focus-visible {
-    @apply outline-none ring-2 ring-cyan-500/80 ring-offset-2 ring-offset-background;
+    @apply outline-none ring-2 ring-[#C9A962] ring-offset-2 ring-offset-[#1C1714];
   }
 }
 
-/* Custom Scrollbar */
+/* 1. Cathedral Arch-Top Signature Radius */
+.arch-top {
+  border-radius: 40% 40% 0 0 / 20% 20% 0 0;
+}
+
+/* 2. Ornate Corner Flourishes for Major Frames & Cards */
+.ornate-frame {
+  position: relative;
+}
+
+.ornate-frame.absolute,
+[class*="absolute"].ornate-frame {
+  position: absolute !important;
+}
+
+.ornate-frame::before,
+.ornate-frame::after {
+  content: "";
+  position: absolute;
+  width: 32px;
+  height: 32px;
+  border: 2px solid #C9A962;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.ornate-frame::before {
+  top: -1px;
+  left: -1px;
+  border-right: none;
+  border-bottom: none;
+}
+
+.ornate-frame::after {
+  bottom: -1px;
+  right: -1px;
+  border-left: none;
+  border-top: none;
+}
+
+/* Subtle corner flourish for smaller cards */
+.corner-flourish {
+  position: relative;
+}
+
+.corner-flourish.absolute,
+[class*="absolute"].corner-flourish {
+  position: absolute !important;
+}
+
+.corner-flourish::before,
+.corner-flourish::after {
+  content: "";
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  border: 1.5px solid rgba(201, 169, 98, 0.4);
+  pointer-events: none;
+  transition: border-color 0.3s ease;
+  z-index: 5;
+}
+
+.corner-flourish::before {
+  top: 0;
+  left: 0;
+  border-right: none;
+  border-bottom: none;
+}
+
+.corner-flourish::after {
+  bottom: 0;
+  right: 0;
+  border-left: none;
+  border-top: none;
+}
+
+.corner-flourish:hover::before,
+.corner-flourish:hover::after {
+  border-color: rgba(201, 169, 98, 0.9);
+}
+
+/* 3. Ornate Classical Divider with Centered Glyph */
+.ornate-divider {
+  position: relative;
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, #D8CBB8 20%, #B08422 50%, #D8CBB8 80%, transparent 100%);
+}
+
+.dark .ornate-divider {
+  background: linear-gradient(90deg, transparent 0%, #4A3F35 20%, #C9A962 50%, #4A3F35 80%, transparent 100%);
+}
+
+.ornate-divider::before {
+  content: "✶";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  color: #B08422;
+  font-size: 13px;
+  background: #FAF6F0;
+  padding: 0 12px;
+  font-family: var(--font-heading), 'Cormorant Garamond', serif;
+}
+
+.dark .ornate-divider::before {
+  color: #C9A962;
+  background: #1C1714;
+}
+
+/* 4. Illuminated Manuscript Drop Cap */
+.drop-cap::first-letter {
+  font-family: var(--font-heading), 'Cormorant Garamond', serif;
+  font-size: 4.25rem;
+  line-height: 0.8;
+  float: left;
+  margin-right: 0.75rem;
+  margin-top: 0.2rem;
+  color: #B08422;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.15);
+  font-weight: 700;
+}
+
+.dark .drop-cap::first-letter {
+  color: #C9A962;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* 5. Polished Brass Metallic Button */
+.btn-brass {
+  background: linear-gradient(180deg, #D4B872 0%, #C9A962 50%, #B8953F 100%);
+  color: #1C1714;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.35);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3), inset 0 -1px 0 rgba(0, 0, 0, 0.25), 0 2px 8px rgba(0, 0, 0, 0.35);
+  transition: all 0.25s ease;
+  font-family: var(--font-sans), 'Manrope', sans-serif;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+}
+
+.btn-brass:hover {
+  filter: brightness(1.08);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4), inset 0 -1px 0 rgba(0, 0, 0, 0.25), 0 4px 16px rgba(201, 169, 98, 0.35);
+}
+
+.btn-brass:active {
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4), 0 1px 2px rgba(0, 0, 0, 0.2);
+  transform: translateY(1px);
+}
+
+/* 6. Secondary Outlined Brass Button that Transforms to Crimson on Hover */
+.btn-secondary-brass {
+  background: transparent;
+  border: 1.5px solid #B08422;
+  color: #8C6210;
+  font-family: var(--font-sans), 'Manrope', sans-serif;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  transition: all 0.3s ease;
+}
+
+.dark .btn-secondary-brass {
+  border-color: #C9A962;
+  color: #C9A962;
+}
+
+.btn-secondary-brass:hover {
+  background: #8B2635;
+  border-color: #8B2635;
+  color: #FAF6F0;
+  box-shadow: 0 4px 14px rgba(139, 38, 53, 0.35);
+}
+
+.dark .btn-secondary-brass:hover {
+  color: #E8DFD4;
+}
+
+/* 7. Wax Seal Badge */
+.wax-seal {
+  background: radial-gradient(circle at 35% 35%, #A62D3F 0%, #8B2635 60%, #5E1420 100%);
+  box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.25), inset 0 -2px 4px rgba(0, 0, 0, 0.45), 0 4px 10px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* 8. Sepia-to-Color Image Treatment */
+.sepia-reveal {
+  filter: sepia(0.65) contrast(0.95) brightness(0.9);
+  transition: filter 0.7s ease-out, transform 0.7s ease-out;
+}
+
+.sepia-reveal:hover {
+  filter: sepia(0) contrast(1) brightness(1);
+}
+
+/* 9. Engraved Text Effect */
+.engraved-text {
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5), -1px -1px 1px rgba(255, 255, 255, 0.08);
+}
+
+/* 10. Code Highlighting Ribbon with Brass Accent */
+.code-highlight-line {
+  background-color: rgba(201, 169, 98, 0.12);
+  border-left: 3px solid #C9A962;
+  box-shadow: 0 0 16px rgba(201, 169, 98, 0.1);
+}
+
+/* Custom Wood Grain Scrollbar */
 ::-webkit-scrollbar {
   width: 7px;
   height: 7px;
 }
 
 ::-webkit-scrollbar-track {
-  background: transparent;
+  background: #1C1714;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(148, 163, 184, 0.25);
-  border-radius: 4px;
+  background: #4A3F35;
+  border-radius: 2px;
+  border: 1px solid rgba(201, 169, 98, 0.2);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(148, 163, 184, 0.45);
+  background: #C9A962;
 }
 
-/* Glassmorphism & Minimal Card Surface Utilities */
-.dev-surface {
-  background: hsl(var(--card) / 0.8);
-  border: 1px solid hsl(var(--border));
-  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-}
-
-.dark .dev-surface {
-  background: hsl(var(--card) / 0.7);
-  border: 1px solid hsl(var(--border) / 0.8);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-}
-
-.dev-surface-hover {
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.dev-surface-hover:hover {
-  border-color: rgba(56, 189, 248, 0.4);
-  box-shadow: 0 12px 36px -8px rgba(56, 189, 248, 0.15);
-  transform: translateY(-1px);
-}
-
-/* Algorithm-Themed Micro-Interaction: Compare Button Shimmer Pulse */
-@keyframes comparePulse {
-  0% {
-    box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.4);
-  }
-  50% {
-    box-shadow: 0 0 0 6px rgba(251, 191, 36, 0);
-  }
-  100% {
-    box-shadow: 0 0 0 0 rgba(251, 191, 36, 0);
-  }
-}
-
-.btn-compare-hover:hover {
-  animation: comparePulse 1.2s infinite;
-}
-
-/* Algorithm-Themed Micro-Interaction: Card Swap Hover */
-.card-swap-hover {
-  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), border-color 0.2s ease;
-}
-
-.card-swap-hover:hover {
-  transform: translateY(-2px);
-  border-color: rgba(244, 63, 94, 0.4);
-}
-
-/* Algorithm-Themed Micro-Interaction: Sorted Settle Wave */
-@keyframes sortedWave {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
-}
-
-.sorted-settle-glow {
-  background: linear-gradient(90deg, rgba(16, 185, 129, 0.15), rgba(56, 189, 248, 0.15), rgba(16, 185, 129, 0.15));
-  background-size: 200% 200%;
-  animation: sortedWave 2s ease infinite;
-}
-
-/* Code Highlighting Token Ribbon */
-.code-highlight-line {
-  background-color: rgba(56, 189, 248, 0.12);
-  border-left: 3px solid #38bdf8;
-  box-shadow: 0 0 16px rgba(56, 189, 248, 0.12);
-}
-
-/* Respect Prefers-Reduced-Motion Everywhere */
+/* Respect Prefers-Reduced-Motion */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

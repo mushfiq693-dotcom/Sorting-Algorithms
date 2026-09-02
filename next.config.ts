@@ -68,6 +68,15 @@ const securityHeaders = [
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   outputFileTracingRoot: path.resolve(__dirname),
+  experimental: {
+    optimizePackageImports: [
+      "lucide-react",
+      "framer-motion",
+      "prismjs",
+      "@supabase/ssr",
+      "canvas-confetti",
+    ],
+  },
   async headers() {
     return [
       {

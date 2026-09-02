@@ -19,6 +19,43 @@ export async function updateSession(request: NextRequest) {
     return supabaseResponse;
   }
 
+  const pathname = request.nextUrl.pathname;
+
+  // List of public routes that bypass authentication (Public Recruiter Sandbox Mode)
+  const isPublicRoute =
+    pathname === "/" ||
+    pathname === "/learn" ||
+    pathname.startsWith("/algorithms") ||
+    pathname.startsWith("/compare") ||
+    pathname.startsWith("/docs") ||
+    pathname.startsWith("/visualizer") ||
+    pathname.startsWith("/course-material") ||
+    pathname.startsWith("/auth/") ||
+    pathname.startsWith("/_next") ||
+    pathname.startsWith("/api/public") ||
+    pathname === "/favicon.ico" ||
+    pathname.includes(".");
+
+  // Check if any Supabase auth cookies exist in request
+  const allCookies = request.cookies.getAll();
+  const hasAuthCookie = allCookies.some(
+    (cookie) =>
+      cookie.name.includes("auth-token") ||
+      cookie.name.startsWith("sb-")
+  );
+
+  // FAST PATH: If no auth cookies exist
+  if (!hasAuthCookie) {
+    if (isPublicRoute) {
+      return supabaseResponse;
+    }
+    // If not a public route and no cookies, redirect immediately without remote network roundtrip
+    const url = request.nextUrl.clone();
+    url.pathname = "/auth/login";
+    url.searchParams.set("next", pathname);
+    return NextResponse.redirect(url);
+  }
+
   const supabase = createServerClient<Database>(
     supabaseUrl,
     supabaseAnonKey,
@@ -42,30 +79,12 @@ export async function updateSession(request: NextRequest) {
     }
   );
 
-  // IMPORTANT: Do NOT use supabase.auth.getSession() in middleware as it may be spoofed.
-  // Always use supabase.auth.getUser() to authenticate securely against Supabase Auth.
+  // Only authenticate via network when auth cookies are present
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const pathname = request.nextUrl.pathname;
-
-  // List of public routes that bypass authentication (Public Recruiter Sandbox Mode)
-  const isPublicRoute =
-    pathname === "/" ||
-    pathname === "/learn" ||
-    pathname.startsWith("/algorithms") ||
-    pathname.startsWith("/compare") ||
-    pathname.startsWith("/docs") ||
-    pathname.startsWith("/visualizer") ||
-    pathname.startsWith("/course-material") ||
-    pathname.startsWith("/auth/") ||
-    pathname.startsWith("/_next") ||
-    pathname.startsWith("/api/public") ||
-    pathname === "/favicon.ico" ||
-    pathname.includes(".");
-
-  // If user is unauthenticated and attempting to access protected routes
+  // If user is unauthenticated (token invalid/expired) and attempting to access protected routes
   if (!user && !isPublicRoute) {
     const url = request.nextUrl.clone();
     url.pathname = "/auth/login";

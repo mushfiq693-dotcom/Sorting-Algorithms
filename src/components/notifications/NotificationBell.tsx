@@ -5,6 +5,8 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { Bell } from "lucide-react";
 
+import { fastCache } from "@/lib/cache";
+
 export function NotificationBell() {
   const supabase = createClient();
   const [unreadCount, setUnreadCount] = useState<number>(0);
@@ -12,9 +14,20 @@ export function NotificationBell() {
   const fetchUnreadCount = useCallback(async () => {
     try {
       const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (!user) return;
+        data: { session },
+      } = await supabase.auth.getSession();
+      if (!session?.user) {
+        setUnreadCount(0);
+        return;
+      }
+      const user = session.user;
+
+      // Check cache first
+      const cachedCount = fastCache.get<number>(`unread_${user.id}`);
+      if (cachedCount !== null) {
+        setUnreadCount(cachedCount);
+        return;
+      }
 
       // 1. Fetch total notices
       const { data: noticesData } = await (supabase.from("notices") as any)
@@ -22,6 +35,7 @@ export function NotificationBell() {
 
       if (!noticesData || noticesData.length === 0) {
         setUnreadCount(0);
+        fastCache.set(`unread_${user.id}`, 0, 60);
         return;
       }
 
@@ -33,6 +47,7 @@ export function NotificationBell() {
       const readIds = new Set((readData || []).map((r: any) => r.notice_id));
       const unread = noticesData.filter((n: any) => !readIds.has(n.id)).length;
       setUnreadCount(unread);
+      fastCache.set(`unread_${user.id}`, unread, 60);
     } catch {
       // ignore
     }

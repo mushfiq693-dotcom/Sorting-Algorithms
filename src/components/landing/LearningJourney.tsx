@@ -2,7 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import { BookOpen, Eye, Bug, Sparkles, ArrowRight, CheckCircle2 } from "lucide-react";
+import { BookOpen, Eye, Bug, Sparkles, ArrowRight } from "lucide-react";
 
 interface StepItem {
   number: string;
@@ -10,8 +10,6 @@ interface StepItem {
   tagline: string;
   description: string;
   icon: React.ElementType;
-  accentColor: string;
-  bgGlow: string;
   link: string;
 }
 
@@ -22,8 +20,6 @@ const JOURNEY_STEPS: StepItem[] = [
     tagline: "Concept Before Syntax",
     description: "Understand the core algorithmic intuition and invariant before worrying about the implementation.",
     icon: BookOpen,
-    accentColor: "text-cyan-400 border-cyan-500/30",
-    bgGlow: "from-cyan-500/15 via-cyan-500/5 to-transparent",
     link: "/docs",
   },
   {
@@ -32,8 +28,6 @@ const JOURNEY_STEPS: StepItem[] = [
     tagline: "See Every Step",
     description: "Watch the actual algorithm execute with live comparisons, swaps, partitions, and recursion trees.",
     icon: Eye,
-    accentColor: "text-blue-400 border-blue-500/30",
-    bgGlow: "from-blue-500/15 via-blue-500/5 to-transparent",
     link: "/visualizer",
   },
   {
@@ -42,8 +36,6 @@ const JOURNEY_STEPS: StepItem[] = [
     tagline: "Break & Investigate",
     description: "Follow synchronized C++ lines, inspect scope variables, and track call stack frames in real time.",
     icon: Bug,
-    accentColor: "text-rose-400 border-rose-500/30",
-    bgGlow: "from-rose-500/15 via-rose-500/5 to-transparent",
     link: "/algorithms/bubble",
   },
   {
@@ -52,25 +44,28 @@ const JOURNEY_STEPS: StepItem[] = [
     tagline: "Achieve Mastery",
     description: "Solve quizzes, hunt buggy code logic, write implementations, and test against rigorous automated test suites.",
     icon: Sparkles,
-    accentColor: "text-emerald-400 border-emerald-500/30",
-    bgGlow: "from-emerald-500/15 via-emerald-500/5 to-transparent",
     link: "/learn",
   },
 ];
 
 export function LearningJourney() {
   return (
-    <section className="py-16 sm:py-20 border-b border-border/40 relative overflow-hidden bg-background">
+    <section
+      id="learning-workflow"
+      className="py-16 sm:py-24 border-b border-border relative overflow-hidden bg-background scroll-mt-16 transition-colors"
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-cyan-500/30 bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 text-xs font-mono font-semibold mb-4 backdrop-blur-md">
+        <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16 space-y-3">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-primary/40 bg-card text-primary text-xs font-sans font-semibold uppercase tracking-wider backdrop-blur-md shadow-sm">
             <span>Pedagogical Architecture</span>
           </div>
-          <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-foreground">
+
+          <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-foreground leading-[1.15]">
             A Complete Learning Workflow
           </h2>
-          <p className="mt-3 text-sm sm:text-base text-muted-foreground leading-relaxed">
+
+          <p className="font-sans font-normal text-base sm:text-lg text-muted-foreground leading-relaxed max-w-2xl mx-auto">
             From zero understanding to complete algorithmic confidence through a structured, 4-stage interactive journey.
           </p>
         </div>
@@ -83,27 +78,28 @@ export function LearningJourney() {
             return (
               <div
                 key={step.number}
-                className="relative flex flex-col justify-between rounded-2xl border border-border bg-card p-6 backdrop-blur-xl shadow-sm dark:shadow-xl hover:border-cyan-500/40 transition-all duration-300 group"
+                className="relative flex flex-col justify-between rounded bg-card border border-border p-6 sm:p-7 backdrop-blur-xl shadow-lg hover:border-primary/60 hover:shadow-brass transition-all duration-300 corner-flourish group"
               >
                 <div>
                   {/* Step Header */}
                   <div className="flex items-center justify-between mb-4">
-                    <span className="font-mono text-2xl font-extrabold text-muted-foreground/30 group-hover:text-muted-foreground/70 transition-colors">
+                    <span className="font-sans text-2xl font-bold text-muted-foreground/40 group-hover:text-primary transition-colors select-none">
                       {step.number}
                     </span>
-                    <div className={`p-2.5 rounded-xl border ${step.accentColor} bg-secondary shadow-sm`}>
+                    <div className="p-2.5 rounded border border-border bg-background text-primary group-hover:border-primary group-hover:bg-[#8B2635] group-hover:text-white transition-all duration-300">
                       <Icon className="h-5 w-5" />
                     </div>
                   </div>
 
-                  <h3 className="text-lg font-bold text-foreground tracking-tight flex items-center gap-2">
-                    <span>{step.title}</span>
+                  <h3 className="font-sans text-lg font-semibold text-foreground tracking-wide uppercase">
+                    {step.title}
                   </h3>
-                  <p className="text-xs font-mono text-cyan-600 dark:text-cyan-300 font-semibold mt-1">
+
+                  <p className="font-sans italic text-xs text-primary font-medium mt-1">
                     {step.tagline}
                   </p>
 
-                  <p className="text-xs text-muted-foreground leading-relaxed mt-3 font-sans">
+                  <p className="font-sans font-normal text-xs sm:text-sm text-muted-foreground leading-relaxed mt-3">
                     {step.description}
                   </p>
                 </div>
@@ -111,7 +107,7 @@ export function LearningJourney() {
                 <div className="mt-6 pt-4 border-t border-border flex items-center justify-between">
                   <Link
                     href={step.link}
-                    className="inline-flex items-center gap-1.5 text-xs font-semibold text-cyan-600 dark:text-cyan-400 group-hover:text-cyan-500 transition-colors"
+                    className="inline-flex items-center gap-1.5 font-sans text-xs font-semibold uppercase tracking-wider text-primary hover:text-primary/80 group-hover:tracking-widest transition-all"
                   >
                     <span>Explore Stage</span>
                     <ArrowRight className="h-3.5 w-3.5 group-hover:translate-x-1 transition-transform" />

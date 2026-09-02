@@ -8,10 +8,15 @@ import { generateRandomArray } from "@/lib/utils";
 import { ArrayBars } from "./ArrayBars";
 import { VisualizerControls } from "./VisualizerControls";
 import { OperationIndicator } from "./OperationIndicator";
-import { AlgorithmSelector } from "@/components/algorithms/AlgorithmSelector";
 import { ComplexityCard } from "@/components/algorithms/ComplexityCard";
+import { AlgorithmSelector } from "@/components/algorithms/AlgorithmSelector";
 import { CodeViewer } from "@/components/code/CodeViewer";
 import { LiveComplexityTracker } from "@/components/complexity/LiveComplexityTracker";
+import { StackVisualizer } from "./StackVisualizer";
+import { QueueVisualizer } from "./QueueVisualizer";
+import { TimeComplexityVisualizer } from "./TimeComplexityVisualizer";
+import { SpaceComplexityVisualizer } from "./SpaceComplexityVisualizer";
+import { Sparkles, ArrowLeft } from "lucide-react";
 
 const DEFAULT_INITIAL_ARRAY = [48, 15, 86, 34, 92, 28, 65, 12, 54, 78, 23, 95, 41, 60, 31];
 
@@ -348,81 +353,142 @@ export function SortingVisualizer() {
     return () => clearTimer();
   }, [clearTimer]);
 
-  const currentMeta = ALGORITHMS[selectedAlgorithm];
+  const currentMeta = ALGORITHMS[selectedAlgorithm] || ALGORITHMS.bubble;
+  const isSorting = ["bubble", "selection", "insertion", "merge", "quick"].includes(selectedAlgorithm);
+
+  // Render dedicated visualizer for Data Structures (Stack, Queue) and Complexity topics
+  if (!isSorting) {
+    return (
+      <div className="flex flex-col gap-6 w-full max-w-7xl mx-auto">
+        {/* Active Specialized Topic Header Bar */}
+        <div className="flex flex-wrap items-center justify-between gap-3 p-3.5 rounded-xl border border-border bg-card/70 backdrop-blur-md shadow-sm">
+          <div className="flex items-center gap-2.5">
+            <span className="text-xs font-mono text-muted-foreground uppercase tracking-wider">Active Workspace:</span>
+            <span className="px-3 py-1 rounded-md bg-primary/10 border border-primary/30 text-primary text-xs font-display font-bold uppercase tracking-wider flex items-center gap-1.5 shadow-xs">
+              <Sparkles className="h-3.5 w-3.5" />
+              <span>{currentMeta.name}</span>
+            </span>
+          </div>
+
+          <button
+            onClick={() => handleSelectAlgorithm("bubble")}
+            className="inline-flex items-center gap-1.5 text-xs font-display font-bold uppercase tracking-wider text-muted-foreground hover:text-primary transition-colors px-3 py-1.5 rounded-lg border border-border bg-secondary/60 hover:bg-secondary cursor-pointer active:scale-95 shadow-xs"
+          >
+            <ArrowLeft className="h-3.5 w-3.5" />
+            <span>Switch to Sorting Algorithms</span>
+          </button>
+        </div>
+
+        {/* Dedicated Specialized Visualizer Stage */}
+        <div className="w-full">
+          {selectedAlgorithm === "stack" && <StackVisualizer />}
+          {selectedAlgorithm === "queue" && <QueueVisualizer />}
+          {selectedAlgorithm === "time-complexity" && <TimeComplexityVisualizer />}
+          {selectedAlgorithm === "space-complexity" && <SpaceComplexityVisualizer />}
+        </div>
+
+        {/* Studio Bottom Grid: Topic Selector (left) + C++ Code & Complexity (right) */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start pt-4 border-t border-border">
+          {/* Topic Categories Accordion */}
+          <div className="lg:col-span-5 flex flex-col gap-3">
+            <AlgorithmSelector
+              selectedAlgorithm={selectedAlgorithm}
+              onSelectAlgorithm={handleSelectAlgorithm}
+              disabled={false}
+            />
+          </div>
+
+          {/* Synchronized Reference Code & Complexity */}
+          <div className="lg:col-span-7 flex flex-col gap-3">
+            <div className="h-[400px] sm:h-[450px]">
+              <CodeViewer
+                code={currentMeta.cppCode}
+                activeLineNumber={null}
+                algorithmName={currentMeta.name}
+              />
+            </div>
+            <ComplexityCard metadata={currentMeta} />
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="flex flex-col gap-6 w-full max-w-7xl mx-auto">
-      {/* Top Layout Grid: Visualizer Bars + Live Explanation */}
-      <div className="flex flex-col gap-4">
-        <ArrayBars
-          array={array}
-          comparingIndices={comparingIndices}
-          swappingIndices={swappingIndices}
-          sortedIndices={sortedIndices}
-          pivotIndex={pivotIndex}
-          activeRange={activeRange}
-          overwritingIndex={overwritingIndex}
-          mergeRange={mergeRange}
-        />
+    <div className="flex flex-col gap-4 w-full max-w-7xl mx-auto">
+      {/* Unified Studio Grid: Left Visual Stage (7 cols), Right Code Execution & Complexity (5 cols) */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
+        {/* Left Column: Visual Canvas + Live Telemetry + Controls + Live Big-O + Collapsible Categories */}
+        <div className="lg:col-span-7 flex flex-col gap-3">
+          {/* Visualizer Canvas */}
+          <ArrayBars
+            array={array}
+            comparingIndices={comparingIndices}
+            swappingIndices={swappingIndices}
+            sortedIndices={sortedIndices}
+            pivotIndex={pivotIndex}
+            activeRange={activeRange}
+            overwritingIndex={overwritingIndex}
+            mergeRange={mergeRange}
+          />
 
-        <OperationIndicator
-          explanation={explanation}
-          comparisonsCount={comparisonsCount}
-          swapsCount={swapsCount}
-          currentStep={currentStepIndex}
-          totalSteps={operations.length || 0}
-          isFinished={isFinished}
-        />
-      </div>
+          {/* Operation Status & Live Telemetry */}
+          <OperationIndicator
+            explanation={explanation}
+            comparisonsCount={comparisonsCount}
+            swapsCount={swapsCount}
+            currentStep={currentStepIndex}
+            totalSteps={operations.length || 0}
+            isFinished={isFinished}
+          />
 
-      {/* Controls Bar */}
-      <VisualizerControls
-        isPlaying={isPlaying}
-        isFinished={isFinished}
-        isPaused={isPaused}
-        canStep={!isPlaying && (!isFinished || currentStepIndex < operations.length)}
-        speed={speed}
-        arraySize={arraySize}
-        onStart={handleStart}
-        onPause={handlePause}
-        onResume={handleResume}
-        onStep={handleStep}
-        onReset={handleReset}
-        onGenerateRandom={handleGenerateRandom}
-        onCustomArraySubmit={handleCustomArray}
-        onSpeedChange={setSpeed}
-        onArraySizeChange={handleArraySizeChange}
-      />
+          {/* Compact Studio Controls */}
+          <VisualizerControls
+            isPlaying={isPlaying}
+            isFinished={isFinished}
+            isPaused={isPaused}
+            canStep={!isPlaying && (!isFinished || currentStepIndex < operations.length)}
+            speed={speed}
+            arraySize={arraySize}
+            onStart={handleStart}
+            onPause={handlePause}
+            onResume={handleResume}
+            onStep={handleStep}
+            onReset={handleReset}
+            onGenerateRandom={handleGenerateRandom}
+            onCustomArraySubmit={handleCustomArray}
+            onSpeedChange={setSpeed}
+            onArraySizeChange={handleArraySizeChange}
+          />
 
-      {/* Live Big-O Tracking */}
-      <LiveComplexityTracker
-        algorithmId={selectedAlgorithm}
-        arraySize={array.length}
-        comparisonsCount={comparisonsCount}
-        swapsCount={swapsCount}
-        isFinished={isFinished}
-        initialArray={originalArray}
-      />
+          {/* Live Big-O Bounds Strip */}
+          <LiveComplexityTracker
+            algorithmId={selectedAlgorithm}
+            arraySize={array.length}
+            comparisonsCount={comparisonsCount}
+            swapsCount={swapsCount}
+            isFinished={isFinished}
+            initialArray={originalArray}
+          />
 
-      {/* Bottom 2-Column Section: Left (Algorithms & Complexity), Right (Code Viewer) */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-        {/* Left Column: Algorithm Selector + Complexity Card */}
-        <div className="lg:col-span-5 flex flex-col gap-4">
+          {/* Collapsible Topic Categories */}
           <AlgorithmSelector
             selectedAlgorithm={selectedAlgorithm}
             onSelectAlgorithm={handleSelectAlgorithm}
             disabled={isPlaying}
           />
-          <ComplexityCard metadata={currentMeta} />
         </div>
 
-        {/* Right Column: Code Viewer with Synced Line Highlighting */}
-        <div className="lg:col-span-7 h-[440px] sm:h-[480px]">
-          <CodeViewer
-            code={currentMeta.cppCode}
-            activeLineNumber={currentLineNumber}
-            algorithmName={currentMeta.name}
-          />
+        {/* Right Column: Synchronized C++ Code Viewer + Complexity Invariants */}
+        <div className="lg:col-span-5 flex flex-col gap-3 lg:sticky lg:top-20">
+          <div className="h-[380px] sm:h-[420px] lg:h-[450px]">
+            <CodeViewer
+              code={currentMeta.cppCode}
+              activeLineNumber={currentLineNumber}
+              algorithmName={currentMeta.name}
+            />
+          </div>
+          <ComplexityCard metadata={currentMeta} />
         </div>
       </div>
     </div>

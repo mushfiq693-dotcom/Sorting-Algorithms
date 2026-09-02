@@ -15,6 +15,8 @@ import {
   ALGORITHM_DOCS_MAP,
 } from "@/lib/scoring";
 
+import { fastCache } from "@/lib/cache";
+
 export const STEPS_KEY = "sortviz_completed_steps";
 export const DOCS_KEY = "sortviz_docs_completed";
 export const TOPIC_SCORES_KEY = "sortviz_topic_scores";
@@ -35,10 +37,16 @@ export function useProgressSync() {
     async function syncDown() {
       try {
         const {
-          data: { user },
-        } = await supabase.auth.getUser();
+          data: { session },
+        } = await supabase.auth.getSession();
 
+        const user = session?.user;
         if (!user) return;
+
+        // Throttle syncDown to once per 2 minutes per session to prevent repeated network hits
+        const lastSync = fastCache.get<boolean>(`last_sync_${user.id}`);
+        if (lastSync) return;
+        fastCache.set(`last_sync_${user.id}`, true, 120);
 
         const { data: progress } = await (supabase.from("user_progress") as any)
           .select("completed_steps, completed_docs, quiz_scores, topic_scores, activity_history")
