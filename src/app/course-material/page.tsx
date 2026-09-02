@@ -45,6 +45,7 @@ import {
   BookOpen,
   HelpCircle,
   Lightbulb,
+  Code2,
   Search,
   Tag,
   Flame,
@@ -73,12 +74,14 @@ const CHAPTER_OPTIONS = [
   { id: "all", label: "All Chapters", icon: BookOpen },
   { id: "Chapter 2", label: "Chapter 2: Complexity Analysis", icon: Bookmark },
   { id: "Chapter 3", label: "Chapter 3: String Processing", icon: Bookmark },
+  { id: "Chapter 4", label: "Chapter 4: Linear Arrays", icon: Bookmark },
 ];
 
 const TYPE_OPTIONS = [
   { id: "all", label: "All Content Types", icon: Layers },
-  { id: "problem", label: "Assigned Problems Only", icon: HelpCircle },
   { id: "topic", label: "Lecture Topics Only", icon: Lightbulb },
+  { id: "problem", label: "Assigned Problems Only", icon: HelpCircle },
+  { id: "algorithm", label: "Algorithms Only", icon: Code2 },
 ];
 
 const DIFFICULTY_OPTIONS = [
@@ -365,6 +368,7 @@ export default function CourseMaterialPage() {
   const stats = useMemo(() => {
     const totalProblems = materials.filter((m) => m.content_type === "problem").length;
     const totalTopics = materials.filter((m) => m.content_type === "topic").length;
+    const totalAlgorithms = materials.filter((m) => m.content_type === "algorithm").length;
     const chapters = new Set(
       materials
         .map((m) => {
@@ -376,7 +380,8 @@ export default function CourseMaterialPage() {
     return {
       totalProblems,
       totalTopics,
-      totalChapters: chapters.size || 2,
+      totalAlgorithms,
+      totalChapters: chapters.size || 3,
     };
   }, [materials]);
 
@@ -446,7 +451,7 @@ export default function CourseMaterialPage() {
             </div>
 
             {/* Stat Counters Badges */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-2 lg:grid-cols-4 gap-2.5 shrink-0">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-5 gap-2.5 shrink-0">
               {/* Total Problems Stat */}
               <button
                 onClick={() => setSelectedType(selectedType === "problem" ? "all" : "problem")}
@@ -489,6 +494,27 @@ export default function CourseMaterialPage() {
                 </div>
               </button>
 
+              {/* Total Algorithms Stat */}
+              <button
+                onClick={() => setSelectedType(selectedType === "algorithm" ? "all" : "algorithm")}
+                className={`p-3 rounded-2xl border text-left transition-all active:scale-95 flex flex-col justify-between ${
+                  selectedType === "algorithm"
+                    ? "bg-emerald-500/20 border-emerald-500/50 shadow-md shadow-emerald-500/10 ring-2 ring-emerald-400/30"
+                    : "bg-secondary/60 hover:bg-secondary border-border/80"
+                }`}
+              >
+                <div className="flex items-center justify-between text-muted-foreground mb-1">
+                  <span className="text-[10px] font-mono font-bold uppercase tracking-wider">Algorithms</span>
+                  <Code2 className="h-3.5 w-3.5 text-emerald-500" />
+                </div>
+                <div className="text-xl font-extrabold text-foreground font-mono">
+                  {stats.totalAlgorithms}
+                </div>
+                <div className="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium mt-0.5">
+                  Core Algorithms
+                </div>
+              </button>
+
               {/* Chapters Stat */}
               <div className="p-3 rounded-2xl border border-border/80 bg-secondary/60 flex flex-col justify-between">
                 <div className="flex items-center justify-between text-muted-foreground mb-1">
@@ -499,7 +525,7 @@ export default function CourseMaterialPage() {
                   {stats.totalChapters}
                 </div>
                 <div className="text-[10px] text-cyan-600 dark:text-cyan-400 font-medium mt-0.5">
-                  Ch 2 &amp; Ch 3
+                  Ch 2, 3 &amp; 4
                 </div>
               </div>
 
@@ -659,6 +685,8 @@ export default function CourseMaterialPage() {
           <div className="space-y-4">
             {filteredMaterials.map((item, index) => {
               const isProblem = item.content_type === "problem";
+              const isAlgorithm = item.content_type === "algorithm";
+              const isTopic = item.content_type === "topic";
               const isCardOpen = expandedCards[item.id] || false;
               const isSolutionOpen = expandedSolutions[item.id] || false;
 
@@ -703,6 +731,11 @@ export default function CourseMaterialPage() {
                             <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-amber-500/15 text-amber-600 dark:text-amber-300 border border-amber-500/30">
                               <HelpCircle className="h-3 w-3" />
                               <span>PROBLEM</span>
+                            </span>
+                          ) : isAlgorithm ? (
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-emerald-500/15 text-emerald-600 dark:text-emerald-300 border border-emerald-500/30">
+                              <Code2 className="h-3 w-3" />
+                              <span>ALGORITHM</span>
                             </span>
                           ) : (
                             <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-indigo-500/15 text-indigo-600 dark:text-indigo-300 border border-indigo-500/30">
@@ -917,6 +950,17 @@ export default function CourseMaterialPage() {
                               </>
                             );
                           })()}
+                        </div>
+                      ) : isAlgorithm ? (
+                        /* Algorithm Content (Direct display with code specification) */
+                        <div className="space-y-4">
+                          <div className="rounded-2xl border border-emerald-500/30 bg-card p-6 shadow-sm">
+                            <div className="flex items-center gap-2 text-xs font-mono font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider pb-3 border-b border-border/60 mb-4">
+                              <Code2 className="h-4 w-4 text-emerald-500" />
+                              <span>Formal Textbook Algorithm Specification &amp; Analysis</span>
+                            </div>
+                            <FormattedMarkdown content={item.explanation_or_solution} />
+                          </div>
                         </div>
                       ) : (
                         /* Topic Explanation (Direct display with optional Interactive Studio) */

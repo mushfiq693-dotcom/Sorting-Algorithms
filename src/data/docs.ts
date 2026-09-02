@@ -6,7 +6,7 @@ export interface DocsArticle {
   title: string;
   subtitle: string;
   estimatedReadTime: string;
-  category: "Fundamentals" | "Simple Algorithms" | "Divide and Conquer" | "Advanced Analysis" | "Decision Guide" | "Data Structures" | "Complexity";
+  category: "Fundamentals" | "Simple Algorithms" | "Divide and Conquer" | "Advanced Analysis" | "Decision Guide" | "Data Structures" | "Complexity" | "Searching";
   content: string; // Markdown / prose structure
   banglaNote?: {
     topic: string;
@@ -1678,6 +1678,320 @@ $$\\text{Total Space} = \\text{Input Space} + \\text{Auxiliary Space}$$
       path: "/algorithms/space-complexity",
     },
   },
+  {
+    slug: "linked-list-fundamentals",
+    level: 5,
+    levelTitle: "Level 5: Fundamental Data Structures",
+    order: 3,
+    title: "Singly Linked List: Nodes, Pointers & Memory Architecture",
+    subtitle: "Deep dive into dynamic node allocation, pointer rewiring, O(1) head insertion vs O(n) array element shifting.",
+    estimatedReadTime: "12 min",
+    category: "Data Structures",
+    content: `
+# Singly Linked List: Nodes, Pointers & Memory Architecture
+
+A **Linked List** is a fundamental linear data structure composed of discrete, dynamically allocated structures called **Nodes**. Unlike arrays, which occupy a single contiguous block of physical RAM, linked list nodes can reside anywhere in the heap. They maintain sequential order solely through pointer references stored inside each node.
+
+---
+
+## 1. Anatomy of a Node
+
+In C++, a singly linked list node typically packages two distinct components:
+1. **Data payload (\`val\`):** The value stored in this element.
+2. **Next pointer (\`next\`):** A memory pointer referencing the successor node, or \`nullptr\` if it is the terminal node.
+
+\`\`\`cpp
+struct Node {
+    int val;
+    Node* next;
+    Node(int x) : val(x), next(nullptr) {}
+};
+\`\`\`
+
+---
+
+## 2. Head Prepending: Why Linked Lists Beat Arrays at Insertion
+
+Consider prepending an element at the very front (index 0) of a collection:
+
+### Array Prepend — $O(n)$ Costly Shift
+To insert an element at \`arr[0]\` in a standard vector, every existing element from index 0 to $n-1$ must be shifted one position to the right to make room:
+\`\`\`cpp
+for (int j = n; j > 0; j--) {
+    arr[j] = arr[j - 1]; // Moves all n elements in memory!
+}
+arr[0] = newElement;
+\`\`\`
+If the array contains 1,000,000 elements, inserting at the front moves 1,000,000 memory words!
+
+### Linked List Prepend — Strictly $O(1)$ Time
+In a linked list, prepending requires only **two pointer assignments**, completely independent of the size of the list:
+\`\`\`cpp
+void insertAtHead(int val) {
+    Node* newNode = new Node(val);
+    newNode->next = head; // Point new node to current first node
+    head = newNode;       // Advance head to point to new node
+}
+\`\`\`
+Whether the list contains 5 nodes or 5,000,000 nodes, inserting at the head always takes the exact same two CPU instructions ($O(1)$).
+
+---
+
+## 3. The Tradeoff: Random Access vs Sequential Hopping
+
+| Feature | Dynamic Array / Vector | Singly Linked List |
+| :--- | :--- | :--- |
+| **Access by Index (\`arr[i]\`)** | **$O(1)$** (Direct pointer arithmetic: \`base + i * size\`) | **$O(i) \\rightarrow O(n)$** (Must hop $i$ pointer steps) |
+| **Insert at Head** | **$O(n)$** (Must shift all $n$ items right) | **$O(1)$** (Rewire 2 pointers) |
+| **Insert at Tail** | **$O(1)$ amortized** | **$O(n)$** without tail ptr / **$O(1)$** with tail ptr |
+| **Delete by Value** | **$O(n)$** (Search + shift) | **$O(n)$** (Search + splice, zero shifts) |
+| **Memory Overhead** | Compact (zero per-element pointer overhead) | Extra 8 bytes per node for \`next\` pointer |
+| **Cache Locality** | **Excellent** (Contiguous cache prefetching) | **Poor** (Nodes scattered across heap) |
+
+---
+
+## 4. Deleting by Value: Pointer Splicing
+
+Deleting an element in a linked list does NOT move any remaining elements. Instead, you find the predecessor node (\`prev\`) and splice its pointer around the target node:
+
+\`\`\`cpp
+bool deleteValue(int target) {
+    if (!head) return false;
+    if (head->val == target) {
+        Node* temp = head;
+        head = head->next;
+        delete temp;
+        return true;
+    }
+    Node* curr = head;
+    while (curr->next && curr->next->val != target) {
+        curr = curr->next;
+    }
+    if (!curr->next) return false; // Target not found
+    Node* temp = curr->next;
+    curr->next = curr->next->next; // Splice around target
+    delete temp;                   // Deallocate memory
+    return true;
+}
+\`\`\`
+    `,
+    banglaNote: {
+      topic: "লিঙ্কড লিস্ট ও পয়েন্টার কনসেপ্ট",
+      englishContext: "Singly Linked List memory architecture & O(1) insertion",
+      banglaText: `
+### লিঙ্কড লিস্ট (Linked List) সহজ বাংলায়:
+
+১. **মেমোরিতে ছড়িয়ে থাকা ট্রেনের বগি:**
+   অ্যারে হলো একই লাইনে পরপর সাজানো বক্সের মতো। কিন্তু লিঙ্কড লিস্টের নোডগুলো মেমোরির যেকোনো জায়গায় ছড়িয়ে থাকতে পারে। প্রতিটি নোডের ভেতর পরবর্তী নোডের মেমোরি অ্যাড্রেস বা **পয়েন্টার (\`next\`)** লেখা থাকে।
+
+২. **শুরুতে উপাদান যোগ করার ম্যাজিক ($O(1)$):**
+   অ্যারের শুরুতে একটি সংখ্যা ঢুকাতে গেলে পেছনের সবাইকে ১ ঘর করে ডানে সরাতে হয় ($O(n)$)। কিন্তু লিঙ্কড লিস্টে নতুন নোড বানিয়ে শুধু পয়েন্টারটি বদলে দিলেই কাজ শেষ ($O(1)$)! কোনো সংখ্যা সরাতে হয় না।
+
+৩. **সীমাবদ্ধতা (Tradeoff):**
+   অ্যারেতে সরাসরি \`arr[5]\` লিখে এক মুহূর্তে ৫ম সংখ্যায় যাওয়া যায় ($O(1)$)। কিন্তু লিঙ্কড লিস্টে ৫ম সংখ্যায় যেতে হলে মাথা (\`head\`) থেকে শুরু করে ৪ বার পয়েন্টার দিয়ে লাফিয়ে লাফিয়ে এগোতে হয় ($O(n)$)।
+      `,
+    },
+    quizTopicId: "linked-list",
+    visualizerLink: {
+      label: "Linked List Studio",
+      algorithmId: "linked-list",
+      path: "/algorithms/linked-list",
+    },
+  },
+  {
+    slug: "linear-search",
+    level: 7,
+    levelTitle: "Level 7: Searching Algorithms",
+    order: 1,
+    title: "Linear Search: Sequential Scanning & Complexity Bounds",
+    subtitle: "Sequential inspection, early exit optimizations, worst vs best case derivation, and when unsorted data makes it optimal.",
+    estimatedReadTime: "8 min",
+    category: "Searching",
+    content: `
+# Linear Search: Sequential Scanning & Complexity Bounds
+
+**Linear Search** (also called **Sequential Search**) is the simplest search algorithm in computer science. It traverses an array or collection element by element from beginning to end, comparing each item with the target value until a match is found or the collection is exhausted.
+
+---
+
+## 1. C++ Reference Implementation
+
+\`\`\`cpp
+int linearSearch(const vector<int>& arr, int target) {
+    for (int i = 0; i < (int)arr.size(); i++) {
+        if (arr[i] == target) {
+            return i; // Early termination: Target located at index i
+        }
+    }
+    return -1; // Exhausted array: Target does not exist in collection
+}
+\`\`\`
+
+---
+
+## 2. Mathematical Complexity Derivation
+
+### Best Case: $O(1)$ Comparisons
+If the target happens to be the very first element in the array (\`arr[0] == target\`), the loop body executes exactly once and immediately returns. Time complexity is strictly $O(1)$.
+
+### Worst Case: $O(n)$ Comparisons
+Occurs when:
+1. The target is located in the very last slot (\`arr[n-1]\`), requiring $n$ comparisons.
+2. The target is absent from the array, requiring $n$ unsuccessful checks before returning \`-1\`.
+Thus, worst-case complexity is $W(n) = n \\implies O(n)$.
+
+### Average Case: $\\frac{n+1}{2} \\rightarrow O(n)$ Comparisons
+Assuming the target is present and equally likely to appear in any of the $n$ positions:
+$$A(n) = \\frac{1}{n} \\sum_{i=1}^{n} i = \\frac{1}{n} \\cdot \\frac{n(n+1)}{2} = \\frac{n+1}{2} = O(n)$$
+
+---
+
+## 3. Engineering Decisions: When to Use Linear Search
+
+Beginners often assume Linear Search should never be used because Binary Search is $O(\\log n)$. However, Linear Search is superior in several real-world situations:
+1. **Unsorted Data:** Sorting an unsorted array takes $O(n \\log n)$ time. If you only plan to perform 1 or 2 lookups, sorting first is vastly slower than simply running a single $O(n)$ linear scan!
+2. **Small Arrays ($n < 30$):** CPU cache lines fetch contiguous memory chunks. For small collections, a simple linear loop executes entirely in L1 cache with zero branching mispredictions, beating complex search algorithms.
+3. **Linked Lists:** Since linked lists do not support $O(1)$ random indexing, Binary Search cannot be performed on them efficiently. Linear Search is the native search method for linked lists.
+    `,
+    banglaNote: {
+      topic: "লিনিয়ার সার্চ (Linear Search)",
+      englishContext: "Sequential search across unsorted collections",
+      banglaText: `
+### লিনিয়ার সার্চের মূল কথা:
+
+১. **ধাপে ধাপে খোঁজা:**
+   একটি সারির প্রথম থেকে শেষ পর্যন্ত একটি একটি করে চেক করা। যে মুহূর্তে টার্গেট মিলে যায়, তখনই কাজ শেষ।
+
+২. **কখন এটি সেরা?**
+   - টার্গেট যদি একদম শুরুতে থাকে, তবে মাত্র ১টি কদমেই উত্তর পাওয়া যায় ($O(1)$ Best Case)।
+   - ডাটা যদি সাজানো (Sorted) না থাকে, তবে আগে সাজাতে সময় নষ্ট না করে সরাসরি লিনিয়ার সার্চ চালানোই সবচেয়ে বুদ্ধিমানের কাজ।
+
+৩. **খারাপ দিক:**
+   টার্গেট যদি একদম শেষে থাকে বা তালিকায় না-ই থাকে, তবে সবগুলো উপাদান দেখতে হয় ($O(n)$ Worst Case)।
+      `,
+    },
+    quizTopicId: "linear-search",
+    visualizerLink: {
+      label: "Linear Search Studio",
+      algorithmId: "linear-search",
+      path: "/algorithms/linear-search",
+    },
+  },
+  {
+    slug: "binary-search",
+    level: 7,
+    levelTitle: "Level 7: Searching Algorithms",
+    order: 2,
+    title: "Binary Search: Logarithmic Halving & Precondition Proofs",
+    subtitle: "Divide-and-conquer interval halving, proof of O(log n) convergence connecting back to Merge Sort, iterative vs recursive call stack space, and 32-bit overflow avoidance.",
+    estimatedReadTime: "14 min",
+    category: "Searching",
+    content: `
+# Binary Search: Logarithmic Halving & Precondition Proofs
+
+**Binary Search** is one of the most powerful algorithms in computer science. By taking advantage of **sorted data**, it repeatedly divides the search space in half, locating any element in an array of $n$ items in at most $\\lceil \\log_2 n \\rceil$ steps.
+
+> ⚠️ **CRITICAL PRECONDITION:**
+> Binary Search **ONLY** works if the collection is sorted in monotonic order (e.g. non-decreasing order). Running Binary Search on an unsorted array produces undefined or wrong results!
+
+---
+
+## 1. C++ Implementations: Iterative vs Recursive
+
+### Iterative Version — $O(1)$ Auxiliary Space (Production Standard)
+\`\`\`cpp
+int binarySearchIterative(const vector<int>& arr, int target) {
+    int low = 0, high = (int)arr.size() - 1;
+    while (low <= high) {
+        // Prevents signed 32-bit integer overflow when (low + high) > 2^31 - 1
+        int mid = low + (high - low) / 2;
+
+        if (arr[mid] == target) {
+            return mid; // Target found
+        } else if (arr[mid] < target) {
+            low = mid + 1;  // Discard left half
+        } else {
+            high = mid - 1; // Discard right half
+        }
+    }
+    return -1; // Target not found
+}
+\`\`\`
+
+### Recursive Version — $O(\\log n)$ Call Stack Space
+\`\`\`cpp
+int binarySearchRecursive(const vector<int>& arr, int low, int high, int target) {
+    if (low > high) return -1; // Base case: search interval empty
+
+    int mid = low + (high - low) / 2;
+    if (arr[mid] == target) return mid;
+    else if (arr[mid] < target) {
+        return binarySearchRecursive(arr, mid + 1, high, target);
+    } else {
+        return binarySearchRecursive(arr, low, mid - 1, target);
+    }
+}
+\`\`\`
+
+---
+
+## 2. Deriving the $O(\\log n)$ Bound (Connection to Merge Sort)
+
+In Phase 8, we proved that Merge Sort splits an array in half repeatedly until singletons remain, creating a tree of depth $\\log_2 n$.
+
+Binary Search operates on the exact same mathematical principle:
+1. Initially, the interval has length $n$.
+2. After 1 comparison, the interval length becomes $\\frac{n}{2}$.
+3. After 2 comparisons, the interval length becomes $\\frac{n}{4} = \\frac{n}{2^2}$.
+4. After $k$ comparisons, the interval length becomes $\\frac{n}{2^k}$.
+
+The algorithm must terminate when the interval is reduced to a single element ($1$ candidate):
+$$\\frac{n}{2^k} = 1 \\implies 2^k = n \\implies k = \\log_2 n$$
+
+Therefore, in the worst case, Binary Search performs at most $\\lceil \\log_2 n \\rceil$ comparisons.
+- For $n = 1,000$, it takes at most $\\mathbf{10}$ comparisons.
+- For $n = 1,000,000$, it takes at most $\\mathbf{20}$ comparisons.
+- For $n = 1,000,000,000$, it takes at most $\\mathbf{30}$ comparisons!
+
+---
+
+## 3. The 32-Bit Overflow Bug Explained
+
+Many standard textbooks incorrectly write:
+\`\`\`cpp
+int mid = (low + high) / 2; // DANGEROUS BUG!
+\`\`\`
+If \`low\` and \`high\` are both around $1.5 \\times 10^9$ (valid in a large 2-billion element array), \`low + high\` equals $3 \\times 10^9$, which exceeds the maximum value of a 32-bit signed integer ($2,147,483,647$). The integer wraps around into negative territory, producing a negative index and crashing the program with a segmentation fault!
+
+The mathematically equivalent formula:
+\`\`\`cpp
+int mid = low + (high - low) / 2; // SAFE
+\`\`\`
+will NEVER overflow because \`high - low\` is always strictly less than or equal to \`high\`.
+    `,
+    banglaNote: {
+      topic: "বাইনারি সার্চের মূল রহস্য",
+      englishContext: "Logarithmic interval reduction on sorted data",
+      banglaText: `
+### বাইনারি সার্চ (Binary Search) সহজ বাংলায়:
+
+১. **অভিধান বা ডিকশনারির নিয়ম:**
+   ডিকশনারিতে কোনো শব্দ খুঁজতে আমরা কিন্তু ১ম পৃষ্ঠা থেকে ১টি ১টি করে পাতা উল্টাই না। আমরা ঠিক মাঝখানে বই খুলি। যদি আমাদের শব্দ পেছনের দিকে থাকে, তবে পুরো প্রথমার্ধ এক নিমেষে বাদ দিয়ে বাকি অর্ধেকের মাঝে খুঁজি।
+
+২. **পূর্বশর্ত (Precondition):**
+   ডাটা অবশ্যই **সাজানো (Sorted)** থাকতে হবে! এলোমেলো ডাটার ওপর বাইনারি সার্চ কাজ করে না।
+
+৩. **লগারিদমিক গতির কামাল:**
+   ১০ লাখ উপাদানের ভেতর থেকে যেকোনো সংখ্যা খুঁজতে লিনিয়ার সার্চের লাগতে পারে ১০ লাখ কদম। কিন্তু বাইনারি সার্চ মাত্র **২০টি কদমে** সমাধান নিশ্চিত করে!
+      `,
+    },
+    quizTopicId: "binary-search",
+    visualizerLink: {
+      label: "Binary Search Studio",
+      algorithmId: "binary-search",
+      path: "/algorithms/binary-search",
+    },
+  },
 ];
 
 export const DOCS_LEVELS: DocsLevel[] = [
@@ -1714,7 +2028,7 @@ export const DOCS_LEVELS: DocsLevel[] = [
   {
     level: 5,
     title: "Level 5: Fundamental Data Structures",
-    description: "Core linear containers: Stack (LIFO, call stacks) and Queue (FIFO, circular buffers, BFS).",
+    description: "Core linear containers: Stack (LIFO), Queue (FIFO, circular buffers), and Linked List (dynamic nodes, O(1) prepend).",
     articles: DOCS_ARTICLES.filter((a) => a.level === 5)
   },
   {
@@ -1722,5 +2036,11 @@ export const DOCS_LEVELS: DocsLevel[] = [
     title: "Level 6: Algorithmic Complexity Analysis",
     description: "Deep dive into Time Complexity growth rates, Space Complexity auxiliary memory, and call stack overhead.",
     articles: DOCS_ARTICLES.filter((a) => a.level === 6)
+  },
+  {
+    level: 7,
+    title: "Level 7: Searching Algorithms",
+    description: "Locating targets efficiently: Linear Search (O(n) on unsorted data) and Binary Search (O(log n) logarithmic halving on sorted data).",
+    articles: DOCS_ARTICLES.filter((a) => a.level === 7)
   }
 ];

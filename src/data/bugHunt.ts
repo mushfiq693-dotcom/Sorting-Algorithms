@@ -275,4 +275,87 @@ public:
       { type: "compare", indices: [0], description: "Full array duplicated onto stack frame via copy constructor" },
     ],
   },
+
+  "linear-search": {
+    algorithmId: "linear-search",
+    title: "Linear Search: Premature Loop Termination (Missing Last Element)",
+    description:
+      "This Linear Search function has a boundary off-by-one error: the loop condition stops one index too early, causing searches for the final element in the array to fail.",
+    buggyCode: `int linearSearch(const vector<int>& arr, int target) {
+    for (int i = 0; i < (int)arr.size() - 1; i++) {
+        if (arr[i] == target) {
+            return i;
+        }
+    }
+    return -1;
+}`,
+    buggyLineNumber: 2,
+    hint: "Examine the loop upper bound. In an n-element array with indices 0 to n-1, does `i < arr.size() - 1` visit index n-1?",
+    explanation:
+      "Line 2 used `i < (int)arr.size() - 1`, stopping at index n-2 and completely skipping the last element. Correct condition is `i < (int)arr.size();`.",
+    validateFix: (line: string) => {
+      const trimmed = line.replace(/\s+/g, "");
+      return (
+        (trimmed.includes("i<(int)arr.size();") ||
+          trimmed.includes("i<arr.size();") ||
+          trimmed.includes("i<=(int)arr.size()-1;") ||
+          trimmed.includes("i<=arr.size()-1;")) &&
+        trimmed.includes("i++")
+      );
+    },
+    flawedRunner: () => [
+      { type: "compare", indices: [0], description: "Terminated loop prematurely without checking final array slot" },
+    ],
+  },
+
+  "binary-search": {
+    algorithmId: "binary-search",
+    title: "Binary Search: Strict Inequality Skipping Single-Element Match",
+    description:
+      "This Binary Search implementation uses `low < high` instead of `low <= high`, causing the algorithm to exit prematurely when the search space narrows to a single element.",
+    buggyCode: `int binarySearch(const vector<int>& arr, int target) {
+    int low = 0, high = (int)arr.size() - 1;
+    while (low < high) {
+        int mid = low + (high - low) / 2;
+        if (arr[mid] == target) return mid;
+        else if (arr[mid] < target) low = mid + 1;
+        else high = mid - 1;
+    }
+    return -1;
+}`,
+    buggyLineNumber: 3,
+    hint: "What happens when low == high (e.g. only 1 candidate element left)? Does `while (low < high)` check it?",
+    explanation:
+      "Line 3 used `while (low < high)`. When low == high, the single remaining element is at that position, but the loop breaks immediately and incorrectly returns -1. The correct loop condition is `while (low <= high)`.",
+    validateFix: (line: string) => {
+      const trimmed = line.replace(/\s+/g, "");
+      return trimmed.includes("while(low<=high)");
+    },
+    flawedRunner: () => [
+      { type: "compare", indices: [0], description: "Loop broke prematurely when low == high, returning -1 on valid target" },
+    ],
+  },
+
+  "linked-list": {
+    algorithmId: "linked-list",
+    title: "Linked List: Overwriting Head Before Linking (Memory Orphan Bug)",
+    description:
+      "This `insertAtHead` function destroys the entire existing linked list by overwriting the `head` pointer before linking the new node's next pointer.",
+    buggyCode: `void insertAtHead(int val) {
+    Node* newNode = new Node(val);
+    head = newNode;
+    newNode->next = head;
+}`,
+    buggyLineNumber: 3,
+    hint: "In what order must you assign pointers when prepending? If you overwrite `head` first, where does the old head go?",
+    explanation:
+      "Line 3 assigned `head = newNode;` before setting `newNode->next = head;`. This overwrote the only pointer to the rest of the list, creating a circular self-reference `newNode->next = newNode` and orphaning all previous nodes in memory. First do `newNode->next = head;`, then `head = newNode;`.",
+    validateFix: (line: string) => {
+      const trimmed = line.replace(/\s+/g, "");
+      return trimmed.includes("newNode->next=head") || trimmed.includes("newNode->next=head;");
+    },
+    flawedRunner: () => [
+      { type: "compare", indices: [0], description: "Memory leak: Previous head reference wiped out before linkage" },
+    ],
+  },
 };

@@ -770,4 +770,689 @@ int main() {
 }
 \`\`\``,
   },
+
+  // =========================================================================
+  // CHAPTER 4: LINEAR ARRAYS
+  // =========================================================================
+
+  // --- Topic 4.4: Traversing Linear Arrays ---
+  {
+    id: "cm-topic-4-4",
+    title: "Section 4.4: Traversing Linear Arrays & Visiting Operations",
+    book_reference: "Lipschutz & Seymour, Data Structures, Revised 4th Ed., Chapter 4: Linear Arrays (Section 4.4)",
+    topic_tag: "Linear Arrays",
+    content_type: "topic",
+    difficulty: "easy",
+    assigned_date: null,
+    created_by: null,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    problem_statement: null,
+    explanation_or_solution: `### Section 4.4: Traversing Linear Arrays
+
+A **Linear Array** (denoted $LA$) is a list of a finite number $n$ of homogeneous data elements stored in contiguous computer memory cells, such that:
+1. The elements of the array are referenced respectively by an index set consisting of $n$ consecutive integers.
+2. The elements of the array are stored respectively in successive memory cells.
+
+---
+
+### 1. The Traversal Concept
+Let $A$ be a collection of data elements stored in the memory of the computer. Suppose we want to:
+* Print the contents of each element of $A$, or
+* Count the number of elements of $A$ with a given property, or
+* Update each element of $A$ by applying a mathematical function.
+
+This operation is accomplished by **traversing** $A$ — that is, by accessing and processing (frequently called **visiting**) each element of $A$ **exactly once**.
+
+---
+
+### 2. Linear vs Non-Linear Traversal Mechanics
+* **Linear Structures:** The simplicity of array traversal stems from the fact that a linear array has an inherent sequential ordering in computer hardware memory. Consecutive elements reside at addresses separated by a fixed stride $w$ (word size):
+  $$\\text{LOC}(LA[K]) = \\text{Base}(LA) + w \\cdot (K - \\text{LB})$$
+  Because adjacent logical elements map to adjacent physical memory words, linear structures (linear arrays and linked lists) can be traversed sequentially with trivial loop counters or pointer chasing.
+* **Non-Linear Structures:** On the other hand, the traversal of non-linear structures (such as trees and graphs) is considerably more complicated, requiring auxiliary stack or queue structures (e.g. DFS, BFS) or recursion to manage backtracking.
+
+---
+
+### 3. Array Bounds & Length Formula
+* **Lower Bound ($LB$):** The index of the first element in the array.
+* **Upper Bound ($UB$):** The index of the last element in the array.
+* **Length / Size ($N$):**
+  $$N = \\text{Length} = UB - LB + 1$$
+
+---
+
+### 4. C++ Implementation — Generic Linear Array Traversal
+\`\`\`cpp
+#include <iostream>
+#include <vector>
+#include <functional>
+
+// Generic Traversal passing a visitor function (PROCESS)
+template <typename T>
+void TraverseArray(const std::vector<T>& LA, int LB, int UB, std::function<void(int, const T&)> process) {
+    for (int K = LB; K <= UB; ++K) {
+        process(K, LA[K]); // Visit element LA[K]
+    }
+}
+
+int main() {
+    std::vector<int> scores = {85, 92, 78, 64, 99, 88};
+    int LB = 0;
+    int UB = scores.size() - 1;
+
+    std::cout << "--- Linear Array Traversal Demonstration ---\\n";
+    TraverseArray<int>(scores, LB, UB, [](int index, const int& val) {
+        std::cout << "Element at index [" << index << "] = " << val << "\\n";
+    });
+
+    return 0;
+}
+\`\`\``,
+  },
+
+  // --- Algorithm 4.1: Traversing a Linear Array ---
+  {
+    id: "cm-algo-4-1",
+    title: "Algorithm 4.1 & 4.1': Traversing a Linear Array",
+    book_reference: "Lipschutz & Seymour, Data Structures, Revised 4th Ed., Chapter 4: Linear Arrays (Algorithm 4.1)",
+    topic_tag: "Linear Arrays",
+    content_type: "algorithm",
+    difficulty: "easy",
+    assigned_date: null,
+    created_by: null,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    problem_statement: null,
+    explanation_or_solution: `### Algorithm 4.1: Traversing a Linear Array
+
+Here $LA$ is a linear array with lower bound $LB$ and upper bound $UB$. This algorithm traverses $LA$ applying an operation \`PROCESS\` to each element of $LA$.
+
+---
+
+### Formal Specification (While-Loop Formulation)
+\`\`\`text
+Algorithm 4.1: (Traversing a Linear Array)
+1. [Initialize counter.] Set K := LB.
+2. Repeat Steps 3 and 4 while K <= UB:
+3.   [Visit element.] Apply PROCESS to LA[K].
+4.   [Increase counter.] Set K := K + 1.
+   [End of Step 2 loop.]
+5. Exit.
+\`\`\`
+
+---
+
+### Alternative Specification (Repeat-For Formulation)
+\`\`\`text
+Algorithm 4.1': (Traversing a Linear Array Using Repeat-For Loop)
+1. Repeat for K = LB to UB:
+     Apply PROCESS to LA[K].
+   [End of loop.]
+2. Exit.
+\`\`\`
+
+---
+
+### Critical Cautionary Principle (Initialization)
+> **Caution:** The operation \`PROCESS\` in the traversal algorithm may use certain variables which **must be initialized before \`PROCESS\` is applied to any of the elements in the array**. Accordingly, the traversal algorithm may need to be preceded by such an initialization step (e.g., setting a counter \`NUM := 0\` or an accumulator \`SUM := 0\`).
+
+---
+
+### Mathematical Complexity Analysis
+* **Time Complexity:** The loop runs from $K = LB$ up to $K = UB$. The number of basic operations is exactly:
+  $$T(N) = UB - LB + 1 = N = O(N)$$
+  If the \`PROCESS\` subroutine takes $O(1)$ time, the entire traversal runs in strictly linear $O(N)$ time.
+* **Space Complexity:** Traversal operates in-place using a single counter variable $K$. Auxiliary memory is $S(N) = O(1)$.
+
+---
+
+### Working C++ Verification
+\`\`\`cpp
+#include <iostream>
+#include <vector>
+
+void Algorithm4_1_While(const std::vector<int>& LA, int LB, int UB) {
+    std::cout << "[Algorithm 4.1 (While-Loop)]: \\n";
+    int K = LB; // Step 1: Initialize counter
+    while (K <= UB) { // Step 2: Repeat Steps 3 & 4 while K <= UB
+        std::cout << "  Visiting LA[" << K << "] = " << LA[K] << "\\n"; // Step 3
+        K = K + 1; // Step 4: Increase counter
+    }
+    std::cout << "  Exit.\\n"; // Step 5
+}
+
+void Algorithm4_1_For(const std::vector<int>& LA, int LB, int UB) {
+    std::cout << "[Algorithm 4.1' (Repeat-For)]: \\n";
+    for (int K = LB; K <= UB; ++K) { // Step 1: Repeat for K = LB to UB
+        std::cout << "  Visiting LA[" << K << "] = " << LA[K] << "\\n";
+    }
+    std::cout << "  Exit.\\n"; // Step 2
+}
+
+int main() {
+    std::vector<int> LA = {10, 20, 30, 40, 50};
+    Algorithm4_1_While(LA, 0, 4);
+    Algorithm4_1_For(LA, 0, 4);
+    return 0;
+}
+\`\`\``,
+  },
+
+  // --- Problem 4.4: Automobile Sales Analysis ---
+  {
+    id: "cm-problem-4-4",
+    title: "Example 4.4: Automobile Sales Analysis via Array Traversal",
+    book_reference: "Lipschutz & Seymour, Data Structures, Revised 4th Ed., Chapter 4: Linear Arrays (Example 4.4)",
+    topic_tag: "Linear Arrays",
+    content_type: "problem",
+    difficulty: "easy",
+    assigned_date: null,
+    created_by: null,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    problem_statement: `Consider the array \`AUTO\` in Example 4.1(b), which records the number of automobiles sold each year from 1932 through 1984. Each of the following modules, which carry out the given operation, involves traversing \`AUTO\`.
+
+**(a)** Find the number \`NUM\` of years during which more than 300 automobiles were sold.  
+**(b)** Print each year and the number of automobiles sold in that year.  
+**(c)** State the critical requirement regarding variable initialization in module (a) before traversal begins, and explain why it is not required in module (b).`,
+    explanation_or_solution: `### Detailed Worked Solution for Example 4.4
+
+#### Module (a) Specification & Step-by-Step Execution
+To count how many years experienced automobile sales exceeding 300:
+\`\`\`text
+Module (a): Count Years with Sales > 300
+1. [Initialization step.] Set NUM := 0.
+2. Repeat for K = 1932 to 1984:
+     If AUTO[K] > 300, then:
+       Set NUM := NUM + 1.
+     [End of If structure.]
+   [End of loop.]
+3. Return.
+\`\`\`
+
+---
+
+#### Module (b) Specification & Step-by-Step Execution
+To output a tabulated report of years and sales volume:
+\`\`\`text
+Module (b): Print Sales by Year
+1. Repeat for K = 1932 to 1984:
+     Write: K, AUTO[K].
+   [End of loop.]
+2. Return.
+\`\`\`
+
+---
+
+#### Part (c) Mathematical & System Analysis of Initialization
+* **Why Module (a) requires initialization (\`NUM := 0\`):**  
+  The variable \`NUM\` acts as an **accumulator / frequency counter**. In computer architecture and memory allocation, freshly declared memory cells contain indeterminate residual bit patterns (garbage values). The operation \`NUM := NUM + 1\` reads the existing value of \`NUM\`, adds 1, and stores the result back. If \`NUM\` is not explicitly cleared to zero prior to the loop, the final total will be offset by the random residual data.
+* **Why Module (b) does NOT require initialization:**  
+  Module (b) performs no accumulation. The loop counter \`K\` is explicitly initialized by the loop construct itself (\`K = 1932\`), and \`AUTO[K]\` is accessed as a read-only lookup. No secondary variable maintains state across iterations.
+
+---
+
+### Array Metrics
+* **Lower Bound ($LB$):** $1932$
+* **Upper Bound ($UB$):** $1984$
+* **Total Years ($N$):**
+  $$N = UB - LB + 1 = 1984 - 1932 + 1 = 53 \\text{ elements}$$
+
+---
+
+### Complete C++ Verification Program
+\`\`\`cpp
+#include <iostream>
+#include <vector>
+#include <map>
+
+int main() {
+    // Simulate AUTO array for years 1932 through 1984 (53 elements)
+    std::map<int, int> AUTO;
+    for (int yr = 1932; yr <= 1984; ++yr) {
+        // Sample deterministic sales data
+        AUTO[yr] = 250 + ((yr * 37) % 200); 
+    }
+
+    // --- Module (a): Count years where sales > 300 ---
+    int NUM = 0; // Step 1: Mandatory initialization
+    for (int K = 1932; K <= 1984; ++K) { // Step 2: Repeat for K = 1932 to 1984
+        if (AUTO[K] > 300) {
+            NUM = NUM + 1;
+        }
+    }
+    std::cout << "Module (a) Result: Total years with sales > 300 = " << NUM << "\\n\\n";
+
+    // --- Module (b): Print each year and sales count ---
+    std::cout << "Module (b) Output (First 5 years sample):\\n";
+    for (int K = 1932; K <= 1936; ++K) {
+        std::cout << "  Year " << K << ": " << AUTO[K] << " automobiles\\n";
+    }
+
+    return 0;
+}
+\`\`\``,
+  },
+
+  // --- Topic 4.5: Inserting and Deleting ---
+  {
+    id: "cm-topic-4-5",
+    title: "Section 4.5: Insertion and Deletion Mechanics in Linear Arrays",
+    book_reference: "Lipschutz & Seymour, Data Structures, Revised 4th Ed., Chapter 4: Linear Arrays (Section 4.5)",
+    topic_tag: "Linear Arrays",
+    content_type: "topic",
+    difficulty: "medium",
+    assigned_date: null,
+    created_by: null,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    problem_statement: null,
+    explanation_or_solution: `### Section 4.5: Inserting and Deleting in Linear Arrays
+
+Let $A$ be a collection of data elements in the memory of the computer.
+* **\"Inserting\"** refers to the operation of adding another element to the collection $A$.
+* **\"Deleting\"** refers to the operation of removing one of the elements from $A$.
+
+When $A$ is a **linear array**, these operations behave fundamentally differently depending on whether they occur at the **end** of the array or in the **middle** of the array.
+
+---
+
+### 1. Operations at the End of an Array ($O(1)$)
+* **Inserting at the end:** Can be easily done provided the memory space allocated for the array is large enough to accommodate the additional element. We simply assign the value to slot $N+1$ and increment $N := N + 1$.
+* **Deleting at the end:** Presents no difficulties; we simply decrement $N := N - 1$. The slot is logically excluded without moving any other data.
+
+---
+
+### 2. Operations in the Middle of an Array ($O(N)$ Shifting)
+* **Inserting in the middle (at index $K$):**  
+  Suppose we need to insert an element at index $K$. In order to make room for the new element, every element from index $K$ up to $N$ must be moved **downward** (to higher subscript locations $J+1 := J$). On average, half of the elements must be moved to accommodate the new element and preserve the relative order.
+* **Deleting in the middle (at index $K$):**  
+  Deleting an element somewhere in the middle of the array requires that each subsequent element from index $K+1$ up to $N$ be moved **upward** one location (to lower subscript locations $J := J+1$) in order to \"fill up\" the vacancy and preserve continuity.
+
+---
+
+### 3. Downward Shifting Reverse Order Invariant
+> **Critical Rule:** When shifting elements downward to make room for an insertion, elements **must be moved in reverse order** — that is, first $LA[N]$, then $LA[N-1]$, ..., and last $LA[K]$. Moving in forward order would copy $LA[K]$ into $LA[K+1]$, and then that copy would be copied into $LA[K+2]$, wiping out the entire subsequent list!
+
+---
+
+### 4. Average Number of Data Movements
+Let $N$ be the number of elements in the array:
+* **Average Insertion Shifts:** Assuming each insertion position $K \\in [1, N+1]$ is equally likely:
+  $$\\text{Avg Shifts} = \\frac{1}{N+1} \\sum_{K=1}^{N+1} (N - K + 1) = \\frac{N}{2}$$
+* **Average Deletion Shifts:** Assuming each deletion position $K \\in [1, N]$ is equally likely:
+  $$\\text{Avg Shifts} = \\frac{1}{N} \\sum_{K=1}^{N} (N - K) = \\frac{N - 1}{2}$$
+
+---
+
+### 5. Architectural Trade-off: Arrays vs Linked Lists
+> **Textbook Remark:** If many deletions and insertions are to be made in a collection of data elements, a linear array may **not** be the most efficient data structure because $O(N)$ data movement is required per modification. In such scenarios, **linked lists** or dynamic trees are vastly superior, requiring only $O(1)$ pointer adjustments once the node position is identified.`,
+  },
+
+  // --- Problem 4.6: Tracing Element Shifting in Name Array ---
+  {
+    id: "cm-problem-4-6",
+    title: "Example 4.5 & 4.6: Tracing Element Shifting in an Alphabetical Name Array",
+    book_reference: "Lipschutz & Seymour, Data Structures, Revised 4th Ed., Chapter 4: Linear Arrays (Examples 4.5 & 4.6)",
+    topic_tag: "Linear Arrays",
+    content_type: "problem",
+    difficulty: "medium",
+    assigned_date: null,
+    created_by: null,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    problem_statement: `**(a) Example 4.5 (Array Capacity & End Insertion):**  
+Suppose \`TEST\` has been declared to be a 5-element array (\`TEST[1 ... 5]\`), but data have been recorded only for \`TEST[1]\`, \`TEST[2]\`, and \`TEST[3]\`.
+1. Show the specific assignment statements to add score $X$ to the list, and subsequently score $Y$.
+2. Explain what occurs if an attempt is made to insert another score $Z$ after $Y$.
+
+**(b) Example 4.6 (Step-by-Step Shifting Trace of Figure 4.4):**  
+Suppose \`NAME\` is an 8-element linear array (\`NAME[1 ... 8]\`), and five names are currently stored in alphabetical order (Fig. 4.4a):
+\`NAME[1] = "Brown"\`, \`NAME[2] = "Davis"\`, \`NAME[3] = "Johnson"\`, \`NAME[4] = "Smith"\`, \`NAME[5] = "Wagner"\`.  
+The array must remain sorted alphabetically after every modification. Trace the exact array states and element shifts for the following sequential operations:
+1. **Operation 1:** Insert name **\`"Ford"\`** into \`NAME\`.
+2. **Operation 2:** Next, insert name **\`"Taylor"\`** into \`NAME\`.
+3. **Operation 3:** Last, delete name **\`"Davis"\`** from \`NAME\`.
+4. State the total number of element moves performed across all three operations, and discuss why this demonstrates the inefficiency of linear arrays for dynamic lists.`,
+    explanation_or_solution: `### Detailed Worked Solution for Examples 4.5 & 4.6
+
+#### (a) Example 4.5 Solution:
+1. **Assignments:**
+   * To add $X$ to the list: \`TEST[4] := X\`
+   * To add $Y$ to the list: \`TEST[5] := Y\`
+2. **Capacity Boundary (Overflow):**  
+   Now all 5 allocated cells (\`TEST[1]\` through \`TEST[5]\`) are occupied ($N = 5 = \\text{Capacity}$). An attempt to insert $Z$ triggers an **Array Overflow condition**. In static memory allocation, arrays cannot expand past their declared upper bound without reallocating a new, larger memory block and copying all prior elements.
+
+---
+
+#### (b) Example 4.6 Step-by-Step Trace (Figure 4.4):
+
+##### Initial State (Fig. 4.4a): $N = 5$
+| Index | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |
+| :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| **NAME** | \`Brown\` | \`Davis\` | \`Johnson\` | \`Smith\` | \`Wagner\` | *(empty)* | *(empty)* | *(empty)* |
+
+---
+
+##### Operation 1: Insert \"Ford\" (Fig. 4.4b)
+* Alphabetical order dictates: $\\text{\"Davis\"} < \\mathbf{\\text{\"Ford\"}} < \\text{\"Johnson\"}$. Therefore, $\\text{\"Ford\"}$ must be placed at index $K = 3$.
+* Elements from index $3$ through $5$ must be moved **downward** one slot in reverse order:
+  1. \`NAME[6] := NAME[5]\` (moves \`"Wagner"\` to slot 6)
+  2. \`NAME[5] := NAME[4]\` (moves \`"Smith"\` to slot 5)
+  3. \`NAME[4] := NAME[3]\` (moves \`"Johnson"\` to slot 4)
+* Insert the new element: \`NAME[3] := "Ford"\`.
+* Update size: $N := N + 1 = 6$.
+* **Data Movements:** **3 moves**.
+
+| Index | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |
+| :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| **NAME** | \`Brown\` | \`Davis\` | **\`Ford\`** | \`Johnson\` | \`Smith\` | \`Wagner\` | *(empty)* | *(empty)* |
+
+---
+
+##### Operation 2: Insert \"Taylor\" (Fig. 4.4c)
+* Alphabetical order dictates: $\\text{\"Smith\"} < \\mathbf{\\text{\"Taylor\"}} < \\text{\"Wagner\"}$. Therefore, $\\text{\"Taylor\"}$ must be placed at index $K = 6$.
+* Elements from index $6$ through $6$ must be moved **downward** one slot:
+  1. \`NAME[7] := NAME[6]\` (moves \`"Wagner"\` to slot 7)
+* Insert the new element: \`NAME[6] := "Taylor"\`.
+* Update size: $N := N + 1 = 7$.
+* **Data Movements:** **1 move**.
+
+| Index | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |
+| :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| **NAME** | \`Brown\` | \`Davis\` | \`Ford\` | \`Johnson\` | \`Smith\` | **\`Taylor\`** | \`Wagner\` | *(empty)* |
+
+---
+
+##### Operation 3: Delete \"Davis\" (Fig. 4.4d)
+* \`"Davis"\` is located at index $K = 2$.
+* To close the vacancy, all subsequent elements from index $3$ up to $7$ must be moved **upward** one slot in forward order:
+  1. \`NAME[2] := NAME[3]\` (moves \`"Ford"\` to slot 2)
+  2. \`NAME[3] := NAME[4]\` (moves \`"Johnson"\` to slot 3)
+  3. \`NAME[4] := NAME[5]\` (moves \`"Smith"\` to slot 4)
+  4. \`NAME[5] := NAME[6]\` (moves \`"Taylor"\` to slot 5)
+  5. \`NAME[6] := NAME[7]\` (moves \`"Wagner"\` to slot 6)
+* Update size: $N := N - 1 = 6$.
+* **Data Movements:** **5 moves**.
+
+| Index | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |
+| :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| **NAME** | \`Brown\` | **\`Ford\`** | \`Johnson\` | \`Smith\` | \`Taylor\` | \`Wagner\` | *(empty)* | *(empty)* |
+
+---
+
+##### Total Cost Analysis:
+$$\\text{Total Shifts} = 3 + 1 + 5 = \\mathbf{9} \\text{ element movements}$$
+If thousands of names were stored in the array, each insertion or deletion would require shifting thousands of items, making array-based dynamic lists computationally expensive.
+
+---
+
+### Complete C++ Program Simulating Fig. 4.4 Trace
+\`\`\`cpp
+#include <iostream>
+#include <vector>
+#include <string>
+
+void PrintArray(const std::vector<std::string>& A, int N, const std::string& stepLabel) {
+    std::cout << stepLabel << " (N = " << N << "):\\n  [";
+    for (int i = 0; i < N; ++i) {
+        std::cout << "\"" << A[i] << "\"" << (i + 1 < N ? ", " : "");
+    }
+    std::cout << "]\\n\\n";
+}
+
+int main() {
+    std::vector<std::string> NAME(8);
+    NAME[0] = "Brown";
+    NAME[1] = "Davis";
+    NAME[2] = "Johnson";
+    NAME[3] = "Smith";
+    NAME[4] = "Wagner";
+    int N = 5;
+
+    PrintArray(NAME, N, "Fig 4.4(a): Initial 5 names");
+
+    // 1. Insert "Ford" at index 2 (1-based: 3)
+    int K1 = 2;
+    for (int J = N - 1; J >= K1; --J) {
+        NAME[J + 1] = NAME[J];
+    }
+    NAME[K1] = "Ford";
+    N++;
+    PrintArray(NAME, N, "Fig 4.4(b): After inserting 'Ford' (3 shifts)");
+
+    // 2. Insert "Taylor" at index 5 (1-based: 6)
+    int K2 = 5;
+    for (int J = N - 1; J >= K2; --J) {
+        NAME[J + 1] = NAME[J];
+    }
+    NAME[K2] = "Taylor";
+    N++;
+    PrintArray(NAME, N, "Fig 4.4(c): After inserting 'Taylor' (1 shift)");
+
+    // 3. Delete "Davis" at index 1 (1-based: 2)
+    int K3 = 1;
+    for (int J = K3; J < N - 1; ++J) {
+        NAME[J] = NAME[J + 1];
+    }
+    N--;
+    PrintArray(NAME, N, "Fig 4.4(d): After deleting 'Davis' (5 shifts)");
+
+    return 0;
+}
+\`\`\``,
+  },
+
+  // --- Algorithm 4.2: Inserting into a Linear Array ---
+  {
+    id: "cm-algo-4-2",
+    title: "Algorithm 4.2: Inserting into a Linear Array (INSERT)",
+    book_reference: "Lipschutz & Seymour, Data Structures, Revised 4th Ed., Chapter 4: Linear Arrays (Algorithm 4.2)",
+    topic_tag: "Linear Arrays",
+    content_type: "algorithm",
+    difficulty: "medium",
+    assigned_date: null,
+    created_by: null,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    problem_statement: null,
+    explanation_or_solution: `### Algorithm 4.2: Inserting into a Linear Array
+
+\`INSERT(LA, N, K, ITEM)\`  
+Here $LA$ is a linear array with $N$ elements and $K$ is a positive integer such that $K \\le N$. This algorithm inserts an element \`ITEM\` into the $K^{\\text{th}}$ position in $LA$.
+
+---
+
+### Formal Algorithm Specification
+\`\`\`text
+Algorithm 4.2: INSERT(LA, N, K, ITEM)
+1. [Initialize counter.] Set J := N.
+2. Repeat Steps 3 and 4 while J >= K:
+3.   [Move Jth element downward.] Set LA[J + 1] := LA[J].
+4.   [Decrease counter.] Set J := J - 1.
+   [End of Step 2 loop.]
+5. [Insert element.] Set LA[K] := ITEM.
+6. [Reset N.] Set N := N + 1.
+7. Exit.
+\`\`\`
+
+---
+
+### Mathematical Invariants & Step Explanation
+1. **Loop Initialization ($J := N$):** The index pointer $J$ begins at the current tail element $N$.
+2. **Reverse Order Traversal ($J \\ge K$):** Shifting proceeds in reverse order ($J = N, N-1, \\dots, K$). Each element $LA[J]$ is copied into its adjacent higher neighbor $LA[J+1]$.
+3. **Vacancy Creation:** After the loop terminates, cell $LA[K]$ contains a duplicate copy of $LA[K+1]$, but its old value has safely moved to $LA[K+1]$. Step 5 overwrites $LA[K]$ with \`ITEM\`.
+4. **Size Increment ($N := N + 1$):** Accounts for the newly populated slot.
+
+---
+
+### Boundary Cases & Complexity Analysis
+* **Worst Case ($K = 1$):** Inserting at the very front requires shifting all $N$ elements downward:
+  $$W(N) = N \\text{ movements} = O(N)$$
+* **Best Case ($K = N + 1$):** Appending to the end requires 0 loop iterations ($J < K$ initially):
+  $$B(N) = 0 \\text{ movements} = O(1)$$
+* **Average Case:** Assuming uniform insertion distribution:
+  $$A(N) = \\frac{1}{N+1} \\sum_{K=1}^{N+1} (N - K + 1) = \\frac{N}{2} = O(N)$$
+* **Auxiliary Space:** $O(1)$ extra space.
+
+---
+
+### Complete C++ Implementation
+\`\`\`cpp
+#include <iostream>
+#include <vector>
+
+// Algorithm 4.2 implementation (0-based indexing adaptation)
+bool InsertIntoLinearArray(std::vector<int>& LA, int& N, int MAX_CAPACITY, int K, int ITEM) {
+    // Boundary check for overflow
+    if (N >= MAX_CAPACITY) {
+        std::cerr << "Error: Array Overflow! Cannot insert into full array.\\n";
+        return false;
+    }
+    if (K < 0 || K > N) {
+        std::cerr << "Error: Invalid index K = " << K << " for array of size " << N << "\\n";
+        return false;
+    }
+
+    // Step 1 & 2: Shift downward in reverse order
+    int J = N - 1;
+    while (J >= K) {
+        LA[J + 1] = LA[J]; // Step 3: Move Jth element downward
+        J = J - 1;         // Step 4: Decrease counter
+    }
+
+    // Step 5: Insert element
+    LA[K] = ITEM;
+
+    // Step 6: Reset N
+    N = N + 1;
+
+    return true; // Step 7: Exit
+}
+
+int main() {
+    std::vector<int> LA(10);
+    LA[0] = 11; LA[1] = 22; LA[2] = 33; LA[3] = 44; LA[4] = 55;
+    int N = 5;
+
+    std::cout << "Original array (N=5): ";
+    for (int i = 0; i < N; ++i) std::cout << LA[i] << " ";
+    std::cout << "\\n";
+
+    // Insert 99 at index 2
+    InsertIntoLinearArray(LA, N, 10, 2, 99);
+
+    std::cout << "After inserting 99 at index 2 (N=" << N << "): ";
+    for (int i = 0; i < N; ++i) std::cout << LA[i] << " ";
+    std::cout << "\\n";
+
+    return 0;
+}
+\`\`\``,
+  },
+
+  // --- Algorithm 4.3: Deleting from a Linear Array ---
+  {
+    id: "cm-algo-4-3",
+    title: "Algorithm 4.3: Deleting from a Linear Array (DELETE)",
+    book_reference: "Lipschutz & Seymour, Data Structures, Revised 4th Ed., Chapter 4: Linear Arrays (Algorithm 4.3)",
+    topic_tag: "Linear Arrays",
+    content_type: "algorithm",
+    difficulty: "medium",
+    assigned_date: null,
+    created_by: null,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    problem_statement: null,
+    explanation_or_solution: `### Algorithm 4.3: Deleting from a Linear Array
+
+\`DELETE(LA, N, K, ITEM)\`  
+Here $LA$ is a linear array with $N$ elements and $K$ is a positive integer such that $K \\le N$. This algorithm deletes the $K^{\\text{th}}$ element from $LA$ and assigns it to the variable \`ITEM\`.
+
+---
+
+### Formal Algorithm Specification
+\`\`\`text
+Algorithm 4.3: DELETE(LA, N, K, ITEM)
+1. Set ITEM := LA[K].
+2. Repeat for J = K to N - 1:
+     [Move J + 1st element upward.] Set LA[J] := LA[J + 1].
+   [End of loop.]
+3. [Reset the number N of elements in LA.] Set N := N - 1.
+4. Exit.
+\`\`\`
+
+---
+
+### Mathematical Invariants & Step Explanation
+1. **Value Preservation (\`ITEM := LA[K]\`):** Saves the target value before it is overwritten by subsequent elements.
+2. **Forward Order Traversal ($J = K \\dots N-1$):** Shifting proceeds forward. Element $LA[J+1]$ is shifted **upward** into position $LA[J]$, closing the hole left by the removed item.
+3. **Size Decrement ($N := N - 1$):** Reduces the logical size. The old value at $LA[N]$ is logically dropped.
+
+---
+
+### Boundary Cases & Complexity Analysis
+* **Worst Case ($K = 1$):** Deleting the very first element requires shifting all remaining $N - 1$ elements upward:
+  $$W(N) = N - 1 \\text{ movements} = O(N)$$
+* **Best Case ($K = N$):** Deleting the last element requires 0 loop iterations:
+  $$B(N) = 0 \\text{ movements} = O(1)$$
+* **Average Case:** Assuming uniform deletion distribution across all $N$ positions:
+  $$A(N) = \\frac{1}{N} \\sum_{K=1}^{N} (N - K) = \\frac{N - 1}{2} = O(N)$$
+* **Auxiliary Space:** $O(1)$ extra space.
+
+---
+
+### Complete C++ Implementation
+\`\`\`cpp
+#include <iostream>
+#include <vector>
+
+// Algorithm 4.3 implementation (0-based indexing adaptation)
+bool DeleteFromLinearArray(std::vector<int>& LA, int& N, int K, int& ITEM) {
+    // Boundary check for underflow
+    if (N <= 0) {
+        std::cerr << "Error: Array Underflow! Cannot delete from empty array.\\n";
+        return false;
+    }
+    if (K < 0 || K >= N) {
+        std::cerr << "Error: Invalid index K = " << K << " for array of size " << N << "\\n";
+        return false;
+    }
+
+    // Step 1: Save element
+    ITEM = LA[K];
+
+    // Step 2: Shift upward in forward order
+    for (int J = K; J < N - 1; ++J) {
+        LA[J] = LA[J + 1]; // Move J+1st element upward
+    }
+
+    // Step 3: Decrement N
+    N = N - 1;
+
+    return true; // Step 4: Exit
+}
+
+int main() {
+    std::vector<int> LA = {10, 20, 30, 40, 50};
+    int N = 5;
+    int deletedItem = 0;
+
+    std::cout << "Original array: ";
+    for (int i = 0; i < N; ++i) std::cout << LA[i] << " ";
+    std::cout << "\\n";
+
+    // Delete element at index 1 (value 20)
+    DeleteFromLinearArray(LA, N, 1, deletedItem);
+
+    std::cout << "Deleted Item: " << deletedItem << "\\n";
+    std::cout << "Array after deletion (N=" << N << "): ";
+    for (int i = 0; i < N; ++i) std::cout << LA[i] << " ";
+    std::cout << "\\n";
+
+    return 0;
+}
+\`\`\``,
+  },
 ];

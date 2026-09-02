@@ -22,7 +22,6 @@ import {
   EyeOff,
   KeyRound,
   X,
-  Zap,
 } from "lucide-react";
 
 import { validateGenuineEmail } from "@/lib/validation/emailValidator";
@@ -147,29 +146,6 @@ function LoginForm() {
     }
   };
 
-  const handleDemoSignIn = async () => {
-    setIsLoading(true);
-    setErrorMsg(null);
-    setSuccessMsg("Authenticating recruiter demo session...");
-
-    try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email: "demo@algohub.dev",
-        password: "DemoUser2026!",
-      });
-      if (error) throw error;
-
-      if (data.user) {
-        setSuccessMsg("✓ Verified recruiter demo access granted! Redirecting...");
-        router.push(nextRoute);
-        router.refresh();
-      }
-    } catch (err: any) {
-      setErrorMsg(err.message || "Failed to start demo session. You can also explore public visualizers directly.");
-      setIsLoading(false);
-    }
-  };
-
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -225,99 +201,68 @@ function LoginForm() {
   };
 
   return (
-    <div className="w-full max-w-md space-y-6">
-      {/* Header Badge */}
-      <div className="text-center space-y-2">
-        <Link
-          href="/"
-          className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-rose-500/30 bg-rose-500/10 text-rose-300 font-mono text-xs font-semibold hover:bg-rose-500/20 transition-colors"
-        >
-          <Code2 className="h-3.5 w-3.5 text-rose-400" />
-          <span>AlgoHub • GSTU CSE Restricted Beta</span>
-        </Link>
+    <div className="w-full max-w-md space-y-6 relative z-10">
+      {/* Header Badge & Title */}
+      <div className="text-center space-y-3">
+        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-primary/40 bg-card text-primary text-xs font-sans font-semibold uppercase tracking-wider backdrop-blur-md shadow-sm">
+          <Sparkles className="h-3.5 w-3.5 text-primary" />
+          <span>Interactive Algorithm Learning Platform</span>
+        </div>
 
-        <h1 className="text-2xl sm:text-3xl font-extrabold text-white font-sans tracking-tight">
-          {mode === "signin" ? "Sign in to AlgoHub" : "Request Beta Access"}
+        <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight text-foreground leading-[1.2] font-heading">
+          {mode === "signin" ? (
+            <>
+              Sign In to{" "}
+              <span className="italic font-semibold text-[#B08422] dark:text-[#D4B872]">
+                AlgoHub.
+              </span>
+            </>
+          ) : (
+            <>
+              Join the{" "}
+              <span className="italic font-semibold text-[#B08422] dark:text-[#D4B872]">
+                Learning Community.
+              </span>
+            </>
+          )}
         </h1>
-        <p className="text-xs sm:text-sm text-slate-300">
+
+        <p className="text-xs sm:text-sm text-muted-foreground font-sans font-medium max-w-sm mx-auto leading-relaxed">
           {mode === "signin"
-            ? "Enter your credentials to access interactive algorithm modules."
-            : "Register with your student/faculty email for departmental review."}
+            ? "Enter your credentials to access interactive algorithm studios & learning modules."
+            : "Register with your student or faculty email for departmental review and access."}
         </p>
-      </div>
-
-      {/* Recruiter & Quick Evaluation Fast-Track Card */}
-      <div className="rounded-2xl border border-cyan-500/35 bg-gradient-to-b from-cyan-950/50 via-[#071322]/90 to-[#040a14]/98 p-4 sm:p-5 backdrop-blur-xl shadow-xl shadow-cyan-950/50 space-y-3">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <span className="flex h-2 w-2 rounded-full bg-cyan-400 animate-pulse" />
-            <span className="text-xs font-bold text-cyan-300 font-mono tracking-tight">
-              👔 Recruiter & Evaluation Fast-Track
-            </span>
-          </div>
-          <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-cyan-500/15 border border-cyan-500/30 text-cyan-300 font-bold">
-            1-Click Demo
-          </span>
-        </div>
-
-        <p className="text-[11px] text-slate-300 leading-relaxed font-sans">
-          Evaluating this project for a job/internship? Bypass university beta registration with pre-approved demo credentials.
-        </p>
-
-        <div className="flex flex-col sm:flex-row gap-2 pt-1">
-          <button
-            type="button"
-            onClick={handleDemoSignIn}
-            disabled={isLoading}
-            className="flex-1 inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 px-4 py-2.5 text-xs font-bold text-white shadow-lg shadow-cyan-500/25 hover:brightness-110 active:scale-[0.98] transition-all cursor-pointer disabled:opacity-50"
-          >
-            <Zap className="h-3.5 w-3.5 fill-white" />
-            <span>1-Click Recruiter Demo Access</span>
-          </button>
-
-          <Link
-            href="/learn"
-            className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-white/10 bg-white/5 px-3 py-2.5 text-xs font-semibold text-slate-200 hover:text-white hover:bg-white/10 transition-all text-center"
-          >
-            <span>Public Sandbox &rarr;</span>
-          </Link>
-        </div>
-
-        <div className="text-[10px] text-slate-400 font-mono flex items-center justify-between pt-1.5 border-t border-white/[0.08]">
-          <span>Email: <strong className="text-slate-300">demo@algohub.dev</strong></span>
-          <span>Pass: <strong className="text-slate-300">DemoUser2026!</strong></span>
-        </div>
       </div>
 
       {/* Main Glassmorphic Auth Card */}
-      <div className="rounded-2xl border border-rose-500/25 bg-[#0e0509]/95 p-6 sm:p-8 backdrop-blur-2xl shadow-2xl shadow-rose-950/40 space-y-5">
+      <div className="rounded-2xl border border-border bg-card/90 p-6 sm:p-8 backdrop-blur-xl shadow-2xl space-y-5 corner-flourish transition-all">
         {emailVerificationSent ? (
           <div className="text-center py-4 space-y-5 animate-in fade-in zoom-in-95">
-            <div className="h-16 w-16 mx-auto rounded-2xl bg-gradient-to-tr from-rose-600 to-amber-600 flex items-center justify-center shadow-xl shadow-rose-600/30">
-              <Mail className="h-8 w-8 text-white" />
+            <div className="h-16 w-16 mx-auto rounded-2xl bg-primary/15 border border-primary/30 flex items-center justify-center shadow-brass text-primary">
+              <Mail className="h-8 w-8 text-primary" />
             </div>
 
             <div className="space-y-2">
-              <h2 className="text-xl font-bold text-white font-sans">
+              <h2 className="text-2xl font-semibold text-foreground font-heading">
                 Verify Your Email Address
               </h2>
-              <p className="text-xs sm:text-sm text-slate-300 leading-relaxed max-w-sm mx-auto">
+              <p className="text-xs sm:text-sm text-muted-foreground font-sans leading-relaxed max-w-sm mx-auto">
                 We sent a secure verification link to:
               </p>
-              <div className="inline-block px-3 py-1 rounded-xl bg-rose-500/15 border border-rose-500/30 text-rose-300 font-mono text-xs font-bold">
+              <div className="inline-block px-3.5 py-1.5 rounded-lg bg-primary/10 border border-primary/30 text-primary font-mono text-xs font-bold">
                 {emailVerificationSent}
               </div>
             </div>
 
-            <div className="p-4 rounded-xl bg-[#060204] border border-rose-950/60 text-left text-xs text-slate-300 space-y-2">
-              <div className="font-semibold text-white flex items-center gap-1.5">
-                <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" />
+            <div className="p-4 rounded-xl bg-secondary/50 border border-border text-left text-xs text-muted-foreground space-y-2 font-sans">
+              <div className="font-semibold text-foreground flex items-center gap-1.5">
+                <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
                 <span>Next Steps:</span>
               </div>
-              <ol className="list-decimal list-inside space-y-1 text-slate-400 font-sans">
+              <ol className="list-decimal list-inside space-y-1 text-muted-foreground font-sans">
                 <li>Open your email inbox (and check spam if needed).</li>
                 <li>Click the confirmation link to verify your identity.</li>
-                <li>Your request will immediately move to GSTU departmental review!</li>
+                <li>Your request will immediately move to departmental review!</li>
               </ol>
             </div>
 
@@ -327,7 +272,7 @@ function LoginForm() {
                 setMode("signin");
                 setEmail(emailVerificationSent);
               }}
-              className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-red-600 via-rose-600 to-amber-600 px-5 py-3 text-xs sm:text-sm font-bold text-white shadow-lg shadow-rose-600/30 hover:brightness-110 transition-all cursor-pointer"
+              className="btn-brass w-full inline-flex items-center justify-center gap-2 rounded px-7 py-3 text-xs sm:text-sm font-sans font-semibold tracking-[0.08em] shadow-brass hover:scale-[1.01] active:scale-[0.98] transition-all text-primary-foreground cursor-pointer"
             >
               <span>Already Verified? Go to Sign In</span>
               <ArrowRight className="h-4 w-4" />
@@ -336,7 +281,7 @@ function LoginForm() {
         ) : (
           <>
             {/* Mode Switcher Tabs */}
-            <div className="grid grid-cols-2 gap-1 p-1 rounded-xl bg-[#060204] border border-rose-950/60 font-sans text-xs font-semibold">
+            <div className="grid grid-cols-2 gap-1 p-1 rounded-lg bg-secondary/60 border border-border font-sans text-xs font-semibold">
               <button
                 type="button"
                 onClick={() => {
@@ -344,10 +289,10 @@ function LoginForm() {
                   setErrorMsg(null);
                   setSuccessMsg(null);
                 }}
-                className={`py-2 rounded-lg transition-all cursor-pointer ${
+                className={`py-2 rounded transition-all cursor-pointer tracking-wide ${
                   mode === "signin"
-                    ? "bg-rose-600/20 text-rose-300 border border-rose-500/30 shadow-sm"
-                    : "text-slate-400 hover:text-slate-200"
+                    ? "bg-card text-primary border border-primary/40 shadow-sm font-bold"
+                    : "text-muted-foreground hover:text-foreground hover:bg-card/50"
                 }`}
               >
                 Sign In
@@ -359,10 +304,10 @@ function LoginForm() {
                   setErrorMsg(null);
                   setSuccessMsg(null);
                 }}
-                className={`py-2 rounded-lg transition-all cursor-pointer ${
+                className={`py-2 rounded transition-all cursor-pointer tracking-wide ${
                   mode === "signup"
-                    ? "bg-rose-600/20 text-rose-300 border border-rose-500/30 shadow-sm"
-                    : "text-slate-400 hover:text-slate-200"
+                    ? "bg-card text-primary border border-primary/40 shadow-sm font-bold"
+                    : "text-muted-foreground hover:text-foreground hover:bg-card/50"
                 }`}
               >
                 Join Beta (Register)
@@ -371,260 +316,261 @@ function LoginForm() {
 
             {/* Error Alert Banner */}
             {errorMsg && (
-              <div className="p-3.5 rounded-xl border border-rose-500/50 bg-rose-500/15 text-rose-200 text-xs flex items-start gap-2.5 animate-in fade-in">
-                <AlertCircle className="h-4 w-4 text-rose-400 shrink-0 mt-0.5" />
-                <p className="leading-relaxed">{errorMsg}</p>
+              <div className="p-3.5 rounded-lg border border-destructive/50 bg-destructive/10 text-destructive text-xs flex items-start gap-2.5 animate-in fade-in">
+                <AlertCircle className="h-4 w-4 text-destructive shrink-0 mt-0.5" />
+                <p className="leading-relaxed font-sans">{errorMsg}</p>
               </div>
             )}
 
             {/* Success Alert Banner */}
             {successMsg && (
-          <div className="p-3.5 rounded-xl border border-emerald-500/50 bg-emerald-500/15 text-emerald-200 text-xs flex items-start gap-2.5 animate-in fade-in">
-            <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0 mt-0.5" />
-            <p className="leading-relaxed">{successMsg}</p>
-          </div>
-        )}
-
-        {/* Form Elements */}
-        {mode === "signin" ? (
-          <form onSubmit={handleSignIn} className="space-y-4">
-            {/* Auth Method Toggle (Only shown if MAGIC_LINK_ENABLED is true) */}
-            {MAGIC_LINK_ENABLED && (
-              <div className="flex items-center justify-between text-[11px] font-mono text-slate-400 px-1">
-                <span>Sign-in method:</span>
-                <div className="flex items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setAuthMethod("password")}
-                    className={`hover:underline ${authMethod === "password" ? "text-rose-400 font-bold" : ""}`}
-                  >
-                    Password
-                  </button>
-                  <span>•</span>
-                  <button
-                    type="button"
-                    onClick={() => setAuthMethod("magiclink")}
-                    className={`hover:underline ${authMethod === "magiclink" ? "text-rose-400 font-bold" : ""}`}
-                  >
-                    Magic Link
-                  </button>
-                </div>
+              <div className="p-3.5 rounded-lg border border-emerald-500/50 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-xs flex items-start gap-2.5 animate-in fade-in">
+                <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0 mt-0.5" />
+                <p className="leading-relaxed font-sans">{successMsg}</p>
               </div>
             )}
 
-            {/* Email Field */}
-            <div className="space-y-1.5">
-              <label className="block text-xs font-semibold text-slate-300 font-sans">
-                Email Address
-              </label>
-              <div className="relative">
-                <Mail className="absolute left-3.5 top-3 h-4 w-4 text-slate-400" />
-                <input
-                  type="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="student@gstu.ac.bd"
-                  className="w-full rounded-xl border border-rose-950/70 bg-[#060204] pl-10 pr-4 py-2.5 text-xs sm:text-sm text-slate-100 placeholder:text-slate-600 focus:border-rose-500 focus:outline-none transition-colors"
-                />
-              </div>
-            </div>
+            {/* Form Elements */}
+            {mode === "signin" ? (
+              <form onSubmit={handleSignIn} className="space-y-4">
+                {/* Auth Method Toggle (Only shown if MAGIC_LINK_ENABLED is true) */}
+                {MAGIC_LINK_ENABLED && (
+                  <div className="flex items-center justify-between text-[11px] font-mono text-muted-foreground px-1">
+                    <span>Sign-in method:</span>
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setAuthMethod("password")}
+                        className={`hover:underline ${authMethod === "password" ? "text-primary font-bold" : ""}`}
+                      >
+                        Password
+                      </button>
+                      <span>•</span>
+                      <button
+                        type="button"
+                        onClick={() => setAuthMethod("magiclink")}
+                        className={`hover:underline ${authMethod === "magiclink" ? "text-primary font-bold" : ""}`}
+                      >
+                        Magic Link
+                      </button>
+                    </div>
+                  </div>
+                )}
 
-            {/* Password Field */}
-            {authMethod === "password" && (
-              <div className="space-y-1.5">
-                <div className="flex items-center justify-between">
-                  <label className="block text-xs font-semibold text-slate-300 font-sans">
-                    Password
+                {/* Email Field */}
+                <div className="space-y-1.5">
+                  <label className="block text-xs font-semibold text-foreground font-sans">
+                    Email Address
                   </label>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setForgotEmail(email);
-                      setForgotError(null);
-                      setForgotSuccess(null);
-                      setShowForgotPassword(true);
-                    }}
-                    className="text-[11px] text-rose-400 hover:text-rose-300 hover:underline font-semibold font-sans transition-colors cursor-pointer"
-                  >
-                    Forgot Password?
-                  </button>
+                  <div className="relative">
+                    <Mail className="absolute left-3.5 top-3 h-4 w-4 text-muted-foreground" />
+                    <input
+                      type="email"
+                      required
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="student@gstu.ac.bd"
+                      className="w-full rounded border border-border bg-background/80 pl-10 pr-4 py-2.5 text-xs sm:text-sm text-foreground placeholder:text-muted-foreground/60 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-colors font-sans"
+                    />
+                  </div>
                 </div>
-                <div className="relative">
-                  <Lock className="absolute left-3.5 top-3 h-4 w-4 text-slate-400" />
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    required
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="••••••••"
-                    className="w-full rounded-xl border border-rose-950/70 bg-[#060204] pl-10 pr-10 py-2.5 text-xs sm:text-sm text-slate-100 placeholder:text-slate-600 focus:border-rose-500 focus:outline-none transition-colors"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3.5 top-2.5 p-0.5 text-slate-400 hover:text-slate-200 transition-colors"
-                    aria-label={showPassword ? "Hide password" : "Show password"}
-                  >
-                    {showPassword ? (
-                      <EyeOff className="h-4 w-4" />
-                    ) : (
-                      <Eye className="h-4 w-4" />
-                    )}
-                  </button>
-                </div>
-              </div>
-            )}
 
-            {/* Submit Button */}
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-red-600 via-rose-600 to-amber-600 px-5 py-3 text-xs sm:text-sm font-bold text-white shadow-lg shadow-rose-600/30 hover:brightness-110 transition-all active:scale-[0.98] disabled:opacity-50 cursor-pointer"
-            >
-              {isLoading ? (
-                <>
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                  <span>Signing In...</span>
-                </>
-              ) : (
-                <>
-                  <span>Sign In</span>
-                  <ArrowRight className="h-4 w-4" />
-                </>
-              )}
-            </button>
-          </form>
-        ) : (
-          <form onSubmit={handleSignUp} className="space-y-3.5">
-            {/* Full Name */}
-            <div className="space-y-1">
-              <label className="block text-xs font-semibold text-slate-300 font-sans">
-                Full Name
-              </label>
-              <div className="relative">
-                <User className="absolute left-3.5 top-3 h-4 w-4 text-slate-400" />
-                <input
-                  type="text"
-                  required
-                  value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
-                  placeholder="Mushfiqur Rahman"
-                  className="w-full rounded-xl border border-rose-950/70 bg-[#060204] pl-10 pr-4 py-2.5 text-xs sm:text-sm text-slate-100 placeholder:text-slate-600 focus:border-rose-500 focus:outline-none transition-colors"
-                />
-              </div>
-            </div>
+                {/* Password Field */}
+                {authMethod === "password" && (
+                  <div className="space-y-1.5">
+                    <div className="flex items-center justify-between">
+                      <label className="block text-xs font-semibold text-foreground font-sans">
+                        Password
+                      </label>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setForgotEmail(email);
+                          setForgotError(null);
+                          setForgotSuccess(null);
+                          setShowForgotPassword(true);
+                        }}
+                        className="text-[11px] text-primary hover:underline font-semibold font-sans transition-colors cursor-pointer"
+                      >
+                        Forgot Password?
+                      </button>
+                    </div>
+                    <div className="relative">
+                      <Lock className="absolute left-3.5 top-3 h-4 w-4 text-muted-foreground" />
+                      <input
+                        type={showPassword ? "text" : "password"}
+                        required
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        placeholder="••••••••"
+                        className="w-full rounded border border-border bg-background/80 pl-10 pr-10 py-2.5 text-xs sm:text-sm text-foreground placeholder:text-muted-foreground/60 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-colors font-sans"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-3.5 top-2.5 p-0.5 text-muted-foreground hover:text-foreground transition-colors"
+                        aria-label={showPassword ? "Hide password" : "Show password"}
+                      >
+                        {showPassword ? (
+                          <EyeOff className="h-4 w-4" />
+                        ) : (
+                          <Eye className="h-4 w-4" />
+                        )}
+                      </button>
+                    </div>
+                  </div>
+                )}
 
-            {/* Email Address */}
-            <div className="space-y-1">
-              <label className="block text-xs font-semibold text-slate-300 font-sans">
-                Institutional / University Email
-              </label>
-              <div className="relative">
-                <Mail className="absolute left-3.5 top-3 h-4 w-4 text-slate-400" />
-                <input
-                  type="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="student@gstu.ac.bd"
-                  className="w-full rounded-xl border border-rose-950/70 bg-[#060204] pl-10 pr-4 py-2.5 text-xs sm:text-sm text-slate-100 placeholder:text-slate-600 focus:border-rose-500 focus:outline-none transition-colors"
-                />
-              </div>
-            </div>
-
-            {/* Department & Student ID Grid */}
-            <div className="grid grid-cols-2 gap-2.5">
-              <div className="space-y-1">
-                <label className="block text-xs font-semibold text-slate-300 font-sans">
-                  Department
-                </label>
-                <div className="relative">
-                  <GraduationCap className="absolute left-3 top-3 h-3.5 w-3.5 text-slate-400" />
-                  <input
-                    type="text"
-                    required
-                    value={department}
-                    onChange={(e) => setDepartment(e.target.value)}
-                    placeholder="CSE"
-                    className="w-full rounded-xl border border-rose-950/70 bg-[#060204] pl-9 pr-3 py-2.5 text-xs text-slate-100 focus:border-rose-500 focus:outline-none transition-colors"
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-1">
-                <label className="block text-xs font-semibold text-slate-300 font-sans">
-                  Student/Roll ID
-                </label>
-                <input
-                  type="text"
-                  value={studentId}
-                  onChange={(e) => setStudentId(e.target.value)}
-                  placeholder="e.g. 2021001"
-                  className="w-full rounded-xl border border-rose-950/70 bg-[#060204] px-3.5 py-2.5 text-xs text-slate-100 focus:border-rose-500 focus:outline-none transition-colors"
-                />
-              </div>
-            </div>
-
-            {/* Password */}
-            <div className="space-y-1">
-              <label className="block text-xs font-semibold text-slate-300 font-sans">
-                Create Password
-              </label>
-              <div className="relative">
-                <Lock className="absolute left-3.5 top-3 h-4 w-4 text-slate-400" />
-                <input
-                  type={showPassword ? "text" : "password"}
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="At least 6 characters"
-                  className="w-full rounded-xl border border-rose-950/70 bg-[#060204] pl-10 pr-10 py-2.5 text-xs sm:text-sm text-slate-100 placeholder:text-slate-600 focus:border-rose-500 focus:outline-none transition-colors"
-                />
+                {/* Submit Button */}
                 <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3.5 top-2.5 p-0.5 text-slate-400 hover:text-slate-200 transition-colors"
-                  aria-label={showPassword ? "Hide password" : "Show password"}
+                  type="submit"
+                  disabled={isLoading}
+                  className="btn-brass w-full inline-flex items-center justify-center gap-2 rounded px-7 py-3 text-xs sm:text-sm font-sans font-semibold tracking-[0.08em] shadow-brass hover:scale-[1.01] active:scale-[0.98] transition-all text-primary-foreground cursor-pointer disabled:opacity-50"
                 >
-                  {showPassword ? (
-                    <EyeOff className="h-4 w-4" />
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      <span>Signing In...</span>
+                    </>
                   ) : (
-                    <Eye className="h-4 w-4" />
+                    <>
+                      <span>Sign In</span>
+                      <ArrowRight className="h-4 w-4 ml-0.5" />
+                    </>
                   )}
                 </button>
-              </div>
-            </div>
+              </form>
+            ) : (
+              <form onSubmit={handleSignUp} className="space-y-3.5">
+                {/* Full Name */}
+                <div className="space-y-1">
+                  <label className="block text-xs font-semibold text-foreground font-sans">
+                    Full Name
+                  </label>
+                  <div className="relative">
+                    <User className="absolute left-3.5 top-3 h-4 w-4 text-muted-foreground" />
+                    <input
+                      type="text"
+                      required
+                      value={fullName}
+                      onChange={(e) => setFullName(e.target.value)}
+                      placeholder="Mushfiqur Rahman"
+                      className="w-full rounded border border-border bg-background/80 pl-10 pr-4 py-2.5 text-xs sm:text-sm text-foreground placeholder:text-muted-foreground/60 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-colors font-sans"
+                    />
+                  </div>
+                </div>
 
-            {/* Submit Request Button */}
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-red-600 via-rose-600 to-amber-600 px-5 py-3 text-xs sm:text-sm font-bold text-white shadow-lg shadow-rose-600/30 hover:brightness-110 transition-all active:scale-[0.98] disabled:opacity-50 cursor-pointer pt-2"
-            >
-              {isLoading ? (
-                <>
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                  <span>Submitting Request...</span>
-                </>
-              ) : (
-                <>
-                  <Sparkles className="h-4 w-4" />
-                  <span>Submit Beta Request</span>
-                </>
-              )}
-            </button>
-          </form>
-        )}
+                {/* Email Address */}
+                <div className="space-y-1">
+                  <label className="block text-xs font-semibold text-foreground font-sans">
+                    Institutional / University Email
+                  </label>
+                  <div className="relative">
+                    <Mail className="absolute left-3.5 top-3 h-4 w-4 text-muted-foreground" />
+                    <input
+                      type="email"
+                      required
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="student@gstu.ac.bd"
+                      className="w-full rounded border border-border bg-background/80 pl-10 pr-4 py-2.5 text-xs sm:text-sm text-foreground placeholder:text-muted-foreground/60 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-colors font-sans"
+                    />
+                  </div>
+                </div>
+
+                {/* Department & Student ID Grid */}
+                <div className="grid grid-cols-2 gap-2.5">
+                  <div className="space-y-1">
+                    <label className="block text-xs font-semibold text-foreground font-sans">
+                      Department
+                    </label>
+                    <div className="relative">
+                      <GraduationCap className="absolute left-3 top-3 h-3.5 w-3.5 text-muted-foreground" />
+                      <input
+                        type="text"
+                        required
+                        value={department}
+                        onChange={(e) => setDepartment(e.target.value)}
+                        placeholder="CSE"
+                        className="w-full rounded border border-border bg-background/80 pl-9 pr-3 py-2.5 text-xs text-foreground focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-colors font-sans"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="block text-xs font-semibold text-foreground font-sans">
+                      Student/Roll ID
+                    </label>
+                    <input
+                      type="text"
+                      value={studentId}
+                      onChange={(e) => setStudentId(e.target.value)}
+                      placeholder="e.g. 2021001"
+                      className="w-full rounded border border-border bg-background/80 px-3.5 py-2.5 text-xs text-foreground focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-colors font-sans"
+                    />
+                  </div>
+                </div>
+
+                {/* Password */}
+                <div className="space-y-1">
+                  <label className="block text-xs font-semibold text-foreground font-sans">
+                    Create Password
+                  </label>
+                  <div className="relative">
+                    <Lock className="absolute left-3.5 top-3 h-4 w-4 text-muted-foreground" />
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      required
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="At least 6 characters"
+                      className="w-full rounded border border-border bg-background/80 pl-10 pr-10 py-2.5 text-xs sm:text-sm text-foreground placeholder:text-muted-foreground/60 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-colors font-sans"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3.5 top-2.5 p-0.5 text-muted-foreground hover:text-foreground transition-colors"
+                      aria-label={showPassword ? "Hide password" : "Show password"}
+                    >
+                      {showPassword ? (
+                        <EyeOff className="h-4 w-4" />
+                      ) : (
+                        <Eye className="h-4 w-4" />
+                      )}
+                    </button>
+                  </div>
+                </div>
+
+                {/* Submit Request Button */}
+                <button
+                  type="submit"
+                  disabled={isLoading}
+                  className="btn-brass w-full inline-flex items-center justify-center gap-2 rounded px-7 py-3 text-xs sm:text-sm font-sans font-semibold tracking-[0.08em] shadow-brass hover:scale-[1.01] active:scale-[0.98] transition-all text-primary-foreground cursor-pointer disabled:opacity-50 pt-2"
+                >
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      <span>Submitting Request...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="h-4 w-4" />
+                      <span>Submit Beta Request</span>
+                      <ArrowRight className="h-4 w-4 ml-0.5" />
+                    </>
+                  )}
+                </button>
+              </form>
+            )}
           </>
         )}
       </div>
 
       {/* Forgot Password Modal */}
       {showForgotPassword && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-md animate-in fade-in">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in">
           <div
-            className="relative w-full max-w-md rounded-2xl border border-rose-500/30 bg-[#0c050b]/98 p-6 sm:p-7 text-white shadow-2xl shadow-rose-950/50 backdrop-blur-2xl space-y-5 animate-in zoom-in-95"
+            className="relative w-full max-w-md rounded-2xl border border-primary/40 bg-card p-6 sm:p-7 text-foreground shadow-2xl backdrop-blur-2xl space-y-5 corner-flourish animate-in zoom-in-95"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Close Button */}
@@ -634,39 +580,39 @@ function LoginForm() {
                 setForgotError(null);
                 setForgotSuccess(null);
               }}
-              className="absolute right-4 top-4 p-1.5 rounded-xl bg-secondary/60 text-slate-400 hover:text-white hover:bg-secondary transition-colors"
+              className="absolute right-4 top-4 p-1.5 rounded-lg bg-secondary/80 text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
             >
               <X className="h-4 w-4" />
             </button>
 
             {/* Header */}
             <div className="space-y-1">
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-rose-500/30 bg-rose-500/10 text-rose-300 font-mono text-[11px] font-semibold">
-                <KeyRound className="h-3 w-3 text-rose-400" />
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-primary/40 bg-card text-primary font-sans text-xs uppercase tracking-wider font-semibold">
+                <KeyRound className="h-3 w-3 text-primary" />
                 <span>Account Recovery</span>
               </div>
-              <h2 className="text-xl font-bold text-white font-sans">
+              <h2 className="text-2xl font-semibold text-foreground font-heading mt-2">
                 Forgot Your Password?
               </h2>
-              <p className="text-xs text-slate-300 font-sans leading-relaxed">
+              <p className="text-xs text-muted-foreground font-sans leading-relaxed">
                 Enter your registered student email address. We will send you a secure link to set a new password.
               </p>
             </div>
 
             {/* Error Alert */}
             {forgotError && (
-              <div className="p-3 rounded-xl border border-rose-500/50 bg-rose-500/15 text-rose-200 text-xs flex items-start gap-2 animate-in fade-in">
-                <AlertCircle className="h-4 w-4 text-rose-400 shrink-0 mt-0.5" />
-                <p className="leading-relaxed">{forgotError}</p>
+              <div className="p-3 rounded-lg border border-destructive/50 bg-destructive/10 text-destructive text-xs flex items-start gap-2 animate-in fade-in">
+                <AlertCircle className="h-4 w-4 text-destructive shrink-0 mt-0.5" />
+                <p className="leading-relaxed font-sans">{forgotError}</p>
               </div>
             )}
 
             {/* Success Alert */}
             {forgotSuccess ? (
               <div className="space-y-4 py-2 text-center animate-in fade-in">
-                <div className="p-4 rounded-xl border border-emerald-500/50 bg-emerald-500/15 text-emerald-200 text-xs flex items-start gap-2.5">
-                  <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0 mt-0.5" />
-                  <p className="leading-relaxed text-left">{forgotSuccess}</p>
+                <div className="p-4 rounded-xl border border-emerald-500/50 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-xs flex items-start gap-2.5">
+                  <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0 mt-0.5" />
+                  <p className="leading-relaxed text-left font-sans">{forgotSuccess}</p>
                 </div>
                 <button
                   type="button"
@@ -674,7 +620,7 @@ function LoginForm() {
                     setShowForgotPassword(false);
                     setForgotSuccess(null);
                   }}
-                  className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-red-600 via-rose-600 to-amber-600 px-5 py-2.5 text-xs font-bold text-white shadow-lg shadow-rose-600/30 hover:brightness-110 transition-all cursor-pointer"
+                  className="btn-brass w-full inline-flex items-center justify-center gap-2 rounded px-7 py-2.5 text-xs sm:text-sm font-sans font-semibold tracking-[0.08em] shadow-brass hover:scale-[1.01] active:scale-[0.98] transition-all text-primary-foreground cursor-pointer"
                 >
                   <span>Back to Sign In</span>
                   <ArrowRight className="h-4 w-4" />
@@ -683,18 +629,18 @@ function LoginForm() {
             ) : (
               <form onSubmit={handleForgotPassword} className="space-y-4">
                 <div className="space-y-1.5">
-                  <label className="block text-xs font-semibold text-slate-300 font-sans">
+                  <label className="block text-xs font-semibold text-foreground font-sans">
                     Email Address
                   </label>
                   <div className="relative">
-                    <Mail className="absolute left-3.5 top-3 h-4 w-4 text-slate-400" />
+                    <Mail className="absolute left-3.5 top-3 h-4 w-4 text-muted-foreground" />
                     <input
                       type="email"
                       required
                       value={forgotEmail}
                       onChange={(e) => setForgotEmail(e.target.value)}
                       placeholder="student@gstu.ac.bd"
-                      className="w-full rounded-xl border border-rose-950/70 bg-[#060204] pl-10 pr-4 py-2.5 text-xs sm:text-sm text-slate-100 placeholder:text-slate-600 focus:border-rose-500 focus:outline-none transition-colors font-mono"
+                      className="w-full rounded border border-border bg-background/80 pl-10 pr-4 py-2.5 text-xs sm:text-sm text-foreground placeholder:text-muted-foreground/60 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-colors font-sans"
                     />
                   </div>
                 </div>
@@ -702,7 +648,7 @@ function LoginForm() {
                 <button
                   type="submit"
                   disabled={forgotLoading}
-                  className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-red-600 via-rose-600 to-amber-600 px-5 py-2.5 text-xs font-bold text-white shadow-lg shadow-rose-600/30 hover:brightness-110 transition-all active:scale-[0.98] disabled:opacity-50 cursor-pointer"
+                  className="btn-brass w-full inline-flex items-center justify-center gap-2 rounded px-7 py-2.5 text-xs sm:text-sm font-sans font-semibold tracking-[0.08em] shadow-brass hover:scale-[1.01] active:scale-[0.98] transition-all text-primary-foreground cursor-pointer disabled:opacity-50"
                 >
                   {forgotLoading ? (
                     <>
@@ -712,7 +658,7 @@ function LoginForm() {
                   ) : (
                     <>
                       <span>Send Password Reset Email</span>
-                      <ArrowRight className="h-4 w-4" />
+                      <ArrowRight className="h-4 w-4 ml-0.5" />
                     </>
                   )}
                 </button>
@@ -723,16 +669,16 @@ function LoginForm() {
       )}
 
       {/* Footer Navigation */}
-      <div className="flex items-center justify-between px-2 text-xs font-sans text-slate-400">
+      <div className="flex items-center justify-between px-2 text-xs font-sans text-muted-foreground">
         <Link
           href="/"
-          className="inline-flex items-center gap-1.5 hover:text-white transition-colors"
+          className="inline-flex items-center gap-1.5 hover:text-primary transition-colors"
         >
-          <Home className="h-3.5 w-3.5" />
+          <Home className="h-3.5 w-3.5 text-primary" />
           <span>Back to AlgoHub</span>
         </Link>
-        <span className="flex items-center gap-1 text-slate-400">
-          <ShieldCheck className="h-3.5 w-3.5 text-emerald-400" />
+        <span className="flex items-center gap-1.5 text-muted-foreground">
+          <ShieldCheck className="h-3.5 w-3.5 text-emerald-500" />
           <span>Departmental RLS Protected</span>
         </span>
       </div>
@@ -742,14 +688,27 @@ function LoginForm() {
 
 export default function LoginPage() {
   return (
-    <div className="relative min-h-screen bg-[#060305] flex items-center justify-center p-4 sm:p-6 antialiased selection:bg-rose-500/30 selection:text-rose-200">
-      <div className="absolute top-4 right-4 z-50">
+    <div className="relative min-h-screen bg-background text-foreground flex items-center justify-center p-4 sm:p-6 antialiased selection:bg-[#C9A962]/35 selection:text-[#1C1714] transition-colors duration-200 overflow-hidden font-sans">
+      {/* Ambient background glow matching landing page atmosphere */}
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-primary/10 rounded-full blur-[140px]" />
+        <div className="absolute -bottom-40 left-1/2 -translate-x-1/2 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[120px]" />
+      </div>
+
+      {/* Top Navbar items */}
+      <div className="absolute top-4 left-4 sm:left-8 z-50">
+        <Link href="/" className="flex items-center gap-2 group text-foreground hover:text-primary transition-colors">
+          <span className="font-heading text-lg sm:text-xl font-bold tracking-tight">AlgoHub</span>
+        </Link>
+      </div>
+      <div className="absolute top-4 right-4 sm:right-8 z-50">
         <ThemeToggle />
       </div>
+
       <Suspense
         fallback={
-          <div className="flex items-center justify-center p-12 text-slate-400 text-xs">
-            <Loader2 className="h-6 w-6 animate-spin text-rose-500 mr-2" />
+          <div className="flex items-center justify-center p-12 text-muted-foreground text-xs font-sans">
+            <Loader2 className="h-6 w-6 animate-spin text-primary mr-2" />
             Loading authentication portal...
           </div>
         }

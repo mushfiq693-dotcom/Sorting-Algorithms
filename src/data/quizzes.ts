@@ -768,5 +768,179 @@ export const QUIZZES: Record<string, QuizTopic> = {
         explanation: "A balanced binary recursion tree of size n has height ⌈log₂ n⌉. Only one root-to-leaf path is active on the call stack at any moment, consuming O(log n) stack space."
       }
     ]
+  },
+  "linear-search": {
+    id: "linear-search",
+    title: "Linear Search Knowledge Quiz",
+    description: "Test your understanding of sequential traversal, early exit optimizations, unsorted array utility, and best/worst cases.",
+    questions: [
+      {
+        id: "ls1",
+        question: "What is the best-case time complexity of Linear Search, and when does it occur?",
+        options: [
+          "O(1), when the target value is located at index 0",
+          "O(log n), when the array is already sorted",
+          "O(n), because the entire array must always be checked",
+          "O(n²), if the array contains duplicate elements"
+        ],
+        correctIndex: 0,
+        explanation: "Linear Search inspects elements starting at index 0. If the first element matches the target, the loop immediately terminates and returns 0 in O(1) time."
+      },
+      {
+        id: "ls2",
+        question: "What is the primary operational advantage of Linear Search over Binary Search?",
+        options: [
+          "It works on completely unsorted collections without requiring any preprocessing or sorting overhead",
+          "It runs in O(log n) time on large collections",
+          "It requires O(n) auxiliary heap memory",
+          "It performs fewer comparisons than Binary Search on sorted arrays"
+        ],
+        correctIndex: 0,
+        explanation: "Linear Search makes zero assumptions about element ordering. When data is unsorted or small, paying O(n log n) to sort first just to use Binary Search is inefficient."
+      },
+      {
+        id: "ls3",
+        question: "By standard software convention, what does a linear search function return when the target value is absent from the array?",
+        options: ["-1", "0", "arr.size()", "Throws runtime_error"],
+        correctIndex: 0,
+        explanation: "Since array indices range from 0 to n - 1, returning -1 unambiguously signals that no valid index matched the target."
+      },
+      {
+        id: "ls4",
+        question: "Assuming a target element is present in an array of size n with uniform random distribution, what is the average number of comparisons required by Linear Search?",
+        options: ["(n + 1) / 2 comparisons → O(n)", "n / 4 comparisons", "log₂ n comparisons", "n² comparisons"],
+        correctIndex: 0,
+        explanation: "The average case is the mean of (1 + 2 + ... + n) / n = n(n + 1) / (2n) = (n + 1) / 2 comparisons, which asymptotically is O(n)."
+      }
+    ]
+  },
+  "binary-search": {
+    id: "binary-search",
+    title: "Binary Search Mastery Quiz",
+    description: "Deep dive into logarithmic halving, sorted array preconditions, 32-bit overflow avoidance, and recursion stack tradeoffs.",
+    questions: [
+      {
+        id: "bs1",
+        question: "What essential precondition MUST be satisfied before Binary Search can be safely executed?",
+        options: [
+          "The array MUST be sorted in monotonic (non-decreasing) order",
+          "The array size must be an exact power of 2",
+          "The array must not contain negative integers",
+          "The array elements must all be distinct"
+        ],
+        correctIndex: 0,
+        explanation: "Binary Search relies on the sorted invariant: if arr[mid] < target, ALL elements in the left half are guaranteed to be smaller than target and can be safely eliminated."
+      },
+      {
+        id: "bs2",
+        question: "In professional C++ code, why is `mid = low + (high - low) / 2` strongly preferred over `mid = (low + high) / 2`?",
+        options: [
+          "To avoid 32-bit signed integer overflow when (low + high) exceeds 2,147,483,647",
+          "Because division by 2 is slower in the second formula",
+          "Because the second formula does not compile with templates",
+          "To force the compiler to use bitwise right-shift"
+        ],
+        correctIndex: 0,
+        explanation: "If low and high are both large positive integers (e.g. > 1 billion), `low + high` overflows signed 32-bit integer limits and turns negative, crashing the program."
+      },
+      {
+        id: "bs3",
+        question: "In the worst case, how many comparisons does Binary Search perform on a sorted array of 1,000,000 elements?",
+        options: ["At most 20 comparisons", "500,000 comparisons", "1,000,000 comparisons", "100 comparisons"],
+        correctIndex: 0,
+        explanation: "⌈log₂(1,000,000)⌉ = 20. Binary Search inspects at most 20 elements out of 1 million items! This demonstrates the immense power of O(log n)."
+      },
+      {
+        id: "bs4",
+        question: "What is the key difference in auxiliary space complexity between iterative Binary Search and recursive Binary Search?",
+        options: [
+          "Iterative uses O(1) space, while recursive uses O(log n) auxiliary stack space for activation frames",
+          "Recursive uses O(1) space, while iterative uses O(n) space",
+          "Both use O(n) heap memory buffers",
+          "Iterative uses O(log n) space for loop variables"
+        ],
+        correctIndex: 0,
+        explanation: "The iterative version only maintains scalar integer variables (low, high, mid). The recursive version pushes up to log₂(n) activation frames onto the call stack."
+      },
+      {
+        id: "bs5",
+        question: "Consider the sorted array [2, 5, 8, 12, 16, 23, 38, 56, 72, 91]. You search for target = 23. What are the mid elements checked in order?",
+        options: [
+          "16 (idx 4), then 38 (idx 7), then 23 (idx 5)",
+          "12 (idx 3), then 23 (idx 5)",
+          "23 on the very first comparison",
+          "5, 12, 16, 23"
+        ],
+        correctIndex: 0,
+        explanation: "Pass 1: low=0, high=9, mid=4 (val=16). 16 < 23 → low=5. Pass 2: low=5, high=9, mid=7 (val=38). 38 > 23 → high=6. Pass 3: low=5, high=6, mid=5 (val=23 == 23). Match found!"
+      }
+    ]
+  },
+  "linked-list": {
+    id: "linked-list",
+    title: "Linked List Data Structure Quiz",
+    description: "Test your mastery of dynamic node pointers, O(1) head prepending, sequential traversal, and pointer manipulation safety.",
+    questions: [
+      {
+        id: "ll1",
+        question: "Why does inserting an element at the head of a Singly Linked List take O(1) time, while doing so in a dynamic array takes O(n) time?",
+        options: [
+          "Because prepending to a linked list only rewires two pointers, whereas an array must physically shift all n elements one position to the right",
+          "Because linked list nodes are stored in the CPU cache",
+          "Because arrays cannot be modified after compilation",
+          "Because linked lists use binary search internally"
+        ],
+        correctIndex: 0,
+        explanation: "Prepend in a linked list simply assigns newNode->next = head and head = newNode. Contiguous array storage requires all existing elements to shift right to create slot 0."
+      },
+      {
+        id: "ll2",
+        question: "In a standard Singly Linked List that stores only a `head` pointer (no `tail` pointer), what is the time complexity of `insertAtTail(val)`?",
+        options: [
+          "O(n), because the algorithm must traverse from head to the last node to locate nullptr",
+          "O(1), because the compiler tracks the tail automatically",
+          "O(log n), via binary pointer jumps",
+          "O(n²), due to memory reallocation"
+        ],
+        correctIndex: 0,
+        explanation: "Without an explicit tail pointer, reaching the end of the list requires following `curr = curr->next` across all n nodes, taking O(n) time."
+      },
+      {
+        id: "ll3",
+        question: "During head insertion, what disastrous bug occurs if you execute `head = newNode;` BEFORE `newNode->next = head;`?",
+        options: [
+          "The reference to the entire existing list is overwritten and lost, causing a massive memory leak (orphaned nodes)",
+          "The code fails to compile with a syntax error",
+          "The list is automatically converted into a doubly-linked list",
+          "The node is inserted at the tail instead of head"
+        ],
+        correctIndex: 0,
+        explanation: "If you overwrite `head` first, you destroy your only reference to the original first node. The entire rest of the chain becomes unreachable in memory."
+      },
+      {
+        id: "ll4",
+        question: "Why is accessing the element at index k (e.g. `arr[k]`) O(1) in an array, but O(k) in a Singly Linked List?",
+        options: [
+          "Arrays use contiguous memory allowing direct arithmetic offset address calculation, while linked list nodes are scattered across memory and must be hopped sequentially",
+          "Linked lists use virtual memory whereas arrays use physical memory",
+          "Array access is optimized by the GPU",
+          "Linked lists do not store integers"
+        ],
+        correctIndex: 0,
+        explanation: "Array address is simply `base_address + k * sizeof(type)`. In a linked list, each node is dynamically allocated anywhere on the heap; you must follow k `next` pointers to reach it."
+      },
+      {
+        id: "ll5",
+        question: "When deleting a node `curr` from a Singly Linked List, why do we need a reference to its predecessor `prev`?",
+        options: [
+          "Because singly linked nodes only point forward, so `prev->next` must be redirected to `curr->next` to splice `curr` out of the chain",
+          "Because the C++ `delete` operator requires two pointers",
+          "To check if the node has an even or odd value",
+          "Because `curr` cannot be deallocated without `prev`"
+        ],
+        correctIndex: 0,
+        explanation: "To remove a node while keeping the chain intact, the predecessor's next pointer must bypass the target node and point to the successor."
+      }
+    ]
   }
 };

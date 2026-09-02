@@ -514,6 +514,155 @@ vector<vector<int>> createGrid(int n) {
     return vector<vector<int>>(n, vector<int>(n, 0)); // n x n grid
 }`,
   },
+  "linear-search": {
+    id: "linear-search",
+    name: "Linear Search",
+    category: "searching",
+    shortDescription: "Sequentially checks each element until a match is found or the array ends.",
+    description:
+      "Linear Search (or Sequential Search) scans through a collection element by element from left to right. If the current element matches the target value, its index is returned immediately. If the end of the collection is reached without finding a match, -1 is returned. It makes no assumptions about data ordering and requires zero preprocessing.",
+    complexity: {
+      best: "O(1)",
+      average: "O(n)",
+      worst: "O(n)",
+      space: "O(1)",
+      inPlace: true,
+      spaceNote: "Uses a single index counter variable.",
+    },
+    cppCode: `int linearSearch(const vector<int>& arr, int target) {
+    // Sequentially inspect each element from start to finish
+    for (int i = 0; i < (int)arr.size(); i++) {
+        if (arr[i] == target) {
+            return i; // Target found at index i (Best case O(1) if first element)
+        }
+    }
+    return -1; // Target not present in collection (Worst case O(n))
+}`,
+  },
+  "binary-search": {
+    id: "binary-search",
+    name: "Binary Search",
+    category: "searching",
+    shortDescription: "Repeatedly halves the search space in a sorted array to locate target in O(log n) time.",
+    description:
+      "Binary Search is an extremely efficient divide-and-conquer search algorithm. PRECONDITION: The array MUST be sorted. By comparing the target with the middle element, Binary Search eliminates an entire half of the remaining elements in each step, achieving logarithmic O(log n) time complexity.",
+    complexity: {
+      best: "O(1)",
+      average: "O(log n)",
+      worst: "O(log n)",
+      space: "O(1) iter / O(log n) rec",
+      inPlace: true,
+      spaceNote: "Iterative uses O(1) variables; recursive allocates O(log n) stack frames.",
+    },
+    cppCode: `// PRECONDITION: arr MUST be sorted in non-decreasing order!
+
+// 1. Iterative Binary Search (O(1) Auxiliary Space)
+int binarySearchIterative(const vector<int>& arr, int target) {
+    int low = 0, high = (int)arr.size() - 1;
+    while (low <= high) {
+        int mid = low + (high - low) / 2; // Prevents 32-bit integer overflow
+        if (arr[mid] == target) {
+            return mid; // Found!
+        } else if (arr[mid] < target) {
+            low = mid + 1;  // Discard left half
+        } else {
+            high = mid - 1; // Discard right half
+        }
+    }
+    return -1; // Not found
+}
+
+// 2. Recursive Binary Search (O(log n) Call Stack Space)
+int binarySearchRecursive(const vector<int>& arr, int low, int high, int target) {
+    if (low > high) return -1; // Base case: search interval exhausted
+    int mid = low + (high - low) / 2;
+    if (arr[mid] == target) return mid;
+    else if (arr[mid] < target) {
+        return binarySearchRecursive(arr, mid + 1, high, target);
+    } else {
+        return binarySearchRecursive(arr, low, mid - 1, target);
+    }
+}`,
+  },
+  "linked-list": {
+    id: "linked-list",
+    name: "Linked List",
+    category: "data-structure",
+    shortDescription: "Linear sequence of dynamically allocated nodes linked via forward pointers.",
+    description:
+      "A Singly Linked List is a dynamic linear data structure composed of nodes. Each node stores a data value and a pointer (next) referencing the subsequent node in memory. Unlike arrays, nodes are not stored contiguously in memory, enabling O(1) insertions at the head without shifting subsequent elements, at the cost of losing O(1) random index access.",
+    complexity: {
+      best: "O(1)",
+      average: "O(n)",
+      worst: "O(n)",
+      space: "O(n)",
+      inPlace: false,
+      spaceNote: "Requires an extra pointer field (4-8 bytes) per stored node.",
+      operations: [
+        { name: "Insert at Head", time: "O(1)", space: "O(1)", description: "Allocate node, point to current head, update head." },
+        { name: "Insert at Tail", time: "O(n)", space: "O(1)", description: "Traverse to last node and link new node." },
+        { name: "Delete by Value", time: "O(n)", space: "O(1)", description: "Traverse to target's predecessor and splice pointer." },
+        { name: "Search / Traversal", time: "O(n)", space: "O(1)", description: "Sequential pointer dereferencing from head." },
+      ],
+    },
+    cppCode: `struct Node {
+    int val;
+    Node* next;
+    Node(int x) : val(x), next(nullptr) {}
+};
+
+class LinkedList {
+public:
+    Node* head;
+    LinkedList() : head(nullptr) {}
+
+    // O(1) Time: Prepend new node before current head
+    void insertAtHead(int val) {
+        Node* newNode = new Node(val);
+        newNode->next = head;
+        head = newNode;
+    }
+
+    // O(n) Time: Traverse to tail (without tail pointer)
+    void insertAtTail(int val) {
+        Node* newNode = new Node(val);
+        if (!head) { head = newNode; return; }
+        Node* curr = head;
+        while (curr->next) curr = curr->next;
+        curr->next = newNode;
+    }
+
+    // O(n) Time: Splice predecessor pointer around target node
+    bool deleteValue(int val) {
+        if (!head) return false;
+        if (head->val == val) {
+            Node* temp = head;
+            head = head->next;
+            delete temp;
+            return true;
+        }
+        Node* curr = head;
+        while (curr->next && curr->next->val != val) {
+            curr = curr->next;
+        }
+        if (!curr->next) return false; // Not found
+        Node* temp = curr->next;
+        curr->next = curr->next->next;
+        delete temp;
+        return true;
+    }
+
+    // O(n) Time: Pointer traversal from head
+    bool search(int val) {
+        Node* curr = head;
+        while (curr) {
+            if (curr->val == val) return true;
+            curr = curr->next;
+        }
+        return false;
+    }
+};`,
+  },
 };
 
 // All 5 Sorting Algorithms
@@ -525,8 +674,18 @@ export const SORTING_ALGORITHMS: AlgorithmId[] = [
   "quick",
 ];
 
+// All Searching Algorithms
+export const SEARCHING_ALGORITHMS: AlgorithmId[] = [
+  "linear-search",
+  "binary-search",
+];
+
 // All Data Structures
-export const DATA_STRUCTURES: AlgorithmId[] = ["stack", "queue"];
+export const DATA_STRUCTURES: AlgorithmId[] = [
+  "stack",
+  "queue",
+  "linked-list",
+];
 
 // All Complexity Topics
 export const COMPLEXITY_TOPICS: AlgorithmId[] = [
@@ -540,6 +699,7 @@ export const ALL_ALGORITHMS: AlgorithmId[] = SORTING_ALGORITHMS;
 // Global catalog of all topics across all categories
 export const ALL_TOPICS: AlgorithmId[] = [
   ...SORTING_ALGORITHMS,
+  ...SEARCHING_ALGORITHMS,
   ...DATA_STRUCTURES,
   ...COMPLEXITY_TOPICS,
 ];

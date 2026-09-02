@@ -12,6 +12,9 @@ import { StackLIFODiagram } from "./StackLIFODiagram";
 import { QueueFIFODiagram } from "./QueueFIFODiagram";
 import { TimeComplexityDiagram } from "./TimeComplexityDiagram";
 import { SpaceComplexityDiagram } from "./SpaceComplexityDiagram";
+import { LinearSearchTimelineDiagram } from "./LinearSearchTimelineDiagram";
+import { BinarySearchRangeShrinkingDiagram } from "./BinarySearchRangeShrinkingDiagram";
+import { LinkedListPointerDiagram } from "./LinkedListPointerDiagram";
 import { CodeViewer } from "@/components/code/CodeViewer";
 import { Image, Sparkles, BookOpen, Calculator, Info } from "lucide-react";
 
@@ -38,6 +41,12 @@ export function AlgorithmDiagram({ algorithmId }: AlgorithmDiagramProps) {
         return <StackLIFODiagram />;
       case "queue":
         return <QueueFIFODiagram />;
+      case "linked-list":
+        return <LinkedListPointerDiagram />;
+      case "linear-search":
+        return <LinearSearchTimelineDiagram />;
+      case "binary-search":
+        return <BinarySearchRangeShrinkingDiagram />;
       case "time-complexity":
         return <TimeComplexityDiagram />;
       case "space-complexity":

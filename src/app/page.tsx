@@ -370,7 +370,7 @@ export default function Home() {
               <Link
                 id="cta-start-visualizing"
                 href="/visualizer"
-                className="btn-secondary-brass inline-flex items-center gap-2 rounded px-7 py-3.5 text-xs sm:text-sm font-sans font-semibold tracking-[0.08em] hover:scale-[1.02] active:scale-[0.98] transition-all"
+                className="btn-brass inline-flex items-center gap-2 rounded px-7 py-3.5 text-xs sm:text-sm font-sans font-semibold tracking-[0.08em] shadow-brass hover:scale-[1.02] active:scale-[0.98] transition-all"
               >
                 <Layers className="h-5 w-5" />
                 <span>Explore Visualizer</span>

@@ -14,6 +14,9 @@ import { CodeViewer } from "@/components/code/CodeViewer";
 import { LiveComplexityTracker } from "@/components/complexity/LiveComplexityTracker";
 import { StackVisualizer } from "./StackVisualizer";
 import { QueueVisualizer } from "./QueueVisualizer";
+import { LinkedListVisualizer } from "./LinkedListVisualizer";
+import { LinearSearchVisualizer } from "./LinearSearchVisualizer";
+import { BinarySearchVisualizer } from "./BinarySearchVisualizer";
 import { TimeComplexityVisualizer } from "./TimeComplexityVisualizer";
 import { SpaceComplexityVisualizer } from "./SpaceComplexityVisualizer";
 import { Sparkles, ArrowLeft } from "lucide-react";
@@ -383,6 +386,9 @@ export function SortingVisualizer() {
         <div className="w-full">
           {selectedAlgorithm === "stack" && <StackVisualizer />}
           {selectedAlgorithm === "queue" && <QueueVisualizer />}
+          {selectedAlgorithm === "linked-list" && <LinkedListVisualizer />}
+          {selectedAlgorithm === "linear-search" && <LinearSearchVisualizer />}
+          {selectedAlgorithm === "binary-search" && <BinarySearchVisualizer />}
           {selectedAlgorithm === "time-complexity" && <TimeComplexityVisualizer />}
           {selectedAlgorithm === "space-complexity" && <SpaceComplexityVisualizer />}
         </div>

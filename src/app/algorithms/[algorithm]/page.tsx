@@ -33,6 +33,18 @@ const QueueVisualizer = dynamic(
   () => import("@/components/visualizer/QueueVisualizer").then((mod) => mod.QueueVisualizer),
   { ssr: false, loading: () => <TabLoading /> }
 );
+const LinkedListVisualizer = dynamic(
+  () => import("@/components/visualizer/LinkedListVisualizer").then((mod) => mod.LinkedListVisualizer),
+  { ssr: false, loading: () => <TabLoading /> }
+);
+const LinearSearchVisualizer = dynamic(
+  () => import("@/components/visualizer/LinearSearchVisualizer").then((mod) => mod.LinearSearchVisualizer),
+  { ssr: false, loading: () => <TabLoading /> }
+);
+const BinarySearchVisualizer = dynamic(
+  () => import("@/components/visualizer/BinarySearchVisualizer").then((mod) => mod.BinarySearchVisualizer),
+  { ssr: false, loading: () => <TabLoading /> }
+);
 const TimeComplexityVisualizer = dynamic(
   () => import("@/components/visualizer/TimeComplexityVisualizer").then((mod) => mod.TimeComplexityVisualizer),
   { ssr: false, loading: () => <TabLoading /> }
@@ -100,6 +112,7 @@ import {
   Database,
   ChevronDown,
   Cpu,
+  Search,
 } from "lucide-react";
 
 export default function AlgorithmDetailPage() {
@@ -121,11 +134,14 @@ export default function AlgorithmDetailPage() {
 
   const isDataStructure = meta.category === "data-structure";
   const isComplexity = meta.category === "complexity";
-  const isSpecialTopic = isDataStructure || isComplexity;
+  const isSearching = meta.category === "searching";
+  const isSpecialTopic = isDataStructure || isComplexity || isSearching;
 
   const topicDocsUrl = isDataStructure
-    ? `/docs/${algorithmId}-data-structure`
+    ? (algorithmId === "linked-list" ? "/docs/linked-list-fundamentals" : `/docs/${algorithmId}-data-structure`)
     : isComplexity
+    ? `/docs/${algorithmId}`
+    : isSearching
     ? `/docs/${algorithmId}`
     : `/docs/${algorithmId}-sort`;
 
@@ -365,7 +381,7 @@ export default function AlgorithmDetailPage() {
           <div>
             <div className="flex items-center gap-2 mb-2">
               <span className="text-xs font-mono font-bold px-2.5 py-1 rounded-lg bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-500/20">
-                {isDataStructure ? "Data Structure" : isComplexity ? "Complexity Analysis" : "Sorting Algorithm"} • 0{stepData.order} of 09
+                {isDataStructure ? "Data Structure" : isComplexity ? "Complexity Analysis" : isSearching ? "Searching Algorithm" : "Sorting Algorithm"} • {stepData.order < 10 ? `0${stepData.order}` : stepData.order} of {LEARNING_PATH.length < 10 ? `0${LEARNING_PATH.length}` : LEARNING_PATH.length}
               </span>
               <span className="text-xs font-mono text-muted-foreground flex items-center gap-1">
                 <Clock className="h-3.5 w-3.5 text-amber-500" /> {stepData.estimatedTime}
@@ -541,6 +557,12 @@ export default function AlgorithmDetailPage() {
                 <StackVisualizer />
               ) : algorithmId === "queue" ? (
                 <QueueVisualizer />
+              ) : algorithmId === "linked-list" ? (
+                <LinkedListVisualizer />
+              ) : algorithmId === "linear-search" ? (
+                <LinearSearchVisualizer />
+              ) : algorithmId === "binary-search" ? (
+                <BinarySearchVisualizer />
               ) : algorithmId === "time-complexity" ? (
                 <TimeComplexityVisualizer />
               ) : algorithmId === "space-complexity" ? (
@@ -690,6 +712,22 @@ export default function AlgorithmDetailPage() {
                   <h3 className="text-sm font-mono font-bold uppercase tracking-wider text-foreground flex items-center gap-2">
                     <Database className="h-4 w-4 text-cyan-500" />
                     <span>Operation Complexity Guarantee Matrix</span>
+                  </h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
+                    {meta.complexity.operations?.map((op, i) => (
+                      <div key={i} className="p-3.5 rounded-xl border border-border bg-secondary/40 space-y-1">
+                        <div className="font-mono font-bold text-xs text-foreground">{op.name}</div>
+                        <div className="text-xs font-mono font-bold text-emerald-500">{op.time}</div>
+                        <div className="text-[11px] text-muted-foreground leading-tight">{op.description}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : isSearching ? (
+                <div className="p-6 rounded-2xl border border-border bg-card space-y-4">
+                  <h3 className="text-sm font-mono font-bold uppercase tracking-wider text-foreground flex items-center gap-2">
+                    <Search className="h-4 w-4 text-emerald-500" />
+                    <span>Search Traversal &amp; Precondition Guarantee Matrix</span>
                   </h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
                     {meta.complexity.operations?.map((op, i) => (

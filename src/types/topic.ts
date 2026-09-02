@@ -1,6 +1,6 @@
 import { SortOperation } from "./sorting";
 
-export type TopicCategory = "sorting" | "data-structure" | "complexity";
+export type TopicCategory = "sorting" | "searching" | "data-structure" | "complexity";
 
 export type SortingAlgorithmId =
   | "bubble"
@@ -9,11 +9,17 @@ export type SortingAlgorithmId =
   | "merge"
   | "quick";
 
-export type DataStructureId = "stack" | "queue";
+export type SearchingAlgorithmId = "linear-search" | "binary-search";
+
+export type DataStructureId = "stack" | "queue" | "linked-list";
 
 export type ComplexityTopicId = "time-complexity" | "space-complexity";
 
-export type TopicId = SortingAlgorithmId | DataStructureId | ComplexityTopicId;
+export type TopicId =
+  | SortingAlgorithmId
+  | SearchingAlgorithmId
+  | DataStructureId
+  | ComplexityTopicId;
 
 // Backwards compatibility alias
 export type AlgorithmId = TopicId;
@@ -48,6 +54,13 @@ export type QueueOperation =
   | { type: "front"; value: number; index: number; description: string }
   | { type: "underflow"; description: string }
   | { type: "overflow"; value: number; description: string }
+  | { type: "clear"; description: string };
+
+export type LinkedListOperation =
+  | { type: "insert-head"; value: number; description: string }
+  | { type: "insert-tail"; value: number; description: string }
+  | { type: "delete"; value: number; found: boolean; description: string }
+  | { type: "search"; value: number; found: boolean; steps: number[]; description: string }
   | { type: "clear"; description: string };
 
 export interface TopicMetadata {

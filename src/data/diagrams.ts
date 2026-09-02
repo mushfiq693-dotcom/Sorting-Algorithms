@@ -197,4 +197,68 @@ void reverseInPlace(vector<int>& arr) {
 vector<int> temp(arr.size()); // Consumes n auxiliary ints`,
     highlightedLine: 3,
   },
+  "linear-search": {
+    algorithmId: "linear-search",
+    title: "Linear Search — Sequential Element Examination",
+    subtitle: "Steps through elements sequentially from index 0 until the target is found or the array ends.",
+    caption: "Linear Search examines elements one by one without needing sorted data, stopping as soon as a match is found.",
+    fixedArray: [42, 17, 89, 23, 56, 12, 78],
+    complexityFormula: "Best: O(1) • Average: (n+1)/2 → O(n) • Worst: O(n)",
+    complexityExplanation: "Requires 1 comparison if target is at index 0, but n comparisons if target is last or absent.",
+    codeSnippet: `int linearSearch(const vector<int>& arr, int target) {
+    for (int i = 0; i < (int)arr.size(); i++) {
+        if (arr[i] == target) {
+            return i; // Early exit on match: O(1) best case
+        }
+    }
+    return -1; // Exhausted collection: O(n) worst case
+}`,
+    highlightedLine: 4,
+  },
+  "binary-search": {
+    algorithmId: "binary-search",
+    title: "Binary Search — Search-Range-Shrinking Timeline",
+    subtitle: "Repeatedly cuts the sorted candidate interval in half by comparing the target with the middle element.",
+    caption: "Each comparison eliminates half of the remaining elements, guaranteeing an O(log n) search time.",
+    fixedArray: [12, 24, 32, 45, 57, 68, 81, 99],
+    complexityFormula: "Recurrence: T(n) = T(n/2) + O(1) → O(log n)",
+    complexityExplanation: "Repeated division by 2 guarantees termination in at most ⌈log₂(n)⌉ comparisons on sorted data.",
+    codeSnippet: `int binarySearch(const vector<int>& arr, int target) {
+    int low = 0, high = (int)arr.size() - 1;
+    while (low <= high) {
+        int mid = low + (high - low) / 2; // Prevents 32-bit overflow
+        if (arr[mid] == target) return mid;
+        else if (arr[mid] < target) low = mid + 1; // Discard left half
+        else high = mid - 1; // Discard right half
+    }
+    return -1;
+}`,
+    highlightedLine: 5,
+  },
+  "linked-list": {
+    algorithmId: "linked-list",
+    title: "Linked List — Dynamic Node Pointer Architecture",
+    subtitle: "Nodes scattered across memory connected via pointers: O(1) head insertion vs O(n) traversal search.",
+    caption: "Prepend at the head takes O(1) time without shifting any elements, while search requires following pointers sequentially.",
+    fixedArray: [10, 25, 42, 60],
+    complexityFormula: "Insert Head: O(1) • Insert Tail: O(n) • Search: O(n)",
+    complexityExplanation: "Manipulating node pointers circumvents array contiguous memory shifts, but sacrifices O(1) index access.",
+    codeSnippet: `// O(1) Head Insertion
+void insertAtHead(int val) {
+    Node* newNode = new Node(val);
+    newNode->next = head; // Point new node to current head
+    head = newNode;       // Update head pointer: O(1) time
+}
+
+// O(n) Pointer Traversal Search
+bool search(int target) {
+    Node* curr = head;
+    while (curr) {
+        if (curr->val == target) return true;
+        curr = curr->next; // O(n) sequential pointer hop
+    }
+    return false;
+}`,
+    highlightedLine: 4,
+  },
 };

@@ -1,4 +1,4 @@
-export type CourseMaterialContentType = "topic" | "problem";
+export type CourseMaterialContentType = "topic" | "problem" | "algorithm";
 export type CourseMaterialDifficulty = "easy" | "medium" | "hard";
 
 export interface CourseMaterial {

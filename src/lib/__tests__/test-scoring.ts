@@ -181,6 +181,30 @@ const mockTopicScores = {
     computed_topic_score: 0,
     last_activity_at: new Date().toISOString(),
   },
+  "linked-list": {
+    quiz_best_score: 0,
+    bug_hunt_best_score: 0,
+    docs_completion: 0,
+    prediction_best_score: 0,
+    computed_topic_score: 0,
+    last_activity_at: new Date().toISOString(),
+  },
+  "linear-search": {
+    quiz_best_score: 0,
+    bug_hunt_best_score: 0,
+    docs_completion: 0,
+    prediction_best_score: 0,
+    computed_topic_score: 0,
+    last_activity_at: new Date().toISOString(),
+  },
+  "binary-search": {
+    quiz_best_score: 0,
+    bug_hunt_best_score: 0,
+    docs_completion: 0,
+    prediction_best_score: 0,
+    computed_topic_score: 0,
+    last_activity_at: new Date().toISOString(),
+  },
   "time-complexity": {
     quiz_best_score: 0,
     bug_hunt_best_score: 0,
@@ -200,8 +224,8 @@ const mockTopicScores = {
 };
 
 const overall = calculateOverallProgress(mockTopicScores as any);
-// (82 + 100 + 0 + 0 + 0 + 0 + 0 + 0 + 0) / 9 = 182 / 9 = 20.22 => rounded 20
-assertEqual(overall.overallScore, 20, "Overall score average across 9 topics is 20%");
+// (82 + 100 + 0*10) / 12 = 182 / 12 = 15.16 => rounded 15
+assertEqual(overall.overallScore, 15, "Overall score average across 12 topics is 15%");
 assertEqual(overall.masteredCount, 1, "Mastered count is 1 (Selection Sort >= 85)");
 assertEqual(overall.activeTopic, "bubble", "Active topic is bubble (< 85)");
 
@@ -212,6 +236,11 @@ assertEqual(
   100,
   "2 of 2 docs completed = 100%"
 );
+
+// Docs completion for new topics
+assertEqual(calculateDocsCompletion("linked-list", ["linked-list-fundamentals"]), 100, "1 of 1 doc completed for linked-list = 100%");
+assertEqual(calculateDocsCompletion("linear-search", ["linear-search"]), 100, "1 of 1 doc completed for linear-search = 100%");
+assertEqual(calculateDocsCompletion("binary-search", ["binary-search"]), 100, "1 of 1 doc completed for binary-search = 100%");
 
 console.log("\n================================================================================");
 console.log("  ALL SCORING & GUIDANCE ENGINE TESTS PASSED (100% MATHEMATICAL PRECISION)      ");

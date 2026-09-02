@@ -11,7 +11,7 @@ import { TopicMetrics, TopicScoresRecord, ActivityHistoryItem } from "../../back
 export interface OrderedTopicItem {
   id: AlgorithmId;
   name: string;
-  category: "sorting" | "data-structure" | "complexity";
+  category: "sorting" | "searching" | "data-structure" | "complexity";
 }
 
 export const ORDERED_SORTING_ALGORITHMS: OrderedTopicItem[] = [
@@ -22,9 +22,15 @@ export const ORDERED_SORTING_ALGORITHMS: OrderedTopicItem[] = [
   { id: "quick", name: "Quick Sort", category: "sorting" },
 ];
 
+export const ORDERED_SEARCHING_ALGORITHMS: OrderedTopicItem[] = [
+  { id: "linear-search", name: "Linear Search", category: "searching" },
+  { id: "binary-search", name: "Binary Search", category: "searching" },
+];
+
 export const ORDERED_DATA_STRUCTURES: OrderedTopicItem[] = [
   { id: "stack", name: "Stack", category: "data-structure" },
   { id: "queue", name: "Queue", category: "data-structure" },
+  { id: "linked-list", name: "Linked List", category: "data-structure" },
 ];
 
 export const ORDERED_COMPLEXITY_TOPICS: OrderedTopicItem[] = [
@@ -38,6 +44,7 @@ export const ORDERED_ALGORITHMS = ORDERED_SORTING_ALGORITHMS;
 export const ORDERED_TOPICS: OrderedTopicItem[] = [
   ...ORDERED_SORTING_ALGORITHMS,
   ...ORDERED_DATA_STRUCTURES,
+  ...ORDERED_SEARCHING_ALGORITHMS,
   ...ORDERED_COMPLEXITY_TOPICS,
 ];
 
@@ -47,8 +54,11 @@ export const ALGORITHM_NAME_MAP: Record<AlgorithmId, string> = {
   insertion: "Insertion Sort",
   merge: "Merge Sort",
   quick: "Quick Sort",
+  "linear-search": "Linear Search",
+  "binary-search": "Binary Search",
   stack: "Stack",
   queue: "Queue",
+  "linked-list": "Linked List",
   "time-complexity": "Time Complexity",
   "space-complexity": "Space Complexity",
 };
@@ -62,8 +72,11 @@ export const ALGORITHM_DOCS_MAP: Record<AlgorithmId, string[]> = {
   insertion: ["insertion-sort", "proof-on2-bubble-insertion"],
   merge: ["merge-sort", "what-is-recursion", "why-merge-is-always-nlogn"],
   quick: ["quick-sort", "why-quicksort-degrades"],
+  "linear-search": ["linear-search"],
+  "binary-search": ["binary-search"],
   stack: ["stack-data-structure"],
   queue: ["queue-data-structure"],
+  "linked-list": ["linked-list-fundamentals"],
   "time-complexity": ["time-complexity", "big-o-for-beginners"],
   "space-complexity": ["space-complexity", "in-place-and-space-complexity"],
 };

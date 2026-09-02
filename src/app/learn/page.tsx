@@ -25,7 +25,9 @@ import { ThemeToggle } from "@/components/theme/ThemeToggle";
 
 export default function LearnPage() {
   const [completedSteps, setCompletedSteps] = useState<string[]>([]);
-  const [categoryFilter, setCategoryFilter] = useState<"all" | "sorting" | "data-structure" | "complexity">("all");
+  const [categoryFilter, setCategoryFilter] = useState<
+    "all" | "sorting" | "searching" | "data-structure" | "complexity"
+  >("all");
   const { syncStep } = useProgressSync();
 
   // Load completed steps from localStorage and sync
@@ -45,7 +47,10 @@ export default function LearnPage() {
         ? prev.filter((item) => item !== id)
         : [...prev, id];
       try {
-        localStorage.setItem("sortviz_completed_steps", JSON.stringify(updated));
+        localStorage.setItem(
+          "sortviz_completed_steps",
+          JSON.stringify(updated)
+        );
         if (!prev.includes(id)) {
           syncStep(id);
         }
@@ -110,21 +115,23 @@ export default function LearnPage() {
             <span>Beginner-First Structured Roadmap</span>
           </div>
 
-          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-foreground leading-tight">
-            AlgoHub Curriculum & Learning Path
+          <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-foreground mb-3 font-sans">
+            Algorithm &amp; Data Structure{" "}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-500 to-blue-500">
+              Mastery Path
+            </span>
           </h1>
-          <p className="mt-3 text-sm sm:text-base text-muted-foreground leading-relaxed">
-            Master the core concepts of algorithms and data structures in the ideal conceptual order. Each lesson breaks down intuition, interactive visualizers, code dissection, complexity, and practice.
+          <p className="text-sm sm:text-base text-muted-foreground leading-relaxed max-w-2xl mx-auto">
+            A step-by-step roadmap from brute-force paradigms to optimal
+            algorithms, linear data structures, searching strategies, and asymptotic complexity analysis.
           </p>
 
-          {/* Progress Tracker Bar */}
-          <div className="mt-8 rounded-2xl border border-border bg-card p-4 sm:p-5 backdrop-blur-md shadow-sm dark:shadow-xl text-left">
-            <div className="flex items-center justify-between text-xs font-medium mb-2">
-              <span className="text-foreground flex items-center gap-2 font-semibold">
-                <Zap className="h-4 w-4 text-cyan-500" /> Overall Mastery Progress
-              </span>
-              <span className="font-mono text-cyan-600 dark:text-cyan-400 font-bold">
-                {completedSteps.length} of {LEARNING_PATH.length} Completed ({progressPercent}%)
+          {/* Progress Overview Bar */}
+          <div className="mt-8 p-4 rounded-2xl border border-border bg-card/60 backdrop-blur-md max-w-xl mx-auto shadow-sm">
+            <div className="flex items-center justify-between text-xs font-mono mb-2">
+              <span className="text-muted-foreground">Overall Roadmap Completion</span>
+              <span className="text-cyan-500 font-bold">
+                {completedSteps.length} / {LEARNING_PATH.length} ({progressPercent}%)
               </span>
             </div>
             <div className="w-full h-2.5 rounded-full bg-secondary overflow-hidden">
@@ -155,7 +162,17 @@ export default function LearnPage() {
                   : "border border-border bg-secondary/80 text-muted-foreground hover:text-foreground hover:bg-secondary"
               }`}
             >
-              Sorting Algorithms (5)
+              Sorting ({LEARNING_PATH.filter((s) => s.category === "sorting").length})
+            </button>
+            <button
+              onClick={() => setCategoryFilter("searching")}
+              className={`px-4 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+                categoryFilter === "searching"
+                  ? "bg-cyan-500 text-slate-950 shadow-md font-bold"
+                  : "border border-border bg-secondary/80 text-muted-foreground hover:text-foreground hover:bg-secondary"
+              }`}
+            >
+              Searching ({LEARNING_PATH.filter((s) => s.category === "searching").length})
             </button>
             <button
               onClick={() => setCategoryFilter("data-structure")}
@@ -165,7 +182,7 @@ export default function LearnPage() {
                   : "border border-border bg-secondary/80 text-muted-foreground hover:text-foreground hover:bg-secondary"
               }`}
             >
-              Data Structures (2)
+              Data Structures ({LEARNING_PATH.filter((s) => s.category === "data-structure").length})
             </button>
             <button
               onClick={() => setCategoryFilter("complexity")}
@@ -175,7 +192,7 @@ export default function LearnPage() {
                   : "border border-border bg-secondary/80 text-muted-foreground hover:text-foreground hover:bg-secondary"
               }`}
             >
-              Complexity Analysis (2)
+              Complexity ({LEARNING_PATH.filter((s) => s.category === "complexity").length})
             </button>
           </div>
         </div>

@@ -12,7 +12,6 @@ import {
   Home,
   GraduationCap,
   Sparkles,
-  ShieldAlert,
   CheckCircle2,
   Loader2,
 } from "lucide-react";
@@ -91,43 +90,56 @@ export default function BetaPendingPage() {
   };
 
   return (
-    <div className="relative min-h-screen bg-[#060305] flex items-center justify-center p-4 sm:p-6 antialiased selection:bg-rose-500/30 selection:text-rose-200">
-      <div className="absolute top-4 right-4 z-50">
+    <div className="relative min-h-screen bg-background text-foreground flex items-center justify-center p-4 sm:p-6 antialiased selection:bg-[#C9A962]/35 selection:text-[#1C1714] transition-colors duration-200 overflow-hidden font-sans">
+      {/* Ambient background glow */}
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-primary/10 rounded-full blur-[140px]" />
+        <div className="absolute -bottom-40 left-1/2 -translate-x-1/2 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[120px]" />
+      </div>
+
+      {/* Top Navbar items */}
+      <div className="absolute top-4 left-4 sm:left-8 z-50">
+        <Link href="/" className="flex items-center gap-2 group text-foreground hover:text-primary transition-colors">
+          <span className="font-heading text-lg sm:text-xl font-bold tracking-tight">AlgoHub</span>
+        </Link>
+      </div>
+      <div className="absolute top-4 right-4 sm:right-8 z-50">
         <ThemeToggle />
       </div>
-      <div className="max-w-lg w-full rounded-2xl border border-amber-500/30 bg-[#0e0509]/95 p-6 sm:p-8 backdrop-blur-2xl shadow-2xl shadow-amber-950/20 text-center space-y-6">
+
+      <div className="max-w-lg w-full rounded-2xl border border-border bg-card/90 p-6 sm:p-8 backdrop-blur-xl shadow-2xl text-center space-y-6 relative z-10 corner-flourish transition-all">
         {/* Glowing Clock Badge */}
-        <div className="mx-auto h-16 w-16 rounded-2xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-400 shadow-inner">
-          <Clock className="h-8 w-8 animate-pulse" />
+        <div className="mx-auto h-16 w-16 rounded-2xl bg-primary/15 border border-primary/30 flex items-center justify-center text-primary shadow-brass">
+          <Clock className="h-8 w-8 animate-pulse text-primary" />
         </div>
 
         {/* Header & Status Details */}
         <div className="space-y-2.5">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-amber-500/30 bg-amber-500/10 text-amber-300 font-mono text-xs font-semibold">
+          <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full border border-primary/40 bg-card text-primary font-sans text-xs uppercase tracking-wider font-semibold">
             <GraduationCap className="h-3.5 w-3.5" />
-            <span>GSTU CSE Restricted Beta Verification</span>
+            <span>Restricted Beta Verification</span>
           </div>
 
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-white font-sans tracking-tight">
-            Beta Approval Pending
+          <h1 className="text-3xl font-semibold tracking-tight text-foreground font-heading">
+            Beta Approval <span className="italic font-semibold text-primary dark:text-[#D4B872]">Pending</span>
           </h1>
 
-          <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-sans max-w-md mx-auto">
+          <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed font-sans max-w-md mx-auto">
             Welcome{userName ? `, ${userName}` : ""}! Your registration has been received.
-            Departmental administrators are reviewing access requests to ensure server stability.
+            Departmental administrators are reviewing access requests to ensure platform stability.
           </p>
         </div>
 
         {/* Verification Card */}
-        <div className="p-4 rounded-xl border border-rose-950/70 bg-[#060204] font-mono text-xs text-slate-300 space-y-2 text-left">
-          <div className="flex items-center justify-between text-slate-400 border-b border-rose-950/50 pb-2">
+        <div className="p-4 rounded-xl border border-border bg-secondary/40 font-mono text-xs text-foreground space-y-2 text-left">
+          <div className="flex items-center justify-between text-muted-foreground border-b border-border/60 pb-2">
             <span>Account Email:</span>
-            <span className="text-white font-bold">{userEmail || "Loading..."}</span>
+            <span className="text-foreground font-bold">{userEmail || "Loading..."}</span>
           </div>
-          <div className="flex items-center justify-between text-slate-400">
+          <div className="flex items-center justify-between text-muted-foreground">
             <span>Current Status:</span>
-            <span className="inline-flex items-center gap-1 text-amber-400 font-bold bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">
-              <span className="h-1.5 w-1.5 rounded-full bg-amber-400 animate-ping" />
+            <span className="inline-flex items-center gap-1.5 text-primary font-bold bg-primary/10 px-2 py-0.5 rounded border border-primary/20 font-sans text-xs">
+              <span className="h-1.5 w-1.5 rounded-full bg-primary animate-ping" />
               Pending Review
             </span>
           </div>
@@ -135,8 +147,8 @@ export default function BetaPendingPage() {
 
         {/* Status Check Alert */}
         {statusMessage && (
-          <div className="p-3.5 rounded-xl border border-amber-500/40 bg-amber-500/10 text-amber-200 text-xs flex items-center justify-center gap-2 animate-in fade-in">
-            <CheckCircle2 className="h-4 w-4 text-amber-400 shrink-0" />
+          <div className="p-3.5 rounded-xl border border-primary/40 bg-primary/10 text-primary text-xs flex items-center justify-center gap-2 animate-in fade-in font-sans">
+            <CheckCircle2 className="h-4 w-4 text-primary shrink-0" />
             <span>{statusMessage}</span>
           </div>
         )}
@@ -147,7 +159,7 @@ export default function BetaPendingPage() {
           <button
             onClick={handleCheckStatus}
             disabled={isChecking}
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-red-600 via-rose-600 to-amber-600 px-5 py-2.5 text-xs sm:text-sm font-bold text-white shadow-md shadow-rose-600/25 hover:brightness-110 focus-visible:ring-2 focus-visible:ring-rose-400 focus-visible:outline-none transition-all active:scale-95 disabled:opacity-50 cursor-pointer"
+            className="btn-brass w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded px-6 py-2.5 text-xs sm:text-sm font-sans font-semibold tracking-[0.08em] shadow-brass hover:scale-[1.01] active:scale-[0.98] transition-all text-primary-foreground disabled:opacity-50 cursor-pointer"
           >
             {isChecking ? (
               <Loader2 className="h-4 w-4 animate-spin" />
@@ -160,18 +172,18 @@ export default function BetaPendingPage() {
           {/* Return Home */}
           <Link
             href="/"
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl border border-rose-950/70 bg-[#14080e]/90 px-5 py-2.5 text-xs sm:text-sm font-semibold text-slate-200 hover:text-white hover:bg-[#1f0c16] hover:border-rose-800/60 focus-visible:ring-2 focus-visible:ring-rose-400 focus-visible:outline-none transition-all active:scale-95"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded border border-border bg-card px-5 py-2.5 text-xs sm:text-sm font-sans font-semibold text-foreground hover:text-primary hover:border-primary/50 transition-all active:scale-95"
           >
             <Home className="h-4 w-4" />
-            <span>Explore Landing Page</span>
+            <span>Back to AlgoHub</span>
           </Link>
         </div>
 
         {/* Sign Out */}
-        <div className="pt-2 border-t border-rose-950/50">
+        <div className="pt-2 border-t border-border">
           <button
             onClick={handleSignOut}
-            className="inline-flex items-center gap-1.5 text-xs text-slate-400 hover:text-rose-400 transition-colors"
+            className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-primary transition-colors cursor-pointer"
           >
             <LogOut className="h-3.5 w-3.5" />
             <span>Sign out of this account</span>

@@ -4,7 +4,7 @@ export interface LearningStep {
   id: AlgorithmId;
   order: number;
   name: string;
-  category: "sorting" | "data-structure" | "complexity";
+  category: "sorting" | "searching" | "data-structure" | "complexity";
   badge: string;
   estimatedTime: string;
   difficulty: "Beginner" | "Intermediate" | "Advanced";
@@ -269,8 +269,95 @@ export const LEARNING_PATH: LearningStep[] = [
     },
   },
   {
-    id: "time-complexity",
+    id: "linked-list",
     order: 8,
+    name: "Linked List",
+    category: "data-structure",
+    badge: "Nodes & Forward Pointers",
+    estimatedTime: "~15 min",
+    difficulty: "Intermediate",
+    reason: "The quintessential pointer-based linear structure. Master how dynamic nodes eliminate element shifting at the cost of direct indexing.",
+    analogy: "A treasure hunt with clues: each clue box has a treasure item and a slip of paper telling you the exact GPS address of the next clue box.",
+    idea: "A Singly Linked List consists of independently allocated nodes in heap memory, each holding data and a next pointer. Unlike contiguous arrays, inserting at the head is strictly O(1) because no other elements move.",
+    sampleArray: [10, 20, 30, 40],
+    codeBlocks: [
+      {
+        title: "Node Definition & Head Prepending",
+        lines: "struct Node {\n    int val;\n    Node* next;\n    Node(int x) : val(x), next(nullptr) {}\n};\n\nvoid insertAtHead(int val) {\n    Node* newNode = new Node(val);\n    newNode->next = head;\n    head = newNode;\n}",
+        explanation: "Allocates a new node and redirects head in O(1) time without shifting elements.",
+      },
+      {
+        title: "Traversal & Search",
+        lines: "bool search(int target) {\n    Node* curr = head;\n    while (curr) {\n        if (curr->val == target) return true;\n        curr = curr->next;\n    }\n    return false;\n}",
+        explanation: "Follows pointer chains sequentially from head to tail in O(n) time.",
+      },
+      {
+        title: "Deletion by Value",
+        lines: "bool deleteValue(int val) {\n    if (!head) return false;\n    if (head->val == val) {\n        Node* temp = head;\n        head = head->next;\n        delete temp;\n        return true;\n    }\n    Node* curr = head;\n    while (curr->next && curr->next->val != val) curr = curr->next;\n    if (!curr->next) return false;\n    Node* temp = curr->next;\n    curr->next = curr->next->next;\n    delete temp;\n    return true;\n}",
+        explanation: "Splices predecessor pointer around target node in O(n) time without shifting other nodes.",
+      },
+    ],
+    complexityWhy: {
+      time: "Prepend at head is O(1). Searching, tail insertion (without tail pointer), and deleting by value require sequential traversal O(n).",
+      space: "Consumes O(n) extra memory for pointer storage (4-8 bytes per node).",
+    },
+  },
+  {
+    id: "linear-search",
+    order: 9,
+    name: "Linear Search",
+    category: "searching",
+    badge: "Sequential Scan",
+    estimatedTime: "~10 min",
+    difficulty: "Beginner",
+    reason: "The simplest search algorithm. Works on any collection without requiring sorting or extra preprocessing.",
+    analogy: "Looking for your lost keys in a row of jacket pockets: you check the first pocket, then the second, then the third, until you find them or check every pocket.",
+    idea: "Linear Search checks every element of an array one by one from left to right. When it finds the target, it stops and returns the index. If it reaches the end without a match, it returns -1.",
+    sampleArray: [42, 17, 89, 23, 56, 12, 78],
+    codeBlocks: [
+      {
+        title: "Sequential Iteration & Early Exit",
+        lines: "int linearSearch(const vector<int>& arr, int target) {\n    for (int i = 0; i < (int)arr.size(); i++) {\n        if (arr[i] == target) return i;\n    }\n    return -1;\n}",
+        explanation: "Loops through each slot from 0 to n-1. Returns as soon as target matches.",
+      },
+    ],
+    complexityWhy: {
+      time: "Best case O(1) if target is at index 0. Average and worst case O(n) if target is at the end or absent.",
+      space: "Requires strictly O(1) extra space because it uses only one loop counter variable.",
+    },
+  },
+  {
+    id: "binary-search",
+    order: 10,
+    name: "Binary Search",
+    category: "searching",
+    badge: "Logarithmic Halving",
+    estimatedTime: "~15 min",
+    difficulty: "Intermediate",
+    reason: "Requires sorted input. Dramatically accelerates search time from O(n) to O(log n) by repeatedly halving the remaining candidates.",
+    analogy: "Looking up a word in a printed dictionary: you open the book to the exact middle. If the target word comes before, you discard the entire second half and repeat in the first half.",
+    idea: "PRECONDITION: Array must be sorted. Compare target with middle element arr[mid]. If equal, return mid. If target is smaller, search left half; if larger, search right half. Each step cuts the search space in half.",
+    sampleArray: [12, 24, 32, 45, 57, 68, 81, 99],
+    codeBlocks: [
+      {
+        title: "Iterative Implementation (O(1) Space)",
+        lines: "int binarySearch(const vector<int>& arr, int target) {\n    int low = 0, high = (int)arr.size() - 1;\n    while (low <= high) {\n        int mid = low + (high - low) / 2;\n        if (arr[mid] == target) return mid;\n        else if (arr[mid] < target) low = mid + 1;\n        else high = mid - 1;\n    }\n    return -1;\n}",
+        explanation: "Narrows search window [low..high]. `low + (high - low) / 2` avoids 32-bit integer overflow.",
+      },
+      {
+        title: "Recursive Implementation (O(log n) Call Stack)",
+        lines: "int binarySearchRec(const vector<int>& arr, int low, int high, int target) {\n    if (low > high) return -1;\n    int mid = low + (high - low) / 2;\n    if (arr[mid] == target) return mid;\n    if (arr[mid] < target) return binarySearchRec(arr, mid + 1, high, target);\n    return binarySearchRec(arr, low, mid - 1, target);\n}",
+        explanation: "Recursive divide-and-conquer consumes log₂(n) activation frames on the call stack.",
+      },
+    ],
+    complexityWhy: {
+      time: "Halving the search space on each step guarantees at most log₂(n) comparisons in all cases O(log n).",
+      space: "Iterative version uses O(1) space. Recursive version uses O(log n) call stack space.",
+    },
+  },
+  {
+    id: "time-complexity",
+    order: 11,
     name: "Time Complexity",
     category: "complexity",
     badge: "Big-O & Growth Rates",
@@ -304,7 +391,7 @@ export const LEARNING_PATH: LearningStep[] = [
   },
   {
     id: "space-complexity",
-    order: 9,
+    order: 12,
     name: "Space Complexity",
     category: "complexity",
     badge: "Auxiliary Memory & Stack",
@@ -339,12 +426,13 @@ export const LEARNING_PATH: LearningStep[] = [
 ];
 
 export const SORTING_PATH = LEARNING_PATH.filter((s) => s.category === "sorting");
+export const SEARCHING_PATH = LEARNING_PATH.filter((s) => s.category === "searching");
 export const DATA_STRUCTURES_PATH = LEARNING_PATH.filter((s) => s.category === "data-structure");
 export const COMPLEXITY_PATH = LEARNING_PATH.filter((s) => s.category === "complexity");
 
 export interface GlossaryTerm {
   term: string;
-  category: "Fundamentals" | "Properties" | "Recursion" | "Data Structures";
+  category: "Fundamentals" | "Properties" | "Recursion" | "Data Structures" | "Searching";
   definition: string;
 }
 
@@ -438,5 +526,30 @@ export const GLOSSARY_TERMS: GlossaryTerm[] = [
     term: "Call Stack",
     category: "Data Structures",
     definition: "A special stack maintained by CPU/runtimes to store active function execution frames and return addresses during recursion.",
+  },
+  {
+    term: "Linear Search",
+    category: "Searching",
+    definition: "A sequential search examining elements one-by-one from start to finish. Works on unsorted data in O(n) time.",
+  },
+  {
+    term: "Binary Search",
+    category: "Searching",
+    definition: "A divide-and-conquer search requiring a sorted array that halves the search space on each step, achieving O(log n) time.",
+  },
+  {
+    term: "Linked List",
+    category: "Data Structures",
+    definition: "A linear sequence of node structures stored non-contiguously in memory, connected through explicit next pointers.",
+  },
+  {
+    term: "Node",
+    category: "Data Structures",
+    definition: "A basic building block of linked data structures, packaging an item payload alongside one or more pointer references.",
+  },
+  {
+    term: "Pointer / Reference",
+    category: "Fundamentals",
+    definition: "A memory variable that stores the direct physical or virtual heap address of another object or node.",
   },
 ];
