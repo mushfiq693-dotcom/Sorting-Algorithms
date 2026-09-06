@@ -51,6 +51,45 @@ function GoogleIcon() {
   );
 }
 
+function formatAuthErrorMessage(error: any, isSignUp: boolean = false): string {
+  if (!error) return "An unexpected error occurred. Please try again.";
+  const msg = (error.message || String(error)).toLowerCase();
+
+  if (
+    msg.includes("invalid login credentials") ||
+    msg.includes("invalid_credentials") ||
+    msg.includes("invalid username or password")
+  ) {
+    return "Invalid email or password. Please check your credentials and try again.";
+  }
+  if (
+    msg.includes("user already registered") ||
+    msg.includes("already registered") ||
+    msg.includes("already exists")
+  ) {
+    return "An account with this email address already exists. Please switch to Sign In.";
+  }
+  if (msg.includes("email not confirmed")) {
+    return "Please confirm your email address via the link sent to your inbox, or continue with Google.";
+  }
+  if (msg.includes("password should be at least") || msg.includes("password is too short")) {
+    return "Password must be at least 6 characters long.";
+  }
+  if (msg.includes("rate limit") || msg.includes("over_email_send_rate_limit")) {
+    return "Too many attempts in a short time. Please wait a minute and try again.";
+  }
+  if (msg.includes("database error") || msg.includes("saving new user")) {
+    return isSignUp
+      ? "Unable to create account right now. Please try again or use Continue with Google."
+      : "Database connection issue. Please try again shortly.";
+  }
+  if (msg.includes("invalid email") || msg.includes("unable to validate email")) {
+    return "Please enter a valid email address.";
+  }
+
+  return error.message || "Authentication failed. Please verify your credentials.";
+}
+
 function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -201,7 +240,7 @@ function LoginForm() {
         }
       }
     } catch (err: any) {
-      setErrorMsg(err.message || "Failed to sign in. Please verify your credentials.");
+      setErrorMsg(formatAuthErrorMessage(err, false));
     } finally {
       setIsLoading(false);
     }
@@ -247,15 +286,15 @@ function LoginForm() {
       if (error) throw error;
 
       if (data.user) {
-        // If email confirmation is required by Supabase
+        // If user already exists without error or if confirmation sent
         if (data.user.identities && data.user.identities.length === 0) {
-          setErrorMsg("An account with this email address already exists. Please Sign In.");
+          setErrorMsg("An account with this email address already exists. Please switch to Sign In.");
         } else {
           setEmailVerificationSent(cleanEmail);
         }
       }
     } catch (err: any) {
-      setErrorMsg(err.message || "Registration failed. Please try again.");
+      setErrorMsg(formatAuthErrorMessage(err, true));
     } finally {
       setIsLoading(false);
     }
