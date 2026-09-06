@@ -21,15 +21,9 @@ export async function updateSession(request: NextRequest) {
 
   const pathname = request.nextUrl.pathname;
 
-  // List of public routes that bypass authentication (Public Recruiter Sandbox Mode)
+  // List of public routes that bypass authentication
   const isPublicRoute =
     pathname === "/" ||
-    pathname === "/learn" ||
-    pathname.startsWith("/algorithms") ||
-    pathname.startsWith("/compare") ||
-    pathname.startsWith("/docs") ||
-    pathname.startsWith("/visualizer") ||
-    pathname.startsWith("/course-material") ||
     pathname.startsWith("/auth/") ||
     pathname.startsWith("/_next") ||
     pathname.startsWith("/api/public") ||
@@ -134,10 +128,12 @@ export async function updateSession(request: NextRequest) {
     }
   }
 
-  // If user is already authenticated and visits /auth/login, redirect to /learn
+  // If user is already authenticated and visits /auth/login, redirect to next param or /
   if (user && pathname === "/auth/login") {
+    const next = request.nextUrl.searchParams.get("next") || "/";
     const url = request.nextUrl.clone();
-    url.pathname = "/learn";
+    url.pathname = next.startsWith("/") ? next : "/";
+    url.searchParams.delete("next");
     return NextResponse.redirect(url);
   }
 

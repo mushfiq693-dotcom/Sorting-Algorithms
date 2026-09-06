@@ -13,7 +13,7 @@ export function FeedbackWidget() {
   return (
     <>
       {/* Floating Bottom Action Trigger */}
-      <div className="fixed bottom-5 right-5 z-40 flex flex-col items-end gap-2 font-sans select-none">
+      <div className="fixed bottom-4 right-3 sm:bottom-5 sm:right-5 z-40 flex flex-col items-end gap-2 font-sans select-none">
         {/* Expanded Options */}
         {isExpanded && (
           <div className="flex flex-col items-end gap-2 animate-in fade-in slide-in-from-bottom-2">

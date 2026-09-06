@@ -32,14 +32,14 @@ export function DeveloperCredit() {
   const dev = LINKS.DEVELOPER;
 
   return (
-    <div ref={modalRef} className="fixed bottom-20 right-5 z-50 font-sans select-none">
+    <div ref={modalRef} className="fixed bottom-20 right-3 sm:right-5 z-50 font-sans select-none">
       {/* Floating Popup Card */}
       {isOpen && (
-        <div className="absolute bottom-14 right-0 w-80 sm:w-88 max-w-[calc(100vw-2.5rem)] rounded-2xl border border-primary/30 bg-card/95 backdrop-blur-2xl p-5 sm:p-6 shadow-2xl text-foreground corner-flourish animate-in fade-in zoom-in-95 duration-200">
+        <div className="absolute bottom-14 right-0 w-[calc(100vw-1.5rem)] sm:w-88 max-w-[340px] sm:max-w-none rounded-2xl border border-primary/30 bg-card/95 backdrop-blur-2xl p-4 sm:p-6 shadow-2xl text-foreground corner-flourish animate-in fade-in zoom-in-95 duration-200">
           {/* Close Button Top-Right */}
           <button
             onClick={() => setIsOpen(false)}
-            className="absolute top-4 right-4 p-1.5 rounded-lg bg-secondary/80 text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors z-10 cursor-pointer"
+            className="absolute top-3.5 right-3.5 p-1.5 rounded-lg bg-secondary/80 text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors z-10 cursor-pointer"
             aria-label="Close developer card"
           >
             <X className="h-4 w-4" />

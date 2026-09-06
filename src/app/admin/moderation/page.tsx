@@ -738,7 +738,7 @@ export default function AdminModerationPage() {
           </div>
 
           {/* Card 5: Feedback & Bugs */}
-          <div className="p-4 rounded-xl border border-border bg-card/80 space-y-1 shadow-sm corner-flourish">
+          <div className="col-span-2 sm:col-span-1 lg:col-span-1 p-4 rounded-xl border border-border bg-card/80 space-y-1 shadow-sm corner-flourish">
             <div className="flex items-center justify-between text-rose-500 dark:text-rose-400">
               <span className="text-xs font-mono font-semibold">Feedback / Bugs</span>
               <MessageSquare className="h-4 w-4" />
