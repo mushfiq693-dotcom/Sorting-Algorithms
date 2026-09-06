@@ -26,7 +26,7 @@ export const LINKS = {
     bio: "Architected & developed with modern web standards by Mushfiq.",
     portfolioUrl:
       process.env.NEXT_PUBLIC_DEVELOPER_PORTFOLIO_URL ||
-      "https://mushfiq.dev",
+      "https://mushfiq-dev.vercel.app",
     githubUrl:
       process.env.NEXT_PUBLIC_DEVELOPER_GITHUB_URL ||
       "https://github.com/mushfiq693-dotcom",
