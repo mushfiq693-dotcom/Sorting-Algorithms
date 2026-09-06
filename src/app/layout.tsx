@@ -4,6 +4,7 @@ import "./globals.css";
 import { FeedbackWidget } from "@/components/feedback/FeedbackWidget";
 import { DeveloperCredit } from "@/components/brand/DeveloperCredit";
 import { AtmosphericOverlay } from "@/components/ui/AtmosphericOverlay";
+import { UserPresenceTracker } from "@/components/telemetry/UserPresenceTracker";
 
 // 1. Heading Font: Cormorant Garamond 600 (High-contrast serif for hero & headings)
 const cormorantGaramond = Cormorant_Garamond({
@@ -101,6 +102,7 @@ export default function RootLayout({
         className={`${cormorantGaramond.variable} ${manrope.variable} ${jetbrainsMono.variable} font-sans font-normal bg-background text-foreground min-h-screen flex flex-col antialiased selection:bg-[#C9A962]/35 selection:text-[#1C1714]`}
       >
         <AtmosphericOverlay />
+        <UserPresenceTracker />
         {children}
         <DeveloperCredit />
         <FeedbackWidget />

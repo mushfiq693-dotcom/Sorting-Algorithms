@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
@@ -25,21 +25,59 @@ import {
   UserCheck,
   UserX,
   Crown,
-  Lock,
   Sparkles,
+  Activity,
+  Zap,
+  Eye,
+  BookOpen,
+  BarChart2,
+  X,
+  Radio,
+  Check,
 } from "lucide-react";
 
-interface ProfileBetaUser {
+interface UserProgressData {
+  completed_steps?: string[];
+  completed_docs?: string[];
+  quiz_scores?: Record<string, number>;
+  topic_scores?: Record<string, any>;
+  activity_history?: Array<{
+    id: string;
+    algorithmId: string;
+    activityType: string;
+    score: number;
+    title: string;
+    timestamp: string;
+  }>;
+  last_active_at?: string | null;
+}
+
+interface ProfileUser {
   id: string;
   email: string;
   full_name: string | null;
   department: string | null;
   student_id: string | null;
-  role: string;
+  avatar_url: string | null;
+  role: "student" | "mentor" | "admin";
   created_at: string;
   status: "pending" | "approved" | "rejected" | "suspended";
   approved_at: string | null;
   notes: string | null;
+  // Telemetry fields from user_progress
+  completed_steps: string[];
+  completed_docs: string[];
+  quiz_scores: Record<string, number>;
+  topic_scores: Record<string, any>;
+  activity_history: Array<{
+    id: string;
+    algorithmId: string;
+    activityType: string;
+    score: number;
+    title: string;
+    timestamp: string;
+  }>;
+  last_active_at: string | null;
 }
 
 interface MentorApplicationItem {
@@ -91,6 +129,25 @@ interface BugReportItem {
   };
 }
 
+// Format relative time helper
+function formatTimeAgo(dateString: string | null): string {
+  if (!dateString) return "Never";
+  const now = Date.now();
+  const past = new Date(dateString).getTime();
+  const diffMs = now - past;
+  const diffSec = Math.floor(diffMs / 1000);
+  const diffMin = Math.floor(diffSec / 60);
+  const diffHours = Math.floor(diffMin / 60);
+  const diffDays = Math.floor(diffHours / 24);
+
+  if (diffSec < 45) return "Just now";
+  if (diffMin < 60) return `${diffMin}m ago`;
+  if (diffHours < 24) return `${diffHours}h ago`;
+  if (diffDays === 1) return "Yesterday";
+  if (diffDays < 7) return `${diffDays}d ago`;
+  return new Date(dateString).toLocaleDateString();
+}
+
 export default function AdminModerationPage() {
   const router = useRouter();
   const supabase = createClient();
@@ -99,14 +156,21 @@ export default function AdminModerationPage() {
   const [activeTab, setActiveTab] = useState<"users" | "mentors" | "feedback" | "bugs">("users");
 
   // Data states
-  const [users, setUsers] = useState<ProfileBetaUser[]>([]);
+  const [users, setUsers] = useState<ProfileUser[]>([]);
   const [mentorApps, setMentorApps] = useState<MentorApplicationItem[]>([]);
   const [feedbackList, setFeedbackList] = useState<FeedbackItem[]>([]);
   const [bugsList, setBugsList] = useState<BugReportItem[]>([]);
 
+  // Real-time live presence tracking map: userId -> { page, online_at }
+  const [liveOnlineMap, setLiveOnlineMap] = useState<Map<string, { page?: string; online_at?: string }>>(new Map());
+
+  // Selected User for Activity Inspector Drawer / Modal
+  const [inspectingUser, setInspectingUser] = useState<ProfileUser | null>(null);
+
   // Filters & Search
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [presenceFilter, setPresenceFilter] = useState<"all" | "online" | "recent">("all");
   const [isLoading, setIsLoading] = useState(true);
   const [actionLoadingId, setActionLoadingId] = useState<string | null>(null);
 
@@ -135,9 +199,20 @@ export default function AdminModerationPage() {
       }
       setIsAdmin(true);
 
-      // 2. Fetch all profiles joined with beta_access
+      // 2. Fetch all profiles joined with beta_access and user_progress
       const { data: profilesData, error: profilesErr } = await (supabase.from("profiles") as any)
-        .select("id, email, full_name, department, student_id, role, created_at, beta_access!beta_access_user_id_fkey(status, approved_at, notes)")
+        .select(`
+          id,
+          email,
+          full_name,
+          department,
+          student_id,
+          avatar_url,
+          role,
+          created_at,
+          beta_access!beta_access_user_id_fkey(status, approved_at, notes),
+          user_progress(completed_steps, completed_docs, quiz_scores, topic_scores, activity_history, last_active_at)
+        `)
         .order("created_at", { ascending: false });
 
       if (profilesErr) {
@@ -145,19 +220,30 @@ export default function AdminModerationPage() {
       }
 
       if (profilesData) {
-        const formattedUsers: ProfileBetaUser[] = profilesData.map((p: any) => {
+        const formattedUsers: ProfileUser[] = profilesData.map((p: any) => {
           const beta = Array.isArray(p.beta_access) ? p.beta_access[0] : p.beta_access;
+          const prog: UserProgressData = Array.isArray(p.user_progress)
+            ? p.user_progress[0] || {}
+            : p.user_progress || {};
+
           return {
             id: p.id,
             email: p.email,
             full_name: p.full_name,
             department: p.department,
             student_id: p.student_id,
+            avatar_url: p.avatar_url,
             role: p.role,
             created_at: p.created_at,
-            status: beta?.status || "pending",
+            status: beta?.status || "approved",
             approved_at: beta?.approved_at || null,
             notes: beta?.notes || null,
+            completed_steps: Array.isArray(prog.completed_steps) ? prog.completed_steps : [],
+            completed_docs: Array.isArray(prog.completed_docs) ? prog.completed_docs : [],
+            quiz_scores: prog.quiz_scores && typeof prog.quiz_scores === "object" ? prog.quiz_scores : {},
+            topic_scores: prog.topic_scores && typeof prog.topic_scores === "object" ? prog.topic_scores : {},
+            activity_history: Array.isArray(prog.activity_history) ? prog.activity_history : [],
+            last_active_at: prog.last_active_at || null,
           };
         });
         setUsers(formattedUsers);
@@ -196,6 +282,94 @@ export default function AdminModerationPage() {
     loadData();
   }, [loadData]);
 
+  // Real-time Presence Listener using Supabase WebSocket channel
+  useEffect(() => {
+    const channel = supabase.channel("algohub-live-users", {
+      config: {
+        presence: {
+          key: "admin-presence-listener",
+        },
+      },
+    });
+
+    channel
+      .on("presence", { event: "sync" }, () => {
+        const state = channel.presenceState();
+        const newMap = new Map<string, { page?: string; online_at?: string }>();
+
+        Object.values(state).forEach((presences: any) => {
+          presences.forEach((p: any) => {
+            if (p.user_id) {
+              newMap.set(p.user_id, {
+                page: p.page,
+                online_at: p.online_at,
+              });
+            }
+          });
+        });
+
+        setLiveOnlineMap(newMap);
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [supabase]);
+
+  // Online Check Helper
+  const checkIsUserOnline = useCallback(
+    (user: ProfileUser): { isOnline: boolean; isRecent: boolean; label: string; activePage?: string } => {
+      const liveData = liveOnlineMap.get(user.id);
+      if (liveData) {
+        return {
+          isOnline: true,
+          isRecent: false,
+          label: "Online Now",
+          activePage: liveData.page || "Active on Platform",
+        };
+      }
+
+      if (user.last_active_at) {
+        const diffMs = Date.now() - new Date(user.last_active_at).getTime();
+        const diffMin = Math.floor(diffMs / 60000);
+
+        if (diffMin <= 4) {
+          return {
+            isOnline: true,
+            isRecent: false,
+            label: "Online Now",
+            activePage: "Active recently",
+          };
+        }
+
+        if (diffMin <= 60) {
+          return {
+            isOnline: false,
+            isRecent: true,
+            label: `Active ${diffMin}m ago`,
+          };
+        }
+
+        const diffHours = Math.floor(diffMin / 60);
+        if (diffHours < 24) {
+          return {
+            isOnline: false,
+            isRecent: false,
+            label: `Active ${diffHours}h ago`,
+          };
+        }
+      }
+
+      return {
+        isOnline: false,
+        isRecent: false,
+        label: formatTimeAgo(user.last_active_at || user.created_at),
+      };
+    },
+    [liveOnlineMap]
+  );
+
   // Mentor Application Action Handlers
   const handleApproveMentor = async (appId: string, userId: string) => {
     setActionLoadingId(appId);
@@ -204,7 +378,6 @@ export default function AdminModerationPage() {
         data: { user: currentAdmin },
       } = await supabase.auth.getUser();
 
-      // 1. Update application status
       const { error: appErr } = await (supabase.from("mentor_applications") as any)
         .update({
           status: "approved",
@@ -215,14 +388,12 @@ export default function AdminModerationPage() {
 
       if (appErr) throw appErr;
 
-      // 2. Update user profile role to 'mentor'
       const { error: roleErr } = await (supabase.from("profiles") as any)
         .update({ role: "mentor" })
         .eq("id", userId);
 
       if (roleErr) throw roleErr;
 
-      // Update local state
       setMentorApps((prev) =>
         prev.map((app) =>
           app.id === appId
@@ -271,8 +442,30 @@ export default function AdminModerationPage() {
     }
   };
 
-  // Beta Access Action Handlers
-  const handleUpdateStatus = async (userId: string, newStatus: "approved" | "rejected" | "suspended") => {
+  // User Role and Account Status Update
+  const handleUpdateRole = async (userId: string, newRole: "student" | "mentor" | "admin") => {
+    setActionLoadingId(userId);
+    try {
+      const { error } = await (supabase.from("profiles") as any)
+        .update({ role: newRole })
+        .eq("id", userId);
+
+      if (error) throw error;
+
+      setUsers((prev) =>
+        prev.map((u) => (u.id === userId ? { ...u, role: newRole } : u))
+      );
+      if (inspectingUser && inspectingUser.id === userId) {
+        setInspectingUser({ ...inspectingUser, role: newRole });
+      }
+    } catch (err: any) {
+      alert(`Failed to update role: ${err.message}`);
+    } finally {
+      setActionLoadingId(null);
+    }
+  };
+
+  const handleUpdateStatus = async (userId: string, newStatus: "approved" | "suspended") => {
     setActionLoadingId(userId);
     try {
       const {
@@ -289,14 +482,20 @@ export default function AdminModerationPage() {
 
       if (error) throw error;
 
-      // Update local state
       setUsers((prev) =>
         prev.map((u) =>
           u.id === userId
-            ? { ...u, status: newStatus, approved_at: newStatus === "approved" ? new Date().toISOString() : null }
+            ? {
+                ...u,
+                status: newStatus,
+                approved_at: newStatus === "approved" ? new Date().toISOString() : null,
+              }
             : u
         )
       );
+      if (inspectingUser && inspectingUser.id === userId) {
+        setInspectingUser({ ...inspectingUser, status: newStatus });
+      }
     } catch (err: any) {
       alert(`Failed to update status: ${err.message}`);
     } finally {
@@ -321,40 +520,68 @@ export default function AdminModerationPage() {
     }
   };
 
+  // Filtered Users List
+  const filteredUsers = useMemo(() => {
+    return users
+      .filter((u) => {
+        const matchesSearch =
+          (u.full_name || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+          (u.email || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+          (u.student_id || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+          (u.department || "").toLowerCase().includes(searchQuery.toLowerCase());
+
+        const matchesStatus = statusFilter === "all" || u.status === statusFilter;
+
+        const onlineInfo = checkIsUserOnline(u);
+        const matchesPresence =
+          presenceFilter === "all" ||
+          (presenceFilter === "online" && onlineInfo.isOnline) ||
+          (presenceFilter === "recent" && (onlineInfo.isOnline || onlineInfo.isRecent));
+
+        return matchesSearch && matchesStatus && matchesPresence;
+      })
+      .sort((a, b) => {
+        const aOnline = checkIsUserOnline(a).isOnline;
+        const bOnline = checkIsUserOnline(b).isOnline;
+        if (aOnline && !bOnline) return -1;
+        if (!aOnline && bOnline) return 1;
+
+        const aTime = a.last_active_at ? new Date(a.last_active_at).getTime() : new Date(a.created_at).getTime();
+        const bTime = b.last_active_at ? new Date(b.last_active_at).getTime() : new Date(b.created_at).getTime();
+        return bTime - aTime;
+      });
+  }, [users, searchQuery, statusFilter, presenceFilter, checkIsUserOnline]);
+
+  // Aggregate Platform KPI Metrics
+  const onlineCount = useMemo(() => {
+    return users.filter((u) => checkIsUserOnline(u).isOnline).length;
+  }, [users, checkIsUserOnline]);
+
+  const activeTodayCount = useMemo(() => {
+    const twentyFourHoursAgo = Date.now() - 24 * 60 * 60 * 1000;
+    return users.filter((u) => {
+      if (!u.last_active_at) return false;
+      return new Date(u.last_active_at).getTime() > twentyFourHoursAgo;
+    }).length;
+  }, [users]);
+
+  const totalStepsCompleted = useMemo(() => {
+    return users.reduce((acc, u) => acc + (u.completed_steps?.length || 0), 0);
+  }, [users]);
+
+  const pendingMentorCount = mentorApps.filter((m) => m.status === "pending").length;
+  const openBugsCount = bugsList.filter((b) => b.status === "open").length;
+
   if (isAdmin === null || isLoading) {
     return (
       <div className="min-h-screen bg-background text-foreground flex items-center justify-center font-sans">
         <div className="flex items-center gap-3 text-sm font-sans text-muted-foreground">
           <Loader2 className="h-5 w-5 animate-spin text-primary" />
-          <span>Verifying Departmental Administrator Access...</span>
+          <span>Verifying Administrator Console Access...</span>
         </div>
       </div>
     );
   }
-
-  // Filtered Users (Prioritize pending requests first)
-  const filteredUsers = users
-    .filter((u) => {
-      const matchesSearch =
-        (u.full_name || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (u.email || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (u.student_id || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (u.department || "").toLowerCase().includes(searchQuery.toLowerCase());
-
-      const matchesStatus = statusFilter === "all" || u.status === statusFilter;
-      return matchesSearch && matchesStatus;
-    })
-    .sort((a, b) => {
-      if (a.status === "pending" && b.status !== "pending") return -1;
-      if (b.status === "pending" && a.status !== "pending") return 1;
-      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
-    });
-
-  // Stats Counters
-  const pendingCount = users.filter((u) => u.status === "pending").length;
-  const approvedCount = users.filter((u) => u.status === "approved").length;
-  const pendingMentorCount = mentorApps.filter((m) => m.status === "pending").length;
-  const openBugsCount = bugsList.filter((b) => b.status === "open").length;
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col font-sans antialiased selection:bg-[#C9A962]/35 selection:text-[#1C1714] transition-colors duration-200">
@@ -374,15 +601,24 @@ export default function AdminModerationPage() {
                 <ShieldCheck className="h-4 w-4" />
               </div>
               <span className="font-heading text-lg sm:text-xl font-bold tracking-tight text-foreground">
-                AlgoHub Moderation Dashboard
+                AlgoHub Admin & Telemetry Dashboard
               </span>
               <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-primary/15 text-primary border border-primary/30 font-bold ml-1">
-                Admin Console
+                Live Console
               </span>
             </div>
           </div>
 
           <div className="flex items-center gap-3">
+            {/* Live Indicator Pill in Header */}
+            <div className="hidden sm:inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 text-xs font-mono font-bold">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+              </span>
+              <span>{onlineCount} Online Right Now</span>
+            </div>
+
             <ThemeToggle />
             <button
               onClick={loadData}
@@ -390,7 +626,7 @@ export default function AdminModerationPage() {
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded border border-border bg-card text-xs font-semibold text-foreground hover:text-primary hover:border-primary transition-colors cursor-pointer"
             >
               <RefreshCw className={`h-3.5 w-3.5 ${isLoading ? "animate-spin text-primary" : ""}`} />
-              <span>Refresh</span>
+              <span className="hidden sm:inline">Refresh</span>
             </button>
           </div>
         </div>
@@ -403,65 +639,76 @@ export default function AdminModerationPage() {
             Admin <span className="italic font-semibold text-primary dark:text-[#D4B872]">Control Center</span>
           </h1>
           <p className="text-xs sm:text-sm text-muted-foreground font-sans">
-            Manage student registrations, evaluate mentor applications, oversee user permissions, and maintain platform stability.
+            Monitor real-time learner presence, inspect algorithm activity telemetry, manage permissions, and track platform growth.
           </p>
         </div>
 
         {/* KPI Stats Cards */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+          {/* Card 1: Total Users */}
           <div className="p-4 rounded-xl border border-border bg-card/80 space-y-1 shadow-sm corner-flourish">
             <div className="flex items-center justify-between text-amber-500">
-              <span className="text-xs font-mono font-semibold">Total Users</span>
+              <span className="text-xs font-mono font-semibold">Total Accounts</span>
               <Users className="h-4 w-4" />
             </div>
             <div className="text-2xl sm:text-3xl font-extrabold text-foreground font-mono">
               {users.length}
             </div>
-            <p className="text-[11px] text-muted-foreground font-sans">Registered accounts</p>
+            <p className="text-[11px] text-muted-foreground font-sans">Registered developers</p>
           </div>
 
+          {/* Card 2: 🟢 Online Right Now */}
+          <div className="p-4 rounded-xl border border-emerald-500/40 bg-emerald-500/5 space-y-1 shadow-sm corner-flourish">
+            <div className="flex items-center justify-between text-emerald-600 dark:text-emerald-400">
+              <span className="text-xs font-mono font-semibold flex items-center gap-1.5">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                </span>
+                Online Now
+              </span>
+              <Radio className="h-4 w-4 text-emerald-500 animate-pulse" />
+            </div>
+            <div className="text-2xl sm:text-3xl font-extrabold text-emerald-600 dark:text-emerald-400 font-mono">
+              {onlineCount}
+            </div>
+            <p className="text-[11px] text-muted-foreground font-sans">Active in product right now</p>
+          </div>
+
+          {/* Card 3: Active Today */}
           <div className="p-4 rounded-xl border border-border bg-card/80 space-y-1 shadow-sm corner-flourish">
-            <div className="flex items-center justify-between text-purple-500 dark:text-purple-400">
-              <span className="text-xs font-mono font-semibold">Mentor Apps</span>
-              <Award className="h-4 w-4" />
+            <div className="flex items-center justify-between text-primary">
+              <span className="text-xs font-mono font-semibold">Active Today</span>
+              <Activity className="h-4 w-4" />
             </div>
             <div className="text-2xl sm:text-3xl font-extrabold text-foreground font-mono">
-              {pendingMentorCount}
+              {activeTodayCount}
             </div>
-            <p className="text-[11px] text-muted-foreground font-sans">Pending review</p>
+            <p className="text-[11px] text-muted-foreground font-sans">Active in past 24 hours</p>
           </div>
 
-          <div className="p-4 rounded-xl border border-border bg-card/80 space-y-1 shadow-sm corner-flourish">
-            <div className="flex items-center justify-between text-emerald-500 dark:text-emerald-400">
-              <span className="text-xs font-mono font-semibold">Active Scholars</span>
-              <Sparkles className="h-4 w-4 text-emerald-500" />
-            </div>
-            <div className="text-2xl sm:text-3xl font-extrabold text-foreground font-mono">
-              {users.filter(u => u.status !== 'suspended').length}
-            </div>
-            <p className="text-[11px] text-muted-foreground font-sans">Free full access active</p>
-          </div>
-
+          {/* Card 4: Total Steps Completed */}
           <div className="p-4 rounded-xl border border-border bg-card/80 space-y-1 shadow-sm corner-flourish">
             <div className="flex items-center justify-between text-cyan-500 dark:text-cyan-400">
-              <span className="text-xs font-mono font-semibold">Feedback</span>
+              <span className="text-xs font-mono font-semibold">Steps Solved</span>
+              <Zap className="h-4 w-4" />
+            </div>
+            <div className="text-2xl sm:text-3xl font-extrabold text-foreground font-mono">
+              {totalStepsCompleted}
+            </div>
+            <p className="text-[11px] text-muted-foreground font-sans">Total algorithm milestones</p>
+          </div>
+
+          {/* Card 5: Feedback & Bugs */}
+          <div className="p-4 rounded-xl border border-border bg-card/80 space-y-1 shadow-sm corner-flourish">
+            <div className="flex items-center justify-between text-rose-500 dark:text-rose-400">
+              <span className="text-xs font-mono font-semibold">Feedback / Bugs</span>
               <MessageSquare className="h-4 w-4" />
             </div>
             <div className="text-2xl sm:text-3xl font-extrabold text-foreground font-mono">
-              {feedbackList.length}
+              {feedbackList.length} <span className="text-xs text-muted-foreground font-normal">/ {openBugsCount} bugs</span>
             </div>
-            <p className="text-[11px] text-muted-foreground font-sans">In-app ratings</p>
-          </div>
-
-          <div className="p-4 rounded-xl border border-border bg-card/80 space-y-1 shadow-sm corner-flourish">
-            <div className="flex items-center justify-between text-rose-500 dark:text-rose-400">
-              <span className="text-xs font-mono font-semibold">Bug Reports</span>
-              <Bug className="h-4 w-4" />
-            </div>
-            <div className="text-2xl sm:text-3xl font-extrabold text-foreground font-mono">
-              {openBugsCount}
-            </div>
-            <p className="text-[11px] text-muted-foreground font-sans">Open diagnostics</p>
+            <p className="text-[11px] text-muted-foreground font-sans">Community submissions</p>
           </div>
         </div>
 
@@ -476,7 +723,12 @@ export default function AdminModerationPage() {
             }`}
           >
             <Users className="h-4 w-4" />
-            <span>User Management ({users.length})</span>
+            <span>Learners & Activity ({users.length})</span>
+            {onlineCount > 0 && (
+              <span className="px-1.5 py-0.2 rounded-full bg-emerald-500 text-white text-[10px] font-mono font-bold animate-pulse">
+                {onlineCount} Online
+              </span>
+            )}
           </button>
 
           <button
@@ -521,144 +773,247 @@ export default function AdminModerationPage() {
           </button>
         </div>
 
-        {/* TAB 1: USERS & ACCESS APPROVALS */}
+        {/* TAB 1: USERS & REAL-TIME ACTIVITY TELEMETRY */}
         {activeTab === "users" && (
           <div className="space-y-4">
-            {/* Filter and Search Bar */}
-            <div className="flex flex-col sm:flex-row gap-3 items-center justify-between">
+            {/* Filters, Search, and Live Presence Filter */}
+            <div className="flex flex-col lg:flex-row gap-3 items-start lg:items-center justify-between">
               <div className="relative w-full sm:w-80">
                 <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
                 <input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search by name, email, roll..."
+                  placeholder="Search by name, email, institution..."
                   className="w-full rounded border border-border bg-background pl-9 pr-4 py-2 text-xs text-foreground placeholder:text-muted-foreground/60 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none font-sans"
                 />
               </div>
 
-              {/* Status Pills */}
-              <div className="flex flex-wrap gap-1 text-xs font-mono self-start sm:self-auto">
-                {["all", "pending", "approved", "rejected", "suspended"].map((st) => (
+              {/* Presence & Status Pills */}
+              <div className="flex flex-wrap items-center gap-2 text-xs font-mono">
+                {/* Presence Filter */}
+                <div className="inline-flex rounded-lg border border-border bg-secondary/40 p-0.5">
                   <button
-                    key={st}
-                    onClick={() => setStatusFilter(st)}
-                    className={`px-3 py-1.5 rounded capitalize border transition-all cursor-pointer ${
-                      statusFilter === st
-                        ? "border-primary/60 bg-primary/15 text-primary font-bold"
-                        : "border-border bg-card text-muted-foreground hover:text-foreground"
+                    onClick={() => setPresenceFilter("all")}
+                    className={`px-2.5 py-1 rounded text-[11px] font-semibold transition-all cursor-pointer ${
+                      presenceFilter === "all"
+                        ? "bg-card text-foreground shadow-xs"
+                        : "text-muted-foreground hover:text-foreground"
                     }`}
                   >
-                    {st === "pending" ? "Pending Requests" : st === "approved" ? "Premium Users" : st === "rejected" ? "Free Users" : st}
+                    All Users
                   </button>
-                ))}
+                  <button
+                    onClick={() => setPresenceFilter("online")}
+                    className={`px-2.5 py-1 rounded text-[11px] font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
+                      presenceFilter === "online"
+                        ? "bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/40 shadow-xs font-bold"
+                        : "text-muted-foreground hover:text-emerald-500"
+                    }`}
+                  >
+                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                    <span>🟢 Online ({onlineCount})</span>
+                  </button>
+                  <button
+                    onClick={() => setPresenceFilter("recent")}
+                    className={`px-2.5 py-1 rounded text-[11px] font-semibold transition-all cursor-pointer ${
+                      presenceFilter === "recent"
+                        ? "bg-card text-primary font-bold shadow-xs"
+                        : "text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    Active Recently
+                  </button>
+                </div>
               </div>
             </div>
 
-            {/* Users Table */}
+            {/* Users & Live Activity Table */}
             <div className="rounded-xl border border-border bg-card/90 overflow-hidden shadow-sm corner-flourish">
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs font-sans">
                   <thead className="border-b border-border bg-secondary/60 text-muted-foreground font-mono">
                     <tr>
-                      <th className="p-3.5">Student / User</th>
-                      <th className="p-3.5">Dept & Roll ID</th>
-                      <th className="p-3.5">Registered</th>
-                      <th className="p-3.5">Access Tier</th>
-                      <th className="p-3.5 text-right">Moderation Action</th>
+                      <th className="p-3.5">Learner Profile</th>
+                      <th className="p-3.5">Live Presence & Status</th>
+                      <th className="p-3.5">Learning Telemetry</th>
+                      <th className="p-3.5">Institution & ID</th>
+                      <th className="p-3.5 text-right">Activity & Controls</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-border text-foreground">
                     {filteredUsers.length === 0 ? (
                       <tr>
-                        <td colSpan={5} className="p-8 text-center text-muted-foreground font-sans">
-                          No matching students or access requests found.
+                        <td colSpan={5} className="p-10 text-center text-muted-foreground font-sans">
+                          No matching learners or users found for the selected filter.
                         </td>
                       </tr>
                     ) : (
-                      filteredUsers.map((user) => (
-                        <tr key={user.id} className="hover:bg-secondary/30 transition-colors">
-                          <td className="p-3.5">
-                            <div className="font-semibold text-foreground flex items-center gap-2">
-                              <span>{user.full_name || "Anonymous Student"}</span>
-                              {user.role === "admin" && (
-                                <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-primary text-primary-foreground font-bold">Admin</span>
+                      filteredUsers.map((user) => {
+                        const onlineInfo = checkIsUserOnline(user);
+                        const initials = (user.full_name || user.email || "U").charAt(0).toUpperCase();
+
+                        return (
+                          <tr key={user.id} className="hover:bg-secondary/30 transition-colors">
+                            {/* User Profile Column with Avatar & Green Online Dot */}
+                            <td className="p-3.5">
+                              <div className="flex items-center gap-3">
+                                {/* Avatar with Live Presence Indicator */}
+                                <div className="relative shrink-0">
+                                  {user.avatar_url ? (
+                                    <img
+                                      src={user.avatar_url}
+                                      alt={user.full_name || user.email}
+                                      className="h-9 w-9 rounded-full object-cover border border-border"
+                                    />
+                                  ) : (
+                                    <div className="h-9 w-9 rounded-full bg-gradient-to-tr from-[#8B2635] via-[#B08422] to-[#C9A962] flex items-center justify-center text-white text-xs font-bold shadow-xs">
+                                      {initials}
+                                    </div>
+                                  )}
+
+                                  {/* 🟢 Live Green Online Signal Badge on Avatar */}
+                                  {onlineInfo.isOnline ? (
+                                    <span
+                                      className="absolute -bottom-0.5 -right-0.5 flex h-3 w-3"
+                                      title="User is online now"
+                                    >
+                                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                                      <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500 border-2 border-card"></span>
+                                    </span>
+                                  ) : onlineInfo.isRecent ? (
+                                    <span
+                                      className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-amber-500 border-2 border-card"
+                                      title="Active in last hour"
+                                    />
+                                  ) : null}
+                                </div>
+
+                                <div>
+                                  <div className="font-semibold text-foreground flex items-center gap-2">
+                                    <span>{user.full_name || "Unnamed Developer"}</span>
+                                    {user.role === "admin" && (
+                                      <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-primary text-primary-foreground font-bold">
+                                        Admin
+                                      </span>
+                                    )}
+                                    {user.role === "mentor" && (
+                                      <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-[#8B2635]/20 text-[#8B2635] dark:text-[#E8DFD4] border border-[#8B2635] font-bold">
+                                        Mentor
+                                      </span>
+                                    )}
+                                  </div>
+                                  <div className="text-[11px] font-mono text-muted-foreground">{user.email}</div>
+                                  <div className="text-[10px] text-muted-foreground/80 mt-0.5">
+                                    Joined {new Date(user.created_at).toLocaleDateString()}
+                                  </div>
+                                </div>
+                              </div>
+                            </td>
+
+                            {/* Live Presence Column */}
+                            <td className="p-3.5">
+                              {onlineInfo.isOnline ? (
+                                <div className="space-y-1">
+                                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/40 text-emerald-700 dark:text-emerald-400 font-mono text-[11px] font-bold shadow-xs">
+                                    <span className="relative flex h-2 w-2">
+                                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                                      <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                                    </span>
+                                    <span>Online Now</span>
+                                  </span>
+                                  <div className="text-[10px] font-mono text-emerald-600/80 dark:text-emerald-400/80 truncate max-w-[140px]">
+                                    {onlineInfo.activePage}
+                                  </div>
+                                </div>
+                              ) : onlineInfo.isRecent ? (
+                                <div className="space-y-0.5">
+                                  <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-700 dark:text-amber-400 font-mono text-[10px] font-medium">
+                                    <span className="h-1.5 w-1.5 rounded-full bg-amber-500" />
+                                    <span>{onlineInfo.label}</span>
+                                  </span>
+                                </div>
+                              ) : (
+                                <div className="text-[11px] font-mono text-muted-foreground">
+                                  <span>Last seen: {onlineInfo.label}</span>
+                                </div>
                               )}
-                              {user.role === "mentor" && (
-                                <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-[#8B2635]/20 text-[#8B2635] dark:text-[#E8DFD4] border border-[#8B2635] font-bold">Mentor</span>
-                              )}
-                            </div>
-                            <div className="text-[11px] font-mono text-muted-foreground">{user.email}</div>
-                          </td>
-                          <td className="p-3.5 font-mono text-[11px] text-foreground">
-                            <div>{user.department || "CSE"}</div>
-                            <div className="text-muted-foreground">{user.student_id || "N/A"}</div>
-                          </td>
-                          <td className="p-3.5 font-mono text-[11px] text-muted-foreground">
-                            {new Date(user.created_at).toLocaleDateString()}
-                          </td>
-                          <td className="p-3.5">
-                            {user.role === "admin" ? (
-                              <span className="inline-flex items-center gap-1 text-[11px] font-mono font-bold px-2 py-0.5 rounded bg-primary/20 text-primary border border-primary/30 shadow-xs">
-                                <ShieldCheck className="h-3 w-3" /> Administrator
-                              </span>
-                            ) : user.role === "mentor" ? (
-                              <span className="inline-flex items-center gap-1 text-[11px] font-mono font-bold px-2 py-0.5 rounded bg-purple-500/15 text-purple-700 dark:text-purple-300 border border-purple-500/30 shadow-xs">
-                                <Award className="h-3 w-3" /> Mentor
-                              </span>
-                            ) : user.status === "suspended" ? (
-                              <span className="inline-flex items-center gap-1 text-[11px] font-mono font-bold px-2 py-0.5 rounded bg-destructive/20 text-destructive border border-destructive/40">
-                                <Ban className="h-3 w-3" /> Suspended
-                              </span>
-                            ) : (
-                              <span className="inline-flex items-center gap-1 text-[11px] font-mono font-semibold px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
-                                <Sparkles className="h-3 w-3" /> Active Scholar
-                              </span>
-                            )}
-                          </td>
-                          <td className="p-3.5 text-right font-sans">
-                            <div className="flex items-center justify-end gap-1.5">
-                              {user.status !== "approved" && user.role !== "admin" && (
+                            </td>
+
+                            {/* Learning Telemetry Column */}
+                            <td className="p-3.5 font-mono text-[11px]">
+                              <div className="space-y-1">
+                                <div className="flex items-center gap-1.5">
+                                  <span className="px-1.5 py-0.5 rounded bg-primary/10 border border-primary/20 text-primary font-bold">
+                                    {user.completed_steps.length} Steps
+                                  </span>
+                                  <span className="text-muted-foreground">•</span>
+                                  <span className="text-foreground">
+                                    {Object.keys(user.quiz_scores).length} Quizzes
+                                  </span>
+                                </div>
+                                <div className="text-[10px] text-muted-foreground">
+                                  {user.completed_docs.length} Docs read
+                                </div>
+                              </div>
+                            </td>
+
+                            {/* Institution & Roll ID Column */}
+                            <td className="p-3.5 font-mono text-[11px]">
+                              <div>{user.department || "General"}</div>
+                              <div className="text-muted-foreground">{user.student_id || "N/A"}</div>
+                            </td>
+
+                            {/* Moderation & Activity Inspection Actions */}
+                            <td className="p-3.5 text-right font-sans">
+                              <div className="flex items-center justify-end gap-1.5">
+                                {/* Inspect Telemetry / Activity History Button */}
                                 <button
-                                  onClick={() => handleUpdateStatus(user.id, "approved")}
-                                  disabled={actionLoadingId === user.id}
-                                  className="btn-brass px-3 py-1 rounded text-xs font-sans font-semibold tracking-wide text-primary-foreground shadow-brass hover:scale-[1.02] active:scale-95 transition-all cursor-pointer disabled:opacity-50 flex items-center gap-1"
+                                  onClick={() => setInspectingUser(user)}
+                                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded border border-primary/40 bg-primary/10 hover:bg-primary/20 text-primary font-semibold text-xs transition-colors cursor-pointer"
+                                  title="View full activity history & quiz telemetry"
                                 >
-                                  <Crown className="h-3 w-3" />
-                                  <span>Approve Premium</span>
+                                  <Eye className="h-3.5 w-3.5" />
+                                  <span>Activity</span>
                                 </button>
-                              )}
-                              {user.status === "approved" && user.role !== "admin" && (
-                                <button
-                                  onClick={() => handleUpdateStatus(user.id, "rejected")}
+
+                                {/* Role Selector */}
+                                <select
+                                  value={user.role}
+                                  onChange={(e) => handleUpdateRole(user.id, e.target.value as any)}
                                   disabled={actionLoadingId === user.id}
-                                  className="px-2.5 py-1 rounded border border-border bg-secondary/50 text-muted-foreground font-semibold hover:text-foreground hover:bg-secondary transition-colors disabled:opacity-50 cursor-pointer"
+                                  className="bg-card text-foreground border border-border rounded px-2 py-1 text-xs font-mono focus:border-primary focus:outline-none cursor-pointer"
+                                  title="Change role"
                                 >
-                                  Revoke Premium
-                                </button>
-                              )}
-                              {user.status !== "suspended" && user.role !== "admin" && (
-                                <button
-                                  onClick={() => handleUpdateStatus(user.id, "suspended")}
-                                  disabled={actionLoadingId === user.id}
-                                  className="px-2 py-1 rounded border border-destructive/40 bg-destructive/10 text-destructive font-semibold hover:bg-destructive/20 transition-colors disabled:opacity-50 cursor-pointer"
-                                >
-                                  Suspend
-                                </button>
-                              )}
-                              {user.status === "suspended" && (
-                                <button
-                                  onClick={() => handleUpdateStatus(user.id, "rejected")}
-                                  disabled={actionLoadingId === user.id}
-                                  className="px-2 py-1 rounded border border-border bg-secondary/50 text-muted-foreground font-semibold hover:text-foreground transition-colors disabled:opacity-50 cursor-pointer"
-                                >
-                                  Unsuspend
-                                </button>
-                              )}
-                            </div>
-                          </td>
-                        </tr>
-                      ))
+                                  <option value="student">Student</option>
+                                  <option value="mentor">Mentor</option>
+                                  <option value="admin">Admin</option>
+                                </select>
+
+                                {/* Suspend / Unsuspend */}
+                                {user.status === "suspended" ? (
+                                  <button
+                                    onClick={() => handleUpdateStatus(user.id, "approved")}
+                                    disabled={actionLoadingId === user.id}
+                                    className="px-2 py-1 rounded border border-border bg-secondary/50 text-muted-foreground font-semibold hover:text-foreground transition-colors disabled:opacity-50 cursor-pointer"
+                                  >
+                                    Unsuspend
+                                  </button>
+                                ) : (
+                                  <button
+                                    onClick={() => handleUpdateStatus(user.id, "suspended")}
+                                    disabled={actionLoadingId === user.id || user.role === "admin"}
+                                    className="px-2 py-1 rounded border border-destructive/40 bg-destructive/10 text-destructive font-semibold hover:bg-destructive/20 transition-colors disabled:opacity-30 cursor-pointer"
+                                    title={user.role === "admin" ? "Admins cannot be suspended" : "Suspend account"}
+                                  >
+                                    Suspend
+                                  </button>
+                                )}
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })
                     )}
                   </tbody>
                 </table>
@@ -682,10 +1037,10 @@ export default function AdminModerationPage() {
                       <thead className="border-b border-border bg-secondary/60 text-muted-foreground font-mono">
                         <tr>
                           <th className="p-3.5">Applicant Profile</th>
-                          <th className="p-3.5">Dept & Roll ID</th>
+                          <th className="p-3.5">Institution & ID</th>
                           <th className="p-3.5">Motivation Statement</th>
                           <th className="p-3.5">Current Role</th>
-                          <th className="p-3.5">Application Status</th>
+                          <th className="p-3.5">Status</th>
                           <th className="p-3.5 text-right">Moderation Action</th>
                         </tr>
                       </thead>
@@ -702,14 +1057,14 @@ export default function AdminModerationPage() {
                             </td>
 
                             <td className="p-3.5 font-mono text-[11px]">
-                              <div>{app.profiles?.department || "CSE"}</div>
+                              <div>{app.profiles?.department || "General"}</div>
                               <div className="text-muted-foreground">
                                 {app.profiles?.student_id || "N/A"}
                               </div>
                             </td>
 
                             <td className="p-3.5 max-w-xs sm:max-w-sm">
-                              <p className="text-xs text-foreground line-clamp-3 bg-secondary/40 p-2.5 rounded border border-border">
+                              <p className="text-xs text-foreground line-clamp-3 bg-secondary/40 p-2.5 rounded border border-border font-sans">
                                 {app.reason}
                               </p>
                               <div className="text-[10px] font-mono text-muted-foreground mt-1">
@@ -718,13 +1073,15 @@ export default function AdminModerationPage() {
                             </td>
 
                             <td className="p-3.5">
-                              <span className={`inline-flex items-center gap-1 font-mono text-[10px] px-2 py-0.5 rounded font-bold uppercase ${
-                                app.profiles?.role === "mentor"
-                                  ? "bg-purple-500/20 text-purple-700 dark:text-purple-300 border border-purple-500/40"
-                                  : app.profiles?.role === "admin"
-                                  ? "bg-primary/20 text-primary border border-primary/40"
-                                  : "bg-secondary text-muted-foreground border border-border"
-                              }`}>
+                              <span
+                                className={`inline-flex items-center gap-1 font-mono text-[10px] px-2 py-0.5 rounded font-bold uppercase ${
+                                  app.profiles?.role === "mentor"
+                                    ? "bg-purple-500/20 text-purple-700 dark:text-purple-300 border border-purple-500/40"
+                                    : app.profiles?.role === "admin"
+                                    ? "bg-primary/20 text-primary border border-primary/40"
+                                    : "bg-secondary text-muted-foreground border border-border"
+                                }`}
+                              >
                                 {app.profiles?.role || "student"}
                               </span>
                             </td>
@@ -861,11 +1218,10 @@ export default function AdminModerationPage() {
                           {bug.algorithm_id || "Algorithm Bug"}
                         </span>
                         <span className="text-[11px] font-mono text-muted-foreground">
-                          by {bug.profiles?.full_name || bug.profiles?.email || "Student"}
+                          by {bug.profiles?.full_name || bug.profiles?.email || "User"}
                         </span>
                       </div>
 
-                      {/* Status Toggle */}
                       <div className="flex items-center gap-1.5 font-mono text-xs">
                         <span className="text-muted-foreground text-[11px]">Status:</span>
                         <select
@@ -883,7 +1239,6 @@ export default function AdminModerationPage() {
                       </div>
                     </div>
 
-                    {/* Bug Details */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                       <div className="p-3 rounded bg-secondary/40 border border-border space-y-1">
                         <span className="text-[11px] font-mono text-muted-foreground font-semibold">
@@ -919,6 +1274,214 @@ export default function AdminModerationPage() {
           </div>
         )}
       </main>
+
+      {/* USER ACTIVITY INSPECTOR MODAL */}
+      {inspectingUser && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in"
+          onClick={() => setInspectingUser(null)}
+        >
+          <div
+            className="relative w-full max-w-2xl max-h-[85vh] overflow-y-auto rounded-2xl border border-primary/40 bg-card p-6 sm:p-7 text-foreground shadow-2xl backdrop-blur-2xl space-y-5 corner-flourish animate-in zoom-in-95 font-sans"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Close Button */}
+            <button
+              onClick={() => setInspectingUser(null)}
+              className="absolute right-4 top-4 p-1.5 rounded-lg bg-secondary/80 text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors cursor-pointer"
+            >
+              <X className="h-4 w-4" />
+            </button>
+
+            {/* Header / User Info */}
+            <div className="flex items-start gap-3.5 pb-4 border-b border-border">
+              <div className="relative shrink-0">
+                {inspectingUser.avatar_url ? (
+                  <img
+                    src={inspectingUser.avatar_url}
+                    alt={inspectingUser.full_name || inspectingUser.email}
+                    className="h-14 w-14 rounded-full object-cover border-2 border-primary/50"
+                  />
+                ) : (
+                  <div className="h-14 w-14 rounded-full bg-gradient-to-tr from-[#8B2635] via-[#B08422] to-[#C9A962] flex items-center justify-center text-white text-lg font-bold shadow-brass">
+                    {(inspectingUser.full_name || inspectingUser.email).charAt(0).toUpperCase()}
+                  </div>
+                )}
+
+                {/* Live Online Badge */}
+                {checkIsUserOnline(inspectingUser).isOnline && (
+                  <span className="absolute -bottom-0.5 -right-0.5 flex h-4 w-4">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-4 w-4 bg-emerald-500 border-2 border-card"></span>
+                  </span>
+                )}
+              </div>
+
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <h3 className="font-heading text-xl font-bold text-foreground">
+                    {inspectingUser.full_name || "Unnamed Developer"}
+                  </h3>
+                  {checkIsUserOnline(inspectingUser).isOnline ? (
+                    <span className="px-2 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/40 text-emerald-600 dark:text-emerald-400 font-mono text-[10px] font-bold inline-flex items-center gap-1">
+                      <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                      Online Now
+                    </span>
+                  ) : (
+                    <span className="px-2 py-0.5 rounded-full bg-secondary text-muted-foreground font-mono text-[10px]">
+                      {checkIsUserOnline(inspectingUser).label}
+                    </span>
+                  )}
+                </div>
+
+                <div className="text-xs font-mono text-muted-foreground">{inspectingUser.email}</div>
+
+                <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground pt-1">
+                  <span>Org: {inspectingUser.department || "General"}</span>
+                  <span>•</span>
+                  <span>ID: {inspectingUser.student_id || "N/A"}</span>
+                  <span>•</span>
+                  <span>Registered: {new Date(inspectingUser.created_at).toLocaleDateString()}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Telemetry Metrics Grid */}
+            <div className="grid grid-cols-3 gap-3 font-mono text-center">
+              <div className="p-3 rounded-xl bg-secondary/40 border border-border space-y-0.5">
+                <div className="text-xl font-extrabold text-primary">
+                  {inspectingUser.completed_steps.length}
+                </div>
+                <div className="text-[10px] text-muted-foreground uppercase">Steps Solved</div>
+              </div>
+
+              <div className="p-3 rounded-xl bg-secondary/40 border border-border space-y-0.5">
+                <div className="text-xl font-extrabold text-cyan-500">
+                  {Object.keys(inspectingUser.quiz_scores).length}
+                </div>
+                <div className="text-[10px] text-muted-foreground uppercase">Quizzes Completed</div>
+              </div>
+
+              <div className="p-3 rounded-xl bg-secondary/40 border border-border space-y-0.5">
+                <div className="text-xl font-extrabold text-amber-500">
+                  {inspectingUser.completed_docs.length}
+                </div>
+                <div className="text-[10px] text-muted-foreground uppercase">Docs Read</div>
+              </div>
+            </div>
+
+            {/* Completed Steps Section */}
+            <div className="space-y-2">
+              <h4 className="text-xs font-semibold uppercase tracking-wider font-mono text-muted-foreground flex items-center gap-1.5">
+                <Zap className="h-3.5 w-3.5 text-primary" />
+                <span>Completed Algorithm Steps ({inspectingUser.completed_steps.length})</span>
+              </h4>
+
+              {inspectingUser.completed_steps.length === 0 ? (
+                <div className="p-4 rounded-lg bg-secondary/30 border border-border text-center text-xs text-muted-foreground font-sans">
+                  No learning steps completed yet.
+                </div>
+              ) : (
+                <div className="flex flex-wrap gap-1.5 max-h-32 overflow-y-auto p-1">
+                  {inspectingUser.completed_steps.map((step) => (
+                    <span
+                      key={step}
+                      className="px-2.5 py-1 rounded-md bg-primary/10 border border-primary/25 text-primary font-mono text-xs font-semibold flex items-center gap-1"
+                    >
+                      <Check className="h-3 w-3 text-emerald-500" />
+                      <span>{step}</span>
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Quiz Scores Breakdown */}
+            <div className="space-y-2">
+              <h4 className="text-xs font-semibold uppercase tracking-wider font-mono text-muted-foreground flex items-center gap-1.5">
+                <BarChart2 className="h-3.5 w-3.5 text-cyan-500" />
+                <span>Quiz Scores Breakdown</span>
+              </h4>
+
+              {Object.keys(inspectingUser.quiz_scores).length === 0 ? (
+                <div className="p-4 rounded-lg bg-secondary/30 border border-border text-center text-xs text-muted-foreground font-sans">
+                  No quiz attempts recorded yet.
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-36 overflow-y-auto">
+                  {Object.entries(inspectingUser.quiz_scores).map(([quizId, score]) => (
+                    <div
+                      key={quizId}
+                      className="p-2.5 rounded-lg bg-secondary/40 border border-border flex items-center justify-between text-xs font-mono"
+                    >
+                      <span className="capitalize text-foreground font-medium truncate max-w-[150px]">
+                        {quizId.replace(/_/g, " ")}
+                      </span>
+                      <span
+                        className={`font-bold px-2 py-0.5 rounded text-[11px] ${
+                          Number(score) >= 80
+                            ? "bg-emerald-500/20 text-emerald-600 dark:text-emerald-400"
+                            : Number(score) >= 60
+                            ? "bg-amber-500/20 text-amber-600 dark:text-amber-400"
+                            : "bg-destructive/20 text-destructive"
+                        }`}
+                      >
+                        {score}%
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Activity History Timeline */}
+            <div className="space-y-2">
+              <h4 className="text-xs font-semibold uppercase tracking-wider font-mono text-muted-foreground flex items-center gap-1.5">
+                <Clock className="h-3.5 w-3.5 text-amber-500" />
+                <span>Recent Activity Log</span>
+              </h4>
+
+              {inspectingUser.activity_history.length === 0 ? (
+                <div className="p-4 rounded-lg bg-secondary/30 border border-border text-center text-xs text-muted-foreground font-sans">
+                  No timestamped activity logs recorded.
+                </div>
+              ) : (
+                <div className="space-y-1.5 max-h-40 overflow-y-auto">
+                  {inspectingUser.activity_history.slice(0, 10).map((act, i) => (
+                    <div
+                      key={act.id || i}
+                      className="p-2 rounded-lg bg-secondary/40 border border-border flex items-center justify-between text-xs font-sans"
+                    >
+                      <div className="space-y-0.5">
+                        <div className="font-semibold text-foreground text-xs">
+                          {act.title || act.activityType}
+                        </div>
+                        <div className="text-[10px] font-mono text-muted-foreground">
+                          {act.algorithmId} • Score: {act.score}%
+                        </div>
+                      </div>
+                      <div className="text-[10px] font-mono text-muted-foreground">
+                        {formatTimeAgo(act.timestamp)}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Footer Buttons */}
+            <div className="pt-2 border-t border-border flex items-center justify-end gap-2">
+              <button
+                onClick={() => setInspectingUser(null)}
+                className="px-4 py-2 rounded-lg border border-border bg-card hover:bg-secondary text-xs font-semibold transition-colors cursor-pointer"
+              >
+                Close Inspector
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
+
