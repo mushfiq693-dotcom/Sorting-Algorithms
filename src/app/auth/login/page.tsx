@@ -93,7 +93,7 @@ function formatAuthErrorMessage(error: any, isSignUp: boolean = false): string {
 function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const nextRoute = searchParams.get("next") || "/learn";
+  const nextRoute = searchParams.get("next") || "/";
   const urlError = searchParams.get("error");
 
   const [mode, setMode] = useState<"signin" | "signup">("signin");
