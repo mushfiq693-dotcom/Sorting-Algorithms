@@ -201,15 +201,20 @@ export default function AdminModerationPage() {
       }
       setIsAdmin(true);
 
-      // 2. Fetch all profiles, beta_access, and user_progress independently to avoid PostgREST join ambiguity
+      // 2. Fetch all tables independently to completely eliminate PostgREST relation ambiguity
       const [profilesRes, betaRes, progressRes, mentorAppsRes, feedbackRes, bugsRes] = await Promise.all([
         (supabase.from("profiles") as any).select("*").order("created_at", { ascending: false }),
         (supabase.from("beta_access") as any).select("user_id, status, approved_at, notes"),
         (supabase.from("user_progress") as any).select("user_id, completed_steps, completed_docs, quiz_scores, topic_scores, activity_history, last_active_at"),
-        (supabase.from("mentor_applications") as any).select("id, user_id, reason, status, reviewed_by, reviewed_at, notes, created_at, profiles(email, full_name, department, student_id, role)").order("created_at", { ascending: false }),
-        (supabase.from("feedback") as any).select("id, user_id, category, rating, message, page_url, created_at, profiles(email, full_name)").order("created_at", { ascending: false }),
-        (supabase.from("bug_reports") as any).select("id, user_id, algorithm_id, page_url, steps_to_reproduce, expected_behavior, actual_behavior, browser_info, status, created_at, profiles(email, full_name)").order("created_at", { ascending: false }),
+        (supabase.from("mentor_applications") as any).select("*").order("created_at", { ascending: false }),
+        (supabase.from("feedback") as any).select("*").order("created_at", { ascending: false }),
+        (supabase.from("bug_reports") as any).select("*").order("created_at", { ascending: false }),
       ]);
+
+      const profileMap = new Map<string, any>();
+      (profilesRes.data || []).forEach((p: any) => {
+        if (p?.id) profileMap.set(p.id, p);
+      });
 
       const betaMap = new Map<string, any>();
       (betaRes.data || []).forEach((b: any) => {
@@ -250,15 +255,27 @@ export default function AdminModerationPage() {
       }
 
       if (mentorAppsRes.data && Array.isArray(mentorAppsRes.data)) {
-        setMentorApps(mentorAppsRes.data);
+        const formattedMentorApps = mentorAppsRes.data.map((m: any) => ({
+          ...m,
+          profiles: profileMap.get(m.user_id) || null,
+        }));
+        setMentorApps(formattedMentorApps);
       }
 
       if (feedbackRes.data && Array.isArray(feedbackRes.data)) {
-        setFeedbackList(feedbackRes.data);
+        const formattedFeedback = feedbackRes.data.map((f: any) => ({
+          ...f,
+          profiles: profileMap.get(f.user_id) || null,
+        }));
+        setFeedbackList(formattedFeedback);
       }
 
       if (bugsRes.data && Array.isArray(bugsRes.data)) {
-        setBugsList(bugsRes.data);
+        const formattedBugs = bugsRes.data.map((b: any) => ({
+          ...b,
+          profiles: profileMap.get(b.user_id) || null,
+        }));
+        setBugsList(formattedBugs);
       }
     } catch (err) {
       console.error("Failed to load moderation data:", err);
