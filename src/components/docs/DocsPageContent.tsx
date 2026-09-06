@@ -14,13 +14,13 @@ import {
   Sparkles,
   Layers,
   CheckCircle2,
-  Bookmark,
   Share2,
   Check,
+  Lock,
+  Zap,
 } from "lucide-react";
 
 import { useProgressSync } from "@/hooks/useProgressSync";
-
 import { FormattedMarkdown } from "@/components/docs/FormattedMarkdown";
 
 interface DocsPageContentProps {
@@ -148,40 +148,40 @@ export function DocsPageContent({ article }: DocsPageContentProps) {
         <FormattedMarkdown content={article.content} />
       </div>
 
-      {/* Signature Static Diagram for Algorithm Lessons */}
-      {(() => {
-        const algoMap: Record<string, "bubble" | "selection" | "insertion" | "merge" | "quick"> = {
-          "bubble-sort": "bubble",
-          "selection-sort": "selection",
-          "insertion-sort": "insertion",
-          "merge-sort": "merge",
-          "quick-sort": "quick",
-        };
-        const algoId = algoMap[article.slug];
-        if (algoId) {
-          return (
-            <div className="my-6">
-              <AlgorithmDiagram algorithmId={algoId} />
+          {/* Signature Static Diagram for Algorithm Lessons */}
+          {(() => {
+            const algoMap: Record<string, "bubble" | "selection" | "insertion" | "merge" | "quick"> = {
+              "bubble-sort": "bubble",
+              "selection-sort": "selection",
+              "insertion-sort": "insertion",
+              "merge-sort": "merge",
+              "quick-sort": "quick",
+            };
+            const algoId = algoMap[article.slug];
+            if (algoId) {
+              return (
+                <div className="my-6">
+                  <AlgorithmDiagram algorithmId={algoId} />
+                </div>
+              );
+            }
+            return null;
+          })()}
+
+          {/* Collapsible Bangla Explanation Box */}
+          {article.banglaNote && (
+            <BanglaNote
+              topic={article.banglaNote.topic}
+              banglaText={article.banglaNote.banglaText}
+            />
+          )}
+
+          {/* Embedded Quiz if present */}
+          {article.quizTopicId && (
+            <div className="pt-6">
+              <Quiz topicId={article.quizTopicId} />
             </div>
-          );
-        }
-        return null;
-      })()}
-
-      {/* Collapsible Bangla Explanation Box */}
-      {article.banglaNote && (
-        <BanglaNote
-          topic={article.banglaNote.topic}
-          banglaText={article.banglaNote.banglaText}
-        />
-      )}
-
-      {/* Embedded Quiz if present */}
-      {article.quizTopicId && (
-        <div className="pt-6">
-          <Quiz topicId={article.quizTopicId} />
-        </div>
-      )}
+          )}
 
       {/* Next / Previous Article Navigation Buttons */}
       <div className="pt-8 border-t border-border grid grid-cols-1 sm:grid-cols-2 gap-4">

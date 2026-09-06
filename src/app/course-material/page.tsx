@@ -67,7 +67,13 @@ import {
   ChevronsUpDown,
   Minimize2,
   Maximize2,
+  Lock,
+  ArrowRight,
+  Zap,
+  Clock,
 } from "lucide-react";
+import { useAccessControl } from "@/hooks/useAccessControl";
+import { AuthButton } from "@/components/auth/AuthButton";
 
 // Chapter Filter Options
 const CHAPTER_OPTIONS = [
@@ -210,6 +216,8 @@ function getMaterialSortKey(m: CourseMaterial): number {
 export default function CourseMaterialPage() {
   const router = useRouter();
   const supabase = createClient();
+
+  const { user, role } = useAccessControl();
 
   const [materials, setMaterials] = useState<CourseMaterial[]>(() => {
     if (typeof window !== "undefined") {
@@ -417,6 +425,7 @@ export default function CourseMaterialPage() {
               Docs
             </Link>
             <ThemeToggle />
+            <AuthButton />
           </div>
         </div>
       </header>

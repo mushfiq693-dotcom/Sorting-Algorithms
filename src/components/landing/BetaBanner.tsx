@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { MessageSquare, Bug, GraduationCap, ShieldCheck, ExternalLink, Award } from "lucide-react";
+import { MessageSquare, Bug, Sparkles, ShieldCheck, ExternalLink, Award } from "lucide-react";
 import { FeedbackModal } from "@/components/feedback/FeedbackModal";
 import { BugReportModal } from "@/components/feedback/BugReportModal";
 import { LINKS } from "@/config/links";
@@ -21,18 +21,18 @@ export function BetaBanner() {
               <Award className="h-5 w-5 sm:h-6 sm:w-6 text-[#D4B872]" />
             </div>
 
-            {/* University Department Beta Badge */}
+            {/* Community Feedback Badge */}
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-primary/40 bg-background text-primary text-xs font-sans font-semibold uppercase tracking-wider mb-6 shadow-sm">
-              <GraduationCap className="h-4 w-4" />
-              <span>GSTU CSE Department Restricted Beta</span>
+              <Sparkles className="h-4 w-4" />
+              <span>AlgoHub Community & Feedback</span>
             </div>
 
             <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-foreground leading-tight">
-              Help shape the next version of AlgoHub.
+              Help shape the future of AlgoHub.
             </h2>
 
             <p className="mt-4 font-sans font-normal text-base sm:text-lg text-muted-foreground leading-relaxed max-w-2xl mx-auto">
-              AlgoHub is currently in early restricted beta for <strong className="text-foreground font-semibold">GSTU CSE students and faculty</strong>. Explore the platform, try the learning experience, and tell us what should be better.
+              AlgoHub is built for <strong className="text-foreground font-semibold">learners, developers, and educators worldwide</strong>. Explore the platform, try the interactive visualizers, and let us know what features or topics you'd love to see next.
             </p>
 
             {/* Primary & Secondary Action CTAs */}
@@ -42,7 +42,7 @@ export function BetaBanner() {
                 className="btn-brass inline-flex items-center gap-2 rounded px-6 py-3 text-xs font-sans font-semibold tracking-[0.08em] shadow-brass active:scale-95 cursor-pointer"
               >
                 <MessageSquare className="h-4 w-4" />
-                <span>Give Beta Feedback</span>
+                <span>Give Feedback & Ideas</span>
               </button>
 
               <button
@@ -54,11 +54,11 @@ export function BetaBanner() {
               </button>
             </div>
 
-            {/* Department Notice & Credentials */}
+            {/* Credentials Notice */}
             <div className="mt-8 pt-6 border-t border-border flex flex-wrap items-center justify-center gap-6 font-sans text-[11px] font-semibold tracking-wide text-muted-foreground">
               <span className="flex items-center gap-1.5 text-primary">
                 <ShieldCheck className="h-3.5 w-3.5" />
-                <span>PostgreSQL RLS Protected</span>
+                <span>PostgreSQL RLS & Cloud Encrypted</span>
               </span>
               <span>•</span>
               <a

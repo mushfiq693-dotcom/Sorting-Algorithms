@@ -26,7 +26,7 @@ export function FeedbackWidget() {
               className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-card border border-cyan-500/40 text-cyan-700 dark:text-cyan-300 text-xs font-semibold shadow-xl hover:bg-cyan-500/10 transition-all active:scale-95 cursor-pointer"
             >
               <MessageSquare className="h-3.5 w-3.5 text-cyan-500" />
-              <span>Give Beta Feedback</span>
+              <span>Give Feedback & Ideas</span>
             </button>
 
             {/* Bug Report Button */}
@@ -47,14 +47,14 @@ export function FeedbackWidget() {
         <button
           onClick={() => setIsExpanded(!isExpanded)}
           className="inline-flex items-center gap-2 px-3.5 py-2 rounded-full bg-gradient-to-r from-red-600 via-rose-600 to-amber-600 text-white text-xs font-bold shadow-2xl shadow-rose-600/30 hover:brightness-110 active:scale-95 transition-all cursor-pointer border border-white/10"
-          aria-label="Open Beta Feedback and Issue Reporting"
+          aria-label="Open Feedback and Issue Reporting"
         >
           {isExpanded ? (
             <X className="h-4 w-4" />
           ) : (
             <>
               <MessageSquare className="h-3.5 w-3.5" />
-              <span className="hidden sm:inline">Beta Feedback</span>
+              <span className="hidden sm:inline">Feedback</span>
             </>
           )}
         </button>

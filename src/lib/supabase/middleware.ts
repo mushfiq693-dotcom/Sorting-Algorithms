@@ -120,46 +120,25 @@ export async function updateSession(request: NextRequest) {
     }
   }
 
-  // If user is authenticated, check their Beta Access status in PostgreSQL
+  // If user is suspended by admin, redirect to suspended notice
   if (user && !isPublicRoute && !pathname.startsWith("/admin")) {
     const { data: betaAccess } = await (supabase.from("beta_access") as any)
       .select("status")
       .eq("user_id", user.id)
       .single();
 
-    const status = betaAccess?.status || "pending";
-
-    if (status === "pending" && pathname !== "/auth/pending") {
-      const url = request.nextUrl.clone();
-      url.pathname = "/auth/pending";
-      return NextResponse.redirect(url);
-    }
-
-    if (status === "rejected" && pathname !== "/auth/rejected") {
-      const url = request.nextUrl.clone();
-      url.pathname = "/auth/rejected";
-      return NextResponse.redirect(url);
-    }
-
-    if (status === "suspended" && pathname !== "/auth/suspended") {
+    if (betaAccess?.status === "suspended" && pathname !== "/auth/suspended") {
       const url = request.nextUrl.clone();
       url.pathname = "/auth/suspended";
       return NextResponse.redirect(url);
     }
   }
 
-  // If user is already authenticated & approved, and visits /auth/login, redirect to /learn
+  // If user is already authenticated and visits /auth/login, redirect to /learn
   if (user && pathname === "/auth/login") {
-    const { data: betaAccess } = await (supabase.from("beta_access") as any)
-      .select("status")
-      .eq("user_id", user.id)
-      .single();
-
-    if (betaAccess?.status === "approved") {
-      const url = request.nextUrl.clone();
-      url.pathname = "/learn";
-      return NextResponse.redirect(url);
-    }
+    const url = request.nextUrl.clone();
+    url.pathname = "/learn";
+    return NextResponse.redirect(url);
   }
 
   return supabaseResponse;

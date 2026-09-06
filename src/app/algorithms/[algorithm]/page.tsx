@@ -91,6 +91,7 @@ const MathDerivation = dynamic(
 );
 import {
   ArrowLeft,
+  ArrowRight,
   Lightbulb,
   Eye,
   ImageIcon,
@@ -114,7 +115,6 @@ import {
   Cpu,
   Search,
 } from "lucide-react";
-
 export default function AlgorithmDetailPage() {
   const params = useParams();
   const algorithmId = (params.algorithm as AlgorithmId) || "bubble";
@@ -380,15 +380,17 @@ export default function AlgorithmDetailPage() {
         <div className="flex flex-wrap items-center justify-between gap-4 mb-8 pb-6 border-b border-border">
           <div>
             <div className="flex items-center gap-2 mb-2">
-              <span className="text-xs font-mono font-bold px-2.5 py-1 rounded-lg bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-500/20">
-                {isDataStructure ? "Data Structure" : isComplexity ? "Complexity Analysis" : isSearching ? "Searching Algorithm" : "Sorting Algorithm"} • {stepData.order < 10 ? `0${stepData.order}` : stepData.order} of {LEARNING_PATH.length < 10 ? `0${LEARNING_PATH.length}` : LEARNING_PATH.length}
+              <span className="text-xs font-mono font-bold px-2.5 py-1 rounded-lg bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-500/20 flex items-center gap-1.5">
+                <span>
+                  {isDataStructure ? "Data Structure" : isComplexity ? "Complexity Analysis" : isSearching ? "Searching Algorithm" : "Sorting Algorithm"} • {stepData.order < 10 ? `0${stepData.order}` : stepData.order} of {LEARNING_PATH.length < 10 ? `0${LEARNING_PATH.length}` : LEARNING_PATH.length}
+                </span>
               </span>
               <span className="text-xs font-mono text-muted-foreground flex items-center gap-1">
                 <Clock className="h-3.5 w-3.5 text-amber-500" /> {stepData.estimatedTime}
               </span>
             </div>
-            <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-foreground">
-              {meta.name} Deep Dive
+            <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-foreground flex items-center gap-3">
+              <span>{meta.name} Deep Dive</span>
             </h1>
             <p className="mt-2 text-sm text-muted-foreground max-w-2xl leading-relaxed">
               {stepData.reason}

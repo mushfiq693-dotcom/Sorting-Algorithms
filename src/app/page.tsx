@@ -397,7 +397,7 @@ export default function Home() {
         {/* 1. PRIMARY NARRATIVE: 4-STAGE LEARNING JOURNEY */}
         <LearningJourney />
 
-        {/* 5. GSTU CSE RESTRICTED BETA BANNER & FEEDBACK ENTRY POINTS */}
+        {/* 5. COMMUNITY & FEEDBACK BANNER */}
         <BetaBanner />
       </main>
 
@@ -408,7 +408,7 @@ export default function Home() {
             <div className="flex items-center justify-center sm:justify-start gap-2">
               <span className="font-heading text-base font-bold text-foreground">AlgoHub</span>
               <span className="font-sans text-[10px] uppercase tracking-wider px-2 py-0.5 rounded bg-primary/10 text-primary border border-primary/30 font-semibold">
-                GSTU CSE Beta
+                v1.0 Live
               </span>
             </div>
             <p className="text-[11px] text-muted-foreground">
@@ -441,7 +441,7 @@ export default function Home() {
         </div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6 pt-4 border-t border-border/60 text-center font-sans text-[11px] tracking-wide text-muted-foreground">
-          © 2026 AlgoHub. Gopalganj Science and Technology University (GSTU) CSE Department Restricted Beta.
+          © 2026 AlgoHub. An interactive platform for learning data structures and algorithms worldwide.
         </div>
       </footer>
     </div>

@@ -24,6 +24,7 @@ export function AlgorithmSelector({
   onSelectAlgorithm,
   disabled = false,
 }: AlgorithmSelectorProps) {
+
   // Determine which category the current selected algorithm belongs to
   const getActiveCategory = (id: AlgorithmId): CategoryKey => {
     if (SORTING_ALGORITHMS.includes(id as any)) return "sorting";
@@ -52,10 +53,10 @@ export function AlgorithmSelector({
     }));
   }, [selectedAlgorithm]);
 
-  const toggleCategory = (cat: CategoryKey) => {
+  const toggleCategory = (category: CategoryKey) => {
     setOpenCategories((prev) => ({
       ...prev,
-      [cat]: !prev[cat],
+      [category]: !prev[category],
     }));
   };
 
@@ -67,13 +68,17 @@ export function AlgorithmSelector({
     setOpenCategories({ sorting: false, searching: false, "data-structures": false, complexity: false });
   };
 
+  const handleTopicClick = (algoId: AlgorithmId) => {
+    onSelectAlgorithm(algoId);
+  };
+
   const isSortingActive = SORTING_ALGORITHMS.includes(selectedAlgorithm as any);
   const isSearchingActive = SEARCHING_ALGORITHMS.includes(selectedAlgorithm as any);
   const isDsActive = DATA_STRUCTURES.includes(selectedAlgorithm as any);
   const isComplexityActive = COMPLEXITY_TOPICS.includes(selectedAlgorithm as any);
 
   return (
-    <div className="flex flex-col gap-3 rounded-2xl border border-border bg-card/80 p-3.5 sm:p-4 backdrop-blur-xl shadow-xl">
+    <div className="flex flex-col gap-3 rounded-2xl border border-border bg-card/80 p-3.5 sm:p-4 backdrop-blur-xl shadow-xl font-sans">
       {/* Top Header with Expand/Collapse All */}
       <div className="flex items-center justify-between px-1 pb-2 border-b border-border/60">
         <div className="flex items-center gap-2">
@@ -153,7 +158,7 @@ export function AlgorithmSelector({
                   key={algoId}
                   id={`algo-btn-${algoId}`}
                   disabled={disabled}
-                  onClick={() => onSelectAlgorithm(algoId)}
+                  onClick={() => handleTopicClick(algoId)}
                   className={`group relative flex flex-col items-start rounded-xl p-2.5 text-left transition-all ${
                     isSelected
                       ? "bg-cyan-500/15 border border-cyan-500/60 shadow-sm text-foreground"
@@ -171,15 +176,18 @@ export function AlgorithmSelector({
                         </span>
                       )}
                     </span>
-                    <span
-                      className={`text-[9px] font-mono font-semibold px-1.5 py-0.5 rounded ${
-                        meta.complexity.average.includes("log")
-                          ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-300 border border-emerald-500/20"
-                          : "bg-amber-500/10 text-amber-600 dark:text-amber-300 border border-amber-500/20"
-                      }`}
-                    >
-                      {meta.complexity.average}
-                    </span>
+
+                    <div className="flex items-center gap-1.5">
+                      <span
+                        className={`text-[9px] font-mono font-semibold px-1.5 py-0.5 rounded ${
+                          meta.complexity.average.includes("log")
+                            ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-300 border border-emerald-500/20"
+                            : "bg-amber-500/10 text-amber-600 dark:text-amber-300 border border-amber-500/20"
+                        }`}
+                      >
+                        {meta.complexity.average}
+                      </span>
+                    </div>
                   </div>
                   <p className="mt-1 text-[10px] text-muted-foreground leading-relaxed line-clamp-1">
                     {meta.shortDescription}
@@ -243,7 +251,7 @@ export function AlgorithmSelector({
                   key={algoId}
                   id={`algo-btn-${algoId}`}
                   disabled={disabled}
-                  onClick={() => onSelectAlgorithm(algoId)}
+                  onClick={() => handleTopicClick(algoId)}
                   className={`group relative flex flex-col items-start rounded-xl p-2.5 text-left transition-all ${
                     isSelected
                       ? "bg-emerald-500/15 border border-emerald-500/60 shadow-sm text-foreground"
@@ -261,15 +269,18 @@ export function AlgorithmSelector({
                         </span>
                       )}
                     </span>
-                    <span
-                      className={`text-[9px] font-mono font-semibold px-1.5 py-0.5 rounded ${
-                        meta.complexity.average.includes("log")
-                          ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-300 border border-emerald-500/20"
-                          : "bg-blue-500/10 text-blue-600 dark:text-blue-300 border border-blue-500/20"
-                      }`}
-                    >
-                      {meta.complexity.average}
-                    </span>
+
+                    <div className="flex items-center gap-1.5">
+                      <span
+                        className={`text-[9px] font-mono font-semibold px-1.5 py-0.5 rounded ${
+                          meta.complexity.average.includes("log")
+                            ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-300 border border-emerald-500/20"
+                            : "bg-blue-500/10 text-blue-600 dark:text-blue-300 border border-blue-500/20"
+                        }`}
+                      >
+                        {meta.complexity.average}
+                      </span>
+                    </div>
                   </div>
                   <p className="mt-1 text-[10px] text-muted-foreground leading-relaxed line-clamp-1">
                     {meta.shortDescription}
@@ -333,7 +344,7 @@ export function AlgorithmSelector({
                   key={dsId}
                   id={`ds-btn-${dsId}`}
                   disabled={disabled}
-                  onClick={() => onSelectAlgorithm(dsId)}
+                  onClick={() => handleTopicClick(dsId)}
                   className={`group relative flex flex-col items-start rounded-xl p-2.5 text-left transition-all ${
                     isSelected
                       ? "bg-blue-500/15 border border-blue-500/60 shadow-sm text-foreground"
@@ -351,9 +362,12 @@ export function AlgorithmSelector({
                         </span>
                       )}
                     </span>
-                    <span className="text-[9px] font-mono font-semibold px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-600 dark:text-blue-300 border border-blue-500/20">
-                      LIFO/FIFO O(1)
-                    </span>
+
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-[9px] font-mono font-semibold px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-600 dark:text-blue-300 border border-blue-500/20">
+                        LIFO/FIFO O(1)
+                      </span>
+                    </div>
                   </div>
                   <p className="mt-1 text-[10px] text-muted-foreground leading-relaxed line-clamp-1">
                     {meta.shortDescription}
@@ -366,7 +380,7 @@ export function AlgorithmSelector({
       </div>
 
       {/* =================================================================== */}
-      {/* Category 3: Complexity Analysis Dropdown */}
+      {/* Category 4: Complexity Analysis Dropdown */}
       {/* =================================================================== */}
       <div className="rounded-xl border border-border/80 bg-secondary/30 overflow-hidden transition-all duration-200">
         <button
@@ -415,9 +429,9 @@ export function AlgorithmSelector({
               return (
                 <button
                   key={compId}
-                  id={`comp-btn-${compId}`}
+                  id={`algo-btn-${compId}`}
                   disabled={disabled}
-                  onClick={() => onSelectAlgorithm(compId)}
+                  onClick={() => handleTopicClick(compId)}
                   className={`group relative flex flex-col items-start rounded-xl p-2.5 text-left transition-all ${
                     isSelected
                       ? "bg-purple-500/15 border border-purple-500/60 shadow-sm text-foreground"
@@ -435,9 +449,12 @@ export function AlgorithmSelector({
                         </span>
                       )}
                     </span>
-                    <span className="text-[9px] font-mono font-semibold px-1.5 py-0.5 rounded bg-purple-500/10 text-purple-600 dark:text-purple-300 border border-purple-500/20">
-                      {compId === "time-complexity" ? "Big-O Scale" : "Aux Space"}
-                    </span>
+
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-[9px] font-mono font-semibold px-1.5 py-0.5 rounded bg-purple-500/10 text-purple-600 dark:text-purple-300 border border-purple-500/20">
+                        {compId === "time-complexity" ? "Big-O Scale" : "Aux Space"}
+                      </span>
+                    </div>
                   </div>
                   <p className="mt-1 text-[10px] text-muted-foreground leading-relaxed line-clamp-1">
                     {meta.shortDescription}

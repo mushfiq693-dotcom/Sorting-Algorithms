@@ -299,10 +299,20 @@ DECLARE
   v_full_name TEXT;
   v_department TEXT;
   v_student_id TEXT;
+  v_avatar_url TEXT;
 BEGIN
-  v_full_name := COALESCE(NEW.raw_user_meta_data->>'full_name', '');
-  v_department := COALESCE(NEW.raw_user_meta_data->>'department', 'CSE');
+  v_full_name := COALESCE(
+    NEW.raw_user_meta_data->>'full_name',
+    NEW.raw_user_meta_data->>'name',
+    ''
+  );
+  v_department := COALESCE(NEW.raw_user_meta_data->>'department', 'General');
   v_student_id := COALESCE(NEW.raw_user_meta_data->>'student_id', '');
+  v_avatar_url := COALESCE(
+    NEW.raw_user_meta_data->>'avatar_url',
+    NEW.raw_user_meta_data->>'picture',
+    ''
+  );
 
   INSERT INTO public.profiles (
     id,
@@ -310,6 +320,7 @@ BEGIN
     full_name,
     department,
     student_id,
+    avatar_url,
     role
   ) VALUES (
     NEW.id,
@@ -317,16 +328,19 @@ BEGIN
     v_full_name,
     v_department,
     v_student_id,
+    v_avatar_url,
     'student'
-  ) ON CONFLICT (id) DO NOTHING;
+  ) ON CONFLICT (id) DO UPDATE SET
+    full_name = CASE WHEN profiles.full_name IS NULL OR profiles.full_name = '' THEN EXCLUDED.full_name ELSE profiles.full_name END,
+    avatar_url = CASE WHEN profiles.avatar_url IS NULL OR profiles.avatar_url = '' THEN EXCLUDED.avatar_url ELSE profiles.avatar_url END;
 
   INSERT INTO public.beta_access (
     user_id,
     status
   ) VALUES (
     NEW.id,
-    'pending'
-  ) ON CONFLICT (user_id) DO NOTHING;
+    'approved'
+  ) ON CONFLICT (user_id) DO UPDATE SET status = 'approved';
 
   INSERT INTO public.user_progress (
     user_id,

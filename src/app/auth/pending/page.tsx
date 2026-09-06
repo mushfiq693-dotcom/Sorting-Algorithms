@@ -39,9 +39,14 @@ export default function BetaPendingPage() {
       setUserEmail(user.email || null);
 
       const { data: profile } = await (supabase.from("profiles") as any)
-        .select("full_name")
+        .select("full_name, role")
         .eq("id", user.id)
         .single();
+
+      if (profile?.role === "admin") {
+        router.replace("/admin/moderation");
+        return;
+      }
 
       setUserName(profile?.full_name || null);
     }

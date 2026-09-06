@@ -6,7 +6,6 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import {
-  Code2,
   Lock,
   Mail,
   User,
@@ -26,8 +25,31 @@ import {
 
 import { validateGenuineEmail } from "@/lib/validation/emailValidator";
 
-// Reversible Feature Flag: Magic Link is disabled for beta launch to preserve email quotas
+// Reversible Feature Flag: Magic Link is disabled to preserve email quotas
 const MAGIC_LINK_ENABLED = false;
+
+function GoogleIcon() {
+  return (
+    <svg className="h-4 w-4" viewBox="0 0 24 24">
+      <path
+        d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+        fill="#4285F4"
+      />
+      <path
+        d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+        fill="#34A853"
+      />
+      <path
+        d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"
+        fill="#FBBC05"
+      />
+      <path
+        d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
+        fill="#EA4335"
+      />
+    </svg>
+  );
+}
 
 function LoginForm() {
   const router = useRouter();
@@ -51,17 +73,42 @@ function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
-  const [department, setDepartment] = useState("CSE");
+  const [department, setDepartment] = useState("");
   const [studentId, setStudentId] = useState("");
 
   // State
   const [isLoading, setIsLoading] = useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(
     urlError === "auth_callback_failed" ? "Authentication link expired or invalid. Please try again." : null
   );
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
 
   const supabase = createClient();
+
+  const handleGoogleSignIn = async () => {
+    setIsGoogleLoading(true);
+    setErrorMsg(null);
+    setSuccessMsg(null);
+
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(nextRoute)}`,
+          queryParams: {
+            access_type: "offline",
+            prompt: "select_account",
+          },
+        },
+      });
+
+      if (error) throw error;
+    } catch (err: any) {
+      setErrorMsg(err.message || "Failed to initiate Google Sign-In. Please try again.");
+      setIsGoogleLoading(false);
+    }
+  };
 
   const handleForgotPassword = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -123,20 +170,34 @@ function LoginForm() {
         });
         if (error) throw error;
 
-        // Check beta access status
+        // Check user role and account status
         if (data.user) {
+          const { data: userProfile } = await (supabase.from("profiles") as any)
+            .select("role")
+            .eq("id", data.user.id)
+            .single();
+
+          // Admin users go straight to Admin Panel
+          if (userProfile?.role === "admin") {
+            router.push("/admin/moderation");
+            router.refresh();
+            return;
+          }
+
+          // Check if user is suspended
           const { data: betaAccess } = await (supabase.from("beta_access") as any)
             .select("status")
             .eq("user_id", data.user.id)
-            .single();
+            .maybeSingle();
 
-          const status = betaAccess?.status || "pending";
-          if (status === "approved") {
-            router.push(nextRoute);
-            router.refresh();
-          } else {
-            router.push(`/auth/${status}`);
+          if (betaAccess?.status === "suspended") {
+            router.push("/auth/suspended");
+            return;
           }
+
+          // Users enter the platform immediately
+          router.push(nextRoute);
+          router.refresh();
         }
       }
     } catch (err: any) {
@@ -158,7 +219,7 @@ function LoginForm() {
     // 1. Genuine Email Domain & Typo Validation
     const validation = validateGenuineEmail(cleanEmail);
     if (!validation.isValid) {
-      setErrorMsg(validation.error || "Please enter a valid personal or university email.");
+      setErrorMsg(validation.error || "Please enter a valid personal or work email.");
       setIsLoading(false);
       return;
     }
@@ -176,10 +237,10 @@ function LoginForm() {
         options: {
           data: {
             full_name: fullName.trim(),
-            department: department || "CSE",
-            student_id: studentId.trim(),
+            department: department.trim() || "General",
+            student_id: studentId.trim() || "",
           },
-          emailRedirectTo: `${window.location.origin}/auth/callback?next=/auth/pending`,
+          emailRedirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(nextRoute)}`,
         },
       });
 
@@ -229,8 +290,8 @@ function LoginForm() {
 
         <p className="text-xs sm:text-sm text-muted-foreground font-sans font-medium max-w-sm mx-auto leading-relaxed">
           {mode === "signin"
-            ? "Enter your credentials to access interactive algorithm studios & learning modules."
-            : "Register with your student or faculty email for departmental review and access."}
+            ? "Enter your credentials or continue with Google to access interactive algorithm studios & learning modules."
+            : "Create your account to start visualizing, debugging, and mastering algorithms."}
         </p>
       </div>
 
@@ -262,7 +323,7 @@ function LoginForm() {
               <ol className="list-decimal list-inside space-y-1 text-muted-foreground font-sans">
                 <li>Open your email inbox (and check spam if needed).</li>
                 <li>Click the confirmation link to verify your identity.</li>
-                <li>Your request will immediately move to departmental review!</li>
+                <li>You will be automatically logged in and ready to learn!</li>
               </ol>
             </div>
 
@@ -310,7 +371,7 @@ function LoginForm() {
                     : "text-muted-foreground hover:text-foreground hover:bg-card/50"
                 }`}
               >
-                Join Beta (Register)
+                Sign Up
               </button>
             </div>
 
@@ -329,6 +390,34 @@ function LoginForm() {
                 <p className="leading-relaxed font-sans">{successMsg}</p>
               </div>
             )}
+
+            {/* Continue with Google OAuth Button */}
+            <button
+              type="button"
+              onClick={handleGoogleSignIn}
+              disabled={isGoogleLoading || isLoading}
+              className="w-full inline-flex items-center justify-center gap-3 py-2.5 px-4 rounded-lg border border-border bg-background/90 hover:bg-secondary/70 text-foreground text-xs sm:text-sm font-sans font-semibold tracking-wide shadow-sm hover:border-primary/50 transition-all cursor-pointer disabled:opacity-50 active:scale-[0.99]"
+            >
+              {isGoogleLoading ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin text-primary" />
+                  <span>Connecting to Google...</span>
+                </>
+              ) : (
+                <>
+                  <GoogleIcon />
+                  <span>Continue with Google</span>
+                </>
+              )}
+            </button>
+
+            {/* Divider */}
+            <div className="relative flex items-center justify-center py-1">
+              <div className="w-full border-t border-border" />
+              <span className="absolute bg-card px-3 text-[11px] font-medium text-muted-foreground uppercase tracking-wider font-mono">
+                or with email
+              </span>
+            </div>
 
             {/* Form Elements */}
             {mode === "signin" ? (
@@ -369,7 +458,7 @@ function LoginForm() {
                       required
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      placeholder="student@gstu.ac.bd"
+                      placeholder="you@example.com"
                       className="w-full rounded border border-border bg-background/80 pl-10 pr-4 py-2.5 text-xs sm:text-sm text-foreground placeholder:text-muted-foreground/60 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-colors font-sans"
                     />
                   </div>
@@ -454,7 +543,7 @@ function LoginForm() {
                       required
                       value={fullName}
                       onChange={(e) => setFullName(e.target.value)}
-                      placeholder="Mushfiqur Rahman"
+                      placeholder="Your Name"
                       className="w-full rounded border border-border bg-background/80 pl-10 pr-4 py-2.5 text-xs sm:text-sm text-foreground placeholder:text-muted-foreground/60 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-colors font-sans"
                     />
                   </div>
@@ -463,7 +552,7 @@ function LoginForm() {
                 {/* Email Address */}
                 <div className="space-y-1">
                   <label className="block text-xs font-semibold text-foreground font-sans">
-                    Institutional / University Email
+                    Email Address
                   </label>
                   <div className="relative">
                     <Mail className="absolute left-3.5 top-3 h-4 w-4 text-muted-foreground" />
@@ -472,26 +561,25 @@ function LoginForm() {
                       required
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      placeholder="student@gstu.ac.bd"
+                      placeholder="you@example.com"
                       className="w-full rounded border border-border bg-background/80 pl-10 pr-4 py-2.5 text-xs sm:text-sm text-foreground placeholder:text-muted-foreground/60 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-colors font-sans"
                     />
                   </div>
                 </div>
 
-                {/* Department & Student ID Grid */}
+                {/* Optional Organization / University & Role Grid */}
                 <div className="grid grid-cols-2 gap-2.5">
                   <div className="space-y-1">
                     <label className="block text-xs font-semibold text-foreground font-sans">
-                      Department
+                      Institution / Org <span className="text-[10px] text-muted-foreground font-normal">(Optional)</span>
                     </label>
                     <div className="relative">
                       <GraduationCap className="absolute left-3 top-3 h-3.5 w-3.5 text-muted-foreground" />
                       <input
                         type="text"
-                        required
                         value={department}
                         onChange={(e) => setDepartment(e.target.value)}
-                        placeholder="CSE"
+                        placeholder="e.g. University / Company"
                         className="w-full rounded border border-border bg-background/80 pl-9 pr-3 py-2.5 text-xs text-foreground focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-colors font-sans"
                       />
                     </div>
@@ -499,13 +587,13 @@ function LoginForm() {
 
                   <div className="space-y-1">
                     <label className="block text-xs font-semibold text-foreground font-sans">
-                      Student/Roll ID
+                      Roll / ID <span className="text-[10px] text-muted-foreground font-normal">(Optional)</span>
                     </label>
                     <input
                       type="text"
                       value={studentId}
                       onChange={(e) => setStudentId(e.target.value)}
-                      placeholder="e.g. 2021001"
+                      placeholder="e.g. 2024001"
                       className="w-full rounded border border-border bg-background/80 px-3.5 py-2.5 text-xs text-foreground focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-colors font-sans"
                     />
                   </div>
@@ -550,12 +638,12 @@ function LoginForm() {
                   {isLoading ? (
                     <>
                       <Loader2 className="h-4 w-4 animate-spin" />
-                      <span>Submitting Request...</span>
+                      <span>Creating Account...</span>
                     </>
                   ) : (
                     <>
                       <Sparkles className="h-4 w-4" />
-                      <span>Submit Beta Request</span>
+                      <span>Create Account</span>
                       <ArrowRight className="h-4 w-4 ml-0.5" />
                     </>
                   )}
@@ -595,7 +683,7 @@ function LoginForm() {
                 Forgot Your Password?
               </h2>
               <p className="text-xs text-muted-foreground font-sans leading-relaxed">
-                Enter your registered student email address. We will send you a secure link to set a new password.
+                Enter your registered email address. We will send you a secure link to set a new password.
               </p>
             </div>
 
@@ -639,7 +727,7 @@ function LoginForm() {
                       required
                       value={forgotEmail}
                       onChange={(e) => setForgotEmail(e.target.value)}
-                      placeholder="student@gstu.ac.bd"
+                      placeholder="you@example.com"
                       className="w-full rounded border border-border bg-background/80 pl-10 pr-4 py-2.5 text-xs sm:text-sm text-foreground placeholder:text-muted-foreground/60 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-colors font-sans"
                     />
                   </div>
@@ -679,7 +767,7 @@ function LoginForm() {
         </Link>
         <span className="flex items-center gap-1.5 text-muted-foreground">
           <ShieldCheck className="h-3.5 w-3.5 text-emerald-500" />
-          <span>Departmental RLS Protected</span>
+          <span>Enterprise Security & RLS Protected</span>
         </span>
       </div>
     </div>

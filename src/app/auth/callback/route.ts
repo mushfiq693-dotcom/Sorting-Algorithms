@@ -35,15 +35,11 @@ export async function GET(request: Request) {
 
         const status = betaAccess?.status || "pending";
 
-        if (status === "approved") {
-          return NextResponse.redirect(`${origin}${next}`);
-        } else if (status === "pending") {
-          return NextResponse.redirect(`${origin}/auth/pending`);
-        } else if (status === "rejected") {
-          return NextResponse.redirect(`${origin}/auth/rejected`);
-        } else if (status === "suspended") {
+        if (status === "suspended") {
           return NextResponse.redirect(`${origin}/auth/suspended`);
         }
+
+        return NextResponse.redirect(`${origin}${next}`);
       }
 
       return NextResponse.redirect(`${origin}${next}`);

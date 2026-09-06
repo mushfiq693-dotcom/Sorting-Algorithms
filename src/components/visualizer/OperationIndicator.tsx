@@ -99,6 +99,10 @@ export function OperationIndicator({
           <span>Swapping</span>
         </div>
         <div className="flex items-center gap-1">
+          <span className="h-2 w-2 rounded-xs bg-[#D97706]" />
+          <span>Write / Shift</span>
+        </div>
+        <div className="flex items-center gap-1">
           <span className="h-2 w-2 rounded-xs bg-emerald-400" />
           <span>Sorted</span>
         </div>

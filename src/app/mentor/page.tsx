@@ -359,7 +359,7 @@ export default function MentorPortalPage() {
             <div className="text-2xl sm:text-3xl font-extrabold text-white font-mono">
               {students.length}
             </div>
-            <p className="text-[11px] text-slate-400">Beta students under mentorship</p>
+            <p className="text-[11px] text-slate-400">Students under mentorship</p>
           </div>
 
           <div className="p-4 rounded-2xl border border-rose-500/30 bg-[#140612] space-y-1">
@@ -805,7 +805,7 @@ export default function MentorPortalPage() {
                       onChange={(e) => setNoticeTarget(e.target.value)}
                       className="w-full rounded-xl border border-purple-950 bg-black/70 p-2.5 text-xs text-white focus:border-purple-400 focus:outline-none"
                     >
-                      <option value="all">All Enrolled Beta Students</option>
+                      <option value="all">All Enrolled Students</option>
                       <option value="weak_bubble">Students Struggling with Bubble Sort (&lt;60%)</option>
                       <option value="weak_selection">Students Struggling with Selection Sort (&lt;60%)</option>
                       <option value="weak_insertion">Students Struggling with Insertion Sort (&lt;60%)</option>

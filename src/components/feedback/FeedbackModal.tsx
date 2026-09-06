@@ -97,7 +97,7 @@ export function FeedbackModal({ isOpen, onClose }: FeedbackModalProps) {
         <div className="space-y-1">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-cyan-500/30 bg-cyan-500/10 text-cyan-600 dark:text-cyan-300 font-mono text-[11px] font-semibold">
             <Sparkles className="h-3 w-3 text-cyan-500" />
-            <span>GSTU CSE Beta Feedback</span>
+            <span>AlgoHub Community Feedback</span>
           </div>
           <h2 className="text-xl font-bold tracking-tight text-foreground font-sans">
             Help Shape AlgoHub
@@ -114,7 +114,7 @@ export function FeedbackModal({ isOpen, onClose }: FeedbackModalProps) {
             </div>
             <h3 className="text-base font-bold text-foreground">Thank You for Your Feedback!</h3>
             <p className="text-xs text-muted-foreground">
-              Your insights have been saved directly to our beta development tracker.
+              Your insights have been saved directly to our platform development tracker.
             </p>
           </div>
         ) : (

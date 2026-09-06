@@ -69,31 +69,16 @@ export function LockedVisualizerGate() {
         <div className="h-64 flex items-center justify-center">
           <div className="flex items-center gap-2 text-xs font-mono text-slate-400">
             <span className="h-2 w-2 rounded-full bg-cyan-400 animate-ping" />
-            Verifying GSTU CSE Beta credentials...
+            Initializing visualizer engine...
           </div>
         </div>
       </div>
     );
   }
 
-  // Render full interactive visualizer in sandbox mode
+  // Render full interactive visualizer
   return (
     <div className="space-y-3">
-      {!isApproved && (
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-2 px-4 py-2.5 rounded-2xl bg-cyan-500/10 border border-cyan-500/25 text-xs font-mono text-cyan-300">
-          <div className="flex items-center gap-2">
-            <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="font-semibold">Public Evaluation Sandbox</span>
-            <span className="hidden sm:inline text-slate-400">• Full real-time execution engine active</span>
-          </div>
-          <Link
-            href="/auth/login"
-            className="text-xs text-slate-300 hover:text-white transition-colors underline decoration-cyan-500/50 hover:decoration-cyan-400"
-          >
-            Simulate Departmental RBAC Access &rarr;
-          </Link>
-        </div>
-      )}
       <SortingVisualizer />
     </div>
   );

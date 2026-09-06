@@ -44,7 +44,7 @@ export default function DocsIndexPage() {
           Complete DSA Documentation & Theory Course
         </h1>
         <p className="text-sm sm:text-base text-muted-foreground max-w-2xl leading-relaxed">
-          A structured 7-level masterclass exploring formal definitions, asymptotic Big-O time & space complexity, pure C++ algorithmic implementations, and targeted Bengali explanations for complex concepts.
+          A structured masterclass exploring formal definitions, asymptotic Big-O time &amp; space complexity, pure C++ algorithmic implementations, and targeted Bengali explanations for complex concepts.
         </p>
 
         {/* Global Progress Card */}

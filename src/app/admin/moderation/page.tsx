@@ -13,20 +13,20 @@ import {
   Clock,
   Ban,
   Search,
-  Filter,
   MessageSquare,
   Bug,
   RefreshCw,
   ArrowLeft,
   Star,
-  ExternalLink,
   Loader2,
   GraduationCap,
   ShieldCheck,
-  Code2,
   Award,
   UserCheck,
   UserX,
+  Crown,
+  Lock,
+  Sparkles,
 } from "lucide-react";
 
 interface ProfileBetaUser {
@@ -323,26 +323,32 @@ export default function AdminModerationPage() {
 
   if (isAdmin === null || isLoading) {
     return (
-      <div className="min-h-screen bg-[#060305] flex items-center justify-center text-white">
-        <div className="flex items-center gap-3 text-sm font-mono text-slate-300">
-          <Loader2 className="h-5 w-5 animate-spin text-rose-500" />
+      <div className="min-h-screen bg-background text-foreground flex items-center justify-center font-sans">
+        <div className="flex items-center gap-3 text-sm font-sans text-muted-foreground">
+          <Loader2 className="h-5 w-5 animate-spin text-primary" />
           <span>Verifying Departmental Administrator Access...</span>
         </div>
       </div>
     );
   }
 
-  // Filtered Users
-  const filteredUsers = users.filter((u) => {
-    const matchesSearch =
-      (u.full_name || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (u.email || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (u.student_id || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (u.department || "").toLowerCase().includes(searchQuery.toLowerCase());
+  // Filtered Users (Prioritize pending requests first)
+  const filteredUsers = users
+    .filter((u) => {
+      const matchesSearch =
+        (u.full_name || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (u.email || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (u.student_id || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (u.department || "").toLowerCase().includes(searchQuery.toLowerCase());
 
-    const matchesStatus = statusFilter === "all" || u.status === statusFilter;
-    return matchesSearch && matchesStatus;
-  });
+      const matchesStatus = statusFilter === "all" || u.status === statusFilter;
+      return matchesSearch && matchesStatus;
+    })
+    .sort((a, b) => {
+      if (a.status === "pending" && b.status !== "pending") return -1;
+      if (b.status === "pending" && a.status !== "pending") return 1;
+      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+    });
 
   // Stats Counters
   const pendingCount = users.filter((u) => u.status === "pending").length;
@@ -351,25 +357,26 @@ export default function AdminModerationPage() {
   const openBugsCount = bugsList.filter((b) => b.status === "open").length;
 
   return (
-    <div className="min-h-screen bg-[#060305] text-white flex flex-col font-sans antialiased selection:bg-rose-500/30 selection:text-rose-200">
+    <div className="min-h-screen bg-background text-foreground flex flex-col font-sans antialiased selection:bg-[#C9A962]/35 selection:text-[#1C1714] transition-colors duration-200">
       {/* Top Header Bar */}
-      <header className="sticky top-0 z-40 border-b border-rose-950/70 bg-[#0c0409]/95 backdrop-blur-xl">
+      <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur-xl transition-colors">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Link
               href="/"
-              className="p-2 rounded-xl bg-[#1a0712] border border-rose-500/30 text-rose-300 hover:text-white transition-colors"
+              className="p-2 rounded border border-border bg-card text-foreground hover:text-primary hover:border-primary transition-colors"
+              title="Back to AlgoHub"
             >
               <ArrowLeft className="h-4 w-4" />
             </Link>
             <div className="flex items-center gap-2">
-              <div className="h-7 w-7 rounded-lg bg-gradient-to-tr from-red-600 to-rose-600 flex items-center justify-center">
-                <ShieldCheck className="h-4 w-4 text-white" />
+              <div className="h-7 w-7 rounded bg-primary/20 border border-primary/40 flex items-center justify-center text-primary">
+                <ShieldCheck className="h-4 w-4" />
               </div>
-              <span className="font-bold text-base font-sans tracking-tight">
+              <span className="font-heading text-lg sm:text-xl font-bold tracking-tight text-foreground">
                 AlgoHub Moderation Dashboard
               </span>
-              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/30 font-bold ml-1">
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-primary/15 text-primary border border-primary/30 font-bold ml-1">
                 Admin Console
               </span>
             </div>
@@ -380,9 +387,9 @@ export default function AdminModerationPage() {
             <button
               onClick={loadData}
               disabled={isLoading}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-rose-950 bg-[#14080e] text-xs text-slate-300 hover:text-white hover:border-rose-700 transition-colors"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded border border-border bg-card text-xs font-semibold text-foreground hover:text-primary hover:border-primary transition-colors cursor-pointer"
             >
-              <RefreshCw className={`h-3.5 w-3.5 ${isLoading ? "animate-spin" : ""}`} />
+              <RefreshCw className={`h-3.5 w-3.5 ${isLoading ? "animate-spin text-primary" : ""}`} />
               <span>Refresh</span>
             </button>
           </div>
@@ -390,90 +397,100 @@ export default function AdminModerationPage() {
       </header>
 
       <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+        {/* Title and Intro */}
+        <div className="space-y-1">
+          <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight text-foreground font-heading">
+            Admin <span className="italic font-semibold text-primary dark:text-[#D4B872]">Control Center</span>
+          </h1>
+          <p className="text-xs sm:text-sm text-muted-foreground font-sans">
+            Manage student registrations, evaluate mentor applications, oversee user permissions, and maintain platform stability.
+          </p>
+        </div>
+
         {/* KPI Stats Cards */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
-          <div className="p-4 rounded-2xl border border-amber-500/30 bg-[#12070e] space-y-1">
-            <div className="flex items-center justify-between text-amber-400">
-              <span className="text-xs font-mono font-semibold">Beta Requests</span>
-              <Clock className="h-4 w-4" />
+          <div className="p-4 rounded-xl border border-border bg-card/80 space-y-1 shadow-sm corner-flourish">
+            <div className="flex items-center justify-between text-amber-500">
+              <span className="text-xs font-mono font-semibold">Total Users</span>
+              <Users className="h-4 w-4" />
             </div>
-            <div className="text-2xl sm:text-3xl font-extrabold text-white font-mono">
-              {pendingCount}
+            <div className="text-2xl sm:text-3xl font-extrabold text-foreground font-mono">
+              {users.length}
             </div>
-            <p className="text-[11px] text-slate-400">Pending admission</p>
+            <p className="text-[11px] text-muted-foreground font-sans">Registered accounts</p>
           </div>
 
-          <div className="p-4 rounded-2xl border border-purple-500/30 bg-[#12070e] space-y-1">
-            <div className="flex items-center justify-between text-purple-400">
+          <div className="p-4 rounded-xl border border-border bg-card/80 space-y-1 shadow-sm corner-flourish">
+            <div className="flex items-center justify-between text-purple-500 dark:text-purple-400">
               <span className="text-xs font-mono font-semibold">Mentor Apps</span>
               <Award className="h-4 w-4" />
             </div>
-            <div className="text-2xl sm:text-3xl font-extrabold text-white font-mono">
+            <div className="text-2xl sm:text-3xl font-extrabold text-foreground font-mono">
               {pendingMentorCount}
             </div>
-            <p className="text-[11px] text-slate-400">Pending review</p>
+            <p className="text-[11px] text-muted-foreground font-sans">Pending review</p>
           </div>
 
-          <div className="p-4 rounded-2xl border border-emerald-500/30 bg-[#12070e] space-y-1">
-            <div className="flex items-center justify-between text-emerald-400">
-              <span className="text-xs font-mono font-semibold">Approved Cohort</span>
-              <CheckCircle2 className="h-4 w-4" />
+          <div className="p-4 rounded-xl border border-border bg-card/80 space-y-1 shadow-sm corner-flourish">
+            <div className="flex items-center justify-between text-emerald-500 dark:text-emerald-400">
+              <span className="text-xs font-mono font-semibold">Active Scholars</span>
+              <Sparkles className="h-4 w-4 text-emerald-500" />
             </div>
-            <div className="text-2xl sm:text-3xl font-extrabold text-white font-mono">
-              {approvedCount}
+            <div className="text-2xl sm:text-3xl font-extrabold text-foreground font-mono">
+              {users.filter(u => u.status !== 'suspended').length}
             </div>
-            <p className="text-[11px] text-slate-400">Active students</p>
+            <p className="text-[11px] text-muted-foreground font-sans">Free full access active</p>
           </div>
 
-          <div className="p-4 rounded-2xl border border-cyan-500/30 bg-[#12070e] space-y-1">
-            <div className="flex items-center justify-between text-cyan-400">
+          <div className="p-4 rounded-xl border border-border bg-card/80 space-y-1 shadow-sm corner-flourish">
+            <div className="flex items-center justify-between text-cyan-500 dark:text-cyan-400">
               <span className="text-xs font-mono font-semibold">Feedback</span>
               <MessageSquare className="h-4 w-4" />
             </div>
-            <div className="text-2xl sm:text-3xl font-extrabold text-white font-mono">
+            <div className="text-2xl sm:text-3xl font-extrabold text-foreground font-mono">
               {feedbackList.length}
             </div>
-            <p className="text-[11px] text-slate-400">In-app ratings</p>
+            <p className="text-[11px] text-muted-foreground font-sans">In-app ratings</p>
           </div>
 
-          <div className="p-4 rounded-2xl border border-rose-500/30 bg-[#12070e] space-y-1">
-            <div className="flex items-center justify-between text-rose-400">
+          <div className="p-4 rounded-xl border border-border bg-card/80 space-y-1 shadow-sm corner-flourish">
+            <div className="flex items-center justify-between text-rose-500 dark:text-rose-400">
               <span className="text-xs font-mono font-semibold">Bug Reports</span>
               <Bug className="h-4 w-4" />
             </div>
-            <div className="text-2xl sm:text-3xl font-extrabold text-white font-mono">
+            <div className="text-2xl sm:text-3xl font-extrabold text-foreground font-mono">
               {openBugsCount}
             </div>
-            <p className="text-[11px] text-slate-400">Open diagnostics</p>
+            <p className="text-[11px] text-muted-foreground font-sans">Open diagnostics</p>
           </div>
         </div>
 
         {/* Tab Switcher */}
-        <div className="flex border-b border-rose-950/80 gap-2 overflow-x-auto">
+        <div className="flex border-b border-border gap-2 overflow-x-auto font-sans">
           <button
             onClick={() => setActiveTab("users")}
-            className={`pb-3 px-4 text-xs sm:text-sm font-bold transition-all border-b-2 flex items-center gap-2 whitespace-nowrap ${
+            className={`pb-3 px-4 text-xs sm:text-sm font-semibold transition-all border-b-2 flex items-center gap-2 whitespace-nowrap cursor-pointer ${
               activeTab === "users"
-                ? "border-rose-500 text-rose-300"
-                : "border-transparent text-slate-400 hover:text-slate-200"
+                ? "border-primary text-primary font-bold"
+                : "border-transparent text-muted-foreground hover:text-foreground"
             }`}
           >
             <Users className="h-4 w-4" />
-            <span>Beta Access Requests ({users.length})</span>
+            <span>User Management ({users.length})</span>
           </button>
 
           <button
             onClick={() => setActiveTab("mentors")}
-            className={`pb-3 px-4 text-xs sm:text-sm font-bold transition-all border-b-2 flex items-center gap-2 whitespace-nowrap ${
+            className={`pb-3 px-4 text-xs sm:text-sm font-semibold transition-all border-b-2 flex items-center gap-2 whitespace-nowrap cursor-pointer ${
               activeTab === "mentors"
-                ? "border-rose-500 text-rose-300"
-                : "border-transparent text-slate-400 hover:text-slate-200"
+                ? "border-primary text-primary font-bold"
+                : "border-transparent text-muted-foreground hover:text-foreground"
             }`}
           >
             <Award className="h-4 w-4" />
             <span>Mentor Applications ({mentorApps.length})</span>
             {pendingMentorCount > 0 && (
-              <span className="px-1.5 py-0.2 rounded-full bg-purple-500 text-white text-[10px] font-mono">
+              <span className="px-1.5 py-0.2 rounded-full bg-purple-600 text-white text-[10px] font-mono">
                 {pendingMentorCount}
               </span>
             )}
@@ -481,10 +498,10 @@ export default function AdminModerationPage() {
 
           <button
             onClick={() => setActiveTab("feedback")}
-            className={`pb-3 px-4 text-xs sm:text-sm font-bold transition-all border-b-2 flex items-center gap-2 whitespace-nowrap ${
+            className={`pb-3 px-4 text-xs sm:text-sm font-semibold transition-all border-b-2 flex items-center gap-2 whitespace-nowrap cursor-pointer ${
               activeTab === "feedback"
-                ? "border-rose-500 text-rose-300"
-                : "border-transparent text-slate-400 hover:text-slate-200"
+                ? "border-primary text-primary font-bold"
+                : "border-transparent text-muted-foreground hover:text-foreground"
             }`}
           >
             <MessageSquare className="h-4 w-4" />
@@ -493,10 +510,10 @@ export default function AdminModerationPage() {
 
           <button
             onClick={() => setActiveTab("bugs")}
-            className={`pb-3 px-4 text-xs sm:text-sm font-bold transition-all border-b-2 flex items-center gap-2 whitespace-nowrap ${
+            className={`pb-3 px-4 text-xs sm:text-sm font-semibold transition-all border-b-2 flex items-center gap-2 whitespace-nowrap cursor-pointer ${
               activeTab === "bugs"
-                ? "border-rose-500 text-rose-300"
-                : "border-transparent text-slate-400 hover:text-slate-200"
+                ? "border-primary text-primary font-bold"
+                : "border-transparent text-muted-foreground hover:text-foreground"
             }`}
           >
             <Bug className="h-4 w-4" />
@@ -504,19 +521,19 @@ export default function AdminModerationPage() {
           </button>
         </div>
 
-        {/* TAB 1: USERS & BETA ACCESS */}
+        {/* TAB 1: USERS & ACCESS APPROVALS */}
         {activeTab === "users" && (
           <div className="space-y-4">
             {/* Filter and Search Bar */}
             <div className="flex flex-col sm:flex-row gap-3 items-center justify-between">
               <div className="relative w-full sm:w-80">
-                <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+                <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
                 <input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search by name, email, roll..."
-                  className="w-full rounded-xl border border-rose-950/70 bg-[#0e0509] pl-9 pr-4 py-2 text-xs text-slate-100 placeholder:text-slate-600 focus:border-rose-500 focus:outline-none"
+                  className="w-full rounded border border-border bg-background pl-9 pr-4 py-2 text-xs text-foreground placeholder:text-muted-foreground/60 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none font-sans"
                 />
               </div>
 
@@ -526,103 +543,116 @@ export default function AdminModerationPage() {
                   <button
                     key={st}
                     onClick={() => setStatusFilter(st)}
-                    className={`px-3 py-1.5 rounded-lg capitalize border transition-all ${
+                    className={`px-3 py-1.5 rounded capitalize border transition-all cursor-pointer ${
                       statusFilter === st
-                        ? "border-rose-500/60 bg-rose-500/20 text-rose-300 font-bold"
-                        : "border-rose-950/60 bg-[#0e0509] text-slate-400 hover:text-slate-200"
+                        ? "border-primary/60 bg-primary/15 text-primary font-bold"
+                        : "border-border bg-card text-muted-foreground hover:text-foreground"
                     }`}
                   >
-                    {st}
+                    {st === "pending" ? "Pending Requests" : st === "approved" ? "Premium Users" : st === "rejected" ? "Free Users" : st}
                   </button>
                 ))}
               </div>
             </div>
 
             {/* Users Table */}
-            <div className="rounded-2xl border border-rose-950/70 bg-[#0c0409]/95 overflow-hidden">
+            <div className="rounded-xl border border-border bg-card/90 overflow-hidden shadow-sm corner-flourish">
               <div className="overflow-x-auto">
-                <table className="w-full text-left text-xs">
-                  <thead className="border-b border-rose-950/80 bg-[#14060e] text-slate-400 font-mono">
+                <table className="w-full text-left text-xs font-sans">
+                  <thead className="border-b border-border bg-secondary/60 text-muted-foreground font-mono">
                     <tr>
-                      <th className="p-3.5">Student / Faculty</th>
+                      <th className="p-3.5">Student / User</th>
                       <th className="p-3.5">Dept & Roll ID</th>
                       <th className="p-3.5">Registered</th>
-                      <th className="p-3.5">Status</th>
+                      <th className="p-3.5">Access Tier</th>
                       <th className="p-3.5 text-right">Moderation Action</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-rose-950/40 font-sans">
+                  <tbody className="divide-y divide-border text-foreground">
                     {filteredUsers.length === 0 ? (
                       <tr>
-                        <td colSpan={5} className="p-8 text-center text-slate-400">
+                        <td colSpan={5} className="p-8 text-center text-muted-foreground font-sans">
                           No matching students or access requests found.
                         </td>
                       </tr>
                     ) : (
                       filteredUsers.map((user) => (
-                        <tr key={user.id} className="hover:bg-rose-950/20 transition-colors">
+                        <tr key={user.id} className="hover:bg-secondary/30 transition-colors">
                           <td className="p-3.5">
-                            <div className="font-bold text-white">
-                              {user.full_name || "Anonymous Student"}
+                            <div className="font-semibold text-foreground flex items-center gap-2">
+                              <span>{user.full_name || "Anonymous Student"}</span>
+                              {user.role === "admin" && (
+                                <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-primary text-primary-foreground font-bold">Admin</span>
+                              )}
+                              {user.role === "mentor" && (
+                                <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-[#8B2635]/20 text-[#8B2635] dark:text-[#E8DFD4] border border-[#8B2635] font-bold">Mentor</span>
+                              )}
                             </div>
-                            <div className="text-[11px] font-mono text-slate-400">{user.email}</div>
+                            <div className="text-[11px] font-mono text-muted-foreground">{user.email}</div>
                           </td>
-                          <td className="p-3.5 font-mono text-[11px] text-slate-300">
+                          <td className="p-3.5 font-mono text-[11px] text-foreground">
                             <div>{user.department || "CSE"}</div>
-                            <div className="text-slate-400">{user.student_id || "N/A"}</div>
+                            <div className="text-muted-foreground">{user.student_id || "N/A"}</div>
                           </td>
-                          <td className="p-3.5 font-mono text-[11px] text-slate-400">
+                          <td className="p-3.5 font-mono text-[11px] text-muted-foreground">
                             {new Date(user.created_at).toLocaleDateString()}
                           </td>
                           <td className="p-3.5">
-                            {user.status === "approved" && (
-                              <span className="inline-flex items-center gap-1 text-[11px] font-mono font-bold px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">
-                                <CheckCircle2 className="h-3 w-3" /> Approved
+                            {user.role === "admin" ? (
+                              <span className="inline-flex items-center gap-1 text-[11px] font-mono font-bold px-2 py-0.5 rounded bg-primary/20 text-primary border border-primary/30 shadow-xs">
+                                <ShieldCheck className="h-3 w-3" /> Administrator
                               </span>
-                            )}
-                            {user.status === "pending" && (
-                              <span className="inline-flex items-center gap-1 text-[11px] font-mono font-bold px-2 py-0.5 rounded bg-amber-500/15 text-amber-300 border border-amber-500/30">
-                                <Clock className="h-3 w-3" /> Pending
+                            ) : user.role === "mentor" ? (
+                              <span className="inline-flex items-center gap-1 text-[11px] font-mono font-bold px-2 py-0.5 rounded bg-purple-500/15 text-purple-700 dark:text-purple-300 border border-purple-500/30 shadow-xs">
+                                <Award className="h-3 w-3" /> Mentor
                               </span>
-                            )}
-                            {user.status === "rejected" && (
-                              <span className="inline-flex items-center gap-1 text-[11px] font-mono font-bold px-2 py-0.5 rounded bg-rose-500/15 text-rose-300 border border-rose-500/30">
-                                <XCircle className="h-3 w-3" /> Rejected
-                              </span>
-                            )}
-                            {user.status === "suspended" && (
-                              <span className="inline-flex items-center gap-1 text-[11px] font-mono font-bold px-2 py-0.5 rounded bg-red-900/40 text-red-300 border border-red-800">
+                            ) : user.status === "suspended" ? (
+                              <span className="inline-flex items-center gap-1 text-[11px] font-mono font-bold px-2 py-0.5 rounded bg-destructive/20 text-destructive border border-destructive/40">
                                 <Ban className="h-3 w-3" /> Suspended
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center gap-1 text-[11px] font-mono font-semibold px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+                                <Sparkles className="h-3 w-3" /> Active Scholar
                               </span>
                             )}
                           </td>
-                          <td className="p-3.5 text-right">
+                          <td className="p-3.5 text-right font-sans">
                             <div className="flex items-center justify-end gap-1.5">
-                              {user.status !== "approved" && (
+                              {user.status !== "approved" && user.role !== "admin" && (
                                 <button
                                   onClick={() => handleUpdateStatus(user.id, "approved")}
                                   disabled={actionLoadingId === user.id}
-                                  className="px-2.5 py-1 rounded-lg bg-emerald-600/20 text-emerald-300 border border-emerald-500/30 font-semibold hover:bg-emerald-600/40 transition-colors disabled:opacity-50"
+                                  className="btn-brass px-3 py-1 rounded text-xs font-sans font-semibold tracking-wide text-primary-foreground shadow-brass hover:scale-[1.02] active:scale-95 transition-all cursor-pointer disabled:opacity-50 flex items-center gap-1"
                                 >
-                                  Approve
+                                  <Crown className="h-3 w-3" />
+                                  <span>Approve Premium</span>
                                 </button>
                               )}
-                              {user.status !== "rejected" && (
+                              {user.status === "approved" && user.role !== "admin" && (
                                 <button
                                   onClick={() => handleUpdateStatus(user.id, "rejected")}
                                   disabled={actionLoadingId === user.id}
-                                  className="px-2.5 py-1 rounded-lg bg-rose-600/20 text-rose-300 border border-rose-500/30 font-semibold hover:bg-rose-600/40 transition-colors disabled:opacity-50"
+                                  className="px-2.5 py-1 rounded border border-border bg-secondary/50 text-muted-foreground font-semibold hover:text-foreground hover:bg-secondary transition-colors disabled:opacity-50 cursor-pointer"
                                 >
-                                  Reject
+                                  Revoke Premium
                                 </button>
                               )}
-                              {user.status === "approved" && (
+                              {user.status !== "suspended" && user.role !== "admin" && (
                                 <button
                                   onClick={() => handleUpdateStatus(user.id, "suspended")}
                                   disabled={actionLoadingId === user.id}
-                                  className="px-2.5 py-1 rounded-lg bg-red-900/40 text-red-300 border border-red-800 font-semibold hover:bg-red-900/60 transition-colors disabled:opacity-50"
+                                  className="px-2 py-1 rounded border border-destructive/40 bg-destructive/10 text-destructive font-semibold hover:bg-destructive/20 transition-colors disabled:opacity-50 cursor-pointer"
                                 >
                                   Suspend
+                                </button>
+                              )}
+                              {user.status === "suspended" && (
+                                <button
+                                  onClick={() => handleUpdateStatus(user.id, "rejected")}
+                                  disabled={actionLoadingId === user.id}
+                                  className="px-2 py-1 rounded border border-border bg-secondary/50 text-muted-foreground font-semibold hover:text-foreground transition-colors disabled:opacity-50 cursor-pointer"
+                                >
+                                  Unsuspend
                                 </button>
                               )}
                             </div>
@@ -641,15 +671,15 @@ export default function AdminModerationPage() {
         {activeTab === "mentors" && (
           <div className="space-y-4">
             {mentorApps.length === 0 ? (
-              <div className="p-12 text-center text-slate-400 rounded-2xl border border-rose-950/70 bg-[#0c0409]">
+              <div className="p-12 text-center text-muted-foreground rounded-xl border border-border bg-card/80 font-sans">
                 No mentor applications submitted yet.
               </div>
             ) : (
               <div className="space-y-4">
-                <div className="rounded-2xl border border-rose-950/70 bg-[#0c0409]/95 overflow-hidden">
+                <div className="rounded-xl border border-border bg-card/90 overflow-hidden shadow-sm corner-flourish">
                   <div className="overflow-x-auto">
-                    <table className="w-full text-left text-xs">
-                      <thead className="border-b border-rose-950/80 bg-[#14060e] text-slate-400 font-mono">
+                    <table className="w-full text-left text-xs font-sans">
+                      <thead className="border-b border-border bg-secondary/60 text-muted-foreground font-mono">
                         <tr>
                           <th className="p-3.5">Applicant Profile</th>
                           <th className="p-3.5">Dept & Roll ID</th>
@@ -659,41 +689,41 @@ export default function AdminModerationPage() {
                           <th className="p-3.5 text-right">Moderation Action</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-rose-950/40 text-slate-300 font-sans">
+                      <tbody className="divide-y divide-border text-foreground">
                         {mentorApps.map((app) => (
-                          <tr key={app.id} className="hover:bg-rose-950/20 transition-colors">
+                          <tr key={app.id} className="hover:bg-secondary/30 transition-colors">
                             <td className="p-3.5">
-                              <div className="font-bold text-white">
+                              <div className="font-semibold text-foreground">
                                 {app.profiles?.full_name || "Anonymous Applicant"}
                               </div>
-                              <div className="text-[11px] font-mono text-slate-400">
+                              <div className="text-[11px] font-mono text-muted-foreground">
                                 {app.profiles?.email || "No email"}
                               </div>
                             </td>
 
                             <td className="p-3.5 font-mono text-[11px]">
                               <div>{app.profiles?.department || "CSE"}</div>
-                              <div className="text-slate-400">
+                              <div className="text-muted-foreground">
                                 {app.profiles?.student_id || "N/A"}
                               </div>
                             </td>
 
                             <td className="p-3.5 max-w-xs sm:max-w-sm">
-                              <p className="text-xs text-slate-200 line-clamp-3 bg-[#060204] p-2.5 rounded-xl border border-rose-950/40">
+                              <p className="text-xs text-foreground line-clamp-3 bg-secondary/40 p-2.5 rounded border border-border">
                                 {app.reason}
                               </p>
-                              <div className="text-[10px] font-mono text-slate-500 mt-1">
+                              <div className="text-[10px] font-mono text-muted-foreground mt-1">
                                 Applied: {new Date(app.created_at).toLocaleDateString()}
                               </div>
                             </td>
 
                             <td className="p-3.5">
-                              <span className={`inline-flex items-center gap-1 font-mono text-[10px] px-2 py-0.5 rounded-full font-bold uppercase ${
+                              <span className={`inline-flex items-center gap-1 font-mono text-[10px] px-2 py-0.5 rounded font-bold uppercase ${
                                 app.profiles?.role === "mentor"
-                                  ? "bg-purple-500/20 text-purple-300 border border-purple-500/40"
+                                  ? "bg-purple-500/20 text-purple-700 dark:text-purple-300 border border-purple-500/40"
                                   : app.profiles?.role === "admin"
-                                  ? "bg-rose-500/20 text-rose-300 border border-rose-500/40"
-                                  : "bg-slate-800 text-slate-300 border border-slate-700"
+                                  ? "bg-primary/20 text-primary border border-primary/40"
+                                  : "bg-secondary text-muted-foreground border border-border"
                               }`}>
                                 {app.profiles?.role || "student"}
                               </span>
@@ -701,28 +731,28 @@ export default function AdminModerationPage() {
 
                             <td className="p-3.5">
                               <span
-                                className={`inline-flex items-center gap-1 font-mono text-[10px] px-2.5 py-0.5 rounded-full font-bold uppercase ${
+                                className={`inline-flex items-center gap-1 font-mono text-[10px] px-2.5 py-0.5 rounded font-bold uppercase ${
                                   app.status === "approved"
-                                    ? "bg-emerald-500/10 text-emerald-300 border border-emerald-500/30"
+                                    ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30"
                                     : app.status === "pending"
-                                    ? "bg-amber-500/10 text-amber-300 border border-amber-500/30"
-                                    : "bg-rose-500/10 text-rose-300 border border-rose-500/30"
+                                    ? "bg-amber-500/10 text-amber-700 dark:text-amber-300 border border-amber-500/30"
+                                    : "bg-destructive/10 text-destructive border border-destructive/30"
                                 }`}
                               >
-                                {app.status === "approved" && <CheckCircle2 className="h-3 w-3" />}
-                                {app.status === "pending" && <Clock className="h-3 w-3" />}
-                                {app.status === "rejected" && <XCircle className="h-3 w-3" />}
+                                {app.status === "approved" && <CheckCircle2 className="h-3 w-3 text-emerald-600" />}
+                                {app.status === "pending" && <Clock className="h-3 w-3 text-amber-600" />}
+                                {app.status === "rejected" && <XCircle className="h-3 w-3 text-destructive" />}
                                 <span>{app.status}</span>
                               </span>
                             </td>
 
-                            <td className="p-3.5 text-right font-mono">
+                            <td className="p-3.5 text-right font-sans">
                               <div className="flex items-center justify-end gap-1.5">
                                 {app.status !== "approved" && (
                                   <button
                                     onClick={() => handleApproveMentor(app.id, app.user_id)}
                                     disabled={actionLoadingId === app.id}
-                                    className="px-2.5 py-1 rounded-lg bg-purple-600/20 text-purple-300 border border-purple-500/40 font-semibold hover:bg-purple-600/40 transition-colors disabled:opacity-50 flex items-center gap-1"
+                                    className="btn-brass px-3 py-1 rounded text-xs font-sans font-semibold tracking-wide text-primary-foreground shadow-brass hover:scale-[1.02] active:scale-95 transition-all flex items-center gap-1 cursor-pointer disabled:opacity-50"
                                   >
                                     <UserCheck className="h-3 w-3" />
                                     <span>Approve as Mentor</span>
@@ -732,7 +762,7 @@ export default function AdminModerationPage() {
                                   <button
                                     onClick={() => handleRejectMentor(app.id)}
                                     disabled={actionLoadingId === app.id}
-                                    className="px-2.5 py-1 rounded-lg bg-rose-600/20 text-rose-300 border border-rose-500/30 font-semibold hover:bg-rose-600/40 transition-colors disabled:opacity-50 flex items-center gap-1"
+                                    className="px-2.5 py-1 rounded border border-destructive/40 bg-destructive/10 text-destructive font-semibold hover:bg-destructive/20 transition-colors disabled:opacity-50 flex items-center gap-1 cursor-pointer"
                                   >
                                     <UserX className="h-3 w-3" />
                                     <span>Reject</span>
@@ -755,7 +785,7 @@ export default function AdminModerationPage() {
         {activeTab === "feedback" && (
           <div className="space-y-4">
             {feedbackList.length === 0 ? (
-              <div className="p-12 text-center text-slate-400 rounded-2xl border border-rose-950/70 bg-[#0c0409]">
+              <div className="p-12 text-center text-muted-foreground rounded-xl border border-border bg-card/80 font-sans">
                 No feedback submissions received yet.
               </div>
             ) : (
@@ -763,18 +793,18 @@ export default function AdminModerationPage() {
                 {feedbackList.map((item) => (
                   <div
                     key={item.id}
-                    className="p-5 rounded-2xl border border-rose-950/70 bg-[#0c0409] space-y-3"
+                    className="p-5 rounded-xl border border-border bg-card/80 space-y-3 shadow-sm corner-flourish"
                   >
                     <div className="flex items-start justify-between">
                       <div>
-                        <span className="text-xs font-bold text-white">
+                        <span className="text-xs font-semibold text-foreground">
                           {item.profiles?.full_name || "Anonymous User"}
                         </span>
-                        <div className="text-[11px] font-mono text-slate-400">
+                        <div className="text-[11px] font-mono text-muted-foreground">
                           {item.profiles?.email || "Unknown email"}
                         </div>
                       </div>
-                      <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-300 border border-cyan-500/20">
+                      <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded bg-primary/10 text-primary border border-primary/20">
                         {item.category}
                       </span>
                     </div>
@@ -785,21 +815,21 @@ export default function AdminModerationPage() {
                           key={s}
                           className={`h-3.5 w-3.5 ${
                             (item.rating || 0) >= s
-                              ? "text-amber-400 fill-amber-400"
-                              : "text-slate-700"
+                              ? "text-amber-500 fill-amber-500"
+                              : "text-muted"
                           }`}
                         />
                       ))}
-                      <span className="text-xs text-slate-400 font-mono ml-1.5">
+                      <span className="text-xs text-muted-foreground font-mono ml-1.5">
                         {item.rating || 5}/5
                       </span>
                     </div>
 
-                    <p className="text-xs sm:text-sm text-slate-200 leading-relaxed font-sans bg-[#060204] p-3 rounded-xl border border-rose-950/40">
+                    <p className="text-xs sm:text-sm text-foreground leading-relaxed font-sans bg-secondary/40 p-3 rounded border border-border">
                       &quot;{item.message}&quot;
                     </p>
 
-                    <div className="flex items-center justify-between text-[10px] font-mono text-slate-400 pt-1">
+                    <div className="flex items-center justify-between text-[10px] font-mono text-muted-foreground pt-1">
                       <span>URL: {item.page_url || "/"}</span>
                       <span>{new Date(item.created_at).toLocaleString()}</span>
                     </div>
@@ -810,11 +840,11 @@ export default function AdminModerationPage() {
           </div>
         )}
 
-        {/* TAB 3: BUG REPORTS */}
+        {/* TAB 4: BUG REPORTS */}
         {activeTab === "bugs" && (
           <div className="space-y-4">
             {bugsList.length === 0 ? (
-              <div className="p-12 text-center text-slate-400 rounded-2xl border border-rose-950/70 bg-[#0c0409]">
+              <div className="p-12 text-center text-muted-foreground rounded-xl border border-border bg-card/80 font-sans">
                 No bug reports logged. All algorithm engines are operating cleanly.
               </div>
             ) : (
@@ -822,28 +852,28 @@ export default function AdminModerationPage() {
                 {bugsList.map((bug) => (
                   <div
                     key={bug.id}
-                    className="p-5 rounded-2xl border border-rose-950/70 bg-[#0c0409] space-y-3"
+                    className="p-5 rounded-xl border border-border bg-card/80 space-y-3 shadow-sm corner-flourish"
                   >
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                       <div className="flex items-center gap-2">
-                        <Bug className="h-4 w-4 text-rose-400 shrink-0" />
-                        <span className="text-sm font-bold text-white">
+                        <Bug className="h-4 w-4 text-destructive shrink-0" />
+                        <span className="text-sm font-semibold text-foreground">
                           {bug.algorithm_id || "Algorithm Bug"}
                         </span>
-                        <span className="text-[11px] font-mono text-slate-400">
+                        <span className="text-[11px] font-mono text-muted-foreground">
                           by {bug.profiles?.full_name || bug.profiles?.email || "Student"}
                         </span>
                       </div>
 
                       {/* Status Toggle */}
                       <div className="flex items-center gap-1.5 font-mono text-xs">
-                        <span className="text-slate-400 text-[11px]">Status:</span>
+                        <span className="text-muted-foreground text-[11px]">Status:</span>
                         <select
                           value={bug.status}
                           onChange={(e) =>
                             handleUpdateBugStatus(bug.id, e.target.value as any)
                           }
-                          className="bg-[#14080e] text-white border border-rose-950/80 rounded-lg px-2.5 py-1 text-xs focus:border-rose-500 focus:outline-none"
+                          className="bg-card text-foreground border border-border rounded px-2.5 py-1 text-xs focus:border-primary focus:outline-none cursor-pointer"
                         >
                           <option value="open">Open</option>
                           <option value="investigating">Investigating</option>
@@ -855,30 +885,30 @@ export default function AdminModerationPage() {
 
                     {/* Bug Details */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-                      <div className="p-3 rounded-xl bg-[#060204] border border-rose-950/40 space-y-1">
-                        <span className="text-[11px] font-mono text-slate-400 font-semibold">
+                      <div className="p-3 rounded bg-secondary/40 border border-border space-y-1">
+                        <span className="text-[11px] font-mono text-muted-foreground font-semibold">
                           Steps to Reproduce:
                         </span>
-                        <p className="text-slate-200">{bug.steps_to_reproduce}</p>
+                        <p className="text-foreground font-sans">{bug.steps_to_reproduce}</p>
                       </div>
 
-                      <div className="p-3 rounded-xl bg-[#060204] border border-rose-950/40 space-y-1">
-                        <div className="text-[11px] font-mono text-slate-400">
+                      <div className="p-3 rounded bg-secondary/40 border border-border space-y-1">
+                        <div className="text-[11px] font-mono text-muted-foreground">
                           Expected:{" "}
-                          <span className="text-emerald-300">
+                          <span className="text-emerald-600 dark:text-emerald-400">
                             {bug.expected_behavior || "None provided"}
                           </span>
                         </div>
-                        <div className="text-[11px] font-mono text-slate-400">
+                        <div className="text-[11px] font-mono text-muted-foreground">
                           Actual:{" "}
-                          <span className="text-rose-300">
+                          <span className="text-destructive">
                             {bug.actual_behavior || "None provided"}
                           </span>
                         </div>
                       </div>
                     </div>
 
-                    <div className="flex items-center justify-between text-[10px] font-mono text-slate-400 pt-1 border-t border-rose-950/40">
+                    <div className="flex items-center justify-between text-[10px] font-mono text-muted-foreground pt-1 border-t border-border">
                       <span>Logged on: {bug.page_url}</span>
                       <span>{new Date(bug.created_at).toLocaleString()}</span>
                     </div>

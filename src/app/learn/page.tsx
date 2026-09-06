@@ -22,7 +22,6 @@ import { useProgressSync } from "@/hooks/useProgressSync";
 import { AuthButton } from "@/components/auth/AuthButton";
 import { NotificationBell } from "@/components/notifications/NotificationBell";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
-
 export default function LearnPage() {
   const [completedSteps, setCompletedSteps] = useState<string[]>([]);
   const [categoryFilter, setCategoryFilter] = useState<
@@ -236,8 +235,8 @@ export default function LearnPage() {
                 >
                   <div className="flex flex-wrap items-center justify-between gap-2 mb-2.5">
                     <div className="flex items-center gap-2.5">
-                      <h2 className="text-lg font-bold text-foreground group-hover:text-cyan-500 transition-colors">
-                        {step.name}
+                      <h2 className="text-lg font-bold text-foreground group-hover:text-cyan-500 transition-colors flex items-center gap-2">
+                        <span>{step.name}</span>
                       </h2>
                       <span className="text-[10px] font-mono font-semibold px-2 py-0.5 rounded-md bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-500/20">
                         {step.badge}

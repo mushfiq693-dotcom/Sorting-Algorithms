@@ -78,7 +78,7 @@ export default function VisualizerPage() {
             <div className="flex items-center justify-center sm:justify-start gap-2">
               <span className="font-heading text-base font-bold text-foreground">AlgoHub</span>
               <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-primary/10 text-primary border border-primary/30 font-bold">
-                GSTU CSE Beta
+                Interactive Studio
               </span>
             </div>
             <p className="text-[11px] text-muted-foreground">

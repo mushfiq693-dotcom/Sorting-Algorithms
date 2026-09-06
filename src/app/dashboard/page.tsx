@@ -138,6 +138,12 @@ function DashboardContent() {
         if (profRes.data) {
           setProfile(profRes.data);
           fastCache.set(`prof_${user.id}`, profRes.data, 300);
+
+          // Admin users do not need a student progress dashboard; forward directly to Admin Panel
+          if (profRes.data.role === "admin") {
+            router.replace("/admin/moderation");
+            return;
+          }
         }
 
         if (appRes.data) {

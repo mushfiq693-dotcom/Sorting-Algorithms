@@ -58,17 +58,17 @@ const ArrayBarItem = memo(function ArrayBarItem({
     barColor = "from-[#8B2635] via-[#A62D3F] to-[#C9A962] shadow-[0_0_20px_rgba(139,38,53,0.6)]";
     glowBorder = "border-[#C9A962] ring-2 ring-[#C9A962]/80";
     badgeText = "Pivot";
-    badgeColor = "bg-[#8B2635] text-[#E8DFD4] border border-[#C9A962]/40";
+    badgeColor = "bg-[#8B2635] text-[#F3EAD8] font-bold border border-[#C9A962]/80 shadow-md shadow-black/40";
   } else if (isSwapping) {
     barColor = "from-[#8B2635] via-[#A62D3F] to-[#6E1E2A] shadow-[0_0_20px_rgba(139,38,53,0.7)]";
     glowBorder = "border-[#A62D3F] ring-2 ring-[#8B2635]/80";
     badgeText = "Swap";
-    badgeColor = "bg-[#8B2635] text-[#E8DFD4]";
+    badgeColor = "bg-[#A62D3F] text-white font-bold border border-[#D4B872]/80 shadow-md shadow-black/40";
   } else if (isOverwriting) {
     barColor = "from-[#D97706] via-[#B45309] to-[#8B2635] shadow-[0_0_16px_rgba(217,119,6,0.5)]";
     glowBorder = "border-[#D4B872] ring-2 ring-[#D97706]/80";
     badgeText = "Write";
-    badgeColor = "bg-[#D97706] text-[#1C1714] font-bold";
+    badgeColor = "bg-gradient-to-r from-[#EA580C] to-[#D97706] text-white font-bold border border-amber-300 shadow-md shadow-orange-950/50";
   } else if (isComparing) {
     barColor = "from-[#D4B872] to-[#F59E0B] shadow-[0_0_16px_rgba(212,184,114,0.5)]";
     glowBorder = "border-[#D4B872] ring-2 ring-[#C9A962]/80";
@@ -92,13 +92,24 @@ const ArrayBarItem = memo(function ArrayBarItem({
         !isInsideRange && !isSorted ? "opacity-30" : "opacity-100"
       }`}
     >
-      {/* Status / Pivot Badge */}
+      {/* Status / Action Indicator Badge */}
       {badgeText && (
-        <span
-          className={`absolute -top-6 px-1.5 py-0.5 rounded text-[9px] font-bold font-mono tracking-tight shadow-md animate-bounce z-10 ${badgeColor}`}
-        >
-          {badgeText}
-        </span>
+        <div className="absolute -top-7 sm:-top-8 left-1/2 -translate-x-1/2 z-20 pointer-events-none flex flex-col items-center">
+          <span
+            className={`inline-flex items-center justify-center px-2 py-0.5 rounded-full text-[10px] sm:text-[11px] font-mono font-bold tracking-wider uppercase shadow-lg border whitespace-nowrap animate-in fade-in zoom-in-95 duration-150 ${badgeColor}`}
+          >
+            {badgeText}
+          </span>
+          <div
+            className={`w-0 h-0 border-l-[3px] border-l-transparent border-r-[3px] border-r-transparent border-t-[3px] ${
+              isPivot
+                ? "border-t-[#8B2635]"
+                : isSwapping
+                ? "border-t-[#A62D3F]"
+                : "border-t-[#D97706]"
+            }`}
+          />
+        </div>
       )}
 
       {/* Value Label on Top */}
@@ -163,7 +174,7 @@ export const ArrayBars = memo(function ArrayBars({
   overwritingIndex,
   mergeRange,
   maxVal = Math.max(...(array.length ? array : [100]), 100),
-  containerHeight = "h-48 sm:h-56",
+  containerHeight = "h-52 sm:h-60",
   className = "",
 }: ArrayBarsProps) {
   const prefersReducedMotion = useReducedMotion();
@@ -196,7 +207,7 @@ export const ArrayBars = memo(function ArrayBars({
     <div
       role="region"
       aria-label="Sorting Array Bars Visualization"
-      className={`relative flex ${containerHeight} w-full items-end justify-center gap-1 sm:gap-1.5 rounded bg-[#251E19] border border-[#4A3F35] p-3 sm:p-4 shadow-2xl backdrop-blur-xl overflow-hidden corner-flourish ${className}`}
+      className={`relative flex ${containerHeight} w-full items-end justify-center gap-1 sm:gap-1.5 rounded bg-[#251E19] border border-[#4A3F35] pt-10 pb-3 px-3 sm:pt-11 sm:pb-4 sm:px-4 shadow-2xl backdrop-blur-xl overflow-hidden corner-flourish ${className}`}
     >
       {/* Classical Background Grid Lines */}
       <div className="absolute inset-0 pointer-events-none bg-[linear-gradient(to_right,#c9a96208_1px,transparent_1px),linear-gradient(to_bottom,#c9a96208_1px,transparent_1px)] bg-[size:1.5rem_1.5rem]" />
