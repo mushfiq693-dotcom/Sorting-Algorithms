@@ -183,61 +183,61 @@ export default function AdminModerationPage() {
       } = await supabase.auth.getUser();
 
       if (!user) {
-        router.push("/auth/login");
+        setIsAdmin(false);
+        setIsLoading(false);
         return;
       }
 
       // 1. Verify Admin Role
-      const { data: currentProfile } = await (supabase.from("profiles") as any)
+      const { data: currentProfile, error: profileErr } = await (supabase.from("profiles") as any)
         .select("role")
         .eq("id", user.id)
-        .single();
+        .maybeSingle();
 
-      if (currentProfile?.role !== "admin") {
-        router.push("/");
+      if (profileErr || currentProfile?.role !== "admin") {
+        setIsAdmin(false);
+        setIsLoading(false);
         return;
       }
       setIsAdmin(true);
 
-      // 2. Fetch all profiles joined with beta_access and user_progress
-      const { data: profilesData, error: profilesErr } = await (supabase.from("profiles") as any)
-        .select(`
-          id,
-          email,
-          full_name,
-          department,
-          student_id,
-          avatar_url,
-          role,
-          created_at,
-          beta_access!beta_access_user_id_fkey(status, approved_at, notes),
-          user_progress(completed_steps, completed_docs, quiz_scores, topic_scores, activity_history, last_active_at)
-        `)
-        .order("created_at", { ascending: false });
+      // 2. Fetch all profiles, beta_access, and user_progress independently to avoid PostgREST join ambiguity
+      const [profilesRes, betaRes, progressRes, mentorAppsRes, feedbackRes, bugsRes] = await Promise.all([
+        (supabase.from("profiles") as any).select("*").order("created_at", { ascending: false }),
+        (supabase.from("beta_access") as any).select("user_id, status, approved_at, notes"),
+        (supabase.from("user_progress") as any).select("user_id, completed_steps, completed_docs, quiz_scores, topic_scores, activity_history, last_active_at"),
+        (supabase.from("mentor_applications") as any).select("id, user_id, reason, status, reviewed_by, reviewed_at, notes, created_at, profiles(email, full_name, department, student_id, role)").order("created_at", { ascending: false }),
+        (supabase.from("feedback") as any).select("id, user_id, category, rating, message, page_url, created_at, profiles(email, full_name)").order("created_at", { ascending: false }),
+        (supabase.from("bug_reports") as any).select("id, user_id, algorithm_id, page_url, steps_to_reproduce, expected_behavior, actual_behavior, browser_info, status, created_at, profiles(email, full_name)").order("created_at", { ascending: false }),
+      ]);
 
-      if (profilesErr) {
-        console.error("Error fetching profiles in admin dashboard:", profilesErr);
-      }
+      const betaMap = new Map<string, any>();
+      (betaRes.data || []).forEach((b: any) => {
+        if (b?.user_id) betaMap.set(b.user_id, b);
+      });
 
-      if (profilesData) {
-        const formattedUsers: ProfileUser[] = profilesData.map((p: any) => {
-          const beta = Array.isArray(p.beta_access) ? p.beta_access[0] : p.beta_access;
-          const prog: UserProgressData = Array.isArray(p.user_progress)
-            ? p.user_progress[0] || {}
-            : p.user_progress || {};
+      const progMap = new Map<string, any>();
+      (progressRes.data || []).forEach((p: any) => {
+        if (p?.user_id) progMap.set(p.user_id, p);
+      });
+
+      if (profilesRes.data && Array.isArray(profilesRes.data)) {
+        const formattedUsers: ProfileUser[] = profilesRes.data.map((p: any) => {
+          const beta = betaMap.get(p.id) || {};
+          const prog: UserProgressData = progMap.get(p.id) || {};
 
           return {
             id: p.id,
-            email: p.email,
-            full_name: p.full_name,
-            department: p.department,
-            student_id: p.student_id,
-            avatar_url: p.avatar_url,
-            role: p.role,
-            created_at: p.created_at,
-            status: beta?.status || "approved",
-            approved_at: beta?.approved_at || null,
-            notes: beta?.notes || null,
+            email: p.email || "",
+            full_name: p.full_name || null,
+            department: p.department || null,
+            student_id: p.student_id || null,
+            avatar_url: p.avatar_url || null,
+            role: p.role || "student",
+            created_at: p.created_at || new Date().toISOString(),
+            status: beta.status || "approved",
+            approved_at: beta.approved_at || null,
+            notes: beta.notes || null,
             completed_steps: Array.isArray(prog.completed_steps) ? prog.completed_steps : [],
             completed_docs: Array.isArray(prog.completed_docs) ? prog.completed_docs : [],
             quiz_scores: prog.quiz_scores && typeof prog.quiz_scores === "object" ? prog.quiz_scores : {},
@@ -249,34 +249,23 @@ export default function AdminModerationPage() {
         setUsers(formattedUsers);
       }
 
-      // 3. Fetch Mentor Applications
-      const { data: mentorAppsData } = await (supabase.from("mentor_applications") as any)
-        .select("id, user_id, reason, status, reviewed_by, reviewed_at, notes, created_at, profiles(email, full_name, department, student_id, role)")
-        .order("created_at", { ascending: false });
-
-      if (mentorAppsData) {
-        setMentorApps(mentorAppsData);
+      if (mentorAppsRes.data && Array.isArray(mentorAppsRes.data)) {
+        setMentorApps(mentorAppsRes.data);
       }
 
-      // 4. Fetch Feedback
-      const { data: feedbackData } = await (supabase.from("feedback") as any)
-        .select("id, user_id, category, rating, message, page_url, created_at, profiles(email, full_name)")
-        .order("created_at", { ascending: false });
+      if (feedbackRes.data && Array.isArray(feedbackRes.data)) {
+        setFeedbackList(feedbackRes.data);
+      }
 
-      if (feedbackData) setFeedbackList(feedbackData);
-
-      // 5. Fetch Bug Reports
-      const { data: bugsData } = await (supabase.from("bug_reports") as any)
-        .select("id, user_id, algorithm_id, page_url, steps_to_reproduce, expected_behavior, actual_behavior, browser_info, status, created_at, profiles(email, full_name)")
-        .order("created_at", { ascending: false });
-
-      if (bugsData) setBugsList(bugsData);
+      if (bugsRes.data && Array.isArray(bugsRes.data)) {
+        setBugsList(bugsRes.data);
+      }
     } catch (err) {
       console.error("Failed to load moderation data:", err);
     } finally {
       setIsLoading(false);
     }
-  }, [router, supabase]);
+  }, [supabase]);
 
   useEffect(() => {
     loadData();
@@ -572,12 +561,44 @@ export default function AdminModerationPage() {
   const pendingMentorCount = mentorApps.filter((m) => m.status === "pending").length;
   const openBugsCount = bugsList.filter((b) => b.status === "open").length;
 
-  if (isAdmin === null || isLoading) {
+  if (isLoading || isAdmin === null) {
     return (
       <div className="min-h-screen bg-background text-foreground flex items-center justify-center font-sans">
         <div className="flex items-center gap-3 text-sm font-sans text-muted-foreground">
           <Loader2 className="h-5 w-5 animate-spin text-primary" />
           <span>Verifying Administrator Console Access...</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (isAdmin === false) {
+    return (
+      <div className="min-h-screen bg-background text-foreground flex items-center justify-center font-sans p-4">
+        <div className="max-w-md w-full p-6 rounded-2xl border border-border bg-card/90 text-center space-y-4 shadow-xl corner-flourish">
+          <div className="h-12 w-12 rounded-full bg-destructive/10 text-destructive border border-destructive/30 flex items-center justify-center mx-auto">
+            <ShieldAlert className="h-6 w-6" />
+          </div>
+          <div className="space-y-1">
+            <h2 className="text-xl font-bold font-heading text-foreground">Access Restricted</h2>
+            <p className="text-xs text-muted-foreground">
+              You do not have administrator permissions to access this control center. Please sign in with an administrator account.
+            </p>
+          </div>
+          <div className="flex gap-2 justify-center pt-2">
+            <Link
+              href="/"
+              className="px-4 py-2 rounded-lg border border-border bg-secondary text-xs font-semibold text-foreground hover:bg-secondary/80 transition-colors"
+            >
+              Return Home
+            </Link>
+            <Link
+              href="/auth/login"
+              className="btn-brass px-4 py-2 rounded-lg text-xs font-semibold text-primary-foreground shadow-brass hover:scale-[1.02] transition-all"
+            >
+              Sign In as Admin
+            </Link>
+          </div>
         </div>
       </div>
     );
