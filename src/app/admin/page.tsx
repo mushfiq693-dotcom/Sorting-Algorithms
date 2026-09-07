@@ -1,5 +1,2 @@
-import { redirect } from "next/navigation";
+export { default } from "./moderation/page";
 
-export default function AdminPage() {
-  redirect("/admin/moderation");
-}

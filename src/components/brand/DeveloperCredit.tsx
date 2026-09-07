@@ -35,7 +35,7 @@ export function DeveloperCredit() {
     <div ref={modalRef} className="fixed bottom-20 right-3 sm:right-5 z-50 font-sans select-none">
       {/* Floating Popup Card */}
       {isOpen && (
-        <div className="absolute bottom-14 right-0 w-[calc(100vw-1.5rem)] sm:w-88 max-w-[340px] sm:max-w-none rounded-2xl border border-primary/30 bg-card/95 backdrop-blur-2xl p-4 sm:p-6 shadow-2xl text-foreground corner-flourish animate-in fade-in zoom-in-95 duration-200">
+        <div className="absolute bottom-14 right-0 w-[calc(100vw-2rem)] sm:w-80 max-w-[320px] rounded-2xl border border-primary/30 bg-card/95 backdrop-blur-2xl p-4 sm:p-5 shadow-2xl text-foreground corner-flourish animate-in fade-in zoom-in-95 duration-200">
           {/* Close Button Top-Right */}
           <button
             onClick={() => setIsOpen(false)}

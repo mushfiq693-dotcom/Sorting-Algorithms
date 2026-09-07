@@ -91,7 +91,7 @@ export async function updateSession(request: NextRequest) {
     const { data: profile } = await (supabase.from("profiles") as any)
       .select("role")
       .eq("id", user.id)
-      .single();
+      .maybeSingle();
 
     if (profile?.role !== "admin") {
       const url = request.nextUrl.clone();
@@ -105,7 +105,7 @@ export async function updateSession(request: NextRequest) {
     const { data: profile } = await (supabase.from("profiles") as any)
       .select("role")
       .eq("id", user.id)
-      .single();
+      .maybeSingle();
 
     if (profile?.role !== "mentor" && profile?.role !== "admin") {
       const url = request.nextUrl.clone();
@@ -119,7 +119,7 @@ export async function updateSession(request: NextRequest) {
     const { data: betaAccess } = await (supabase.from("beta_access") as any)
       .select("status")
       .eq("user_id", user.id)
-      .single();
+      .maybeSingle();
 
     if (betaAccess?.status === "suspended" && pathname !== "/auth/suspended") {
       const url = request.nextUrl.clone();
