@@ -41,6 +41,13 @@ const StringOperationsVisualizer = dynamic(
     ),
   { ssr: false, loading: () => <SimLabLoading /> }
 );
+const LinkedListInsLocVisualizer = dynamic(
+  () =>
+    import("@/components/course-material/LinkedListInsLocVisualizer").then(
+      (m) => m.LinkedListInsLocVisualizer
+    ),
+  { ssr: false, loading: () => <SimLabLoading /> }
+);
 import {
   BookOpen,
   HelpCircle,
@@ -81,6 +88,7 @@ const CHAPTER_OPTIONS = [
   { id: "Chapter 2", label: "Chapter 2: Complexity Analysis", icon: Bookmark },
   { id: "Chapter 3", label: "Chapter 3: String Processing", icon: Bookmark },
   { id: "Chapter 4", label: "Chapter 4: Linear Arrays", icon: Bookmark },
+  { id: "Chapter 5", label: "Chapter 5: Linked Lists", icon: Bookmark },
 ];
 
 const TYPE_OPTIONS = [
@@ -857,7 +865,14 @@ export default function CourseMaterialPage() {
                               item.title.includes("3.5") ||
                               item.title.includes("3.6");
 
-                            const hasVisualizer = isProblem26 || isProblem27 || isStringProblem;
+                            const isLinkedListProblem =
+                              item.topic_tag === "Linked Lists" ||
+                              item.title.toLowerCase().includes("linked list") ||
+                              item.title.includes("5.5") ||
+                              item.title.includes("INSLOC") ||
+                              item.id === "cm-algo-5-5";
+
+                            const hasVisualizer = isProblem26 || isProblem27 || isStringProblem || isLinkedListProblem;
                             const isVisualizerOpen = !!expandedVisualizers[item.id];
 
                             return (
@@ -871,6 +886,8 @@ export default function CourseMaterialPage() {
                                       ? "Interactive loop counter available for 3-loop nested cubic growth and logarithmic stepping."
                                       : isStringProblem
                                       ? "Interactive string studio & algorithm execution trace available."
+                                      : isLinkedListProblem
+                                      ? "Interactive Algorithm 5.5 INSLOC Simulation Lab & Parallel Memory Arrays available."
                                       : "Attempt the question first before viewing the full step-by-step verification."}
                                   </div>
 
@@ -946,6 +963,13 @@ export default function CourseMaterialPage() {
                                   </div>
                                 )}
 
+                                {/* Embedded Simulation & Visualizer Studio for Linked List (5.5) */}
+                                {isLinkedListProblem && isVisualizerOpen && (
+                                  <div className="animate-in fade-in slide-in-from-top-3 duration-300">
+                                    <LinkedListInsLocVisualizer />
+                                  </div>
+                                )}
+
                                 {/* Collapsible Solution Content */}
                                 {isSolutionOpen && (
                                   <div className="rounded-2xl border border-emerald-500/30 bg-card p-6 shadow-xl animate-in fade-in slide-in-from-top-3 duration-200">
@@ -961,16 +985,63 @@ export default function CourseMaterialPage() {
                           })()}
                         </div>
                       ) : isAlgorithm ? (
-                        /* Algorithm Content (Direct display with code specification) */
-                        <div className="space-y-4">
-                          <div className="rounded-2xl border border-emerald-500/30 bg-card p-6 shadow-sm">
-                            <div className="flex items-center gap-2 text-xs font-mono font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider pb-3 border-b border-border/60 mb-4">
-                              <Code2 className="h-4 w-4 text-emerald-500" />
-                              <span>Formal Textbook Algorithm Specification &amp; Analysis</span>
+                        /* Algorithm Content (Direct display with code specification & optional Interactive Simulation Studio) */
+                        (() => {
+                          const isLinkedListAlgo =
+                            item.topic_tag === "Linked Lists" ||
+                            item.title.toLowerCase().includes("linked list") ||
+                            item.title.includes("5.5") ||
+                            item.title.includes("INSLOC") ||
+                            item.id === "cm-algo-5-5";
+
+                          const isVisualizerOpen = !!expandedVisualizers[item.id];
+
+                          return (
+                            <div className="space-y-4">
+                              {/* Simulation Lab Toggle for Algorithm */}
+                              {isLinkedListAlgo && (
+                                <div className="flex flex-wrap items-center justify-between gap-3 p-4 rounded-2xl border border-primary/40 bg-primary/5 shadow-sm">
+                                  <div className="text-xs text-muted-foreground font-sans">
+                                    Interactive Algorithm 5.5 INSLOC Simulation Lab with Memory Array tracing (<code className="text-primary font-mono font-bold">INFO, LINK, START, AVAIL</code>) available.
+                                  </div>
+                                  <button
+                                    onClick={() => toggleVisualizer(item.id)}
+                                    className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all active:scale-95 shadow-md cursor-pointer ${
+                                      isVisualizerOpen
+                                        ? "bg-primary/20 text-primary border border-primary/50 shadow-primary/10"
+                                        : "btn-brass text-primary-foreground shadow-brass hover:scale-[1.02] ring-2 ring-primary/30"
+                                    }`}
+                                  >
+                                    <Play className={`h-3.5 w-3.5 ${isVisualizerOpen ? "text-primary" : "text-primary-foreground fill-current"}`} />
+                                    <span>
+                                      {isVisualizerOpen ? "Hide Simulation Lab" : "🚀 Launch Algorithm 5.5 Simulation Lab"}
+                                    </span>
+                                    {isVisualizerOpen ? (
+                                      <ChevronUp className="h-3.5 w-3.5" />
+                                    ) : (
+                                      <ChevronDown className="h-3.5 w-3.5" />
+                                    )}
+                                  </button>
+                                </div>
+                              )}
+
+                              {/* Embedded Visualizer Studio for Linked List Algorithm */}
+                              {isLinkedListAlgo && isVisualizerOpen && (
+                                <div className="animate-in fade-in slide-in-from-top-3 duration-300">
+                                  <LinkedListInsLocVisualizer />
+                                </div>
+                              )}
+
+                              <div className="rounded-2xl border border-emerald-500/30 bg-card p-6 shadow-sm">
+                                <div className="flex items-center gap-2 text-xs font-mono font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider pb-3 border-b border-border/60 mb-4">
+                                  <Code2 className="h-4 w-4 text-emerald-500" />
+                                  <span>Formal Textbook Algorithm Specification &amp; Analysis</span>
+                                </div>
+                                <FormattedMarkdown content={item.explanation_or_solution} />
+                              </div>
                             </div>
-                            <FormattedMarkdown content={item.explanation_or_solution} />
-                          </div>
-                        </div>
+                          );
+                        })()
                       ) : (
                         /* Topic Explanation (Direct display with optional Interactive Studio) */
                         (() => {

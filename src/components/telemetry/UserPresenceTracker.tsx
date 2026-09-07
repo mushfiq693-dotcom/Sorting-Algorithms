@@ -4,6 +4,35 @@ import React, { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
+// Global in-memory presence state shared across the application in the client runtime
+let globalPresenceState: Record<string, any> = {};
+
+export function getGlobalPresenceState(): Record<string, any> {
+  return globalPresenceState;
+}
+
+export function parsePresenceMap(
+  state: Record<string, any>
+): Map<string, { page?: string; online_at?: string }> {
+  const newMap = new Map<string, { page?: string; online_at?: string }>();
+  if (!state || typeof state !== "object") return newMap;
+
+  Object.values(state).forEach((presences: any) => {
+    if (Array.isArray(presences)) {
+      presences.forEach((p: any) => {
+        if (p?.user_id) {
+          newMap.set(p.user_id, {
+            page: p.page,
+            online_at: p.online_at,
+          });
+        }
+      });
+    }
+  });
+
+  return newMap;
+}
+
 export function UserPresenceTracker() {
   const pathname = usePathname();
   const supabase = createClient();
@@ -27,6 +56,15 @@ export function UserPresenceTracker() {
     }
   };
 
+  const dispatchPresenceUpdate = (state: Record<string, any>) => {
+    globalPresenceState = state;
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(
+        new CustomEvent("algohub:presence-sync", { detail: state })
+      );
+    }
+  };
+
   useEffect(() => {
     let isMounted = true;
 
@@ -43,7 +81,7 @@ export function UserPresenceTracker() {
       // Initial heartbeat
       sendHeartbeat(user.id);
 
-      // Join Realtime presence channel
+      // Join Realtime presence channel safely
       if (!channelRef.current) {
         const channel = supabase.channel("algohub-live-users", {
           config: {
@@ -54,7 +92,21 @@ export function UserPresenceTracker() {
         });
 
         channel
-          .on("presence", { event: "sync" }, () => {})
+          .on("presence", { event: "sync" }, () => {
+            if (isMounted) {
+              dispatchPresenceUpdate(channel.presenceState());
+            }
+          })
+          .on("presence", { event: "join" }, () => {
+            if (isMounted) {
+              dispatchPresenceUpdate(channel.presenceState());
+            }
+          })
+          .on("presence", { event: "leave" }, () => {
+            if (isMounted) {
+              dispatchPresenceUpdate(channel.presenceState());
+            }
+          })
           .subscribe(async (status) => {
             if (status === "SUBSCRIBED" && isMounted) {
               await channel.track({
@@ -63,6 +115,7 @@ export function UserPresenceTracker() {
                 page: window.location.pathname,
                 online_at: new Date().toISOString(),
               });
+              dispatchPresenceUpdate(channel.presenceState());
             }
           });
 
@@ -83,6 +136,7 @@ export function UserPresenceTracker() {
         if (channelRef.current) {
           supabase.removeChannel(channelRef.current);
           channelRef.current = null;
+          dispatchPresenceUpdate({});
         }
       }
     });

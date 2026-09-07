@@ -6,6 +6,10 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import {
+  getGlobalPresenceState,
+  parsePresenceMap,
+} from "@/components/telemetry/UserPresenceTracker";
+import {
   ShieldAlert,
   Users,
   CheckCircle2,
@@ -288,40 +292,28 @@ export default function AdminModerationPage() {
     loadData();
   }, [loadData]);
 
-  // Real-time Presence Listener using Supabase WebSocket channel
+  // Real-time Presence Listener synchronized with UserPresenceTracker
   useEffect(() => {
-    const channel = supabase.channel("algohub-live-users", {
-      config: {
-        presence: {
-          key: "admin-presence-listener",
-        },
-      },
-    });
+    // 1. Initial hydration from existing memory cache
+    const initialPresence = getGlobalPresenceState();
+    if (initialPresence && Object.keys(initialPresence).length > 0) {
+      setLiveOnlineMap(parsePresenceMap(initialPresence));
+    }
 
-    channel
-      .on("presence", { event: "sync" }, () => {
-        const state = channel.presenceState();
-        const newMap = new Map<string, { page?: string; online_at?: string }>();
+    // 2. Window event listener for live realtime sync/join/leave events
+    const handlePresenceEvent = (e: Event) => {
+      const customEvent = e as CustomEvent<Record<string, any>>;
+      if (customEvent.detail) {
+        setLiveOnlineMap(parsePresenceMap(customEvent.detail));
+      }
+    };
 
-        Object.values(state).forEach((presences: any) => {
-          presences.forEach((p: any) => {
-            if (p.user_id) {
-              newMap.set(p.user_id, {
-                page: p.page,
-                online_at: p.online_at,
-              });
-            }
-          });
-        });
-
-        setLiveOnlineMap(newMap);
-      })
-      .subscribe();
+    window.addEventListener("algohub:presence-sync", handlePresenceEvent);
 
     return () => {
-      supabase.removeChannel(channel);
+      window.removeEventListener("algohub:presence-sync", handlePresenceEvent);
     };
-  }, [supabase]);
+  }, []);
 
   // Online Check Helper
   const checkIsUserOnline = useCallback(

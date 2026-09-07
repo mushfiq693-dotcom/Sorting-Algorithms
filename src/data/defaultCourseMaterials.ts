@@ -1455,4 +1455,230 @@ int main() {
 }
 \`\`\``,
   },
+
+  // =========================================================================
+  // CHAPTER 5: LINKED LISTS & DYNAMIC MEMORY ALLOCATION
+  // =========================================================================
+
+  // --- Topic: Chapter 5 ---
+  {
+    id: "cm-topic-ch5",
+    title: "Chapter 5: Linked Lists, Memory Allocation & Pointer Manipulation (INFO, LINK, START, AVAIL)",
+    book_reference: "Lipschutz, Seymour - Data Structures (Schaum's Outlines), Chapter 5: Linked Lists (Section 5.2 - 5.5)",
+    topic_tag: "Linked Lists",
+    content_type: "topic",
+    difficulty: "medium",
+    assigned_date: null,
+    created_by: null,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    problem_statement: null,
+    explanation_or_solution: `### Chapter 5: Linked Lists & Memory Management in Linear Data Structures
+
+A **Linked List** (or one-way list) is a linear collection of data elements, called **nodes**, where the linear order is not given by their physical memory placement (as in arrays), but by **pointers** or links storing memory addresses.
+
+---
+
+### 1. Parallel Array Representation (Lipschutz Model):
+In classic systems and algorithms, a linked list is represented using two parallel arrays:
+* **\`INFO[k]\`:** Contains the payload or information element stored in node $k$.
+* **\`LINK[k]\`:** Contains the pointer (array index) to the next node in the list.
+* **\`START\`:** Pointer variable storing the index of the first node of the list. If $\\text{START} = \\text{NULL}$, the list is empty.
+* **\`AVAIL\`:** Pointer variable storing the index of the first node in the **free storage list** (list of available unused memory cells).
+
+$$\\text{START} \\longrightarrow \\text{Node}_1 \\xrightarrow{\\text{LINK}} \\text{Node}_2 \\xrightarrow{\\text{LINK}} \\dots \\xrightarrow{\\text{LINK}} \\text{Node}_m \\longrightarrow \\text{NULL}$$
+
+---
+
+### 2. The Free Storage Pool (\`AVAIL\` List):
+Memory cells that are currently not used are linked together in a secondary linked list known as the **AVAIL list** or **free list**.
+* **Dynamic Node Allocation:** When a new node is created, it is popped from the head of the AVAIL list:
+  $$\\text{NEW} := \\text{AVAIL}, \\quad \\text{AVAIL} := \\text{LINK}[\\text{AVAIL}]$$
+* **Overflow Check:** If $\\text{AVAIL} = \\text{NULL}$, no free nodes remain in memory pool, triggering an **OVERFLOW** error condition.
+* **Garbage Collection / Deallocation:** When a node is deleted, its cell is returned to the head of the AVAIL list:
+  $$\\text{LINK}[\\text{LOC}] := \\text{AVAIL}, \\quad \\text{AVAIL} := \\text{LOC}$$
+
+---
+
+### 3. Comparison: Arrays vs. Linked Lists
+| Feature | Linear Array | Singly Linked List |
+| :--- | :--- | :--- |
+| **Memory Allocation** | Contiguous physical block | Dispersed cells linked by pointers |
+| **Random Access** | $O(1)$ via index | $O(n)$ linear traversal from START |
+| **Insertion at Known LOC** | $O(n)$ due to element shifts | **$O(1)$** pointer relinking |
+| **Deletion at Known LOC** | $O(n)$ due to element shifts | **$O(1)$** pointer relinking |
+| **Memory Overhead** | Fixed size, potential waste | Extra pointer field (\`LINK\`) per node |`,
+  },
+
+  // --- Algorithm 5.5: INSLOC ---
+  {
+    id: "cm-algo-5-5",
+    title: "Algorithm 5.5: INSLOC — Inserting a Node into a Linked List (At Beginning or After LOC)",
+    book_reference: "Lipschutz, Seymour - Data Structures (Schaum's Outlines), Chapter 5: Linked Lists, Page 180 (Algorithm 5.5)",
+    topic_tag: "Linked Lists",
+    content_type: "algorithm",
+    difficulty: "medium",
+    assigned_date: null,
+    created_by: null,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    problem_statement: `### Formal Problem Specification:
+Write an algorithm **\`INSLOC(INFO, LINK, START, AVAIL, LOC, ITEM)\`** that inserts \`ITEM\` into a linked list such that:
+1. \`ITEM\` follows the node with location \`LOC\`, OR
+2. \`ITEM\` is inserted as the **first node** of the list when $\\text{LOC} = \\text{NULL}$.
+
+---
+
+### Input Parameters:
+* \`INFO\`: Array storing data contents of nodes.
+* \`LINK\`: Array storing link pointers to the next node in list.
+* \`START\`: Pointer to the first node in the active list.
+* \`AVAIL\`: Pointer to the first node in the free storage list.
+* \`LOC\`: Location index after which \`ITEM\` is to be inserted ($\`\\text{LOC} = \\text{NULL}\`$ for insertion at the beginning).
+* \`ITEM\`: The data payload to be stored in the new node.`,
+    explanation_or_solution: `### Algorithm 5.5: INSLOC(INFO, LINK, START, AVAIL, LOC, ITEM)
+
+This algorithm inserts \`ITEM\` so that \`ITEM\` follows the node with location \`LOC\` or inserts \`ITEM\` as the first node when $\\text{LOC} = \\text{NULL}$.
+
+---
+
+### Step-by-Step Algorithm Pseudocode (Lipschutz Textbook):
+
+\`\`\`text
+1. [OVERFLOW?] If AVAIL = NULL, then: Write: OVERFLOW, and Exit.
+2. [Remove first node from AVAIL list.]
+   Set NEW := AVAIL and AVAIL := LINK[AVAIL].
+3. Set INFO[NEW] := ITEM. [Copies new data into new node.]
+4. If LOC = NULL, then: [Insert as first node.]
+      Set LINK[NEW] := START and START := NEW.
+   Else: [Insert after node with location LOC.]
+      Set LINK[NEW] := LINK[LOC] and LINK[LOC] := NEW.
+   [End of If structure.]
+5. Exit.
+\`\`\`
+
+---
+
+### Detailed Mathematical & Pointer Mechanics Trace
+
+#### Case 1: Insertion as First Node (LOC = NULL)
+1. Allocate node from AVAIL: $\\text{NEW} := \\text{AVAIL}$, $\\text{AVAIL} := \\text{LINK}[\\text{AVAIL}]$.
+2. Store payload: $\\text{INFO}[\\text{NEW}] := \\text{ITEM}$.
+3. Link NEW to previous head: $\\text{LINK}[\\text{NEW}] := \\text{START}$.
+4. Update list head: $\\text{START} := \\text{NEW}$.
+
+$$\\text{START} \\xrightarrow{\\quad} [\\text{NEW} \\mid \\text{ITEM}] \\xrightarrow{\\text{LINK}} [\\text{Previous First Node}] \\longrightarrow \\dots$$
+
+---
+
+#### Case 2: Insertion Following Node LOC (LOC ≠ NULL)
+1. Allocate node from AVAIL: $\\text{NEW} := \\text{AVAIL}$, $\\text{AVAIL} := \\text{LINK}[\\text{AVAIL}]$.
+2. Store payload: $\\text{INFO}[\\text{NEW}] := \\text{ITEM}$.
+3. Splice pointer chain:
+   * First point NEW to the node currently following LOC:
+     $$\\text{LINK}[\\text{NEW}] := \\text{LINK}[\\text{LOC}]$$
+   * Then update LOC's pointer to point to NEW:
+     $$\\text{LINK}[\\text{LOC}] := \\text{NEW}$$
+
+$$\\dots \\longrightarrow [\\text{Node LOC}] \\xrightarrow{\\text{LINK}} [\\text{NEW} \\mid \\text{ITEM}] \\xrightarrow{\\text{LINK}} [\\text{Successor Node}] \\longrightarrow \\dots$$
+
+---
+
+### Complexity Analysis:
+* **Time Complexity:** $\\mathbf{O(1)}$ Constant Time (Given that pointer location \`LOC\` is already known).
+* **Auxiliary Space Complexity:** $\\mathbf{O(1)}$ Constant extra space for pointer rewiring.
+
+---
+
+### Complete Multi-Language Implementations:
+
+#### 1. C++ (Standard Pointer / Struct Implementation)
+\`\`\`cpp
+#include <iostream>
+
+struct Node {
+    int data;
+    Node* next;
+    Node(int val) : data(val), next(nullptr) {}
+};
+
+// Algorithm 5.5: INSLOC in Modern C++
+void insertAfterLoc(Node*& start, Node* loc, int item) {
+    // Step 2 & 3: Allocate new node & copy data (Throws std::bad_alloc on overflow)
+    Node* newNode = new Node(item);
+
+    // Step 4: Relink pointers
+    if (loc == nullptr) {
+        // Insert as first node
+        newNode->next = start;
+        start = newNode;
+    } else {
+        // Insert after node loc
+        newNode->next = loc->next;
+        loc->next = newNode;
+    }
+}
+\`\`\`
+
+#### 2. C++ (Lipschutz Parallel Array Memory Pool Simulation)
+\`\`\`cpp
+#include <iostream>
+#include <vector>
+
+const int MEMORY_SIZE = 100;
+std::vector<int> INFO_ARR(MEMORY_SIZE);
+std::vector<int> LINK_ARR(MEMORY_SIZE);
+int START = 0; // 0 represents NULL
+int AVAIL = 1; // Free list head
+
+bool INSLOC(int& start, int& avail, int loc, int item) {
+    // Step 1: Overflow check
+    if (avail == 0) {
+        std::cerr << "OVERFLOW! Free storage exhausted.\\n";
+        return false;
+    }
+
+    // Step 2: Allocate first node from AVAIL list
+    int NEW = avail;
+    avail = LINK_ARR[avail];
+
+    // Step 3: Copy data
+    INFO_ARR[NEW] = item;
+
+    // Step 4: Splice into active list
+    if (loc == 0) {
+        LINK_ARR[NEW] = start;
+        start = NEW;
+    } else {
+        LINK_ARR[NEW] = LINK_ARR[loc];
+        LINK_ARR[loc] = NEW;
+    }
+
+    return true; // Step 5: Exit
+}
+\`\`\`
+
+#### 3. Java (OOP Node Splicing)
+\`\`\`java
+public class LinkedListInsLoc {
+    static class Node {
+        String info;
+        Node next;
+        Node(String val) { this.info = val; }
+    }
+
+    public static Node insLoc(Node start, Node loc, String item) {
+        Node newNode = new Node(item);
+        if (loc == null) {
+            newNode.next = start;
+            return newNode; // New START
+        } else {
+            newNode.next = loc.next;
+            loc.next = newNode;
+            return start;
+        }
+    }
+}
+\`\`\``,
+  },
 ];
