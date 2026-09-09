@@ -55,6 +55,13 @@ const SinglyLinkedListStudio = dynamic(
     ),
   { ssr: false, loading: () => <SimLabLoading /> }
 );
+const LinkedListPrereqStudio = dynamic(
+  () =>
+    import("@/components/course-material/LinkedListPrereqStudio").then(
+      (m) => m.LinkedListPrereqStudio
+    ),
+  { ssr: false, loading: () => <SimLabLoading /> }
+);
 import {
   BookOpen,
   HelpCircle,
@@ -219,6 +226,12 @@ function getMaterialSortKey(m: CourseMaterial): number {
   if (ref.includes("3.1") || ref.includes("algorithm 3.1")) return 370;
   if (ref.includes("3.2") || ref.includes("algorithm 3.2")) return 375;
 
+  // Chapter 5: Linked Lists
+  if (ref.includes("prereq") || ref.includes("before you start")) return 5000;
+  if (ref.includes("chapter 5") && m.content_type === "topic") return 5010;
+  if (ref.includes("5.1") || ref.includes("singly linked list")) return 5020;
+  if (ref.includes("5.5") || ref.includes("insloc")) return 5050;
+
   // Regex fallback
   const chapMatch = ref.match(/chapter\s+(\d+)/i);
   const secMatch = ref.match(/(?:problem|section|exercise|algorithm)\s+(\d+)(?:\.(\d+))?/i);
@@ -234,10 +247,24 @@ export default function CourseMaterialPage() {
 
   const { user, role } = useAccessControl();
 
+  // Helper to reliably merge cached/db data with the latest default course materials
+  const mergeWithDefaults = (source: CourseMaterial[]): CourseMaterial[] => {
+    const map = new Map<string, CourseMaterial>();
+    // 1. First add all current fresh default materials
+    DEFAULT_COURSE_MATERIALS.forEach((m) => map.set(m.id, m));
+    // 2. Overlay any database or custom materials
+    source.forEach((m) => {
+      if (!map.has(m.id)) {
+        map.set(m.id, m);
+      }
+    });
+    return Array.from(map.values());
+  };
+
   const [materials, setMaterials] = useState<CourseMaterial[]>(() => {
     if (typeof window !== "undefined") {
       const cached = fastCache.get<CourseMaterial[]>("course_materials");
-      if (cached && cached.length > 0) return cached;
+      if (cached && cached.length > 0) return mergeWithDefaults(cached);
     }
     return DEFAULT_COURSE_MATERIALS;
   });
@@ -252,23 +279,29 @@ export default function CourseMaterialPage() {
   const [selectedDifficulty, setSelectedDifficulty] = useState<string>("all");
 
   // Track expanded cards (Dropdown accordions)
-  // First item open by default for immediate engagement
+  // Essential interactive cards open by default for immediate engagement
   const [expandedCards, setExpandedCards] = useState<Record<string, boolean>>({
     "cm-problem-2-6": true,
+    "cm-problem-5-1": true,
+    "cm-topic-5-0-prereq": true,
   });
 
-  // Track expanded solutions & visualizers
+  // Track expanded solutions & visualizers & bangla explanations
   const [expandedSolutions, setExpandedSolutions] = useState<Record<string, boolean>>({});
   const [expandedVisualizers, setExpandedVisualizers] = useState<Record<string, boolean>>({
     "cm-problem-2-6": true,
+    "cm-problem-5-1": true,
+    "cm-topic-5-0-prereq": true,
   });
+  const [expandedBangla, setExpandedBangla] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     async function fetchCourseMaterials() {
       // Check cache first
       const cached = fastCache.get<CourseMaterial[]>("course_materials");
       if (cached && cached.length > 0) {
-        setMaterials(cached);
+        const merged = mergeWithDefaults(cached);
+        setMaterials(merged);
         setIsLoading(false);
         return;
       }
@@ -283,11 +316,9 @@ export default function CourseMaterialPage() {
         if (fetchErr) {
           console.warn("Could not load course materials from database, using local dataset:", fetchErr);
         } else if (data && data.length > 0) {
-          const existingIds = new Set(data.map((d: CourseMaterial) => d.title));
-          const missingDefaults = DEFAULT_COURSE_MATERIALS.filter((d) => !existingIds.has(d.title));
-          const consolidated = [...(data as CourseMaterial[]), ...missingDefaults];
-          setMaterials(consolidated);
-          fastCache.set("course_materials", consolidated, 600); // cache for 10 mins
+          const merged = mergeWithDefaults(data as CourseMaterial[]);
+          setMaterials(merged);
+          fastCache.set("course_materials", merged, 600); // cache for 10 mins
         }
       } catch (err: any) {
         console.warn("Unexpected error loading materials, using fallback:", err);
@@ -327,6 +358,13 @@ export default function CourseMaterialPage() {
 
   const toggleVisualizer = (id: string) => {
     setExpandedVisualizers((prev) => ({
+      ...prev,
+      [id]: !prev[id],
+    }));
+  };
+
+  const toggleBangla = (id: string) => {
+    setExpandedBangla((prev) => ({
       ...prev,
       [id]: !prev[id],
     }));
@@ -549,7 +587,7 @@ export default function CourseMaterialPage() {
                   {stats.totalChapters}
                 </div>
                 <div className="text-[10px] text-cyan-600 dark:text-cyan-400 font-medium mt-0.5">
-                  Ch 2, 3 &amp; 4
+                  Ch 2, 3, 4 &amp; 5
                 </div>
               </div>
 
@@ -560,7 +598,7 @@ export default function CourseMaterialPage() {
                   <Sparkles className="h-3.5 w-3.5 text-pink-400" />
                 </div>
                 <div className="text-xl font-extrabold text-foreground font-mono">
-                  3
+                  5
                 </div>
                 <div className="text-[10px] text-pink-600 dark:text-pink-400 font-medium mt-0.5">
                   Simulators
@@ -713,6 +751,7 @@ export default function CourseMaterialPage() {
               const isTopic = item.content_type === "topic";
               const isCardOpen = expandedCards[item.id] || false;
               const isSolutionOpen = expandedSolutions[item.id] || false;
+              const isBanglaOpen = expandedBangla[item.id] || false;
 
               // Extract chapter badge text cleanly
               const ref = item.book_reference || "";
@@ -907,9 +946,31 @@ export default function CourseMaterialPage() {
                                   </div>
 
                                   <div className="flex flex-wrap items-center gap-2.5">
+                                    {/* Bangla Explanation Toggle Button (Dropdown) */}
+                                    {item.bangla_explanation && (
+                                      <button
+                                        type="button"
+                                        onClick={() => toggleBangla(item.id)}
+                                        className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all active:scale-95 shadow-sm ${
+                                          isBanglaOpen
+                                            ? "bg-amber-500/20 text-amber-600 dark:text-amber-300 border border-amber-500/50 shadow-amber-500/10"
+                                            : "bg-gradient-to-r from-amber-500/15 via-orange-500/15 to-amber-600/15 hover:bg-amber-500/25 text-amber-700 dark:text-amber-300 border border-amber-500/30"
+                                        }`}
+                                      >
+                                        <span>🇧🇩</span>
+                                        <span>{isBanglaOpen ? "বাংলা ব্যাখ্যা লুকান" : "সহজ বাংলা ব্যাখ্যা"}</span>
+                                        {isBanglaOpen ? (
+                                          <ChevronUp className="h-3.5 w-3.5 text-amber-500" />
+                                        ) : (
+                                          <ChevronDown className="h-3.5 w-3.5 text-amber-500" />
+                                        )}
+                                      </button>
+                                    )}
+
                                     {/* Interactive Visualizer Toggle Button */}
                                     {hasVisualizer && (
                                       <button
+                                        type="button"
                                         onClick={() => toggleVisualizer(item.id)}
                                         className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all active:scale-95 shadow-md ${
                                           isVisualizerOpen
@@ -931,6 +992,7 @@ export default function CourseMaterialPage() {
 
                                     {/* Solution Toggle Button */}
                                     <button
+                                      type="button"
                                       onClick={() => toggleSolution(item.id)}
                                       className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all active:scale-95 shadow-sm ${
                                         isSolutionOpen
@@ -992,6 +1054,22 @@ export default function CourseMaterialPage() {
                                   </div>
                                 )}
 
+                                {/* Collapsible Bangla Explanation Card */}
+                                {isBanglaOpen && item.bangla_explanation && (
+                                  <div className="rounded-2xl border border-amber-500/35 bg-gradient-to-br from-amber-500/[0.04] to-orange-500/[0.02] dark:bg-card/95 p-6 shadow-xl animate-in fade-in slide-in-from-top-3 duration-200">
+                                    <div className="flex items-center justify-between pb-3 border-b border-amber-500/20 mb-4">
+                                      <div className="flex items-center gap-2 text-xs font-mono font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider">
+                                        <span className="text-base">🇧🇩</span>
+                                        <span>সহজ বাংলা কনসেপ্ট ও সমাধান বিশ্লেষণ (Beginner-Friendly Explanation)</span>
+                                      </div>
+                                      <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/30 font-semibold font-mono">
+                                        বাংলা গাইড
+                                      </span>
+                                    </div>
+                                    <FormattedMarkdown content={item.bangla_explanation} />
+                                  </div>
+                                )}
+
                                 {/* Collapsible Solution Content */}
                                 {isSolutionOpen && (
                                   <div className="rounded-2xl border border-emerald-500/30 bg-card p-6 shadow-xl animate-in fade-in slide-in-from-top-3 duration-200">
@@ -1020,37 +1098,81 @@ export default function CourseMaterialPage() {
 
                           return (
                             <div className="space-y-4">
-                              {/* Simulation Lab Toggle for Algorithm */}
-                              {isLinkedListAlgo && (
-                                <div className="flex flex-wrap items-center justify-between gap-3 p-4 rounded-2xl border border-primary/40 bg-primary/5 shadow-sm">
-                                  <div className="text-xs text-muted-foreground font-sans">
-                                    Interactive Algorithm 5.5 INSLOC Simulation Lab with Memory Array tracing (<code className="text-primary font-mono font-bold">INFO, LINK, START, AVAIL</code>) available.
-                                  </div>
-                                  <button
-                                    onClick={() => toggleVisualizer(item.id)}
-                                    className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all active:scale-95 shadow-md cursor-pointer ${
-                                      isVisualizerOpen
-                                        ? "bg-primary/20 text-primary border border-primary/50 shadow-primary/10"
-                                        : "btn-brass text-primary-foreground shadow-brass hover:scale-[1.02] ring-2 ring-primary/30"
-                                    }`}
-                                  >
-                                    <Play className={`h-3.5 w-3.5 ${isVisualizerOpen ? "text-primary" : "text-primary-foreground fill-current"}`} />
-                                    <span>
-                                      {isVisualizerOpen ? "Hide Simulation Lab" : "🚀 Launch Algorithm 5.5 Simulation Lab"}
-                                    </span>
-                                    {isVisualizerOpen ? (
-                                      <ChevronUp className="h-3.5 w-3.5" />
-                                    ) : (
-                                      <ChevronDown className="h-3.5 w-3.5" />
-                                    )}
-                                  </button>
+                              {/* Simulation Lab & Bangla Action Bar for Algorithm */}
+                              <div className="flex flex-wrap items-center justify-between gap-3 p-4 rounded-2xl border border-emerald-500/30 bg-emerald-950/10">
+                                <div className="text-xs text-muted-foreground font-sans">
+                                  {isLinkedListAlgo
+                                    ? "Interactive Algorithm 5.5 INSLOC Simulation Lab with Memory Array tracing (INFO, LINK, START, AVAIL) available."
+                                    : "অ্যালগরিদমটির স্টেপ-বাই-স্টেপ বিশ্লেষণ ও বাংলা সারসংক্ষেপ।"}
                                 </div>
-                              )}
+
+                                <div className="flex flex-wrap items-center gap-2.5">
+                                  {/* Bangla Toggle Button */}
+                                  {item.bangla_explanation && (
+                                    <button
+                                      type="button"
+                                      onClick={() => toggleBangla(item.id)}
+                                      className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all active:scale-95 shadow-sm ${
+                                        isBanglaOpen
+                                          ? "bg-amber-500/20 text-amber-600 dark:text-amber-300 border border-amber-500/50 shadow-amber-500/10"
+                                          : "bg-gradient-to-r from-amber-500/15 via-orange-500/15 to-amber-600/15 hover:bg-amber-500/25 text-amber-700 dark:text-amber-300 border border-amber-500/30"
+                                      }`}
+                                    >
+                                      <span>🇧🇩</span>
+                                      <span>{isBanglaOpen ? "বাংলা ব্যাখ্যা লুকান" : "সহজ বাংলা ব্যাখ্যা"}</span>
+                                      {isBanglaOpen ? (
+                                        <ChevronUp className="h-3.5 w-3.5 text-amber-500" />
+                                      ) : (
+                                        <ChevronDown className="h-3.5 w-3.5 text-amber-500" />
+                                      )}
+                                    </button>
+                                  )}
+
+                                  {/* Simulation Lab Toggle for Algorithm */}
+                                  {isLinkedListAlgo && (
+                                    <button
+                                      type="button"
+                                      onClick={() => toggleVisualizer(item.id)}
+                                      className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all active:scale-95 shadow-md cursor-pointer ${
+                                        isVisualizerOpen
+                                          ? "bg-primary/20 text-primary border border-primary/50 shadow-primary/10"
+                                          : "btn-brass text-primary-foreground shadow-brass hover:scale-[1.02] ring-2 ring-primary/30"
+                                      }`}
+                                    >
+                                      <Play className={`h-3.5 w-3.5 ${isVisualizerOpen ? "text-primary" : "text-primary-foreground fill-current"}`} />
+                                      <span>
+                                        {isVisualizerOpen ? "Hide Simulation Lab" : "🚀 Launch Algorithm 5.5 Simulation Lab"}
+                                      </span>
+                                      {isVisualizerOpen ? (
+                                        <ChevronUp className="h-3.5 w-3.5" />
+                                      ) : (
+                                        <ChevronDown className="h-3.5 w-3.5" />
+                                      )}
+                                    </button>
+                                  )}
+                                </div>
+                              </div>
 
                               {/* Embedded Visualizer Studio for Linked List Algorithm */}
                               {isLinkedListAlgo && isVisualizerOpen && (
                                 <div className="animate-in fade-in slide-in-from-top-3 duration-300">
                                   <LinkedListInsLocVisualizer />
+                                </div>
+                              )}
+
+                              {/* Collapsible Bangla Explanation Card */}
+                              {isBanglaOpen && item.bangla_explanation && (
+                                <div className="rounded-2xl border border-amber-500/35 bg-gradient-to-br from-amber-500/[0.04] to-orange-500/[0.02] dark:bg-card/95 p-6 shadow-xl animate-in fade-in slide-in-from-top-3 duration-200">
+                                  <div className="flex items-center justify-between pb-3 border-b border-amber-500/20 mb-4">
+                                    <div className="flex items-center gap-2 text-xs font-mono font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider">
+                                      <span className="text-base">🇧🇩</span>
+                                      <span>সহজ বাংলা অ্যালগরিদম বিশ্লেষণ ও ড্রাই-রান (Beginner-Friendly Explanation)</span>
+                                    </div>
+                                    <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/30 font-semibold font-mono">
+                                      বাংলা গাইড
+                                    </span>
+                                  </div>
+                                  <FormattedMarkdown content={item.bangla_explanation} />
                                 </div>
                               )}
 
@@ -1074,41 +1196,122 @@ export default function CourseMaterialPage() {
                             item.title.toLowerCase().includes("3.5") ||
                             item.title.toLowerCase().includes("3.6");
 
+                          const isPrereqTopic =
+                            item.id === "cm-topic-5-0-prereq" ||
+                            item.title.toLowerCase().includes("prerequisite") ||
+                            item.title.toLowerCase().includes("before you start");
+
                           const isVisualizerOpen = !!expandedVisualizers[item.id];
 
                           return (
                             <div className="space-y-4">
                               {/* Action / Visualizer Toggle Bar for Topic */}
-                              {isStringTopic && (
-                                <div className="flex flex-wrap items-center justify-between gap-3 p-3.5 rounded-2xl border border-cyan-500/30 bg-cyan-950/20">
-                                  <div className="text-xs text-muted-foreground">
-                                    Interactive String Operations &amp; Algorithm 3.1/3.2 Trace Studio available.
-                                  </div>
-                                  <button
-                                    onClick={() => toggleVisualizer(item.id)}
-                                    className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all active:scale-95 shadow-md ${
-                                      isVisualizerOpen
-                                        ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/50 shadow-cyan-500/10"
-                                        : "bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 text-white hover:opacity-95 shadow-cyan-500/20 ring-2 ring-cyan-400/30"
-                                    }`}
-                                  >
-                                    <Play className={`h-3.5 w-3.5 ${isVisualizerOpen ? "text-cyan-400" : "text-white fill-white"}`} />
-                                    <span>
-                                      {isVisualizerOpen ? "Hide String Studio" : "🚀 Launch String Studio"}
-                                    </span>
-                                    {isVisualizerOpen ? (
-                                      <ChevronUp className="h-3.5 w-3.5" />
-                                    ) : (
-                                      <ChevronDown className="h-3.5 w-3.5" />
-                                    )}
-                                  </button>
+                              <div className="flex flex-wrap items-center justify-between gap-3 p-3.5 rounded-2xl border border-cyan-500/30 bg-cyan-950/20">
+                                <div className="text-xs text-muted-foreground">
+                                  {isPrereqTopic
+                                    ? "Interactive Prerequisite Studio (Pointer, Memory Address, DMA & 3-Node Chain) available."
+                                    : isStringTopic
+                                    ? "Interactive String Operations & Algorithm 3.1/3.2 Trace Studio available."
+                                    : "টপিকটির সহজ বাংলা কনসেপ্ট সামারি ও রিয়েল লাইফ অ্যানালজি।"}
+                                </div>
+
+                                <div className="flex flex-wrap items-center gap-2.5">
+                                  {/* Bangla Toggle Button */}
+                                  {item.bangla_explanation && (
+                                    <button
+                                      type="button"
+                                      onClick={() => toggleBangla(item.id)}
+                                      className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all active:scale-95 shadow-sm ${
+                                        isBanglaOpen
+                                          ? "bg-amber-500/20 text-amber-600 dark:text-amber-300 border border-amber-500/50 shadow-amber-500/10"
+                                          : "bg-gradient-to-r from-amber-500/15 via-orange-500/15 to-amber-600/15 hover:bg-amber-500/25 text-amber-700 dark:text-amber-300 border border-amber-500/30"
+                                      }`}
+                                    >
+                                      <span>🇧🇩</span>
+                                      <span>{isBanglaOpen ? "বাংলা ব্যাখ্যা লুকান" : "সহজ বাংলা ব্যাখ্যা"}</span>
+                                      {isBanglaOpen ? (
+                                        <ChevronUp className="h-3.5 w-3.5 text-amber-500" />
+                                      ) : (
+                                        <ChevronDown className="h-3.5 w-3.5 text-amber-500" />
+                                      )}
+                                    </button>
+                                  )}
+
+                                  {/* Prerequisite Interactive Studio Toggle */}
+                                  {isPrereqTopic && (
+                                    <button
+                                      type="button"
+                                      onClick={() => toggleVisualizer(item.id)}
+                                      className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all active:scale-95 shadow-md ${
+                                        isVisualizerOpen
+                                          ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/50 shadow-cyan-500/10"
+                                          : "bg-gradient-to-r from-cyan-500 via-indigo-600 to-purple-600 text-white hover:opacity-95 shadow-cyan-500/20 ring-2 ring-cyan-400/30"
+                                      }`}
+                                    >
+                                      <Play className={`h-3.5 w-3.5 ${isVisualizerOpen ? "text-cyan-400" : "text-white fill-white"}`} />
+                                      <span>
+                                        {isVisualizerOpen ? "Hide Prerequisite Studio" : "🚀 Launch Prerequisite Studio"}
+                                      </span>
+                                      {isVisualizerOpen ? (
+                                        <ChevronUp className="h-3.5 w-3.5" />
+                                      ) : (
+                                        <ChevronDown className="h-3.5 w-3.5" />
+                                      )}
+                                    </button>
+                                  )}
+
+                                  {/* String Studio Toggle */}
+                                  {isStringTopic && (
+                                    <button
+                                      type="button"
+                                      onClick={() => toggleVisualizer(item.id)}
+                                      className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all active:scale-95 shadow-md ${
+                                        isVisualizerOpen
+                                          ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/50 shadow-cyan-500/10"
+                                          : "bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 text-white hover:opacity-95 shadow-cyan-500/20 ring-2 ring-cyan-400/30"
+                                      }`}
+                                    >
+                                      <Play className={`h-3.5 w-3.5 ${isVisualizerOpen ? "text-cyan-400" : "text-white fill-white"}`} />
+                                      <span>
+                                        {isVisualizerOpen ? "Hide String Studio" : "🚀 Launch String Studio"}
+                                      </span>
+                                      {isVisualizerOpen ? (
+                                        <ChevronUp className="h-3.5 w-3.5" />
+                                      ) : (
+                                        <ChevronDown className="h-3.5 w-3.5" />
+                                      )}
+                                    </button>
+                                  )}
+                                </div>
+                              </div>
+
+                              {/* Embedded Prerequisite Studio */}
+                              {isPrereqTopic && isVisualizerOpen && (
+                                <div className="animate-in fade-in slide-in-from-top-3 duration-300">
+                                  <LinkedListPrereqStudio />
                                 </div>
                               )}
 
-                              {/* Embedded Visualizer */}
+                              {/* Embedded String Visualizer */}
                               {isStringTopic && isVisualizerOpen && (
                                 <div className="animate-in fade-in slide-in-from-top-3 duration-300">
                                   <StringOperationsVisualizer />
+                                </div>
+                              )}
+
+                              {/* Collapsible Bangla Explanation Card */}
+                              {isBanglaOpen && item.bangla_explanation && (
+                                <div className="rounded-2xl border border-amber-500/35 bg-gradient-to-br from-amber-500/[0.04] to-orange-500/[0.02] dark:bg-card/95 p-6 shadow-xl animate-in fade-in slide-in-from-top-3 duration-200">
+                                  <div className="flex items-center justify-between pb-3 border-b border-amber-500/20 mb-4">
+                                    <div className="flex items-center gap-2 text-xs font-mono font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider">
+                                      <span className="text-base">🇧🇩</span>
+                                      <span>সহজ বাংলা কনসেপ্ট সামারি ও অ্যানালজি (Beginner-Friendly Explanation)</span>
+                                    </div>
+                                    <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/30 font-semibold font-mono">
+                                      বাংলা গাইড
+                                    </span>
+                                  </div>
+                                  <FormattedMarkdown content={item.bangla_explanation} />
                                 </div>
                               )}
 

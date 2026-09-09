@@ -793,22 +793,20 @@ export function SinglyLinkedListStudio() {
           <div className="flex items-center rounded-xl border border-border bg-secondary/60 p-0.5 text-xs font-mono">
             <button
               onClick={() => setLang("bn")}
-              className={`px-2.5 py-1 rounded-lg font-bold transition-all cursor-pointer flex items-center gap-1 ${
-                lang === "bn"
+              className={`px-2.5 py-1 rounded-lg font-bold transition-all cursor-pointer flex items-center gap-1 ${lang === "bn"
                   ? "bg-primary text-primary-foreground shadow-xs"
                   : "text-muted-foreground hover:text-foreground"
-              }`}
+                }`}
               title="বাংলা ভাষায় ব্যাখ্যা"
             >
               <span>🇧🇩 বাংলা</span>
             </button>
             <button
               onClick={() => setLang("en")}
-              className={`px-2.5 py-1 rounded-lg font-bold transition-all cursor-pointer flex items-center gap-1 ${
-                lang === "en"
+              className={`px-2.5 py-1 rounded-lg font-bold transition-all cursor-pointer flex items-center gap-1 ${lang === "en"
                   ? "bg-primary text-primary-foreground shadow-xs"
                   : "text-muted-foreground hover:text-foreground"
-              }`}
+                }`}
               title="English Explanations"
             >
               <span>🇺🇸 EN</span>
@@ -872,11 +870,10 @@ export function SinglyLinkedListStudio() {
               <button
                 key={spd}
                 onClick={() => setPlaybackSpeed(spd)}
-                className={`px-2 py-0.5 rounded-lg font-bold transition-all cursor-pointer ${
-                  playbackSpeed === spd
+                className={`px-2 py-0.5 rounded-lg font-bold transition-all cursor-pointer ${playbackSpeed === spd
                     ? "bg-primary text-primary-foreground shadow-xs"
                     : "text-muted-foreground hover:text-foreground"
-                }`}
+                  }`}
               >
                 {spd}x
               </button>
@@ -992,13 +989,12 @@ export function SinglyLinkedListStudio() {
                 return (
                   <div
                     key={lineObj.line}
-                    className={`flex flex-col px-2 py-1 rounded transition-all font-mono text-[11px] ${
-                      isCurrent
+                    className={`flex flex-col px-2 py-1 rounded transition-all font-mono text-[11px] ${isCurrent
                         ? "bg-primary/25 border-l-4 border-primary text-white font-bold shadow-brass-sm"
                         : isHighlighted
-                        ? "bg-white/5 text-amber-200"
-                        : "text-slate-400 hover:text-slate-200"
-                    }`}
+                          ? "bg-white/5 text-amber-200"
+                          : "text-slate-400 hover:text-slate-200"
+                      }`}
                   >
                     <div className="flex items-start">
                       <span className="w-6 text-slate-600 text-right mr-3 select-none text-[10px]">
@@ -1038,11 +1034,10 @@ export function SinglyLinkedListStudio() {
               <div className="p-2 rounded-lg border border-border bg-secondary/30 flex items-center justify-between">
                 <span className="text-muted-foreground text-[11px]">head:</span>
                 <span
-                  className={`px-2 py-0.5 rounded border font-bold text-xs ${
-                    currentStep.head !== null
+                  className={`px-2 py-0.5 rounded border font-bold text-xs ${currentStep.head !== null
                       ? "bg-emerald-500/15 border-emerald-500/30 text-emerald-400"
                       : "bg-rose-500/10 border-rose-500/20 text-rose-400"
-                  }`}
+                    }`}
                 >
                   {currentStep.head ?? "nullptr (0x0)"}
                 </span>
@@ -1052,11 +1047,10 @@ export function SinglyLinkedListStudio() {
               <div className="p-2 rounded-lg border border-border bg-secondary/30 flex items-center justify-between">
                 <span className="text-muted-foreground text-[11px]">temp:</span>
                 <span
-                  className={`px-2 py-0.5 rounded border font-bold text-xs ${
-                    currentStep.temp !== null
+                  className={`px-2 py-0.5 rounded border font-bold text-xs ${currentStep.temp !== null
                       ? "bg-cyan-500/15 border-cyan-500/30 text-cyan-400"
                       : "bg-rose-500/10 border-rose-500/20 text-rose-400"
-                  }`}
+                    }`}
                 >
                   {currentStep.temp ?? "nullptr (0x0)"}
                 </span>
@@ -1066,11 +1060,10 @@ export function SinglyLinkedListStudio() {
               <div className="p-2 rounded-lg border border-border bg-secondary/30 flex items-center justify-between">
                 <span className="text-muted-foreground text-[11px]">newNode:</span>
                 <span
-                  className={`px-2 py-0.5 rounded border font-bold text-xs ${
-                    currentStep.newNode !== null
+                  className={`px-2 py-0.5 rounded border font-bold text-xs ${currentStep.newNode !== null
                       ? "bg-amber-500/20 border-amber-500/40 text-amber-300 animate-pulse"
                       : "bg-secondary text-muted-foreground border-border"
-                  }`}
+                    }`}
                 >
                   {currentStep.newNode ?? "nullptr"}
                 </span>
@@ -1097,41 +1090,37 @@ export function SinglyLinkedListStudio() {
             <div className="flex items-center gap-1.5 font-mono text-xs flex-wrap">
               <button
                 onClick={() => setActiveTab("visualizer")}
-                className={`px-3 py-1 rounded-lg font-bold transition-all cursor-pointer ${
-                  activeTab === "visualizer"
+                className={`px-3 py-1 rounded-lg font-bold transition-all cursor-pointer ${activeTab === "visualizer"
                     ? "bg-primary text-primary-foreground shadow-xs"
                     : "text-muted-foreground hover:text-foreground bg-secondary/40"
-                }`}
+                  }`}
               >
                 🔗 {lang === "bn" ? "ভিজ্যুয়াল গ্রাফ" : "Visual Graph"}
               </button>
               <button
                 onClick={() => setActiveTab("bangla_guide")}
-                className={`px-3 py-1 rounded-lg font-bold transition-all cursor-pointer ${
-                  activeTab === "bangla_guide"
+                className={`px-3 py-1 rounded-lg font-bold transition-all cursor-pointer ${activeTab === "bangla_guide"
                     ? "bg-amber-500 text-black shadow-xs font-extrabold"
                     : "text-amber-400 hover:text-amber-300 bg-amber-500/10 border border-amber-500/30"
-                }`}
+                  }`}
               >
                 🇧🇩 সহজ বাংলা গাইড
               </button>
               <button
                 onClick={() => setActiveTab("memory")}
-                className={`px-3 py-1 rounded-lg font-bold transition-all cursor-pointer ${
-                  activeTab === "memory"
+                className={`px-3 py-1 rounded-lg font-bold transition-all cursor-pointer ${activeTab === "memory"
                     ? "bg-primary text-primary-foreground shadow-xs"
                     : "text-muted-foreground hover:text-foreground bg-secondary/40"
-                }`}
+                  }`}
               >
                 💾 {lang === "bn" ? "মেমরি ভিউ" : "Memory View"}
               </button>
               <button
                 onClick={() => setActiveTab("theory")}
-                className={`px-3 py-1 rounded-lg font-bold transition-all cursor-pointer ${
-                  activeTab === "theory"
+                className={`px-3 py-1 rounded-lg font-bold transition-all cursor-pointer ${activeTab === "theory"
                     ? "bg-primary text-primary-foreground shadow-xs"
                     : "text-muted-foreground hover:text-foreground bg-secondary/40"
-                }`}
+                  }`}
               >
                 📖 {lang === "bn" ? "কমপ্লেক্সিটি" : "Complexity"}
               </button>
@@ -1205,13 +1194,12 @@ export function SinglyLinkedListStudio() {
 
                               {/* The Double Compartment Node Card */}
                               <div
-                                className={`flex rounded-xl border font-mono transition-all duration-300 shadow-md ${
-                                  isActive
+                                className={`flex rounded-xl border font-mono transition-all duration-300 shadow-md ${isActive
                                     ? "ring-2 ring-primary border-primary bg-primary/20 scale-105"
                                     : isTemp
-                                    ? "ring-1 ring-cyan-400 border-cyan-400 bg-cyan-500/10"
-                                    : "border-[#4A3F35] bg-[#14100D]"
-                                }`}
+                                      ? "ring-1 ring-cyan-400 border-cyan-400 bg-cyan-500/10"
+                                      : "border-[#4A3F35] bg-[#14100D]"
+                                  }`}
                               >
                                 {/* Left Compartment: Data Field */}
                                 <div className="px-3 py-2 border-r border-[#4A3F35] flex flex-col items-center justify-center min-w-[50px]">

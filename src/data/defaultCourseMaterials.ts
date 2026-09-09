@@ -1,1893 +1,304 @@
 import { CourseMaterial } from "@/types/courseMaterial";
 
 export const DEFAULT_COURSE_MATERIALS: CourseMaterial[] = [
-  // =========================================================================
-  // CHAPTER 2: COMPLEXITY ANALYSIS
-  // =========================================================================
-
-  // --- Topic: Chapter 2 ---
   {
-    id: "cm-topic-ch2",
-    title: "Chapter 2: Algorithms, Complexity & Step-Counting Theory",
-    book_reference: "Lipschutz & Seymour, Data Structures, Revised 4th Ed., Chapter 2: Design and Analysis of Algorithms",
-    topic_tag: "Complexity Analysis",
-    content_type: "topic",
-    difficulty: "medium",
-    assigned_date: null,
-    created_by: null,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-    problem_statement: null,
-    explanation_or_solution: `### Chapter 2: Complexity of Algorithms & Step Counting Theory
-
-The complexity of an algorithm $M$ is the function $f(n)$ which gives the running time and/or storage space required by the algorithm in terms of the size $n$ of the input data.
-
----
-
-### 1. Key Complexity Metrics:
-* **Worst-Case Complexity $W(n)$:** The maximum number of basic steps taken on any input of size $n$.
-* **Best-Case Complexity $B(n)$:** The minimum number of steps taken on any input of size $n$.
-* **Average-Case Complexity $A(n)$:** The expected number of steps assuming a uniform probability distribution over all $n!$ input permutations:
-  $$A(n) = \\sum_{I} P(I) \\cdot \\text{Steps}(I)$$
-
----
-
-### 2. Harmonic Numbers & Logarithmic Behavior:
-When tracking frequency of pointer updates (such as finding the maximum element in a random array), the expected number of assignments satisfies the harmonic sum:
-$$H_n = 1 + \\frac{1}{2} + \\frac{1}{3} + \\dots + \\frac{1}{n} = \\ln n + \\gamma + O\\left(\\frac{1}{n}\\right)$$
-where $\\gamma \\approx 0.5772$ (Euler-Mascheroni constant).
-
----
-
-### 3. Nested Loop Rules of Step Counting:
-* **Linear stepping:** Loops with $i = 0 \\dots n-1$ run $n$ times.
-* **Dependent inner loops:** A loop $k = i \\dots n-1$ runs $(n - i)$ times. Summing gives $\\frac{n(n+1)}{2} = O(n^2)$.
-* **Logarithmic stepping:** Loops multiplying $j = j \\times b$ terminate in $\\lfloor \\log_b n \\rfloor + 1 = O(\\log n)$ steps.`,
+    "id": "cm-topic-ch2",
+    "title": "Chapter 2: Algorithms, Complexity & Step-Counting Theory",
+    "book_reference": "Lipschutz & Seymour, Data Structures, Revised 4th Ed., Chapter 2: Design and Analysis of Algorithms",
+    "topic_tag": "Complexity Analysis",
+    "content_type": "topic",
+    "difficulty": "medium",
+    "assigned_date": null,
+    "created_by": null,
+    "created_at": "2026-09-09T08:38:12.692Z",
+    "updated_at": "2026-09-09T08:38:12.697Z",
+    "problem_statement": null,
+    "explanation_or_solution": "### Chapter 2: Design and Analysis of Algorithms\n\nAn **algorithm** is a finite, step-by-step sequence of unambiguous instructions for solving a specific computational problem.\n\n---\n\n### Step-Counting & Complexity Metrics\n- **Worst Case $W(n)$:** Maximum number of steps required across *all* inputs of size $n$.\n- **Best Case $B(n)$:** Minimum number of steps executed for the most favorable input.\n- **Average Case $A(n)$:** Expected number of steps over all $n!$ input permutations under uniform distribution:\n  $$A(n) = \\sum_{k} P(k) \\cdot \\text{Steps}(k)$$\n\n---\n\n### Asymptotic Notations\n- **Big-O ($O$):** Asymptotic Upper Bound ($f(n) \\le c \\cdot g(n)$).\n- **Big-Omega ($\\Omega$):** Asymptotic Lower Bound ($f(n) \\ge c \\cdot g(n)$).\n- **Big-Theta ($\\Theta$):** Asymptotically Tight Bound ($c_1 g(n) \\le f(n) \\le c_2 g(n)$).",
+    "bangla_explanation": "### 🇧🇩 সহজ বাংলায় চ্যাপ্টার ২: অ্যালগরিদম ও টাইম কমপ্লেক্সিটি বিশ্লেষণ\n\n#### ১. অ্যালগরিদম কী?\nঅ্যালগরিদম হলো একটি সমস্যা সমাধানের জন্য ধাপে ধাপে সুনির্দিষ্ট কিছু নির্দেশনার সেট। যেমন রান্নার রেসিপির মতো — একটার পর একটা ধাপ মানলে কাঙ্ক্ষিত ফলাফল পাওয়া যায়।\n\n---\n\n#### ২. স্টেপ কাউন্টিং (Step-Counting) এবং তিন ধরনের কেস:\nকম্পিউটার কত দ্রুত কাজ করবে তা নির্ভর করে ইনপুটের সাইজ ($n$) এর ওপর কোডটি মোট কতগুলো মৌলিক কাজ (Operations/Steps) সম্পন্ন করছে।\n\n* **Worst Case ($W(n)$) - সবচেয়ে খারাপ পরিস্থিতি:** যখন অ্যালগরিদমকে সবচেয়ে বেশি কাজ করতে হয়। রিয়েল লাইফ সফটওয়্যারে আমরা সবসময় এই কেসকে প্রাধান্য দিয়ে কোড ডিজাইন করি, যাতে প্রোগ্রাম কখনো সিস্টেম ক্র্যাশ না করে।\n* **Best Case ($B(n)$) - সবচেয়ে ভালো পরিস্থিতি:** যখন খুব কম ধাপে কাঙ্ক্ষিত উত্তর মিলে যায়। যেমন: তালিকার প্রথম উপাদানটাই যদি আমাদের খোঁজা উপাদান হয়।\n* **Average Case ($A(n)$) - গড় পরিস্থিতি:** সব সম্ভাব্য ইনপুটের গড় সময়। গাণিতিকভাবে প্রতিটি সম্ভাব্য ইনপুটের সম্ভাবনা ও স্টেপ সংখ্যার গুণফলের সমষ্টি।\n\n---\n\n#### ৩. অ্যাসিম্পটটিক নোটেশন (Asymptotic Notations):\n* **Big-O ($O$):** সর্বোচ্চ সীমানা (Upper Bound)। অর্থাৎ প্রোগ্রামটি এর চেয়ে বেশি সময় কখনোই নিবে না ($T(n) \\le c \\cdot g(n)$)।\n* **Big-Omega ($\\Omega$):** সর্বনিম্ন সীমানা (Lower Bound)। অন্তত এই পরিমাণ সময় লাগবেই ($T(n) \\ge c \\cdot g(n)$)।\n* **Big-Theta ($\\Theta$):** একদম নির্ভুল ও টাইট বাউন্ডারি (Tight Bound)। যখন আপার ও লোয়ার বাউন্ড একই অর্ডারের হয়।"
   },
-
-  // --- Problem 2.6 ---
   {
-    id: "cm-problem-2-6",
-    title: "Problem 2.6: Finding Maximum Element — Update Complexity C(n)",
-    book_reference: "Lipschutz & Seymour, Data Structures, Revised 4th Ed., Chapter 2: Algorithms, Complexity (Exercise 2.6)",
-    topic_tag: "Complexity Analysis",
-    content_type: "problem",
-    difficulty: "medium",
-    assigned_date: null,
-    created_by: null,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-    problem_statement: `Consider Algorithm 2.3 (using standard 0-based array indexing), which finds the location \`LOC\` and value \`MAX\` of the largest element in an array \`DATA\` of size $n$ (\`DATA[0 ... n-1]\`). Consider the complexity function $C(n)$, which measures the number of times \`LOC\` and \`MAX\` are updated in Step 3. (The total comparisons is $n - 1$, independent of element order.)
-
-**(a)** Describe and find $C(n)$ for the worst case.  
-**(b)** Describe and find $C(n)$ for the best case.  
-**(c)** Find $C(n)$ for the average case when $n = 3$, assuming all arrangements of the elements in \`DATA\` are equally likely.`,
-    explanation_or_solution: `### Overview of Algorithm 2.3 (0-Based Indexing)
-Algorithm 2.3 finds the maximum element and its index in an array \`DATA[0 ... n-1]\`:
-1. **Initialize:** Set $K := 0$, \`LOC\` $:= 0$, and \`MAX\` $:= \\text{DATA}[0]$.
-2. **Loop:** Repeat Steps 3 and 4 while $K < n$:
-3. **Compare & Update:** If $\\text{DATA}[K] > \\text{MAX}$, then set \`LOC\` $:= K$ and \`MAX\` $:= \\text{DATA}[K]$.
-4. **Increment:** Set $K := K + 1$.
-5. **Output:** Output \`LOC\` and \`MAX\`.
-
----
-
-### (a) Worst-Case Analysis
-* **Condition / Description:** Occurs when array elements are in **strictly ascending order**:
-  $$\\text{DATA}[0] < \\text{DATA}[1] < \\dots < \\text{DATA}[n-1]$$
-* **Trace:** Condition $\\text{DATA}[K] > \\text{MAX}$ is satisfied on every iteration from $K = 1$ to $n - 1$.
-* **Calculation:** $$C(n) = n - 1$$
-
----
-
-### (b) Best-Case Analysis
-* **Condition / Description:** Occurs when the **maximum element is at index 0** (e.g. sorted descending).
-* **Trace:** $\\text{DATA}[K] > \\text{MAX}$ is never satisfied for any $K \\ge 1$.
-* **Calculation:** $$C(n) = 0$$
-
----
-
-### (c) Average-Case Analysis for $n = 3$
-Assuming elements are $\\{1, 2, 3\\}$, all $3! = 6$ permutations:
-| Permutation DATA | Initial (K=0) | K=1 Check | K=2 Check | Total Updates C(3) |
-| :--- | :--- | :--- | :--- | :---: |
-| $(1, 2, 3)$ | MAX=1, LOC=0 | $2 > 1 \\implies$ Update | $3 > 2 \\implies$ Update | **2** |
-| $(1, 3, 2)$ | MAX=1, LOC=0 | $3 > 1 \\implies$ Update | $2 < 3 \\implies$ No update | **1** |
-| $(2, 1, 3)$ | MAX=2, LOC=0 | $1 < 2 \\implies$ No update | $3 > 2 \\implies$ Update | **1** |
-| $(2, 3, 1)$ | MAX=2, LOC=0 | $3 > 2 \\implies$ Update | $1 < 3 \\implies$ No update | **1** |
-| $(3, 1, 2)$ | MAX=3, LOC=0 | $1 < 3 \\implies$ No update | $2 < 3 \\implies$ No update | **0** |
-| $(3, 2, 1)$ | MAX=3, LOC=0 | $2 < 3 \\implies$ No update | $1 < 3 \\implies$ No update | **0** |
-
-* **Average Case $C(3)$:**
-  $$C(3) = \\frac{2 + 1 + 1 + 1 + 0 + 0}{6} = \\frac{5}{6} \\approx 0.833$$
-
----
-
-### General Harmonic Formula:
-$$E[C(n)] = \\sum_{k=2}^{n} \\frac{1}{k} = H_n - 1$$
-
----
-
-### Complete C++ Implementation for Problem 2.6:
-\`\`\`cpp
-#include <iostream>
-#include <vector>
-#include <numeric>
-#include <algorithm>
-
-// Algorithm 2.3: Finding Maximum Element and counting updates C(n)
-struct MaxResult {
-    int loc;
-    int maxVal;
-    int updateCount;
-};
-
-MaxResult findMaxWithCount(const std::vector<int>& data) {
-    if (data.empty()) return {-1, -1, 0};
-
-    int maxVal = data[0];
-    int loc = 0;
-    int updateCount = 0;
-
-    for (int k = 1; k < static_cast<int>(data.size()); ++k) {
-        if (data[k] > maxVal) {
-            maxVal = data[k];
-            loc = k;
-            updateCount++; // Step 3 update
-        }
-    }
-    return {loc, maxVal, updateCount};
-}
-
-int main() {
-    // 1. Test Worst Case: Strictly ascending array
-    std::vector<int> worstArr = {10, 20, 30, 40, 50}; // n = 5
-    MaxResult worstRes = findMaxWithCount(worstArr);
-    std::cout << "[Worst Case] Updates: " << worstRes.updateCount 
-              << " (Expected n-1 = " << (worstArr.size() - 1) << ")\n";
-
-    // 2. Test Best Case: Max element at index 0
-    std::vector<int> bestArr = {50, 40, 30, 20, 10}; // n = 5
-    MaxResult bestRes = findMaxWithCount(bestArr);
-    std::cout << "[Best Case]  Updates: " << bestRes.updateCount 
-              << " (Expected 0)\n";
-
-    // 3. Test Average Case for n = 3: All 3! = 6 permutations
-    std::vector<int> perm = {1, 2, 3};
-    int totalUpdates = 0;
-    int totalPerms = 0;
-
-    std::cout << "\n[Average Case Permutations for n = 3]:\n";
-    do {
-        MaxResult res = findMaxWithCount(perm);
-        std::cout << "  Permutation (" << perm[0] << ", " << perm[1] << ", " << perm[2] 
-                  << ") -> Updates = " << res.updateCount << "\n";
-        totalUpdates += res.updateCount;
-        totalPerms++;
-    } while (std::next_permutation(perm.begin(), perm.end()));
-
-    double avgUpdates = static_cast<double>(totalUpdates) / totalPerms;
-    std::cout << "Average Updates E[C(3)] = " << totalUpdates << "/" << totalPerms 
-              << " = " << avgUpdates << " (Exact 5/6 = " << 5.0 / 6.0 << ")\n";
-
-    return 0;
-}
-\`\`\``,
+    "id": "cm-problem-2-6",
+    "title": "Problem 2.6: Finding the Maximum Element — Step Count & Case Analysis",
+    "book_reference": "Lipschutz & Seymour, Data Structures, Revised 4th Ed., Chapter 2: Complexity Analysis, Page 43",
+    "topic_tag": "Complexity Analysis",
+    "content_type": "problem",
+    "difficulty": "medium",
+    "assigned_date": null,
+    "created_by": null,
+    "created_at": "2026-09-09T08:38:12.697Z",
+    "updated_at": "2026-09-09T08:38:12.697Z",
+    "problem_statement": "Consider **Algorithm 2.3** which finds the location `LOC` and value `MAX` of the largest element in an array `DATA` with `N` elements:\n\n```text\nAlgorithm 2.3: (Finding Maximum Element)\n1. Set K := 1, LOC := 1, MAX := DATA[1].\n2. Repeat Steps 3 and 4 while K <= N:\n3.    If MAX < DATA[K], then:\n         Set LOC := K, MAX := DATA[K].\n      [End of If structure.]\n4.    Set K := K + 1.\n   [End of Step 2 loop.]\n5. Write: LOC, MAX.\n6. Exit.\n```\n\n**(a)** Find the number $C$ of comparisons in the worst case, best case, and average case.\n**(b)** Find the number $A$ of assignments (assignments to `MAX`) in all cases.\n**(c)** For $N = 3$, analyze all $3! = 6$ permutations under uniform probability $P = 1/6$.",
+    "explanation_or_solution": "### Detailed Mathematical Solution for Problem 2.6\n\n#### (a) Number of Comparisons $C(n)$\n* **Loop Boundaries:** Loop runs from $K = 2$ to $N$.\n* **Every Case (Worst, Best, Average):** The `If MAX < DATA[K]` comparison executes unconditionally on every loop iteration:\n  $$C(n) = n - 1$$\n* For $n = 3$: $C = 3 - 1 = 2$ comparisons.\n\n---\n\n#### (b) Number of Assignments $A(n)$\nInitialization performs $1$ assignment (`MAX := DATA[1]`).\n* **Worst Case $W_A(n)$:** Array is strictly ascending (e.g. $[10, 20, 30]$). Update triggers on every step:\n  $$W_A(n) = 1 + (n - 1) = n$$\n* **Best Case $B_A(n)$:** Maximum is at index $1$ (e.g. $[30, 20, 10]$). No inner updates occur:\n  $$B_A(n) = 1$$\n* **Average Case $A_A(n)$:** Harmonic series expectation:\n  $$A_A(n) = 1 + \\sum_{k=2}^{n} \\frac{1}{k} = H_n \\approx \\ln n + \\gamma$$\n\n---\n\n#### (c) Permutation Table for $N = 3$ ($n! = 6$ permutations, $P = 1/6$):\n\n| Permutation | Comp ($C$) | Assign ($A$) | Steps ($S = C + A$) | Description |\n|---|:---:|:---:|:---:|---|\n| $[1, 2, 3]$ | $2$ | $3$ | $5$ | **Worst Case** (Strictly Ascending) |\n| $[1, 3, 2]$ | $2$ | $2$ | $4$ | Update at index 2 only |\n| $[2, 1, 3]$ | $2$ | $2$ | $4$ | Update at index 3 only |\n| $[2, 3, 1]$ | $2$ | $2$ | $4$ | Update at index 2 only |\n| $[3, 1, 2]$ | $2$ | $1$ | $3$ | **Best Case** (Max at Index 1) |\n| $[3, 2, 1]$ | $2$ | $1$ | $3$ | **Best Case** (Max at Index 1) |\n\n$$\\text{Average Steps } E[S] = \\frac{5 + 4 + 4 + 4 + 3 + 3}{6} = \\frac{23}{6} \\approx 3.833$$",
+    "bangla_explanation": "### 🇧🇩 সহজ বাংলায় প্রবলেম ২.৬ সমাধান ও কনসেপ্ট গাইড\n\n#### সমস্যাটির মূল উদ্দেশ্য:\nএকটি অ্যারের মধ্যে সবচেয়ে বড় সংখ্যা (`MAX`) এবং তার পজিশন (`LOC`) খুঁজে বের করার সময় কম্পিউটারকে মোট কয়টি তুলনা (Comparison) এবং মান পরিবর্তনের (Assignment) কাজ করতে হয় তা নির্ণয় করা।\n\n---\n\n#### ১. তুলনা বা Comparison ($C$):\nঅ্যারেতে মোট $n$ টি সংখ্যা থাকলে ১ম সংখ্যাটিকে আমরা শুরুতে `MAX` ধরি। এরপর বাকি $(n-1)$ টি সংখ্যার সাথে একের পর এক তুলনা করি।\n* সংখ্যাগুলো যেভাবে এলোমেলোই থাকুক না কেন, লুপটি $(n-1)$ বার চলবেই।\n* তাই **Best, Worst ও Average — সব ক্ষেত্রেই $C(n) = n - 1$** (যেমন ৩টি সংখ্যার জন্য সবসময় ২টি তুলনা লাগবে)।\n\n---\n\n#### ২. মান বরাদ্দ বা Assignment ($A$):\nশুরুতে ১ম সংখ্যাটিকে `MAX` করতে ১টি অ্যাসাইনমেন্ট লাগে (`MAX = DATA[1]`)।\n* **Worst Case ($W$):** যদি সংখ্যাগুলো ছোট থেকে বড় ক্রমে সাজানো থাকে (যেমন $[10, 20, 30]$)। প্রতিবার নতুন বড় সংখ্যা পাওয়ার কারণে মান আপডেট করতে হবে। মোট অ্যাসাইনমেন্ট $= n$ টি।\n* **Best Case ($B$):** যদি সবচেয়ে বড় সংখ্যাটি ১ম স্থানেই থাকে (যেমন $[30, 20, 10]$)। লুপে আর কখনোই নতুন মান সেট করতে হবে না। মোট অ্যাসাইনমেন্ট $= ১$ টি।\n* **Average Case ($A$):** গড়ে $H_n = 1 + \\frac{1}{2} + \\frac{1}{3} + \\dots + \\frac{1}{n}$ টি অ্যাসাইনমেন্ট লাগে।\n\n---\n\n#### ৩. $N=3$ এর জন্য ৬টি সম্ভাব্য বিন্যাস (Permutations):\n৩টি সংখ্যার সম্ভাব্য ৬টি বিন্যাসে মোট কাজ (Steps = Comparison + Assignment):\n1. $[1, 2, 3] \\rightarrow 2 + 3 = 5$ স্টেপ (সবচেয়ে বেশি কাজ - Worst Case)\n2. $[1, 3, 2] \\rightarrow 2 + 2 = 4$ স্টেপ\n3. $[2, 1, 3] \\rightarrow 2 + 2 = 4$ স্টেপ\n4. $[2, 3, 1] \\rightarrow 2 + 2 = 4$ স্টেপ\n5. $[3, 1, 2] \\rightarrow 2 + 1 = 3$ স্টেপ (সবচেয়ে কম কাজ - Best Case)\n6. $[3, 2, 1] \\rightarrow 2 + 1 = 3$ স্টেপ (Best Case)\n\nগড় স্টেপ সংখ্যা $= \\frac{5+4+4+4+3+3}{6} = \\frac{23}{6} \\approx 3.83$ টি।"
   },
-
-  // --- Problem 2.7 ---
   {
-    id: "cm-problem-2-7",
-    title: "Problem 2.7: Nested Loops & Logarithmic Stepping — Complexity C(n)",
-    book_reference: "Lipschutz & Seymour, Data Structures, Revised 4th Ed., Chapter 2: Algorithms, Complexity (Exercise 2.7)",
-    topic_tag: "Complexity Analysis",
-    content_type: "problem",
-    difficulty: "medium",
-    assigned_date: null,
-    created_by: null,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-    problem_statement: `Suppose Module A requires $M$ units of time to be executed, where $M$ is a constant. Find the complexity $C(n)$ of each algorithm, where $n$ is the size of the input data and $b$ is a positive integer greater than 1.
-
-**(a) Algorithm P2.7A (0-Based Loop Indices):**
-\`\`\`text
-1. Repeat for I = 0 to N - 1:
-2.   Repeat for J = 0 to N - 1:
-3.     Repeat for K = I to N - 1:
-4.       Module A.
-       [End of Step 3 loop.]
-     [End of Step 2 loop.]
-   [End of Step 1 loop.]
-5. Exit.
-\`\`\`
-
-**(b) Algorithm P2.7B:**
-\`\`\`text
-1. Set J := 1.
-2. Repeat Steps 3 and 4 while J <= N:
-3.   Module A.
-4.   Set J := B * J.
-   [End of Step 2 loop.]
-5. Exit.
-\`\`\``,
-    explanation_or_solution: `### (a) Algorithm P2.7A Cubic Complexity Proof
-* For each $I \\in \\{0, \\dots, N-1\\}$, $J$ runs $N$ times, and $K$ runs $(N - I)$ times:
-  $$\\text{Total Executions} = \\sum_{I=0}^{N-1} N(N - I) = N \\sum_{I=0}^{N-1} (N - I) = N \\cdot \\frac{N(N+1)}{2} = \\frac{N^3 + N^2}{2}$$
-* **Time Complexity:** $$C(n) = \\frac{M}{2}(n^3 + n^2) = O(n^3)$$
-
----
-
-### (b) Algorithm P2.7B Logarithmic Stepping Proof
-* Values taken by $J$: $1, B, B^2, \\dots, B^{k-1} \\le N < B^k$.
-* Solving gives $k = \\lfloor \\log_B N \\rfloor + 1$.
-* **Time Complexity:** $$C(n) = M(\\lfloor \\log_b n \\rfloor + 1) = O(\\log n)$$
-
----
-
-### Complete C++ Implementation for Problem 2.7:
-\`\`\`cpp
-#include <iostream>
-#include <cmath>
-
-// Algorithm P2.7A: 3-Loop Nested Cubic Complexity
-long long runAlgorithmP27A(int N, long long& theoreticalCount) {
-    long long count = 0;
-    for (int I = 0; I < N; ++I) {
-        for (int J = 0; J < N; ++J) {
-            for (int K = I; K < N; ++K) {
-                count++; // Module A execution
-            }
-        }
-    }
-    // Theoretical formula: (N^3 + N^2) / 2
-    theoreticalCount = (1LL * N * N * (N + 1)) / 2;
-    return count;
-}
-
-// Algorithm P2.7B: Geometric Progression Logarithmic Stepping
-long long runAlgorithmP27B(int N, int B, long long& theoreticalCount) {
-    long long count = 0;
-    long long J = 1;
-    while (J <= N) {
-        count++; // Module A execution
-        J = B * J;
-    }
-    // Theoretical formula: floor(log_B(N)) + 1
-    theoreticalCount = static_cast<long long>(std::floor(std::log(N) / std::log(B))) + 1;
-    return count;
-}
-
-int main() {
-    int N = 10;
-    int B = 2;
-    long long theoreticalA = 0, theoreticalB = 0;
-
-    // Test Algorithm P2.7A
-    long long actualA = runAlgorithmP27A(N, theoreticalA);
-    std::cout << "[Algorithm P2.7A for N = " << N << "]:\n"
-              << "  Actual Module A Executions     = " << actualA << "\n"
-              << "  Theoretical ((N^3 + N^2) / 2)  = " << theoreticalA << "\n"
-              << "  Matches Formula: " << (actualA == theoreticalA ? "YES (O(N^3))" : "NO") << "\n\n";
-
-    // Test Algorithm P2.7B
-    long long actualB = runAlgorithmP27B(N, B, theoreticalB);
-    std::cout << "[Algorithm P2.7B for N = " << N << ", B = " << B << "]:\n"
-              << "  Actual Module A Executions     = " << actualB << "\n"
-              << "  Theoretical (floor(log_B N)+1) = " << theoreticalB << "\n"
-              << "  Matches Formula: " << (actualB == theoreticalB ? "YES (O(log N))" : "NO") << "\n";
-
-    return 0;
-}
-\`\`\``,
+    "id": "cm-problem-2-7",
+    "title": "Problem 2.7: Nested Loops Complexity Analysis & Big-O Verification",
+    "book_reference": "Lipschutz & Seymour, Data Structures, Revised 4th Ed., Chapter 2: Complexity Analysis, Page 44",
+    "topic_tag": "Complexity Analysis",
+    "content_type": "problem",
+    "difficulty": "medium",
+    "assigned_date": null,
+    "created_by": null,
+    "created_at": "2026-09-09T08:38:12.697Z",
+    "updated_at": "2026-09-09T08:38:12.697Z",
+    "problem_statement": "Analyze the time complexity and compute the exact execution count $T(n)$ of the statement `S` in the following nested loop algorithms:\n\n```text\nAlgorithm P2.7(a):\nFor I = 1 to N do:\n   For J = 1 to N do:\n      For K = 1 to N do:\n         S;\n```\n\n```text\nAlgorithm P2.7(b):\nFor I = 1 to N do:\n   For J = 1 to I do:\n      For K = 1 to J do:\n         S;\n```",
+    "explanation_or_solution": "### Analytical Solution for Problem 2.7\n\n#### Part (a): Independent Cubic Nested Loops\n* Outer loop ($I$) runs $n$ times.\n* Middle loop ($J$) runs $n$ times.\n* Inner loop ($K$) runs $n$ times.\n$$T_a(n) = \\sum_{I=1}^{n} \\sum_{J=1}^{n} \\sum_{K=1}^{n} 1 = n \\cdot n \\cdot n = n^3$$\n* **Complexity:** $\\Theta(n^3)$ (Strict cubic time).\n\n---\n\n#### Part (b): Dependent Triangular-Pyramidal Nested Loops\n* Outer loop ($I$): $1 \\le I \\le n$.\n* Middle loop ($J$): $1 \\le J \\le I$.\n* Inner loop ($K$): $1 \\le K \\le J$.\n$$T_b(n) = \\sum_{I=1}^{n} \\sum_{J=1}^{I} J = \\sum_{I=1}^{n} \\frac{I(I+1)}{2} = \\frac{n(n+1)(n+2)}{6}$$\n\n* **Asymptotic Dominance:**\n$$T_b(n) = \\frac{1}{6}n^3 + \\frac{1}{2}n^2 + \\frac{1}{3}n = \\Theta(n^3)$$",
+    "bangla_explanation": "### 🇧🇩 সহজ বাংলায় প্রবলেম ২.৭ সমাধান ও নেস্টেড লুপ ট্রিকস\n\n#### নেস্টেড লুপ বোঝার সহজ উপায়:\nএকটি লুপের ভেতর যখন আরেকটি লুপ থাকে, তখন ভেতরের লুপটি বাইরের লুপের প্রতিটি ঘূর্ণনের জন্য সম্পূর্ণ ঘুরে শেষ হয়।\n\n---\n\n#### পর্ব (a) ব্যাখ্যা - স্বাধীন ৩-স্তরের কিউবিক লুপ:\n* ১ম লুপ ($I$) চলে $n$ বার।\n* ২য় লুপ ($J$) চলে $n$ বার।\n* ৩য় লুপ ($K$) চলে $n$ বার।\n* তিনটির একটিও অপরটির ওপর নির্ভরশীল নয়।\n* অতএব মোট স্টেটমেন্ট এক্সিকিউশন $= n \\times n \\times n = n^3$।\n* **টাইম কমপ্লেক্সিটি: $O(n^3)$ বা $\\Theta(n^3)$**। যেমন: $n = 10$ হলে কাজ হবে $1,000$ বার!\n\n---\n\n#### পর্ব (b) ব্যাখ্যা - নির্ভরশীল পিরামিডাল লুপ:\n* এখানে $J$ নির্ভর করছে $I$ এর ওপর ($1$ থেকে $I$ পর্যন্ত)।\n* আবার $K$ নির্ভর করছে $J$ এর ওপর ($1$ থেকে $J$ পর্যন্ত)।\n* গাণিতিক যোগফল: $\\sum_{I=1}^n \\frac{I(I+1)}{2} = \\frac{n(n+1)(n+2)}{6}$।\n* অর্থাৎ যদিও এখানে স্টেপ সংখ্যা কমে $\\frac{1}{6}n^3$ হচ্ছে, কিন্তু $n$ অনেক বড় হলে সর্বোচ্চ ঘাত $n^3$-ই প্রভাব ফেলে।\n* **টাইম কমপ্লেক্সিটি: $\\Theta(n^3)$**।"
   },
-
-  // =========================================================================
-  // CHAPTER 3: STRING PROCESSING
-  // =========================================================================
-
-  // --- Topic: Section 3.5 ---
   {
-    id: "cm-topic-3-5",
-    title: "Section 3.5: Fundamental String Primitives (Substring, Indexing, Concat, Length)",
-    book_reference: "Lipschutz & Seymour, Data Structures, Revised 4th Ed., Chapter 3: String Processing (Section 3.5)",
-    topic_tag: "String Processing",
-    content_type: "topic",
-    difficulty: "easy",
-    assigned_date: null,
-    created_by: null,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-    problem_statement: null,
-    explanation_or_solution: `### Section 3.5: String Primitives Overview
-
-Unlike numerical arrays where individual elements $\\text{DATA}[K]$ are accessed, strings operate on groups of consecutive characters called **substrings**.
-
----
-
-### 1. Substrings: \`SUBSTRING(S, K, L)\`
-* $S$: source string, $K$: 0-based starting index, $L$: length of substring.
-* Example: \`SUBSTRING('TO BE OR NOT TO BE', 3, 7)\` = \`'BE OR N'\`.
-
----
-
-### 2. Indexing (Pattern Matching): \`INDEX(T, P)\`
-* Returns the 0-based starting index of pattern $P$ inside text $T$, or \`-1\` if absent.
-* Example with $T = \\text{'HIS FATHER IS THE PROFESSOR'}$:
-  * \`INDEX(T, 'FATHER')\` = 4
-  * \`INDEX(T, 'THE')\` = 6
-  * \`INDEX(T, ' THE ')\` = 13
-  * \`INDEX(T, 'THEN')\` = -1
-
----
-
-### 3. Concatenation & Length:
-* $S_1 // S_2$: Concatenates $S_1$ and $S_2$.
-* \`LENGTH(S)\`: Returns character count. \`LENGTH('') = 0\`.`,
+    "id": "cm-problem-2-9",
+    "title": "Problem 2.9: Polynomial Asymptotic Dominance & Big-O Bounds",
+    "book_reference": "Lipschutz & Seymour, Data Structures, Revised 4th Ed., Chapter 2: Complexity Analysis, Page 45",
+    "topic_tag": "Complexity Analysis",
+    "content_type": "problem",
+    "difficulty": "easy",
+    "assigned_date": null,
+    "created_by": null,
+    "created_at": "2026-09-09T08:38:12.697Z",
+    "updated_at": "2026-09-09T08:38:12.697Z",
+    "problem_statement": "Prove that the polynomial $f(n) = 7n^3 + 5n^2 - 3n + 8$ is $O(n^3)$ by finding explicit positive constants $c$ and $n_0$ such that $f(n) \\le c \\cdot n^3$ for all $n \\ge n_0$.",
+    "explanation_or_solution": "### Formal Asymptotic Proof for Problem 2.9\n\n#### Definition of Big-O:\n$f(n) = O(g(n))$ if and only if $\\exists c > 0, n_0 \\ge 1$ such that:\n$$|f(n)| \\le c \\cdot g(n) \\quad \\forall n \\ge n_0$$\n\n#### Derivation:\nFor any $n \\ge 1$:\n$$|7n^3 + 5n^2 - 3n + 8| \\le 7n^3 + 5n^3 + 8n^3 = (7 + 5 + 8)n^3 = 20n^3$$\n\n* Choosing $c = 20$ and $n_0 = 1$:\n  $$7n^3 + 5n^2 - 3n + 8 \\le 20n^3 \\quad \\forall n \\ge 1$$\n* Hence $f(n) = O(n^3)$ is verified.",
+    "bangla_explanation": "### 🇧🇩 সহজ বাংলায় প্রবলেম ২.৯: পলিনোমিয়াল ও বিগ-ও প্রুফ\n\n#### মূল ধারণা:\nযেকোনো বহুপদী সমীকরণে (Polynomial) ইনপুটের সাইজ ($n$) যখন অনেক বড় হয়ে যায়, তখন সবচেয়ে বড় পাওয়ার বা ঘাতটিই পুরো সময় নির্ধারণ করে। ছোট পাওয়ারগুলো নগণ্য হয়ে যায়।\n\n---\n\n#### প্রমাণের সহজ ধাপ:\nআমাদের দেখাতে হবে $f(n) \\le c \\cdot n^3$ (যেখানে $c$ এবং $n_0$ ধ্রুবক)।\n\n1. $f(n) = 7n^3 + 5n^2 - 3n + 8$\n2. $n \\ge 1$ এর জন্য আমরা লিখতে পারি:\n   * $5n^2 \\le 5n^3$\n   * $8 \\le 8n^3$\n3. সুতরাং, $7n^3 + 5n^2 - 3n + 8 \\le 7n^3 + 5n^3 + 8n^3 = (7+5+8)n^3 = 20n^3$\n4. এখানে কনস্ট্যান্ট $c = 20$ এবং $n_0 = 1$ নিলে শর্তটি সম্পূর্ণ পূরণ হয়।\n5. তাই প্রমাণিত হলো $f(n) = O(n^3)$।"
   },
-
-  // --- Problem 3.5 ---
   {
-    id: "cm-problem-3-5",
-    title: "Problem 3.5: Fundamental String Operations & Evaluations (Section 3.5)",
-    book_reference: "Lipschutz & Seymour, Data Structures, Revised 4th Ed., Chapter 3: String Processing (Section 3.5)",
-    topic_tag: "String Processing",
-    content_type: "problem",
-    difficulty: "easy",
-    assigned_date: null,
-    created_by: null,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-    problem_statement: `Consider the fundamental string operations \`SUBSTRING\`, \`INDEX\`, \`CONCAT\` ($//$), and \`LENGTH\`. Evaluate each of the following expressions using standard 0-based indexing:
-
-**(a) Substring Operations:**  
-(i) \`SUBSTRING('TO BE OR NOT TO BE', 3, 7)\`  
-(ii) \`SUBSTRING('THE END', 3, 4)\`  
-
-**(b) Indexing (Pattern Matching):** Let text $T = \\text{'HIS FATHER IS THE PROFESSOR'}$. Evaluate:  
-(i) \`INDEX(T, 'FATHER')\`  
-(ii) \`INDEX(T, 'THE')\`  
-(iii) \`INDEX(T, ' THE ')\`  
-(iv) \`INDEX(T, 'THEN')\`  
-
-**(c) Concatenation & Length:** Let $S_1 = \\text{'MARK'}$ and $S_2 = \\text{'TWAIN'}$. Evaluate:  
-(i) $S_1 // S_2$  
-(ii) $S_1 // \\text{' '} // S_2$  
-(iii) \`LENGTH('COMPUTER')\` and \`LENGTH('')\``,
-    explanation_or_solution: `### (a) Substring Solutions:
-1. \`SUBSTRING('TO BE OR NOT TO BE', 3, 7)\` = **\`'BE OR N'\`** (starts at index 3: $'B'$).
-2. \`SUBSTRING('THE END', 3, 4)\` = **\`' END'\`** (starts at index 3: space $' '$).
-
----
-
-### (b) Indexing Solutions ($T = \\text{'HIS FATHER IS THE PROFESSOR'}$):
-1. \`INDEX(T, 'FATHER')\` = **4**
-2. \`INDEX(T, 'THE')\` = **6** (inside $'FA\\mathbf{THE}R'$)
-3. \`INDEX(T, ' THE ')\` = **13** (standalone word)
-4. \`INDEX(T, 'THEN')\` = **-1** (not present)
-
----
-
-### (c) Concatenation & Length Solutions:
-1. $S_1 // S_2$ = **\`'MARKTWAIN'\`**
-2. $S_1 // \\text{' '} // S_2$ = **\`'MARK TWAIN'\`**
-3. \`LENGTH('COMPUTER')\` = **8**, \`LENGTH('')\` = **0**.
-
----
-
-### Complete C++ Implementation for Problem 3.5:
-\`\`\`cpp
-#include <iostream>
-#include <string>
-
-// 1. Primitive Substring: SUBSTRING(S, K, L)
-std::string Substring(const std::string& S, int K, int L) {
-    if (K < 0 || K >= static_cast<int>(S.length()) || L <= 0) return "";
-    return S.substr(K, L);
-}
-
-// 2. Primitive Indexing: INDEX(T, P) returning 0-based index or -1
-int Index(const std::string& T, const std::string& P) {
-    if (P.empty()) return 0;
-    size_t pos = T.find(P);
-    return (pos == std::string::npos) ? -1 : static_cast<int>(pos);
-}
-
-// 3. Length & Trim
-int Length(const std::string& S) {
-    return static_cast<int>(S.length());
-}
-
-std::string Trim(const std::string& S) {
-    size_t end = S.find_last_not_of(" \t\n\r");
-    return (end == std::string::npos) ? "" : S.substr(0, end + 1);
-}
-
-int main() {
-    std::cout << "=== Problem 3.5 C++ Verification ===\n\n";
-
-    // (a) Substring Operations
-    std::string textA = "TO BE OR NOT TO BE";
-    std::string textEnd = "THE END";
-    std::cout << "(a)(i)  SUBSTRING('TO BE OR NOT TO BE', 3, 7) = '" 
-              << Substring(textA, 3, 7) << "'\n";
-    std::cout << "(a)(ii) SUBSTRING('THE END', 3, 4)           = '" 
-              << Substring(textEnd, 3, 4) << "'\n\n";
-
-    // (b) Indexing (Pattern Matching)
-    std::string T = "HIS FATHER IS THE PROFESSOR";
-    std::cout << "(b)(i)   INDEX(T, 'FATHER') = " << Index(T, "FATHER") << "\n";
-    std::cout << "(b)(ii)  INDEX(T, 'THE')    = " << Index(T, "THE") << "\n";
-    std::cout << "(b)(iii) INDEX(T, ' THE ')  = " << Index(T, " THE ") << "\n";
-    std::cout << "(b)(iv)  INDEX(T, 'THEN')   = " << Index(T, "THEN") << "\n\n";
-
-    // (c) Concatenation & Length
-    std::string S1 = "MARK";
-    std::string S2 = "TWAIN";
-    std::cout << "(c)(i)   S1 // S2        = '" << (S1 + S2) << "'\n";
-    std::cout << "(c)(ii)  S1 // ' ' // S2 = '" << (S1 + " " + S2) << "'\n";
-    std::cout << "(c)(iii) LENGTH('COMPUTER') = " << Length("COMPUTER") << "\n";
-    std::cout << "        LENGTH('')         = " << Length("") << "\n";
-    std::cout << "        TRIM('ERIK   ')    = '" << Trim("ERIK   ") << "'\n";
-
-    return 0;
-}
-\`\`\``,
+    "id": "cm-problem-2-10",
+    "title": "Problem 2.10: Big-Omega & Big-Theta Bounding Verification",
+    "book_reference": "Lipschutz & Seymour, Data Structures, Revised 4th Ed., Chapter 2: Complexity Analysis, Page 45",
+    "topic_tag": "Complexity Analysis",
+    "content_type": "problem",
+    "difficulty": "easy",
+    "assigned_date": null,
+    "created_by": null,
+    "created_at": "2026-09-09T08:38:12.697Z",
+    "updated_at": "2026-09-09T08:38:12.697Z",
+    "problem_statement": "Prove that $f(n) = 4n^2 + 3n$ satisfies both $f(n) = \\Omega(n^2)$ and $f(n) = \\Theta(n^2)$.",
+    "explanation_or_solution": "### Mathematical Derivation for Problem 2.10\n\n#### 1. Big-Omega (Lower Bound) Verification:\nWe must find $c_1 > 0$ and $n_0$ such that $4n^2 + 3n \\ge c_1 n^2$ for all $n \\ge n_0$.\n* For $n \\ge 1$, $3n > 0$, hence:\n  $$4n^2 + 3n \\ge 4n^2$$\n* Setting $c_1 = 4, n_0 = 1$ confirms $f(n) = \\Omega(n^2)$.\n\n#### 2. Big-O (Upper Bound) Verification:\n* For $n \\ge 1$, $3n \\le 3n^2$:\n  $$4n^2 + 3n \\le 4n^2 + 3n^2 = 7n^2$$\n* Setting $c_2 = 7, n_0 = 1$ confirms $f(n) = O(n^2)$.\n\n#### 3. Big-Theta (Tight Bound) Conclusion:\nSince $4n^2 \\le 4n^2 + 3n \\le 7n^2$ for all $n \\ge 1$, we have $f(n) = \\Theta(n^2)$.",
+    "bangla_explanation": "### 🇧🇩 সহজ বাংলায় প্রবলেম ২.১০: ওমেগা ($\\Omega$) এবং থিটা ($\\Theta$) প্রমাণ\n\n#### কেন এটা গুরুত্বপূর্ণ?\n* **Big-O** কেবল বলে প্রোগ্রামটি সর্বোচ্চ কত সময় নেবে।\n* **Big-Omega ($\\Omega$)** বলে প্রোগ্রামটি অন্তত সর্বনিম্ন কত সময় নেবে।\n* আর যখন আপার বাউন্ড এবং লোয়ার বাউন্ড দুটোই একই ক্লাসের হয়, তখন তাকে বলে **Big-Theta ($\\Theta$)** — যা সবচেয়ে নির্ভুল বাউন্ড।\n\n---\n\n#### সহজ প্রমাণ:\n1. **লোয়ার বাউন্ড ($\\Omega$):** $n \\ge 1$ হলে $4n^2 + 3n \\ge 4n^2$ হবেই। অর্থাৎ $c_1 = 4$ ধরলে এটি $\\Omega(n^2)$।\n2. **আপার বাউন্ড ($O$):** $n \\ge 1$ হলে $4n^2 + 3n \\le 4n^2 + 3n^2 = 7n^2$। অর্থাৎ $c_2 = 7$ ধরলে এটি $O(n^2)$।\n3. যেহেতু $4n^2 \\le 4n^2 + 3n \\le 7n^2$, তাই নিশ্চিতভাবে এটি $\\Theta(n^2)$।"
   },
-
-  // --- Topic: Section 3.6 ---
   {
-    id: "cm-topic-3-6",
-    title: "Section 3.6: Word Processing, Composite Operations & Cascading Collapse",
-    book_reference: "Lipschutz & Seymour, Data Structures, Revised 4th Ed., Chapter 3: String Processing (Section 3.6)",
-    topic_tag: "String Processing",
-    content_type: "topic",
-    difficulty: "medium",
-    assigned_date: null,
-    created_by: null,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-    problem_statement: null,
-    explanation_or_solution: `### Section 3.6: Word Processing & Composite Operations
-
-Word processing systems implement composite string manipulation operations using primitive building blocks.
-
----
-
-### 1. Primitive Decompositions (0-Based):
-* **Insertion:**
-  $$\\text{INSERT}(T, K, S) = \\text{SUBSTRING}(T, 0, K) // S // \\text{SUBSTRING}(T, K, \\text{LENGTH}(T) - K)$$
-* **Deletion:**
-  $$\\text{DELETE}(T, K, L) = \\text{SUBSTRING}(T, 0, K) // \\text{SUBSTRING}(T, K + L, \\text{LENGTH}(T) - K - L)$$
-* **Replacement:** \`REPLACE(T, P1, P2)\` locates $K = \\text{INDEX}(T, P_1)$, calls \`DELETE(T, K, LENGTH(P1))\`, and \`INSERT(T, K, P2)\`.
-
----
-
-### 2. The Cascading Collapse Phenomenon:
-When deleting all occurrences of a pattern $P$ iteratively (Algorithm 3.1), deleting an inner match causes outer characters to collide. This can form **new occurrences of $P$**, causing the loop to run more times than the initial count of $P$!`,
+    "id": "cm-problem-2-11",
+    "title": "Problem 2.11: Complexity Arithmetic — Sum and Product Rules",
+    "book_reference": "Lipschutz & Seymour, Data Structures, Revised 4th Ed., Chapter 2: Complexity Analysis, Page 46",
+    "topic_tag": "Complexity Analysis",
+    "content_type": "problem",
+    "difficulty": "easy",
+    "assigned_date": null,
+    "created_by": null,
+    "created_at": "2026-09-09T08:38:12.697Z",
+    "updated_at": "2026-09-09T08:38:12.697Z",
+    "problem_statement": "Prove the fundamental Big-O Sum Rule: If $f_1(n) = O(g_1(n))$ and $f_2(n) = O(g_2(n))$, then $f_1(n) + f_2(n) = O(\\max(g_1(n), g_2(n)))$.",
+    "explanation_or_solution": "### Formal Proof of the Sum Rule\n\nBy definition:\n$$\\exists c_1, n_1 \\text{ such that } |f_1(n)| \\le c_1 |g_1(n)| \\quad \\forall n \\ge n_1$$\n$$\\exists c_2, n_2 \\text{ such that } |f_2(n)| \\le c_2 |g_2(n)| \\quad \\forall n \\ge n_2$$\n\nLet $n_0 = \\max(n_1, n_2)$ and $c_3 = c_1 + c_2$. For all $n \\ge n_0$:\n$$|f_1(n) + f_2(n)| \\le |f_1(n)| + |f_2(n)| \\le c_1 |g_1(n)| + c_2 |g_2(n)|$$\n$$\\le (c_1 + c_2) \\max(|g_1(n)|, |g_2(n)|) = c_3 \\max(|g_1(n)|, |g_2(n)|)$$\n\nThus $f_1(n) + f_2(n) = O(\\max(g_1(n), g_2(n)))$.",
+    "bangla_explanation": "### 🇧🇩 সহজ বাংলায় প্রবলেম ২.১১: কমপ্লেক্সিটি যোগের নিয়ম (Sum Rule)\n\n#### রিয়েল লাইফ অর্থ:\nযদি একটি প্রোগ্রামে দুটি আলাদা সেকশন থাকে — ১ম সেকশন নিতেছে $O(n^2)$ সময় এবং ২য় সেকশন নিতেছে $O(n)$ সময়। তাহলে পুরো প্রোগ্রামের মোট সময় কত হবে?\n* উত্তর হলো: $O(n^2)$। কারণ বড় জটিলতাটিই পুরো প্রোগ্রামের পারফরম্যান্স নিয়ন্ত্রণ করে। ছোট অংশটি সামগ্রিকভাবে নগণ্য হয়ে যায়।\n\n---\n\n#### গাণিতিক যুক্তি:\n* $f_1(n) \\le c_1 g_1(n)$ এবং $f_2(n) \\le c_2 g_2(n)$\n* দুটো যোগ করলে: $f_1(n) + f_2(n) \\le (c_1 + c_2) \\cdot \\max(g_1(n), g_2(n))$\n* সুতরাং কমপ্লেক্সিটি হবে তাদের মধ্যে যেটি বড় তার সমান।"
   },
-
-  // --- Problem 3.6 ---
   {
-    id: "cm-problem-3-6",
-    title: "Problem 3.6: Word Processing Operations — Insertion, Deletion & Replacement",
-    book_reference: "Lipschutz & Seymour, Data Structures, Revised 4th Ed., Chapter 3: String Processing (Section 3.6)",
-    topic_tag: "String Processing",
-    content_type: "problem",
-    difficulty: "medium",
-    assigned_date: null,
-    created_by: null,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-    problem_statement: `Word processing composite operations (\`INSERT\`, \`DELETE\`, \`REPLACE\`) are implemented using primitive string operations (\`SUBSTRING\`, \`INDEX\`, \`CONCAT\`).
-
-**(a) Primitive Decompositions:** Write the mathematical formulas for \`INSERT(T, K, S)\` and \`DELETE(T, K, L)\` in terms of \`SUBSTRING\` and Concatenation ($//$) for 0-based indexing.  
-**(b) Insertion Evaluations:**  
-(i) \`INSERT('ABCDEFG', 2, 'XYZ')\`  
-(ii) \`INSERT('ABCDEFG', 5, 'XYZ')\`  
-**(c) Deletion Evaluations:**  
-(i) \`DELETE('ABCDEFG', 3, 2)\`  
-(ii) \`DELETE('ABCDEFG', 1, 4)\`  
-(iii) \`DELETE('ABCDEFG', -1, 2)\` (Zero case)  
-**(d) Replacement Execution:**  
-(i) State the 3-step sequence to execute \`REPLACE(T, P1, P2)\` using \`INDEX\`, \`DELETE\`, and \`INSERT\`.  
-(ii) Evaluate \`REPLACE('XABYABZ', 'AB', 'C')\` and \`REPLACE('XABYABZ', 'BA', 'C')\`.`,
-    explanation_or_solution: `### (a) Primitive Decomposition Formulas (0-Based Indexing)
-1. **Insertion:**
-   $$\\text{INSERT}(T, K, S) = \\text{SUBSTRING}(T, 0, K) // S // \\text{SUBSTRING}(T, K, \\text{LENGTH}(T) - K)$$
-2. **Deletion:**
-   $$\\text{DELETE}(T, K, L) = \\text{SUBSTRING}(T, 0, K) // \\text{SUBSTRING}(T, K + L, \\text{LENGTH}(T) - K - L)$$
-
----
-
-### (b) Insertion Evaluations:
-1. \`INSERT('ABCDEFG', 2, 'XYZ')\` = **\`'ABXYZCDEFG'\`**
-2. \`INSERT('ABCDEFG', 5, 'XYZ')\` = **\`'ABCDEXYZFG'\`**
-
----
-
-### (c) Deletion Evaluations:
-1. \`DELETE('ABCDEFG', 3, 2)\` = **\`'ABCFG'\`** (removes $'DE'$)
-2. \`DELETE('ABCDEFG', 1, 4)\` = **\`'AFG'\`** (removes $'BCDE'$)
-3. \`DELETE('ABCDEFG', -1, 2)\` = **\`'ABCDEFG'\`** (Zero Case)
-
----
-
-### (d) Replacement Evaluations:
-1. \`REPLACE('XABYABZ', 'AB', 'C')\` = **\`'XCYABZ'\`**
-2. \`REPLACE('XABYABZ', 'BA', 'C')\` = **\`'XABYABZ'\`** (no $'BA'$ present).
-
----
-
-### Complete C++ Implementation for Problem 3.6:
-\`\`\`cpp
-#include <iostream>
-#include <string>
-
-// Primitive Helpers
-int Index(const std::string& T, const std::string& P) {
-    size_t pos = T.find(P);
-    return (pos == std::string::npos) ? -1 : static_cast<int>(pos);
-}
-
-// 1. Primitive Decomposition for INSERT(T, K, S)
-std::string customInsert(const std::string& T, int K, const std::string& S) {
-    if (K < 0) K = 0;
-    if (K > static_cast<int>(T.length())) K = static_cast<int>(T.length());
-    
-    std::string prefix = T.substr(0, K);
-    std::string suffix = T.substr(K);
-    return prefix + S + suffix;
-}
-
-// 2. Primitive Decomposition for DELETE(T, K, L) with Zero Case check
-std::string customDelete(const std::string& T, int K, int L) {
-    // Zero Case: If K == -1 or out of bounds, return T unchanged
-    if (K < 0 || K >= static_cast<int>(T.length()) || L <= 0) {
-        return T;
-    }
-    std::string prefix = T.substr(0, K);
-    std::string suffix = (K + L < static_cast<int>(T.length())) ? T.substr(K + L) : "";
-    return prefix + suffix;
-}
-
-// 3. Composite REPLACE(T, P1, P2) using Index, Delete, and Insert
-std::string customReplace(std::string T, const std::string& P1, const std::string& P2) {
-    int K = Index(T, P1);
-    if (K != -1) {
-        T = customDelete(T, K, static_cast<int>(P1.length()));
-        T = customInsert(T, K, P2);
-    }
-    return T;
-}
-
-int main() {
-    std::cout << "=== Problem 3.6 C++ Verification ===\n\n";
-
-    // (b) Insertion Evaluations
-    std::string base = "ABCDEFG";
-    std::cout << "(b)(i)  INSERT('ABCDEFG', 2, 'XYZ') = '" 
-              << customInsert(base, 2, "XYZ") << "'\n";
-    std::cout << "(b)(ii) INSERT('ABCDEFG', 5, 'XYZ') = '" 
-              << customInsert(base, 5, "XYZ") << "'\n\n";
-
-    // (c) Deletion Evaluations
-    std::cout << "(c)(i)   DELETE('ABCDEFG', 3, 2)  = '" 
-              << customDelete(base, 3, 2) << "'\n";
-    std::cout << "(c)(ii)  DELETE('ABCDEFG', 1, 4)  = '" 
-              << customDelete(base, 1, 4) << "'\n";
-    std::cout << "(c)(iii) DELETE('ABCDEFG', -1, 2) = '" 
-              << customDelete(base, -1, 2) << "' (Zero Case)\n\n";
-
-    // (d) Replacement Evaluations
-    std::string textRep = "XABYABZ";
-    std::cout << "(d)(i)  REPLACE('XABYABZ', 'AB', 'C') = '" 
-              << customReplace(textRep, "AB", "C") << "'\n";
-    std::cout << "(d)(ii) REPLACE('XABYABZ', 'BA', 'C') = '" 
-              << customReplace(textRep, "BA", "C") << "'\n";
-
-    return 0;
-}
-\`\`\``,
+    "id": "cm-problem-2-12",
+    "title": "Problem 2.12: Logarithmic Loop Complexity & Step Halving",
+    "book_reference": "Lipschutz & Seymour, Data Structures, Revised 4th Ed., Chapter 2: Complexity Analysis, Page 46",
+    "topic_tag": "Complexity Analysis",
+    "content_type": "problem",
+    "difficulty": "medium",
+    "assigned_date": null,
+    "created_by": null,
+    "created_at": "2026-09-09T08:38:12.697Z",
+    "updated_at": "2026-09-09T08:38:12.697Z",
+    "problem_statement": "Determine the exact step count and asymptotic Big-O complexity of the following halving loop:\n\n```text\nSet K := N.\nRepeat while K >= 1:\n   Execute statement S;\n   Set K := floor(K / 2).\n```",
+    "explanation_or_solution": "### Analytical Derivation for Problem 2.12\n\n#### Step Progression:\nAt iteration $i$, the value of $K$ is $K_i = \\lfloor N / 2^{i-1} \\rfloor$.\nThe loop terminates when $K < 1$, which occurs when:\n$$\\frac{N}{2^k} < 1 \\implies 2^k > N \\implies k > \\log_2 N$$\n\n#### Exact Step Count:\n$$\\text{Total Iterations } T(n) = \\lfloor \\log_2 N \\rfloor + 1$$\n\n#### Asymptotic Complexity:\n$$T(n) = O(\\log_2 n) = O(\\log n)$$",
+    "bangla_explanation": "### 🇧🇩 সহজ বাংলায় প্রবলেম ২.১২: লগারিদমিক লুপ ও অর্ধেক করার ম্যাজিক\n\n#### লুপটি কীভাবে কাজ করছে?\nলুপের প্রতি ধাপে $K$ এর মান ২ দিয়ে ভাগ হয়ে অর্ধেক হয়ে যাচ্ছে:\n* ১ম ধাপ: $K = N$\n* ২য় ধাপ: $K = N/2$\n* ৩য় ধাপ: $K = N/4 = N/2^2$\n* $i$-তম ধাপ: $K = N/2^{i-1}$\n\nলুপটি ততক্ষণ চলবে যতক্ষণ না $K < 1$ হয়।\nতাহলে $2^k \\approx N \\implies k \\approx \\log_2 N$।\n\n---\n\n#### বাস্তব উদাহরণ:\n* $N = 16$ হলে লুপ ঘুরবে মাত্র $5$ বার ($16 \\rightarrow 8 \\rightarrow 4 \\rightarrow 2 \\rightarrow 1$)।\n* $N = 1,000,000$ (দশ লক্ষ) হলেও লুপ ঘুরবে মাত্র ২০ বার!\n* তাই এর **Time Complexity হলো $O(\\log n)$** — যা অবিশ্বাস্য রকমের দ্রুতগতির। যেমন বাইনারি সার্চ এই পদ্ধতিতেই কাজ করে।"
   },
-
-  // --- Problem 3.1 (Algorithm 3.1) ---
   {
-    id: "cm-problem-3-1",
-    title: "Problem 3.1 (Algorithm 3.1): Delete Every Occurrence of Pattern P in Text T",
-    book_reference: "Lipschutz & Seymour, Data Structures, Revised 4th Ed., Chapter 3: String Processing (Algorithm 3.1)",
-    topic_tag: "String Processing",
-    content_type: "problem",
-    difficulty: "medium",
-    assigned_date: null,
-    created_by: null,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-    problem_statement: `Let $T$ be a text stored in memory and let $P$ be a pattern string. Design and analyze an algorithm using primitive string operations (\`INDEX\`, \`DELETE\`, \`LENGTH\`) that deletes every occurrence of pattern $P$ from text $T$.
-
-**(a)** Write the formal step-by-step algorithm using standard 0-based indexing.  
-**(b)** Trace the execution of the algorithm for $T = \\text{'XABYABZ'}$ and $P = \\text{'AB'}$.  
-**(c)** Trace the algorithm for $T = \\text{'XAABBBY'}$ and $P = \\text{'AB'}$. Explain why the loop executes **3 times** even though pattern $P$ appears only once in the initial text $T$ (**Cascading Collapse**).`,
-    explanation_or_solution: `### (a) Algorithm 3.1 Pseudocode (0-Based Standard)
-\`\`\`text
-Algorithm 3.1: Delete Every Occurrence of P in T
-1. [Find initial index.] Set K := INDEX(T, P).
-2. Repeat while K != -1:
-   (a) [Delete P.] Set T := DELETE(T, K, LENGTH(P)).
-   (b) [Update index.] Set K := INDEX(T, P).
-   [End of loop.]
-3. Write: T.
-4. Exit.
-\`\`\`
-
----
-
-### (b) Trace for $T = \\text{'XABYABZ'}, P = \\text{'AB'}$:
-* Step 1: $K = 1 \\implies T = \\text{'XYABZ'}$
-* Step 2: $K = 2 \\implies T = \\text{'XYZ'}$
-* Result: **\`'XYZ'\`** (2 iterations).
-
----
-
-### (c) Cascading Collapse Trace ($T = \\text{'XAABBBY'}, P = \\text{'AB'}$):
-* Iteration 1: Deleting initial $'AB'$ at index 2 $\\implies T = \\text{'XAABBY'}$. New $'AB'$ formed at index 1!
-* Iteration 2: Deleting newly formed $'AB'$ $\\implies T = \\text{'XABY'}$. Another $'AB'$ formed!
-* Iteration 3: Deleting third $'AB'$ $\\implies T = \\text{'XY'}$.
-* Result: **\`'XY'\`** (3 iterations).
-
----
-
-### Complete C++ Implementation for Problem 3.1 (Algorithm 3.1):
-\`\`\`cpp
-#include <iostream>
-#include <string>
-
-// Custom Primitive Delete for Algorithm 3.1
-std::string customDelete(const std::string& T, int K, int L) {
-    if (K < 0 || K >= static_cast<int>(T.length()) || L <= 0) return T;
-    return T.substr(0, K) + T.substr(K + L);
-}
-
-// Algorithm 3.1: Delete Every Occurrence of P in Text T with Step Logging
-std::string deleteAllOccurrences(std::string T, const std::string& P) {
-    if (P.empty()) return T;
-
-    int K = static_cast<int>(T.find(P));
-    int iteration = 0;
-
-    std::cout << "Starting Algorithm 3.1 with T = '" << T << "', P = '" << P << "'\n";
-
-    while (K != -1) {
-        iteration++;
-        T = customDelete(T, K, static_cast<int>(P.length()));
-        std::cout << "  Iteration " << iteration << ": Deleted '" << P 
-                  << "' at index " << K << " -> Current T = '" << T << "'\n";
-        
-        size_t nextPos = T.find(P);
-        K = (nextPos == std::string::npos) ? -1 : static_cast<int>(nextPos);
-    }
-
-    std::cout << "  Finished: Total Iterations = " << iteration 
-              << ", Final Result = '" << T << "'\n\n";
-    return T;
-}
-
-int main() {
-    // (b) Trace Example 3.7(a)
-    std::cout << "=== Test 1: Example 3.7(a) ===\n";
-    deleteAllOccurrences("XABYABZ", "AB");
-
-    // (c) Cascading Collapse Example 3.7(b)
-    std::cout << "=== Test 2: Example 3.7(b) (Cascading Collapse) ===\n";
-    deleteAllOccurrences("XAABBBY", "AB");
-
-    return 0;
-}
-\`\`\``,
+    "id": "cm-topic-3-5",
+    "title": "Section 3.5: String Processing — Substring, Indexing & Concatenation",
+    "book_reference": "Lipschutz & Seymour, Data Structures, Revised 4th Ed., Chapter 3: String Processing",
+    "topic_tag": "String Processing",
+    "content_type": "topic",
+    "difficulty": "easy",
+    "assigned_date": null,
+    "created_by": null,
+    "created_at": "2026-09-09T08:38:12.697Z",
+    "updated_at": "2026-09-09T08:38:12.697Z",
+    "problem_statement": null,
+    "explanation_or_solution": "### Section 3.5: Elementary String Operations\n\nA **String** is a finite sequence of zero or more characters. The length of a string is the number of characters in the sequence.\n\n---\n\n### Fundamental Operations:\n1. **SUBSTRING(S, initial, length):** Returns sub-string of $S$ starting at index `initial` with given `length`.\n2. **INDEX(text, pattern):** Finds first index where `pattern` appears in `text` (returns 0 or -1 if not found).\n3. **CONCAT(S1, S2):** Concatenates two strings $S_1$ and $S_2$.",
+    "bangla_explanation": "### 🇧🇩 সহজ বাংলায় স্ট্রিং প্রসেসিং: Substring, Indexing ও Concatenation\n\n#### ১. স্ট্রিং কী?\nস্ট্রিং হলো কতগুলো ক্যারেক্টারের ধারাবাহিক সিকোয়েন্স (যেমন: `\"HELLO WORLD\"` বা `\"BANGLADESH\"`)।\n\n---\n\n#### ২. ৩টি মৌলিক অপারেশন:\n1. **SUBSTRING (টুকরো কাটা):**\n   - মূল স্ট্রিংয়ের একটি নির্দিষ্ট পজিশন থেকে নির্দিষ্ট দৈর্ঘ্যের অংশ কেটে নেওয়া।\n   - যেমন: `\"BANGLADESH\"` স্ট্রিংয়ের ৩ নম্বর ইনডেক্স থেকে ৪ দৈর্ঘ্য নিলে পাওয়া যাবে `\"NGLA\"`।\n2. **INDEX (প্যাটার্ন খোঁজা):**\n   - একটি বড় লেখার ভেতর কোনো নির্দিষ্ট শব্দ প্রথম কোথায় আছে তার পজিশন বের করা।\n   - না পাওয়া গেলে $-1$ বা $0$ রিটার্ন করে।\n   - যেমন: `\"HELLO WORLD\"` এ `\"WORLD\"` শব্দের ইনডেক্স হলো $6$।\n3. **CONCAT (জোড়া লাগানো):**\n   - দুটি স্ট্রিংকে পাশাপাশি জুড়ে দিয়ে একটি নতুন স্ট্রিং তৈরি করা।\n   - যেমন: `CONCAT(\"Data\", \"Structure\")` $\\rightarrow$ `\"DataStructure\"`।"
   },
-
-  // --- Problem 3.2 (Algorithm 3.2) ---
   {
-    id: "cm-problem-3-2",
-    title: "Problem 3.2 (Algorithm 3.2): Replace Every Occurrence of Pattern P by Q",
-    book_reference: "Lipschutz & Seymour, Data Structures, Revised 4th Ed., Chapter 3: String Processing (Algorithm 3.2)",
-    topic_tag: "String Processing",
-    content_type: "problem",
-    difficulty: "medium",
-    assigned_date: null,
-    created_by: null,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-    problem_statement: `A text $T$ and patterns $P$ and $Q$ are in memory. Design an algorithm that replaces every occurrence of pattern $P$ in text $T$ by pattern $Q$.
-
-**(a)** Write the formal step-by-step algorithm using primitive operations (\`INDEX\`, \`REPLACE\`).  
-**(b)** Trace the algorithm for $T = \\text{'XABYABZ'}, P = \\text{'AB'}, Q = \\text{'C'}$.  
-**(c)** Write a working C++ implementation for global pattern replacement.`,
-    explanation_or_solution: `### (a) Algorithm 3.2 Pseudocode (0-Based Standard)
-\`\`\`text
-Algorithm 3.2: Replace Every Occurrence of P by Q
-1. [Find index of P.] Set K := INDEX(T, P).
-2. Repeat while K != -1:
-   (a) [Replace P by Q.] Set T := REPLACE(T, P, Q).
-   (b) [Update index.] Set K := INDEX(T, P).
-   [End of loop.]
-3. Write: T.
-4. Exit.
-\`\`\`
-
----
-
-### (b) Trace for $T = \\text{'XABYABZ'}, P = \\text{'AB'}, Q = \\text{'C'}$:
-* Iteration 1: $K = 1 \\implies T = \\text{'XCYABZ'}, K = 4$.
-* Iteration 2: $K = 4 \\implies T = \\text{'XCYCZ'}, K = -1$.
-* Result: **\`'XCYCZ'\`**.
-
----
-
-### Complete C++ Implementation for Problem 3.2 (Algorithm 3.2):
-\`\`\`cpp
-#include <iostream>
-#include <string>
-
-// Primitive Replace
-std::string customReplace(std::string T, int K, int lenP, const std::string& Q) {
-    return T.substr(0, K) + Q + T.substr(K + lenP);
-}
-
-// Algorithm 3.2: Replace Every Occurrence of P by Q in T
-std::string replaceAllOccurrences(std::string T, const std::string& P, const std::string& Q) {
-    if (P.empty()) return T;
-
-    size_t pos = T.find(P);
-    int K = (pos == std::string::npos) ? -1 : static_cast<int>(pos);
-    int iteration = 0;
-
-    std::cout << "Starting Algorithm 3.2 with T = '" << T << "', P = '" << P 
-              << "', Q = '" << Q << "'\n";
-
-    while (K != -1) {
-        iteration++;
-        T = customReplace(T, K, static_cast<int>(P.length()), Q);
-        std::cout << "  Iteration " << iteration << ": Replaced at index " << K 
-                  << " -> Current T = '" << T << "'\n";
-        
-        // Find next occurrence (advance after replacement if needed)
-        size_t nextPos = T.find(P, K + Q.length());
-        K = (nextPos == std::string::npos) ? -1 : static_cast<int>(nextPos);
-    }
-
-    std::cout << "  Finished: Total Iterations = " << iteration 
-              << ", Final Result = '" << T << "'\n\n";
-    return T;
-}
-
-int main() {
-    std::cout << "=== Algorithm 3.2 Global Replace Demo ===\n";
-    std::string text = "XABYABZ";
-    std::string result = replaceAllOccurrences(text, "AB", "C");
-    std::cout << "Final Replaced String: '" << result << "' (Expected 'XCYCZ')\n";
-
-    return 0;
-}
-\`\`\``,
+    "id": "cm-problem-3-1",
+    "title": "Problem 3.1: Substring Extraction Operations",
+    "book_reference": "Lipschutz & Seymour, Data Structures, Revised 4th Ed., Chapter 3: String Processing, Page 61",
+    "topic_tag": "String Processing",
+    "content_type": "problem",
+    "difficulty": "easy",
+    "assigned_date": null,
+    "created_by": null,
+    "created_at": "2026-09-09T08:38:12.697Z",
+    "updated_at": "2026-09-09T08:38:12.697Z",
+    "problem_statement": "Let $S = \\text{\"MEMORIES\"}$. Evaluate each of the following substring expressions:\n**(a)** $\\text{SUBSTRING}(S, 1, 3)$\n**(b)** $\\text{SUBSTRING}(S, 4, 4)$\n**(c)** $\\text{SUBSTRING}(S, 3, 1)$\n**(d)** $\\text{SUBSTRING}(S, 2, 5)$",
+    "explanation_or_solution": "### Step-by-Step Evaluation for $S = \\text{\"MEMORIES\"}$\n\nIndexing: $1:M, 2:E, 3:M, 4:O, 5:R, 6:I, 7:E, 8:S$\n\n* **(a) $\\text{SUBSTRING}(S, 1, 3)$:**\n  Starts at index 1 with length 3: Indices $1, 2, 3 \\rightarrow \\mathbf{\"MEM\"}$.\n* **(b) $\\text{SUBSTRING}(S, 4, 4)$:**\n  Starts at index 4 with length 4: Indices $4, 5, 6, 7 \\rightarrow \\mathbf{\"ORIE\"}$.\n* **(c) $\\text{SUBSTRING}(S, 3, 1)$:**\n  Starts at index 3 with length 1: Index $3 \\rightarrow \\mathbf{\"M\"}$.\n* **(d) $\\text{SUBSTRING}(S, 2, 5)$:**\n  Starts at index 2 with length 5: Indices $2, 3, 4, 5, 6 \\rightarrow \\mathbf{\"EMORI\"}$.",
+    "bangla_explanation": "### 🇧🇩 সহজ বাংলায় প্রবলেম ৩.১ সমাধান\n\n#### স্ট্রিংটির ইনডেক্সিং ছক ($S = \\text{\"MEMORIES\"}$):\n* ইনডেক্স ১: `M`\n* ইনডেক্স ২: `E`\n* ইনডেক্স ৩: `M`\n* ইনডেক্স ৪: `O`\n* ইনডেক্স ৫: `R`\n* ইনডেক্স ৬: `I`\n* ইনডেক্স ৭: `E`\n* ইনডেক্স ৮: `S`\n\n---\n\n#### এক নজরে উত্তর:\n* **(a) $\\text{SUBSTRING}(S, 1, 3)$:** ১ নম্বর পজিশন থেকে ৩টি অক্ষর $\\rightarrow$ `\"MEM\"`।\n* **(b) $\\text{SUBSTRING}(S, 4, 4)$:** ৪ নম্বর পজিশন থেকে ৪টি অক্ষর $\\rightarrow$ `\"ORIE\"`।\n* **(c) $\\text{SUBSTRING}(S, 3, 1)$:** ৩ নম্বর পজিশন থেকে ১টি অক্ষর $\\rightarrow$ `\"M\"`।\n* **(d) $\\text{SUBSTRING}(S, 2, 5)$:** ২ নম্বর পজিশন থেকে ৫টি অক্ষর $\\rightarrow$ `\"EMORI\"`।"
   },
-
-  // =========================================================================
-  // CHAPTER 4: LINEAR ARRAYS
-  // =========================================================================
-
-  // --- Topic 4.4: Traversing Linear Arrays ---
   {
-    id: "cm-topic-4-4",
-    title: "Section 4.4: Traversing Linear Arrays & Visiting Operations",
-    book_reference: "Lipschutz & Seymour, Data Structures, Revised 4th Ed., Chapter 4: Linear Arrays (Section 4.4)",
-    topic_tag: "Linear Arrays",
-    content_type: "topic",
-    difficulty: "easy",
-    assigned_date: null,
-    created_by: null,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-    problem_statement: null,
-    explanation_or_solution: `### Section 4.4: Traversing Linear Arrays
-
-A **Linear Array** (denoted $LA$) is a list of a finite number $n$ of homogeneous data elements stored in contiguous computer memory cells, such that:
-1. The elements of the array are referenced respectively by an index set consisting of $n$ consecutive integers.
-2. The elements of the array are stored respectively in successive memory cells.
-
----
-
-### 1. The Traversal Concept
-Let $A$ be a collection of data elements stored in the memory of the computer. Suppose we want to:
-* Print the contents of each element of $A$, or
-* Count the number of elements of $A$ with a given property, or
-* Update each element of $A$ by applying a mathematical function.
-
-This operation is accomplished by **traversing** $A$ — that is, by accessing and processing (frequently called **visiting**) each element of $A$ **exactly once**.
-
----
-
-### 2. Linear vs Non-Linear Traversal Mechanics
-* **Linear Structures:** The simplicity of array traversal stems from the fact that a linear array has an inherent sequential ordering in computer hardware memory. Consecutive elements reside at addresses separated by a fixed stride $w$ (word size):
-  $$\\text{LOC}(LA[K]) = \\text{Base}(LA) + w \\cdot (K - \\text{LB})$$
-  Because adjacent logical elements map to adjacent physical memory words, linear structures (linear arrays and linked lists) can be traversed sequentially with trivial loop counters or pointer chasing.
-* **Non-Linear Structures:** On the other hand, the traversal of non-linear structures (such as trees and graphs) is considerably more complicated, requiring auxiliary stack or queue structures (e.g. DFS, BFS) or recursion to manage backtracking.
-
----
-
-### 3. Array Bounds & Length Formula
-* **Lower Bound ($LB$):** The index of the first element in the array.
-* **Upper Bound ($UB$):** The index of the last element in the array.
-* **Length / Size ($N$):**
-  $$N = \\text{Length} = UB - LB + 1$$
-
----
-
-### 4. C++ Implementation — Generic Linear Array Traversal
-\`\`\`cpp
-#include <iostream>
-#include <vector>
-#include <functional>
-
-// Generic Traversal passing a visitor function (PROCESS)
-template <typename T>
-void TraverseArray(const std::vector<T>& LA, int LB, int UB, std::function<void(int, const T&)> process) {
-    for (int K = LB; K <= UB; ++K) {
-        process(K, LA[K]); // Visit element LA[K]
-    }
-}
-
-int main() {
-    std::vector<int> scores = {85, 92, 78, 64, 99, 88};
-    int LB = 0;
-    int UB = scores.size() - 1;
-
-    std::cout << "--- Linear Array Traversal Demonstration ---\\n";
-    TraverseArray<int>(scores, LB, UB, [](int index, const int& val) {
-        std::cout << "Element at index [" << index << "] = " << val << "\\n";
-    });
-
-    return 0;
-}
-\`\`\``,
+    "id": "cm-problem-3-2",
+    "title": "Problem 3.2: String Concatenation and Substring Slicing",
+    "book_reference": "Lipschutz & Seymour, Data Structures, Revised 4th Ed., Chapter 3: String Processing, Page 61",
+    "topic_tag": "String Processing",
+    "content_type": "problem",
+    "difficulty": "easy",
+    "assigned_date": null,
+    "created_by": null,
+    "created_at": "2026-09-09T08:38:12.697Z",
+    "updated_at": "2026-09-09T08:38:12.697Z",
+    "problem_statement": "Let $S_1 = \\text{\"THE\"}$, $S_2 = \\text{\"END\"}$, and $S_3 = \\text{\"OF\"}$. Find:\n**(a)** $\\text{CONCAT}(S_1, \\text{\" \"}, S_3, \\text{\" \"}, S_2)$\n**(b)** $\\text{SUBSTRING}(\\text{CONCAT}(S_1, S_2), 3, 3)$",
+    "explanation_or_solution": "### Evaluation for Problem 3.2\n\n* **(a) $\\text{CONCAT}(S_1, \\text{\" \"}, S_3, \\text{\" \"}, S_2)$:**\n  $$= \\text{\"THE\"} + \\text{\" \"} + \\text{\"OF\"} + \\text{\" \"} + \\text{\"END\"} = \\mathbf{\"THE\\ OF\\ END\"}$$\n\n* **(b) $\\text{SUBSTRING}(\\text{CONCAT}(S_1, S_2), 3, 3)$:**\n  1. $T = \\text{CONCAT}(\\text{\"THE\"}, \\text{\"END\"}) = \\text{\"THEEND\"}$ (Length 6).\n  2. $\\text{SUBSTRING}(T, 3, 3)$ starts at index 3 with length 3:\n     Indices $3(E), 4(E), 5(N) \\rightarrow \\mathbf{\"EEN\"}$.",
+    "bangla_explanation": "### 🇧🇩 সহজ বাংলায় প্রবলেম ৩.২ সমাধান\n\n#### পর্ব (a) সমাধান:\n* `S1 = \"THE\"`, `S2 = \"END\"`, `S3 = \"OF\"`\n* মাঝখানে স্পেস দিয়ে জোড়া লাগালে পাই: `\"THE OF END\"`।\n\n---\n\n#### পর্ব (b) সমাধান:\n1. প্রথমে কনক্যাট: `CONCAT(\"THE\", \"END\")` $\\rightarrow$ `\"THEEND\"` (ইনডেক্স: $1:T, 2:H, 3:E, 4:E, 5:N, 6:D$)।\n2. এরপর সাবস্ট্রিং: ৩ নম্বর ইনডেক্স থেকে ৩টি বর্ণ নিলে পাই $\\rightarrow$ `\"EEN\"` ($3:E, 4:E, 5:N$)।"
   },
-
-  // --- Algorithm 4.1: Traversing a Linear Array ---
   {
-    id: "cm-algo-4-1",
-    title: "Algorithm 4.1 & 4.1': Traversing a Linear Array",
-    book_reference: "Lipschutz & Seymour, Data Structures, Revised 4th Ed., Chapter 4: Linear Arrays (Algorithm 4.1)",
-    topic_tag: "Linear Arrays",
-    content_type: "algorithm",
-    difficulty: "easy",
-    assigned_date: null,
-    created_by: null,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-    problem_statement: null,
-    explanation_or_solution: `### Algorithm 4.1: Traversing a Linear Array
-
-Here $LA$ is a linear array with lower bound $LB$ and upper bound $UB$. This algorithm traverses $LA$ applying an operation \`PROCESS\` to each element of $LA$.
-
----
-
-### Formal Specification (While-Loop Formulation)
-\`\`\`text
-Algorithm 4.1: (Traversing a Linear Array)
-1. [Initialize counter.] Set K := LB.
-2. Repeat Steps 3 and 4 while K <= UB:
-3.   [Visit element.] Apply PROCESS to LA[K].
-4.   [Increase counter.] Set K := K + 1.
-   [End of Step 2 loop.]
-5. Exit.
-\`\`\`
-
----
-
-### Alternative Specification (Repeat-For Formulation)
-\`\`\`text
-Algorithm 4.1': (Traversing a Linear Array Using Repeat-For Loop)
-1. Repeat for K = LB to UB:
-     Apply PROCESS to LA[K].
-   [End of loop.]
-2. Exit.
-\`\`\`
-
----
-
-### Critical Cautionary Principle (Initialization)
-> **Caution:** The operation \`PROCESS\` in the traversal algorithm may use certain variables which **must be initialized before \`PROCESS\` is applied to any of the elements in the array**. Accordingly, the traversal algorithm may need to be preceded by such an initialization step (e.g., setting a counter \`NUM := 0\` or an accumulator \`SUM := 0\`).
-
----
-
-### Mathematical Complexity Analysis
-* **Time Complexity:** The loop runs from $K = LB$ up to $K = UB$. The number of basic operations is exactly:
-  $$T(N) = UB - LB + 1 = N = O(N)$$
-  If the \`PROCESS\` subroutine takes $O(1)$ time, the entire traversal runs in strictly linear $O(N)$ time.
-* **Space Complexity:** Traversal operates in-place using a single counter variable $K$. Auxiliary memory is $S(N) = O(1)$.
-
----
-
-### Working C++ Verification
-\`\`\`cpp
-#include <iostream>
-#include <vector>
-
-void Algorithm4_1_While(const std::vector<int>& LA, int LB, int UB) {
-    std::cout << "[Algorithm 4.1 (While-Loop)]: \\n";
-    int K = LB; // Step 1: Initialize counter
-    while (K <= UB) { // Step 2: Repeat Steps 3 & 4 while K <= UB
-        std::cout << "  Visiting LA[" << K << "] = " << LA[K] << "\\n"; // Step 3
-        K = K + 1; // Step 4: Increase counter
-    }
-    std::cout << "  Exit.\\n"; // Step 5
-}
-
-void Algorithm4_1_For(const std::vector<int>& LA, int LB, int UB) {
-    std::cout << "[Algorithm 4.1' (Repeat-For)]: \\n";
-    for (int K = LB; K <= UB; ++K) { // Step 1: Repeat for K = LB to UB
-        std::cout << "  Visiting LA[" << K << "] = " << LA[K] << "\\n";
-    }
-    std::cout << "  Exit.\\n"; // Step 2
-}
-
-int main() {
-    std::vector<int> LA = {10, 20, 30, 40, 50};
-    Algorithm4_1_While(LA, 0, 4);
-    Algorithm4_1_For(LA, 0, 4);
-    return 0;
-}
-\`\`\``,
+    "id": "cm-problem-3-5",
+    "title": "Problem 3.5: Character and Substring Deletion (Algorithm 3.1 DELETE)",
+    "book_reference": "Lipschutz & Seymour, Data Structures, Revised 4th Ed., Chapter 3: String Processing, Page 63",
+    "topic_tag": "String Processing",
+    "content_type": "problem",
+    "difficulty": "medium",
+    "assigned_date": null,
+    "created_by": null,
+    "created_at": "2026-09-09T08:38:12.697Z",
+    "updated_at": "2026-09-09T08:38:12.697Z",
+    "problem_statement": "Let $T = \\text{\"AAABBB\"}$. Apply Algorithm 3.1 $\\text{DELETE}(T, K, L)$ to find:\n**(a)** $\\text{DELETE}(T, 2, 2)$\n**(b)** $\\text{DELETE}(T, 4, 3)$\n**(c)** Write down Algorithm 3.1 using $\\text{SUBSTRING}$ and $\\text{CONCAT}$.",
+    "explanation_or_solution": "### Solution for Problem 3.5 & Algorithm 3.1\n\n#### Formal Definition of $\\text{DELETE}(T, K, L)$:\n$$\\text{DELETE}(T, K, L) = \\text{CONCAT}(\\text{SUBSTRING}(T, 1, K-1), \\text{SUBSTRING}(T, K+L, \\text{LENGTH}(T) - (K+L) + 1))$$\n\n---\n\n#### Evaluations for $T = \\text{\"AAABBB\"}$ (Length = 6):\n\n* **(a) $\\text{DELETE}(T, 2, 2)$:**\n  - Prefix (before index 2): $\\text{SUBSTRING}(T, 1, 1) = \\text{\"A\"}$\n  - Suffix (after index $2+2-1=3$): $\\text{SUBSTRING}(T, 4, 3) = \\text{\"BBB\"}$\n  - Result: $\\text{CONCAT}(\\text{\"A\"}, \\text{\"BBB\"}) = \\mathbf{\"ABBB\"}$.\n\n* **(b) $\\text{DELETE}(T, 4, 3)$:**\n  - Prefix (before index 4): $\\text{SUBSTRING}(T, 1, 3) = \\text{\"AAA\"}$\n  - Suffix (after index $4+3-1=6$): $\\text{SUBSTRING}(T, 7, 0) = \\text{\"\"}$\n  - Result: $\\text{CONCAT}(\\text{\"AAA\"}, \\text{\"\"}) = \\mathbf{\"AAA\"}$.",
+    "bangla_explanation": "### 🇧🇩 সহজ বাংলায় প্রবলেম ৩.৫: স্ট্রিং থেকে ডিলিট করার অ্যালগরিদম\n\n#### অ্যালগরিদম ৩.১ (DELETE) এর মূল কৌশল:\nএকটি স্ট্রিংয়ের মাঝখান থেকে কোনো অংশ মুছে ফেলার বুদ্ধি হলো:\n1. মুছে ফেলার আগের অংশটুকু কেটে নেওয়া (Prefix)।\n2. মুছে ফেলার পরের অংশটুকু কেটে নেওয়া (Suffix)।\n3. তারপর দুটো অংশকে জোড়া (CONCAT) লাগিয়ে দেওয়া!\n\n---\n\n#### ড্রাই-রান ($T = \\text{\"AAABBB\"}$):\n* **(a) $\\text{DELETE}(T, 2, 2)$:**\n  - ২ নম্বর পজিশন থেকে ২ দৈর্ঘ্য (অর্থাৎ ২য় ও ৩য় অক্ষর `\"AA\"`) বাদ যাবে।\n  - আগের অংশ: `\"A\"`\n  - পরের অংশ: `\"BBB\"`\n  - ফলাফল: `\"ABBB\"`।\n* **(b) $\\text{DELETE}(T, 4, 3)$:**\n  - ৪ নম্বর পজিশন থেকে ৩ দৈর্ঘ্য (`\"BBB\"`) বাদ যাবে।\n  - বাকি রইলো: `\"AAA\"`।"
   },
-
-  // --- Problem 4.4: Automobile Sales Analysis ---
   {
-    id: "cm-problem-4-4",
-    title: "Example 4.4: Automobile Sales Analysis via Array Traversal",
-    book_reference: "Lipschutz & Seymour, Data Structures, Revised 4th Ed., Chapter 4: Linear Arrays (Example 4.4)",
-    topic_tag: "Linear Arrays",
-    content_type: "problem",
-    difficulty: "easy",
-    assigned_date: null,
-    created_by: null,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-    problem_statement: `Consider the array \`AUTO\` in Example 4.1(b), which records the number of automobiles sold each year from 1932 through 1984. Each of the following modules, which carry out the given operation, involves traversing \`AUTO\`.
-
-**(a)** Find the number \`NUM\` of years during which more than 300 automobiles were sold.  
-**(b)** Print each year and the number of automobiles sold in that year.  
-**(c)** State the critical requirement regarding variable initialization in module (a) before traversal begins, and explain why it is not required in module (b).`,
-    explanation_or_solution: `### Detailed Worked Solution for Example 4.4
-
-#### Module (a) Specification & Step-by-Step Execution
-To count how many years experienced automobile sales exceeding 300:
-\`\`\`text
-Module (a): Count Years with Sales > 300
-1. [Initialization step.] Set NUM := 0.
-2. Repeat for K = 1932 to 1984:
-     If AUTO[K] > 300, then:
-       Set NUM := NUM + 1.
-     [End of If structure.]
-   [End of loop.]
-3. Return.
-\`\`\`
-
----
-
-#### Module (b) Specification & Step-by-Step Execution
-To output a tabulated report of years and sales volume:
-\`\`\`text
-Module (b): Print Sales by Year
-1. Repeat for K = 1932 to 1984:
-     Write: K, AUTO[K].
-   [End of loop.]
-2. Return.
-\`\`\`
-
----
-
-#### Part (c) Mathematical & System Analysis of Initialization
-* **Why Module (a) requires initialization (\`NUM := 0\`):**  
-  The variable \`NUM\` acts as an **accumulator / frequency counter**. In computer architecture and memory allocation, freshly declared memory cells contain indeterminate residual bit patterns (garbage values). The operation \`NUM := NUM + 1\` reads the existing value of \`NUM\`, adds 1, and stores the result back. If \`NUM\` is not explicitly cleared to zero prior to the loop, the final total will be offset by the random residual data.
-* **Why Module (b) does NOT require initialization:**  
-  Module (b) performs no accumulation. The loop counter \`K\` is explicitly initialized by the loop construct itself (\`K = 1932\`), and \`AUTO[K]\` is accessed as a read-only lookup. No secondary variable maintains state across iterations.
-
----
-
-### Array Metrics
-* **Lower Bound ($LB$):** $1932$
-* **Upper Bound ($UB$):** $1984$
-* **Total Years ($N$):**
-  $$N = UB - LB + 1 = 1984 - 1932 + 1 = 53 \\text{ elements}$$
-
----
-
-### Complete C++ Verification Program
-\`\`\`cpp
-#include <iostream>
-#include <vector>
-#include <map>
-
-int main() {
-    // Simulate AUTO array for years 1932 through 1984 (53 elements)
-    std::map<int, int> AUTO;
-    for (int yr = 1932; yr <= 1984; ++yr) {
-        // Sample deterministic sales data
-        AUTO[yr] = 250 + ((yr * 37) % 200); 
-    }
-
-    // --- Module (a): Count years where sales > 300 ---
-    int NUM = 0; // Step 1: Mandatory initialization
-    for (int K = 1932; K <= 1984; ++K) { // Step 2: Repeat for K = 1932 to 1984
-        if (AUTO[K] > 300) {
-            NUM = NUM + 1;
-        }
-    }
-    std::cout << "Module (a) Result: Total years with sales > 300 = " << NUM << "\\n\\n";
-
-    // --- Module (b): Print each year and sales count ---
-    std::cout << "Module (b) Output (First 5 years sample):\\n";
-    for (int K = 1932; K <= 1936; ++K) {
-        std::cout << "  Year " << K << ": " << AUTO[K] << " automobiles\\n";
-    }
-
-    return 0;
-}
-\`\`\``,
+    "id": "cm-problem-3-6",
+    "title": "Problem 3.6: Substring Insertion Operations (Algorithm 3.2 INSERT)",
+    "book_reference": "Lipschutz & Seymour, Data Structures, Revised 4th Ed., Chapter 3: String Processing, Page 64",
+    "topic_tag": "String Processing",
+    "content_type": "problem",
+    "difficulty": "medium",
+    "assigned_date": null,
+    "created_by": null,
+    "created_at": "2026-09-09T08:38:12.697Z",
+    "updated_at": "2026-09-09T08:38:12.697Z",
+    "problem_statement": "Let $T = \\text{\"ABCDEF\"}$ and $S = \\text{\"123\"}$. Apply Algorithm 3.2 $\\text{INSERT}(T, K, S)$ to find:\n**(a)** $\\text{INSERT}(T, 1, S)$\n**(b)** $\\text{INSERT}(T, 4, S)$\n**(c)** $\\text{INSERT}(T, 7, S)$\n**(d)** Express Algorithm 3.2 using $\\text{SUBSTRING}$ and $\\text{CONCAT}$.",
+    "explanation_or_solution": "### Solution for Problem 3.6 & Algorithm 3.2\n\n#### Formal Algorithm 3.2 $\\text{INSERT}(T, K, S)$:\n$$\\text{INSERT}(T, K, S) = \\text{CONCAT}(\\text{SUBSTRING}(T, 1, K-1), S, \\text{SUBSTRING}(T, K, \\text{LENGTH}(T) - K + 1))$$\n\n---\n\n#### Evaluations for $T = \\text{\"ABCDEF\"}$, $S = \\text{\"123\"}$:\n\n* **(a) $\\text{INSERT}(T, 1, S)$ (Insert at Beginning):**\n  - Prefix: $\\text{SUBSTRING}(T, 1, 0) = \\text{\"\"}$\n  - Result: $\\text{CONCAT}(\\text{\"\"}, \\text{\"123\"}, \\text{\"ABCDEF\"}) = \\mathbf{\"123ABCDEF\"}$.\n\n* **(b) $\\text{INSERT}(T, 4, S)$ (Insert in Middle):**\n  - Prefix: $\\text{SUBSTRING}(T, 1, 3) = \\text{\"ABC\"}$\n  - Suffix: $\\text{SUBSTRING}(T, 4, 3) = \\text{\"DEF\"}$\n  - Result: $\\text{CONCAT}(\\text{\"ABC\"}, \\text{\"123\"}, \\text{\"DEF\"}) = \\mathbf{\"ABC123DEF\"}$.\n\n* **(c) $\\text{INSERT}(T, 7, S)$ (Append at End):**\n  - Prefix: $\\text{SUBSTRING}(T, 1, 6) = \\text{\"ABCDEF\"}$\n  - Suffix: $\\text{SUBSTRING}(T, 7, 0) = \\text{\"\"}$\n  - Result: $\\text{CONCAT}(\\text{\"ABCDEF\"}, \\text{\"123\"}) = \\mathbf{\"ABCDEF123\"}$.",
+    "bangla_explanation": "### 🇧🇩 সহজ বাংলায় প্রবলেম ৩.৬: স্ট্রিংয়ের ভেতর নতুন শব্দ ইনসার্ট করার কৌশল\n\n#### অ্যালগরিদম ৩.২ (INSERT) এর মূল লজিক:\nএকটি লেখার ভেতর নতুন কোনো শব্দ ঢোকাতে হলে:\n1. যে পজিশনে ঢোকাব তার আগের অংশ কাটি (Prefix)।\n2. মাঝখানে নতুন স্ট্রিং $S$ বসাই।\n3. তারপর বাকি পেছনের অংশটুকু (Suffix) জোড়া লাগিয়ে দিই!\n\n---\n\n#### উদাহরণ ($T = \\text{\"ABCDEF\"}$, $S = \\text{\"123\"}$):\n* **(a) শুরুতে ঢোকালে ($K=1$):** `\"123\"` + `\"ABCDEF\"` = `\"123ABCDEF\"`।\n* **(b) মাঝখানে ৪ নম্বরে ঢোকালে ($K=4$):** `\"ABC\"` + `\"123\"` + `\"DEF\"` = `\"ABC123DEF\"`।\n* **(c) একদম শেষে ঢোকালে ($K=7$):** `\"ABCDEF\"` + `\"123\"` = `\"ABCDEF123\"`।"
   },
-
-  // --- Topic 4.5: Inserting and Deleting ---
   {
-    id: "cm-topic-4-5",
-    title: "Section 4.5: Insertion and Deletion Mechanics in Linear Arrays",
-    book_reference: "Lipschutz & Seymour, Data Structures, Revised 4th Ed., Chapter 4: Linear Arrays (Section 4.5)",
-    topic_tag: "Linear Arrays",
-    content_type: "topic",
-    difficulty: "medium",
-    assigned_date: null,
-    created_by: null,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-    problem_statement: null,
-    explanation_or_solution: `### Section 4.5: Inserting and Deleting in Linear Arrays
-
-Let $A$ be a collection of data elements in the memory of the computer.
-* **\"Inserting\"** refers to the operation of adding another element to the collection $A$.
-* **\"Deleting\"** refers to the operation of removing one of the elements from $A$.
-
-When $A$ is a **linear array**, these operations behave fundamentally differently depending on whether they occur at the **end** of the array or in the **middle** of the array.
-
----
-
-### 1. Operations at the End of an Array ($O(1)$)
-* **Inserting at the end:** Can be easily done provided the memory space allocated for the array is large enough to accommodate the additional element. We simply assign the value to slot $N+1$ and increment $N := N + 1$.
-* **Deleting at the end:** Presents no difficulties; we simply decrement $N := N - 1$. The slot is logically excluded without moving any other data.
-
----
-
-### 2. Operations in the Middle of an Array ($O(N)$ Shifting)
-* **Inserting in the middle (at index $K$):**  
-  Suppose we need to insert an element at index $K$. In order to make room for the new element, every element from index $K$ up to $N$ must be moved **downward** (to higher subscript locations $J+1 := J$). On average, half of the elements must be moved to accommodate the new element and preserve the relative order.
-* **Deleting in the middle (at index $K$):**  
-  Deleting an element somewhere in the middle of the array requires that each subsequent element from index $K+1$ up to $N$ be moved **upward** one location (to lower subscript locations $J := J+1$) in order to \"fill up\" the vacancy and preserve continuity.
-
----
-
-### 3. Downward Shifting Reverse Order Invariant
-> **Critical Rule:** When shifting elements downward to make room for an insertion, elements **must be moved in reverse order** — that is, first $LA[N]$, then $LA[N-1]$, ..., and last $LA[K]$. Moving in forward order would copy $LA[K]$ into $LA[K+1]$, and then that copy would be copied into $LA[K+2]$, wiping out the entire subsequent list!
-
----
-
-### 4. Average Number of Data Movements
-Let $N$ be the number of elements in the array:
-* **Average Insertion Shifts:** Assuming each insertion position $K \\in [1, N+1]$ is equally likely:
-  $$\\text{Avg Shifts} = \\frac{1}{N+1} \\sum_{K=1}^{N+1} (N - K + 1) = \\frac{N}{2}$$
-* **Average Deletion Shifts:** Assuming each deletion position $K \\in [1, N]$ is equally likely:
-  $$\\text{Avg Shifts} = \\frac{1}{N} \\sum_{K=1}^{N} (N - K) = \\frac{N - 1}{2}$$
-
----
-
-### 5. Architectural Trade-off: Arrays vs Linked Lists
-> **Textbook Remark:** If many deletions and insertions are to be made in a collection of data elements, a linear array may **not** be the most efficient data structure because $O(N)$ data movement is required per modification. In such scenarios, **linked lists** or dynamic trees are vastly superior, requiring only $O(1)$ pointer adjustments once the node position is identified.`,
+    "id": "cm-topic-ch4",
+    "title": "Chapter 4: Linear Arrays — Sequential Allocation & Address Mapping",
+    "book_reference": "Lipschutz & Seymour, Data Structures, Revised 4th Ed., Chapter 4: Arrays, Records and Pointers",
+    "topic_tag": "Linear Arrays",
+    "content_type": "topic",
+    "difficulty": "medium",
+    "assigned_date": null,
+    "created_by": null,
+    "created_at": "2026-09-09T08:38:12.697Z",
+    "updated_at": "2026-09-09T08:38:12.697Z",
+    "problem_statement": null,
+    "explanation_or_solution": "### Chapter 4: Linear Arrays and Memory Representation\n\nA **Linear Array** is a list of a finite number $n$ of homogeneous data elements stored in contiguous memory locations.\n\n---\n\n### Length Formula:\n$$\\text{Length} = \\text{UB} - \\text{LB} + 1$$\nwhere $\\text{UB}$ is Upper Bound and $\\text{LB}$ is Lower Bound.\n\n---\n\n### Memory Address Formula (1D Array):\n$$\\text{LOC}(\\text{LA}[K]) = \\text{Base}(\\text{LA}) + w \\cdot (K - \\text{LB})$$\nwhere:\n* $\\text{Base}(\\text{LA})$ = starting memory address of the array.\n* $w$ = number of words/bytes per memory cell.\n* $K$ = target index.\n* $\\text{LB}$ = lower bound index.",
+    "bangla_explanation": "### 🇧🇩 সহজ বাংলায় চ্যাপ্টার ৪: লিনিয়ার অ্যারে ও মেমোরি অ্যাড্রেসিং\n\n#### ১. লিনিয়ার অ্যারে কী?\nলিনিয়ার অ্যারে হলো একই ধরনের (Homogeneous) ডেটা রাখার এমন একটি কাঠামো যা কম্পিউটারের মেমোরিতে পাশাপাশি (Contiguous) ব্লকে সাজানো থাকে।\n\n---\n\n#### ২. গুরুত্বপূর্ণ সূত্রসমূহ:\n* **অ্যারের দৈর্ঘ্য (Length):**\n  $$\\text{Length} = \\text{UB} - \\text{LB} + 1$$\n  (যেমন: ইনডেক্স $5$ থেকে $15$ হলে মোট উপাদান $= 15 - 5 + 1 = 11$ টি)।\n\n* **মেমোরি অ্যাড্রেস বের করার সূত্র ($O(1)$ র‍্যান্ডম অ্যাক্সেস):**\n  $$\\text{LOC}(\\text{LA}[K]) = \\text{Base}(\\text{LA}) + w \\cdot (K - \\text{LB})$$\n  - $\\text{Base}$: অ্যারের প্রথম ঘরের মেমোরি ঠিকানা।\n  - $w$: প্রতিটি ডেটা কত বাইট মেমোরি নেয় (যেমন int এর জন্য ৪ বাইট)।\n  - $K - \\text{LB}$: প্রথম ঘর থেকে টার্গেট ঘরটি কত দূরে অবস্থিত।\n\n* **সুবিধা:** যে কোনো ইনডেক্সের মান $O(1)$ কনস্ট্যান্ট টাইমে সরাসরি পড়া যায়।\n* **অসুবিধা:** মাঝখানে কোনো উপাদান ঢোকাতে বা মুছতে গেলে বাকি সব উপাদানকে ডানে-বামে শিফট করতে হয় ($O(n)$ সময় লাগে)।"
   },
-
-  // --- Problem 4.6: Tracing Element Shifting in Name Array ---
   {
-    id: "cm-problem-4-6",
-    title: "Example 4.5 & 4.6: Tracing Element Shifting in an Alphabetical Name Array",
-    book_reference: "Lipschutz & Seymour, Data Structures, Revised 4th Ed., Chapter 4: Linear Arrays (Examples 4.5 & 4.6)",
-    topic_tag: "Linear Arrays",
-    content_type: "problem",
-    difficulty: "medium",
-    assigned_date: null,
-    created_by: null,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-    problem_statement: `**(a) Example 4.5 (Array Capacity & End Insertion):**  
-Suppose \`TEST\` has been declared to be a 5-element array (\`TEST[1 ... 5]\`), but data have been recorded only for \`TEST[1]\`, \`TEST[2]\`, and \`TEST[3]\`.
-1. Show the specific assignment statements to add score $X$ to the list, and subsequently score $Y$.
-2. Explain what occurs if an attempt is made to insert another score $Z$ after $Y$.
-
-**(b) Example 4.6 (Step-by-Step Shifting Trace of Figure 4.4):**  
-Suppose \`NAME\` is an 8-element linear array (\`NAME[1 ... 8]\`), and five names are currently stored in alphabetical order (Fig. 4.4a):
-\`NAME[1] = "Brown"\`, \`NAME[2] = "Davis"\`, \`NAME[3] = "Johnson"\`, \`NAME[4] = "Smith"\`, \`NAME[5] = "Wagner"\`.  
-The array must remain sorted alphabetically after every modification. Trace the exact array states and element shifts for the following sequential operations:
-1. **Operation 1:** Insert name **\`"Ford"\`** into \`NAME\`.
-2. **Operation 2:** Next, insert name **\`"Taylor"\`** into \`NAME\`.
-3. **Operation 3:** Last, delete name **\`"Davis"\`** from \`NAME\`.
-4. State the total number of element moves performed across all three operations, and discuss why this demonstrates the inefficiency of linear arrays for dynamic lists.`,
-    explanation_or_solution: `### Detailed Worked Solution for Examples 4.5 & 4.6
-
-#### (a) Example 4.5 Solution:
-1. **Assignments:**
-   * To add $X$ to the list: \`TEST[4] := X\`
-   * To add $Y$ to the list: \`TEST[5] := Y\`
-2. **Capacity Boundary (Overflow):**  
-   Now all 5 allocated cells (\`TEST[1]\` through \`TEST[5]\`) are occupied ($N = 5 = \\text{Capacity}$). An attempt to insert $Z$ triggers an **Array Overflow condition**. In static memory allocation, arrays cannot expand past their declared upper bound without reallocating a new, larger memory block and copying all prior elements.
-
----
-
-#### (b) Example 4.6 Step-by-Step Trace (Figure 4.4):
-
-##### Initial State (Fig. 4.4a): $N = 5$
-| Index | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |
-| :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| **NAME** | \`Brown\` | \`Davis\` | \`Johnson\` | \`Smith\` | \`Wagner\` | *(empty)* | *(empty)* | *(empty)* |
-
----
-
-##### Operation 1: Insert \"Ford\" (Fig. 4.4b)
-* Alphabetical order dictates: $\\text{\"Davis\"} < \\mathbf{\\text{\"Ford\"}} < \\text{\"Johnson\"}$. Therefore, $\\text{\"Ford\"}$ must be placed at index $K = 3$.
-* Elements from index $3$ through $5$ must be moved **downward** one slot in reverse order:
-  1. \`NAME[6] := NAME[5]\` (moves \`"Wagner"\` to slot 6)
-  2. \`NAME[5] := NAME[4]\` (moves \`"Smith"\` to slot 5)
-  3. \`NAME[4] := NAME[3]\` (moves \`"Johnson"\` to slot 4)
-* Insert the new element: \`NAME[3] := "Ford"\`.
-* Update size: $N := N + 1 = 6$.
-* **Data Movements:** **3 moves**.
-
-| Index | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |
-| :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| **NAME** | \`Brown\` | \`Davis\` | **\`Ford\`** | \`Johnson\` | \`Smith\` | \`Wagner\` | *(empty)* | *(empty)* |
-
----
-
-##### Operation 2: Insert \"Taylor\" (Fig. 4.4c)
-* Alphabetical order dictates: $\\text{\"Smith\"} < \\mathbf{\\text{\"Taylor\"}} < \\text{\"Wagner\"}$. Therefore, $\\text{\"Taylor\"}$ must be placed at index $K = 6$.
-* Elements from index $6$ through $6$ must be moved **downward** one slot:
-  1. \`NAME[7] := NAME[6]\` (moves \`"Wagner"\` to slot 7)
-* Insert the new element: \`NAME[6] := "Taylor"\`.
-* Update size: $N := N + 1 = 7$.
-* **Data Movements:** **1 move**.
-
-| Index | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |
-| :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| **NAME** | \`Brown\` | \`Davis\` | \`Ford\` | \`Johnson\` | \`Smith\` | **\`Taylor\`** | \`Wagner\` | *(empty)* |
-
----
-
-##### Operation 3: Delete \"Davis\" (Fig. 4.4d)
-* \`"Davis"\` is located at index $K = 2$.
-* To close the vacancy, all subsequent elements from index $3$ up to $7$ must be moved **upward** one slot in forward order:
-  1. \`NAME[2] := NAME[3]\` (moves \`"Ford"\` to slot 2)
-  2. \`NAME[3] := NAME[4]\` (moves \`"Johnson"\` to slot 3)
-  3. \`NAME[4] := NAME[5]\` (moves \`"Smith"\` to slot 4)
-  4. \`NAME[5] := NAME[6]\` (moves \`"Taylor"\` to slot 5)
-  5. \`NAME[6] := NAME[7]\` (moves \`"Wagner"\` to slot 6)
-* Update size: $N := N - 1 = 6$.
-* **Data Movements:** **5 moves**.
-
-| Index | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |
-| :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| **NAME** | \`Brown\` | **\`Ford\`** | \`Johnson\` | \`Smith\` | \`Taylor\` | \`Wagner\` | *(empty)* | *(empty)* |
-
----
-
-##### Total Cost Analysis:
-$$\\text{Total Shifts} = 3 + 1 + 5 = \\mathbf{9} \\text{ element movements}$$
-If thousands of names were stored in the array, each insertion or deletion would require shifting thousands of items, making array-based dynamic lists computationally expensive.
-
----
-
-### Complete C++ Program Simulating Fig. 4.4 Trace
-\`\`\`cpp
-#include <iostream>
-#include <vector>
-#include <string>
-
-void PrintArray(const std::vector<std::string>& A, int N, const std::string& stepLabel) {
-    std::cout << stepLabel << " (N = " << N << "):\\n  [";
-    for (int i = 0; i < N; ++i) {
-        std::cout << "\"" << A[i] << "\"" << (i + 1 < N ? ", " : "");
-    }
-    std::cout << "]\\n\\n";
-}
-
-int main() {
-    std::vector<std::string> NAME(8);
-    NAME[0] = "Brown";
-    NAME[1] = "Davis";
-    NAME[2] = "Johnson";
-    NAME[3] = "Smith";
-    NAME[4] = "Wagner";
-    int N = 5;
-
-    PrintArray(NAME, N, "Fig 4.4(a): Initial 5 names");
-
-    // 1. Insert "Ford" at index 2 (1-based: 3)
-    int K1 = 2;
-    for (int J = N - 1; J >= K1; --J) {
-        NAME[J + 1] = NAME[J];
-    }
-    NAME[K1] = "Ford";
-    N++;
-    PrintArray(NAME, N, "Fig 4.4(b): After inserting 'Ford' (3 shifts)");
-
-    // 2. Insert "Taylor" at index 5 (1-based: 6)
-    int K2 = 5;
-    for (int J = N - 1; J >= K2; --J) {
-        NAME[J + 1] = NAME[J];
-    }
-    NAME[K2] = "Taylor";
-    N++;
-    PrintArray(NAME, N, "Fig 4.4(c): After inserting 'Taylor' (1 shift)");
-
-    // 3. Delete "Davis" at index 1 (1-based: 2)
-    int K3 = 1;
-    for (int J = K3; J < N - 1; ++J) {
-        NAME[J] = NAME[J + 1];
-    }
-    N--;
-    PrintArray(NAME, N, "Fig 4.4(d): After deleting 'Davis' (5 shifts)");
-
-    return 0;
-}
-\`\`\``,
+    "id": "cm-algo-4-1",
+    "title": "Algorithm 4.1: Traversing a Linear Array",
+    "book_reference": "Lipschutz & Seymour, Data Structures, Revised 4th Ed., Chapter 4: Linear Arrays, Page 72",
+    "topic_tag": "Linear Arrays",
+    "content_type": "algorithm",
+    "difficulty": "easy",
+    "assigned_date": null,
+    "created_by": null,
+    "created_at": "2026-09-09T08:38:12.697Z",
+    "updated_at": "2026-09-09T08:38:12.697Z",
+    "problem_statement": null,
+    "explanation_or_solution": "### Algorithm 4.1: (Traversing a Linear Array)\n\nHere `LA` is a linear array with lower bound `LB` and upper bound `UB`. This algorithm applies an operation `PROCESS` to each element of `LA`.\n\n```text\nAlgorithm 4.1:\n1. [Initialize counter.] Set K := LB.\n2. Repeat Steps 3 and 4 while K <= UB:\n3.    [Visit element.] Apply PROCESS to LA[K].\n4.    [Increment counter.] Set K := K + 1.\n   [End of Step 2 loop.]\n5. Exit.\n```\n\n* **Time Complexity:** $T(n) = O(n)$ where $n = \\text{UB} - \\text{LB} + 1$.",
+    "bangla_explanation": "### 🇧🇩 সহজ বাংলায় অ্যালগরিদম ৪.১: লিনিয়ার অ্যারে ট্রাভার্সাল (এক এক করে ভিজিট)\n\n#### ট্রাভার্সাল (Traversal) কী?\nঅ্যারের প্রথম উপাদান থেকে শুরু করে শেষ উপাদান পর্যন্ত প্রতিটি ঘরে ঠিক একবার করে যাওয়া এবং কোনো কাজ (যেমন প্রিন্ট করা বা যোগ করা) সম্পাদন করাকে ট্রাভার্সাল বলে।\n\n---\n\n#### স্টেপ-বাই-স্টেপ অ্যালগরিদম:\n1. **ধাপ ১:** কাউন্টার ভ্যারিয়েবল $K$-কে শুরুর ইনডেক্স ($LB$) এ সেট করি।\n2. **ধাপ ২:** যতক্ষণ $K \\le UB$ থাকে ততক্ষণ ৩ ও ৪ নম্বর ধাপ বারবার চালাই:\n3. **ধাপ ৩:** $LA[K]$ ঘরের ডেটাতে প্রয়োজনীয় কাজ (`PROCESS`) সম্পন্ন করি।\n4. **ধাপ ৪:** পরের ঘরে যাওয়ার জন্য $K = K + 1$ করি।\n5. **ধাপ ৫:** শেষ করি।\n\n* **Time Complexity:** $O(n)$ — অ্যারেতে যতগুলো উপাদান আছে লুপ ততবারই ঘুরবে।"
   },
-
-  // --- Algorithm 4.2: Inserting into a Linear Array ---
   {
-    id: "cm-algo-4-2",
-    title: "Algorithm 4.2: Inserting into a Linear Array (INSERT)",
-    book_reference: "Lipschutz & Seymour, Data Structures, Revised 4th Ed., Chapter 4: Linear Arrays (Algorithm 4.2)",
-    topic_tag: "Linear Arrays",
-    content_type: "algorithm",
-    difficulty: "medium",
-    assigned_date: null,
-    created_by: null,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-    problem_statement: null,
-    explanation_or_solution: `### Algorithm 4.2: Inserting into a Linear Array
-
-\`INSERT(LA, N, K, ITEM)\`  
-Here $LA$ is a linear array with $N$ elements and $K$ is a positive integer such that $K \\le N$. This algorithm inserts an element \`ITEM\` into the $K^{\\text{th}}$ position in $LA$.
-
----
-
-### Formal Algorithm Specification
-\`\`\`text
-Algorithm 4.2: INSERT(LA, N, K, ITEM)
-1. [Initialize counter.] Set J := N.
-2. Repeat Steps 3 and 4 while J >= K:
-3.   [Move Jth element downward.] Set LA[J + 1] := LA[J].
-4.   [Decrease counter.] Set J := J - 1.
-   [End of Step 2 loop.]
-5. [Insert element.] Set LA[K] := ITEM.
-6. [Reset N.] Set N := N + 1.
-7. Exit.
-\`\`\`
-
----
-
-### Mathematical Invariants & Step Explanation
-1. **Loop Initialization ($J := N$):** The index pointer $J$ begins at the current tail element $N$.
-2. **Reverse Order Traversal ($J \\ge K$):** Shifting proceeds in reverse order ($J = N, N-1, \\dots, K$). Each element $LA[J]$ is copied into its adjacent higher neighbor $LA[J+1]$.
-3. **Vacancy Creation:** After the loop terminates, cell $LA[K]$ contains a duplicate copy of $LA[K+1]$, but its old value has safely moved to $LA[K+1]$. Step 5 overwrites $LA[K]$ with \`ITEM\`.
-4. **Size Increment ($N := N + 1$):** Accounts for the newly populated slot.
-
----
-
-### Boundary Cases & Complexity Analysis
-* **Worst Case ($K = 1$):** Inserting at the very front requires shifting all $N$ elements downward:
-  $$W(N) = N \\text{ movements} = O(N)$$
-* **Best Case ($K = N + 1$):** Appending to the end requires 0 loop iterations ($J < K$ initially):
-  $$B(N) = 0 \\text{ movements} = O(1)$$
-* **Average Case:** Assuming uniform insertion distribution:
-  $$A(N) = \\frac{1}{N+1} \\sum_{K=1}^{N+1} (N - K + 1) = \\frac{N}{2} = O(N)$$
-* **Auxiliary Space:** $O(1)$ extra space.
-
----
-
-### Complete C++ Implementation
-\`\`\`cpp
-#include <iostream>
-#include <vector>
-
-// Algorithm 4.2 implementation (0-based indexing adaptation)
-bool InsertIntoLinearArray(std::vector<int>& LA, int& N, int MAX_CAPACITY, int K, int ITEM) {
-    // Boundary check for overflow
-    if (N >= MAX_CAPACITY) {
-        std::cerr << "Error: Array Overflow! Cannot insert into full array.\\n";
-        return false;
-    }
-    if (K < 0 || K > N) {
-        std::cerr << "Error: Invalid index K = " << K << " for array of size " << N << "\\n";
-        return false;
-    }
-
-    // Step 1 & 2: Shift downward in reverse order
-    int J = N - 1;
-    while (J >= K) {
-        LA[J + 1] = LA[J]; // Step 3: Move Jth element downward
-        J = J - 1;         // Step 4: Decrease counter
-    }
-
-    // Step 5: Insert element
-    LA[K] = ITEM;
-
-    // Step 6: Reset N
-    N = N + 1;
-
-    return true; // Step 7: Exit
-}
-
-int main() {
-    std::vector<int> LA(10);
-    LA[0] = 11; LA[1] = 22; LA[2] = 33; LA[3] = 44; LA[4] = 55;
-    int N = 5;
-
-    std::cout << "Original array (N=5): ";
-    for (int i = 0; i < N; ++i) std::cout << LA[i] << " ";
-    std::cout << "\\n";
-
-    // Insert 99 at index 2
-    InsertIntoLinearArray(LA, N, 10, 2, 99);
-
-    std::cout << "After inserting 99 at index 2 (N=" << N << "): ";
-    for (int i = 0; i < N; ++i) std::cout << LA[i] << " ";
-    std::cout << "\\n";
-
-    return 0;
-}
-\`\`\``,
+    "id": "cm-algo-4-2",
+    "title": "Algorithm 4.2: Inserting into a Linear Array",
+    "book_reference": "Lipschutz & Seymour, Data Structures, Revised 4th Ed., Chapter 4: Linear Arrays, Page 74",
+    "topic_tag": "Linear Arrays",
+    "content_type": "algorithm",
+    "difficulty": "medium",
+    "assigned_date": null,
+    "created_by": null,
+    "created_at": "2026-09-09T08:38:12.697Z",
+    "updated_at": "2026-09-09T08:38:12.697Z",
+    "problem_statement": null,
+    "explanation_or_solution": "### Algorithm 4.2: (Inserting into a Linear Array)\n\n`INSERT(LA, N, K, ITEM)`: Inserts `ITEM` at the $K^{\\text{th}}$ position in linear array `LA` with $N$ elements.\n\n```text\nAlgorithm 4.2:\n1. [Initialize counter.] Set J := N.\n2. Repeat Steps 3 and 4 while J >= K:\n3.    [Move J-th element forward.] Set LA[J + 1] := LA[J].\n4.    [Decrement counter.] Set J := J - 1.\n   [End of Step 2 loop.]\n5. [Insert element.] Set LA[K] := ITEM.\n6. [Reset N.] Set N := N + 1.\n7. Exit.\n```\n\n* **Worst Case:** Inserting at $K = 1$ requires shifting all $n$ elements: $O(n)$.\n* **Best Case:** Inserting at end ($K = N+1$): $O(1)$.",
+    "bangla_explanation": "### 🇧🇩 সহজ বাংলায় অ্যালগরিদম ৪.২: অ্যারেতে নতুন উপাদান ইনসার্ট করা\n\n#### কেন উপাদান ডানে শিফট করতে হয়?\nযেহেতু অ্যারের মেমোরি পাশাপাশি একটার পর একটা থাকে, তাই মাঝখানের কোনো ঘরে নতুন মান বসাতে হলে সেই ঘর থেকে শেষ পর্যন্ত সব উপাদানকে এক ঘর করে ডানপাশে সরিয়ে জায়গা ফাঁকা করতে হয়।\n\n---\n\n#### স্টেপ-বাই-স্টেপ ড্রাই-রান:\n1. **ধাপ ১:** শেষ ইনডেক্স থেকে কাউন্টার শুরু করি ($J = N$)।\n2. **ধাপ ২-৪:** যতক্ষণ $J \\ge K$, পেছনের উপাদানগুলোকে এক ঘর ডানে কপি করি (`LA[J+1] = LA[J]`) এবং $J = J - 1$ করি।\n3. **ধাপ ৫:** ফাঁকা হওয়া $K$-তম স্থানে নতুন উপাদানটি রাখি (`LA[K] = ITEM`)।\n4. **ধাপ ৬:** উপাদান সংখ্যা ১ বৃদ্ধি করি ($N = N + 1$)।\n\n* **Worst Case Time Complexity:** $O(n)$ — যদি একদম শুরুতে উপাদানটি ঢোকাতে হয়, তবে সব কটি সংখ্যা সরাতে হবে।\n* **Best Case:** $O(1)$ — যদি একদম শেষে উপাদানটি ঢোকানো হয়।"
   },
-
-  // --- Algorithm 4.3: Deleting from a Linear Array ---
   {
-    id: "cm-algo-4-3",
-    title: "Algorithm 4.3: Deleting from a Linear Array (DELETE)",
-    book_reference: "Lipschutz & Seymour, Data Structures, Revised 4th Ed., Chapter 4: Linear Arrays (Algorithm 4.3)",
-    topic_tag: "Linear Arrays",
-    content_type: "algorithm",
-    difficulty: "medium",
-    assigned_date: null,
-    created_by: null,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-    problem_statement: null,
-    explanation_or_solution: `### Algorithm 4.3: Deleting from a Linear Array
-
-\`DELETE(LA, N, K, ITEM)\`  
-Here $LA$ is a linear array with $N$ elements and $K$ is a positive integer such that $K \\le N$. This algorithm deletes the $K^{\\text{th}}$ element from $LA$ and assigns it to the variable \`ITEM\`.
-
----
-
-### Formal Algorithm Specification
-\`\`\`text
-Algorithm 4.3: DELETE(LA, N, K, ITEM)
-1. Set ITEM := LA[K].
-2. Repeat for J = K to N - 1:
-     [Move J + 1st element upward.] Set LA[J] := LA[J + 1].
-   [End of loop.]
-3. [Reset the number N of elements in LA.] Set N := N - 1.
-4. Exit.
-\`\`\`
-
----
-
-### Mathematical Invariants & Step Explanation
-1. **Value Preservation (\`ITEM := LA[K]\`):** Saves the target value before it is overwritten by subsequent elements.
-2. **Forward Order Traversal ($J = K \\dots N-1$):** Shifting proceeds forward. Element $LA[J+1]$ is shifted **upward** into position $LA[J]$, closing the hole left by the removed item.
-3. **Size Decrement ($N := N - 1$):** Reduces the logical size. The old value at $LA[N]$ is logically dropped.
-
----
-
-### Boundary Cases & Complexity Analysis
-* **Worst Case ($K = 1$):** Deleting the very first element requires shifting all remaining $N - 1$ elements upward:
-  $$W(N) = N - 1 \\text{ movements} = O(N)$$
-* **Best Case ($K = N$):** Deleting the last element requires 0 loop iterations:
-  $$B(N) = 0 \\text{ movements} = O(1)$$
-* **Average Case:** Assuming uniform deletion distribution across all $N$ positions:
-  $$A(N) = \\frac{1}{N} \\sum_{K=1}^{N} (N - K) = \\frac{N - 1}{2} = O(N)$$
-* **Auxiliary Space:** $O(1)$ extra space.
-
----
-
-### Complete C++ Implementation
-\`\`\`cpp
-#include <iostream>
-#include <vector>
-
-// Algorithm 4.3 implementation (0-based indexing adaptation)
-bool DeleteFromLinearArray(std::vector<int>& LA, int& N, int K, int& ITEM) {
-    // Boundary check for underflow
-    if (N <= 0) {
-        std::cerr << "Error: Array Underflow! Cannot delete from empty array.\\n";
-        return false;
-    }
-    if (K < 0 || K >= N) {
-        std::cerr << "Error: Invalid index K = " << K << " for array of size " << N << "\\n";
-        return false;
-    }
-
-    // Step 1: Save element
-    ITEM = LA[K];
-
-    // Step 2: Shift upward in forward order
-    for (int J = K; J < N - 1; ++J) {
-        LA[J] = LA[J + 1]; // Move J+1st element upward
-    }
-
-    // Step 3: Decrement N
-    N = N - 1;
-
-    return true; // Step 4: Exit
-}
-
-int main() {
-    std::vector<int> LA = {10, 20, 30, 40, 50};
-    int N = 5;
-    int deletedItem = 0;
-
-    std::cout << "Original array: ";
-    for (int i = 0; i < N; ++i) std::cout << LA[i] << " ";
-    std::cout << "\\n";
-
-    // Delete element at index 1 (value 20)
-    DeleteFromLinearArray(LA, N, 1, deletedItem);
-
-    std::cout << "Deleted Item: " << deletedItem << "\\n";
-    std::cout << "Array after deletion (N=" << N << "): ";
-    for (int i = 0; i < N; ++i) std::cout << LA[i] << " ";
-    std::cout << "\\n";
-
-    return 0;
-}
-\`\`\``,
+    "id": "cm-algo-4-3",
+    "title": "Algorithm 4.3: Deleting from a Linear Array",
+    "book_reference": "Lipschutz & Seymour, Data Structures, Revised 4th Ed., Chapter 4: Linear Arrays, Page 76",
+    "topic_tag": "Linear Arrays",
+    "content_type": "algorithm",
+    "difficulty": "medium",
+    "assigned_date": null,
+    "created_by": null,
+    "created_at": "2026-09-09T08:38:12.697Z",
+    "updated_at": "2026-09-09T08:38:12.697Z",
+    "problem_statement": null,
+    "explanation_or_solution": "### Algorithm 4.3: (Deleting from a Linear Array)\n\n`DELETE(LA, N, K, ITEM)`: Deletes the $K^{\\text{th}}$ element from linear array `LA` and returns it in `ITEM`.\n\n```text\nAlgorithm 4.3:\n1. Set ITEM := LA[K].\n2. Repeat for J = K to N - 1:\n3.    [Move (J+1)-st element backward.] Set LA[J] := LA[J + 1].\n   [End of loop.]\n4. [Reset N.] Set N := N - 1.\n5. Exit.\n```\n\n* **Worst Case:** Deleting at $K = 1$ shifts $n-1$ elements: $O(n)$.\n* **Best Case:** Deleting last element ($K = N$): $O(1)$.",
+    "bangla_explanation": "### 🇧🇩 সহজ বাংলায় অ্যালগরিদম ৪.৩: অ্যারে থেকে উপাদান মুছে ফেলা\n\n#### মোছার সময় কী ঘটে?\nমাঝখানের কোনো উপাদান মুছে ফেললে সেখানে একটি শূন্যস্থান তৈরি হয়। অ্যারের ধারাবাহিকতা বজায় রাখার জন্য সেই শূন্যস্থানের ডানপাশের সব উপাদানকে এক ঘর করে বামে টেনে আনতে হয়।\n\n---\n\n#### স্টেপ-বাই-স্টেপ অ্যালগরিদম:\n1. **ধাপ ১:** $K$-তম ঘরের মানটি সেভ করি (`ITEM = LA[K]`)।\n2. **ধাপ ২-৩:** $J = K$ থেকে $N-1$ পর্যন্ত লুপ চালিয়ে পরের ঘরগুলোর মানকে বামে টেনে আনি (`LA[J] = LA[J+1]`)।\n3. **ধাপ ৪:** মোট উপাদানের সংখ্যা ১ কমিয়ে দিই ($N = N - 1$)।\n\n* **Worst Case Time Complexity:** $O(n)$ — ১ম উপাদান মুছে ফেললে বাকি সবাইকে ১ ঘর বামে টানতে হয়।"
   },
-
-  // =========================================================================
-  // CHAPTER 5: LINKED LISTS & DYNAMIC MEMORY ALLOCATION
-  // =========================================================================
-
-  // --- Topic: Chapter 5 ---
   {
-    id: "cm-topic-ch5",
-    title: "Chapter 5: Linked Lists, Memory Allocation & Pointer Manipulation (INFO, LINK, START, AVAIL)",
-    book_reference: "Lipschutz, Seymour - Data Structures (Schaum's Outlines), Chapter 5: Linked Lists (Section 5.2 - 5.5)",
-    topic_tag: "Linked Lists",
-    content_type: "topic",
-    difficulty: "medium",
-    assigned_date: null,
-    created_by: null,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-    problem_statement: null,
-    explanation_or_solution: `### Chapter 5: Linked Lists & Memory Management in Linear Data Structures
-
-A **Linked List** (or one-way list) is a linear collection of data elements, called **nodes**, where the linear order is not given by their physical memory placement (as in arrays), but by **pointers** or links storing memory addresses.
-
----
-
-### 1. Parallel Array Representation (Lipschutz Model):
-In classic systems and algorithms, a linked list is represented using two parallel arrays:
-* **\`INFO[k]\`:** Contains the payload or information element stored in node $k$.
-* **\`LINK[k]\`:** Contains the pointer (array index) to the next node in the list.
-* **\`START\`:** Pointer variable storing the index of the first node of the list. If $\\text{START} = \\text{NULL}$, the list is empty.
-* **\`AVAIL\`:** Pointer variable storing the index of the first node in the **free storage list** (list of available unused memory cells).
-
-$$\\text{START} \\longrightarrow \\text{Node}_1 \\xrightarrow{\\text{LINK}} \\text{Node}_2 \\xrightarrow{\\text{LINK}} \\dots \\xrightarrow{\\text{LINK}} \\text{Node}_m \\longrightarrow \\text{NULL}$$
-
----
-
-### 2. The Free Storage Pool (\`AVAIL\` List):
-Memory cells that are currently not used are linked together in a secondary linked list known as the **AVAIL list** or **free list**.
-* **Dynamic Node Allocation:** When a new node is created, it is popped from the head of the AVAIL list:
-  $$\\text{NEW} := \\text{AVAIL}, \\quad \\text{AVAIL} := \\text{LINK}[\\text{AVAIL}]$$
-* **Overflow Check:** If $\\text{AVAIL} = \\text{NULL}$, no free nodes remain in memory pool, triggering an **OVERFLOW** error condition.
-* **Garbage Collection / Deallocation:** When a node is deleted, its cell is returned to the head of the AVAIL list:
-  $$\\text{LINK}[\\text{LOC}] := \\text{AVAIL}, \\quad \\text{AVAIL} := \\text{LOC}$$
-
----
-
-### 3. Comparison: Arrays vs. Linked Lists
-| Feature | Linear Array | Singly Linked List |
-| :--- | :--- | :--- |
-| **Memory Allocation** | Contiguous physical block | Dispersed cells linked by pointers |
-| **Random Access** | $O(1)$ via index | $O(n)$ linear traversal from START |
-| **Insertion at Known LOC** | $O(n)$ due to element shifts | **$O(1)$** pointer relinking |
-| **Deletion at Known LOC** | $O(n)$ due to element shifts | **$O(1)$** pointer relinking |
-| **Memory Overhead** | Fixed size, potential waste | Extra pointer field (\`LINK\`) per node |`,
+    "id": "cm-topic-5-0-prereq",
+    "title": "Before You Start: Linked List Prerequisites (Pointer, Memory Address, Dynamic Memory & Struct)",
+    "book_reference": "Chapter 5: Linked Lists — Foundational Prerequisites & C++ Concepts",
+    "topic_tag": "Linked Lists",
+    "content_type": "topic",
+    "difficulty": "easy",
+    "assigned_date": null,
+    "created_by": null,
+    "created_at": "2026-09-09T08:38:12.697Z",
+    "updated_at": "2026-09-09T08:38:12.697Z",
+    "problem_statement": null,
+    "explanation_or_solution": "### 🚀 Before You Start: Core Prerequisites for Linked Lists\n\nMaster these 4 essential C++ building blocks before diving into Linked Lists:\n\n---\n\n### 1. Pointer Fundamentals\nA **pointer** is a variable that stores the **memory address** of another variable.\n\n* `&` (**Address-of Operator**): Retrieves the memory address of a variable (e.g., `&x`).\n* `*` (**Dereference Operator**): Accesses or modifies the value stored at the targeted memory address (e.g., `*ptr`).\n\n#### Easy Example (Access & Modify via Pointer):\n```cpp\n#include <iostream>\nusing namespace std;\n\nint main() {\n    int x = 10;\n    int* ptr = &x; // ptr stores address of x\n\n    cout << \"Direct value: \" << x << endl;        // 10\n    cout << \"Via pointer (*ptr): \" << *ptr << endl; // 10\n\n    *ptr = 25; // Directly modifies x in memory!\n    cout << \"Updated x: \" << x << endl;           // 25\n    return 0;\n}\n```\n\n#### Medium Example (Swap via Pointers):\n```cpp\n#include <iostream>\nusing namespace std;\n\nvoid swapValues(int* a, int* b) {\n    int temp = *a;\n    *a = *b;\n    *b = temp;\n}\n\nint main() {\n    int x = 5, y = 9;\n    swapValues(&x, &y);\n    cout << \"x=\" << x << \", y=\" << y << endl; // x=9, y=5\n    return 0;\n}\n```\n* **Connection to Linked List:** In a Linked List, nodes are linked together via pointers (`Node* next`).\n\n---\n\n### 2. Memory Address\nVariables in RAM are stored in distinct memory cells identified by unique hexadecimal numbers (e.g., `0x1000`).\n\n#### Easy Example (Printing Memory Addresses):\n```cpp\n#include <iostream>\nusing namespace std;\n\nint main() {\n    int num = 42;\n    cout << \"Value: \" << num << endl;\n    cout << \"Memory Address (&num): \" << &num << endl;\n    return 0;\n}\n```\n\n#### Medium Example (Pointer Reassignment Across Memory Addresses):\n```cpp\n#include <iostream>\nusing namespace std;\n\nint main() {\n    int a = 100, b = 200;\n    int* ptr = &a; // Points to address of 'a'\n    cout << \"Points to a: \" << *ptr << \" (Address: \" << ptr << \")\" << endl;\n\n    ptr = &b;      // Redirected to address of 'b'\n    cout << \"Points to b: \" << *ptr << \" (Address: \" << ptr << \")\" << endl;\n    return 0;\n}\n```\n* **Connection to Linked List:** During traversal (`temp = temp->next`), the pointer simply updates its stored memory address to point to the next node!\n\n---\n\n### 3. Dynamic Memory Allocation (`new` and `delete`)\n* **Static Allocation (Stack):** Fixed size, destroyed when function returns.\n* **Dynamic Allocation (Heap):** Created at runtime with `new`, persists until explicitly freed with `delete`.\n\n#### Easy Example (Dynamic Integer):\n```cpp\n#include <iostream>\nusing namespace std;\n\nint main() {\n    int* p = new int(50); // Allocate on Heap\n    cout << \"Dynamic Value: \" << *p << endl;\n\n    delete p;    // Free memory to prevent memory leak\n    p = nullptr; // Clear dangling pointer\n    return 0;\n}\n```\n\n#### Medium Example (Dynamic Struct):\n```cpp\n#include <iostream>\nusing namespace std;\n\nstruct Element {\n    int id;\n    double score;\n};\n\nint main() {\n    Element* item = new Element{101, 98.5};\n    cout << \"ID: \" << item->id << \", Score: \" << item->score << endl;\n\n    delete item;\n    item = nullptr;\n    return 0;\n}\n```\n* **Connection to Linked List:** Linked lists grow and shrink dynamically; every new node is allocated on the Heap using `new Node()`.\n\n---\n\n### 4. Struct & Self-Referential Nodes\nA `struct` bundles multiple related variables into a single user-defined type.\n\n#### Base Linked List Node Definition:\n```cpp\nstruct Node {\n    int data;       // Data payload\n    Node* next;     // Pointer to subsequent Node\n};\n```\n\n#### Easy Example (Student Struct):\n```cpp\n#include <iostream>\n#include <string>\nusing namespace std;\n\nstruct Student {\n    string name;\n    int id;\n    double cgpa;\n};\n\nint main() {\n    Student s = {\"Rahim\", 101, 3.85};\n    cout << s.name << \" (ID: \" << s.id << \", CGPA: \" << s.cgpa << \")\" << endl;\n    return 0;\n}\n```\n\n#### Medium Example (Manually Connecting 3 Nodes):\n```cpp\n#include <iostream>\nusing namespace std;\n\nstruct Node {\n    int data;\n    Node* next;\n};\n\nint main() {\n    // 1. Create 3 nodes\n    Node first, second, third;\n\n    // 2. Assign values\n    first.data = 10;\n    second.data = 20;\n    third.data = 30;\n\n    // 3. Connect pointers\n    first.next = &second; // Node 1 points to Node 2\n    second.next = &third; // Node 2 points to Node 3\n    third.next = nullptr; // Node 3 terminates with NULL\n\n    // 4. Traversal\n    Node* current = &first;\n    while (current != nullptr) {\n        cout << current->data << \" -> \";\n        current = current->next;\n    }\n    cout << \"NULL\" << endl;\n    return 0;\n}\n```\n\n---\n\n### ✅ \"Are You Ready for Linked List?\" Checklist\n- [x] **Pointer:** You understand `*` (dereference) vs `&` (address-of) and how pointers hold memory locations.\n- [x] **Memory Address:** You understand where variables live in RAM and how pointers navigate to them.\n- [x] **Dynamic Memory:** You know how `new` allocates on Heap and `delete` prevents memory leaks.\n- [x] **Struct & Node:** You understand `struct Node` with `int data` and self-referential `Node* next`.",
+    "bangla_explanation": "### 🇧🇩 সহজ বাংলায় লিঙ্কড লিস্টের পূর্বশর্ত (Before You Start)\n\nলিঙ্কড লিস্ট শুরু করার আগে এই ৪টি মৌলিক বিষয় ক্লিয়ার থাকলে পুরো লিঙ্কড লিস্ট জলের মতো সহজ মনে হবে:\n\n---\n\n### ১. Pointer (পয়েন্টার)\n#### • পয়েন্টার কী এবং কেন ব্যবহার করা হয়?\nপয়েন্টার হলো একটি বিশেষ ভ্যারিয়েবল যা কোনো সরাসরি সংখ্যা ধারণ করে না, বরং অন্য একটি ভ্যারিয়েবলের **মেমোরি ঠিকানা (Memory Address)** জমা রাখে। লিঙ্কড লিস্টের নোডগুলো মেমোরিতে পাশাপাশি থাকে না, তাই এক নোড থেকে অন্য নোডে যাওয়ার সেতু হলো পয়েন্টার।\n\n#### • `*` এবং `&` কী বোঝায়?\n* **`&` (Address-of Operator):** কোনো ভ্যারিয়েবলের মেমোরি ঠিকানা বের করতে ব্যবহৃত হয় (যেমন: `&x`)।\n* **`*` (Dereference Operator):** পয়েন্টার যে ঠিকানাকে নির্দেশ করছে, সেই ঠিকানার ভেতরের আসল মান পড়তে বা পরিবর্তন করতে ব্যবহৃত হয় (যেমন: `*ptr`)।\n\n#### • Easy Example (পয়েন্টার দিয়ে মান অ্যাক্সেস ও পরিবর্তন):\n```cpp\n#include <iostream>\nusing namespace std;\n\nint main() {\n    int x = 10;\n    int* ptr = &x; // ptr এর ভেতর x এর মেমোরি ঠিকানা জমা হলো\n\n    cout << \"x এর মান: \" << x << endl;          // 10\n    cout << \"পয়েন্টার দিয়ে (*ptr): \" << *ptr << endl; // 10\n\n    *ptr = 25; // পয়েন্টার দিয়ে সরাসরি x এর মেমোরিতে গিয়ে মান পরিবর্তন!\n    cout << \"পরিবর্তিত x: \" << x << endl;       // 25\n    return 0;\n}\n```\n*লাইন-বাই-লাইন ব্যাখ্যা:*\n1. `int* ptr = &x;` $\\rightarrow$ `ptr` ভ্যারিয়েবলে `x` এর ঠিকানা রাখা হলো।\n2. `*ptr = 25;` $\\rightarrow$ `ptr` যে ঠিকানায় নির্দেশ করছিল সেখানে গিয়ে ২৫ বসিয়ে দেওয়া হলো, ফলে `x` এর মান নিজে থেকেই ২৫ হয়ে গেল!\n\n#### • Medium Example (পয়েন্টার দিয়ে দুটি ভ্যারিয়েবলের মান Swap করা):\n```cpp\n#include <iostream>\nusing namespace std;\n\nvoid swapValues(int* a, int* b) {\n    int temp = *a; // a এর ভেতরের মান temp এ রাখলাম\n    *a = *b;       // b এর মান a এর ঠিকানায় বসালাম\n    *b = temp;     // temp এর মান b এর ঠিকানায় বসালাম\n}\n\nint main() {\n    int x = 5, y = 9;\n    swapValues(&x, &y); // মেমোরি ঠিকানা পাঠালাম\n    cout << \"x = \" << x << \", y = \" << y << endl; // Output: x = 9, y = 5\n    return 0;\n}\n```\n*লাইন-বাই-লাইন ব্যাখ্যা:* সাধারণ ফাংশনে মান পাঠালে কপি তৈরি হয়, কিন্তু পয়েন্টার দিয়ে সরাসরি মেমোরি ঠিকানা পাঠালে ফাংশনের ভেতর থেকেই মেইন মেমোরির ভ্যারিয়েবল অদলবদল করা যায়।\n\n* **🔗 লিঙ্কড লিস্টে সংযোগ:** প্রতিটি নোডের ভেতর `next` নামের পয়েন্টার দিয়ে পরের নোডের ঠিকানা ধরে রাখা হয়।\n\n---\n\n### ২. Memory Address (মেমোরি অ্যাড্রেস)\n#### • মেমোরি অ্যাড্রেস কী এবং ভ্যারিয়েবল কোথায় থাকে?\nকম্পিউটারের র‍্যাম (RAM) হলো কোটি কোটি ছোট ছোট বাক্সের মতো। প্রতিটি বাক্সের একটি নির্দিষ্ট ক্রমিক নম্বর বা ঠিকানা থাকে (যেমন: `0x7ffe4a10` বা সংক্ষেপে `0x1000`)। ভ্যারিয়েবল ডিক্লেয়ার করলে তা স্ট্যাক বা হিপ মেমোরির নির্দিষ্ট ঠিকানায় সংরক্ষিত হয়।\n\n#### • Easy Example (মেমোরি ঠিকানা প্রিন্ট করা):\n```cpp\n#include <iostream>\nusing namespace std;\n\nint main() {\n    int num = 42;\n    cout << \"মান: \" << num << endl;\n    cout << \"মেমোরি ঠিকানা (&num): \" << &num << endl; // যেমন: 0x7ffeefbff568\n    return 0;\n}\n```\n\n#### • Medium Example (পয়েন্টারের ঠিকানা পরিবর্তন ও রিডাইরেকশন):\n```cpp\n#include <iostream>\nusing namespace std;\n\nint main() {\n    int a = 100, b = 200;\n    int* ptr = &a; // ptr এখন a এর ঠিকানাকে পয়েন্ট করছে\n    cout << \"a কে পয়েন্ট করছে: \" << *ptr << \" (ঠিকানা: \" << ptr << \")\" << endl;\n\n    ptr = &b;      // ptr এখন b এর ঠিকানায় রিডাইরেক্ট হলো\n    cout << \"b কে পয়েন্ট করছে: \" << *ptr << \" (ঠিকানা: \" << ptr << \")\" << endl;\n    return 0;\n}\n```\n*লাইন-বাই-লাইন ব্যাখ্যা:* পয়েন্টারের ভেতরের সংরক্ষিত ঠিকানা বদলিয়ে দিলেই পয়েন্টারটি অন্য মেমোরি লোকেশনকে নির্দেশ করে।\n* **🔗 লিঙ্কড লিস্টে সংযোগ:** লিঙ্কড লিস্টে ট্রাভার্সাল করার সময় (`temp = temp->next`) মূলত পয়েন্টারের ভেতরের মেমোরি ঠিকানাটি পরিবর্তন করে পরবর্তী নোডে যাওয়া হয়।\n\n---\n\n### ৩. Dynamic Memory Allocation (ডাইনামিক মেমোরি অ্যালোকেশন)\n#### • Dynamic Memory Allocation কী?\nপ্রোগ্রাম চলার সময় রান-টাইমে (Runtime) প্রয়োজন অনুযায়ী মেমোরি নেওয়া এবং কাজ শেষে মুছে ফেলাকে ডাইনামিক মেমোরি অ্যালোকেশন বলে।\n* **`new`**: হিপ (Heap) মেমোরিতে নতুন জায়গা তৈরি করে তার মেমোরি ঠিকানা রিটার্ন করে।\n* **`delete`**: মেমোরি মুক্ত করে যাতে Memory Leak না ঘটে।\n\n#### • লিঙ্কড লিস্টের জন্য কেন ডাইনামিক মেমোরি অপরিহার্য?\nঅ্যারেতে আগেই সাইজ ফিক্সড করতে হয় (যেমন `int a[100]`)। কিন্তু লিঙ্কড লিস্টে ইউজার যখনই নতুন ডেটা দিবে, তখনই রান-টাইমে `new Node()` দিয়ে ঠিক যতটুকু দরকার ততটুকু মেমোরি নেওয়া যায়।\n\n#### • Easy Example (`new` দিয়ে তৈরি ও `delete` দিয়ে মেমোরি মুক্ত):\n```cpp\n#include <iostream>\nusing namespace std;\n\nint main() {\n    // হিপে নতুন int তৈরি\n    int* p = new int(50);\n    cout << \"ডাইনামিক মান: \" << *p << endl; // 50\n\n    // মেমোরি ফ্রি করা\n    delete p;\n    p = nullptr; // নিরাপদ কোডিং\n    return 0;\n}\n```\n\n#### • Medium Example (ডাইনামিক অবজেক্ট তৈরি):\n```cpp\n#include <iostream>\nusing namespace std;\n\nstruct Item {\n    int id;\n    double price;\n};\n\nint main() {\n    Item* it = new Item{101, 250.50};\n    cout << \"ID: \" << it->id << \", Price: \" << it->price << endl;\n\n    delete it;\n    it = nullptr;\n    return 0;\n}\n```\n\n---\n\n### ৪. Struct (স্ট্রাক্ট ও নোড ডিজাইন)\n#### • Struct কী এবং কেন দরকার?\nভিন্ন ভিন্ন ধরনের ডেটাকে (যেমন int, string, pointer) একসাথে একটি কাঠামোর মধ্যে গুচ্ছবদ্ধ করার জন্য `struct` ব্যবহার করা হয়।\n\n#### • লিঙ্কড লিস্টের জন্য কীভাবে Node তৈরি করা হয়?\n```cpp\nstruct Node {\n    int data;     // মূল সংখ্যা\n    Node* next;   // পরবর্তী নোডের মেমোরি ঠিকানা (Self-referential pointer)\n};\n```\n\n#### • Easy Example (Student Struct):\n```cpp\n#include <iostream>\n#include <string>\nusing namespace std;\n\nstruct Student {\n    string name;\n    int id;\n    double cgpa;\n};\n\nint main() {\n    Student s = {\"Rahim\", 101, 3.85};\n    cout << \"নাম: \" << s.name << \" | ID: \" << s.id << \" | CGPA: \" << s.cgpa << endl;\n    return 0;\n}\n```\n\n#### • Medium Example (ম্যানুয়ালি ২-৩টি নোড তৈরি করে `next` দিয়ে যুক্ত করা):\n```cpp\n#include <iostream>\nusing namespace std;\n\nstruct Node {\n    int data;\n    Node* next;\n};\n\nint main() {\n    // ১. তিনটি নোড তৈরি করলাম\n    Node first, second, third;\n\n    // ২. মান বসালাম\n    first.data = 10;\n    second.data = 20;\n    third.data = 30;\n\n    // ৩. next পয়েন্টার দিয়ে চেইন বানালাম\n    first.next = &second; // ১ম নোড নির্দেশ করছে ২য় নোডকে\n    second.next = &third; // ২য় নোড নির্দেশ করছে ৩য় নোডকে\n    third.next = nullptr; // শেষ নোড নির্দেশ করছে NULL কে\n\n    // ৪. প্রথম নোড থেকে শুরু করে ট্রাভার্সাল\n    Node* temp = &first;\n    while (temp != nullptr) {\n        cout << temp->data << \" -> \";\n        temp = temp->next; // পরের নোডে গেলাম\n    }\n    cout << \"NULL\" << endl;\n    return 0;\n}\n```\n*আউটপুট:* `10 -> 20 -> 30 -> NULL`\n\n---\n\n### 🎯 লিঙ্কড লিস্টের জন্য আপনি কি প্রস্তুত? (Readiness Checklist)\n* [x] **Pointer:** `*` এবং `&` এর পার্থক্য ও পয়েন্টার কীভাবে কাজ করে তা পরিষ্কার।\n* [x] **Memory Address:** র‍্যামে প্রতিটি ঘরের ঠিকানা থাকে এবং পয়েন্টার সেই ঠিকানা ধরে রাখে তা বুঝেছেন।\n* [x] **Dynamic Memory:** `new` দিয়ে রান-টাইমে মেমোরি নেওয়া ও `delete` দিয়ে ফ্রি করা আয়ত্ত করেছেন।\n* [x] **Struct & Node:** `struct Node` এ `data` ও `Node* next` পয়েন্টার দিয়ে নোড জোড়া লাগানোর মেকানিজম বুঝতে পেরেছেন।"
   },
-
-  // --- Problem 5.1: Dynamic Singly Linked List Creation & Traversal in C++ ---
   {
-    id: "cm-problem-5-1",
-    title: "Problem 5.1: Dynamic Singly Linked List Creation & Traversal in C++",
-    book_reference: "Data Structures & Algorithms in C++, Chapter 5: Linked Lists — Dynamic Memory Allocation, Node Linking & Traversal",
-    topic_tag: "Linked Lists",
-    content_type: "problem",
-    difficulty: "easy",
-    assigned_date: null,
-    created_by: null,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-    problem_statement: `### Problem Description:
-Create a Singly Linked List containing **5 nodes**. Take 5 integer values from standard input, dynamically allocate each node on the Heap, link them using pointer variables, and display the completed Linked List from \`head\` to \`NULL\`.
-
----
-
-### Example Test Case:
-* **Input Values:**
-  \`\`\`text
-  10 20 30 40 50
-  \`\`\`
-* **Expected Output:**
-  \`\`\`text
-  10 -> 20 -> 30 -> 40 -> 50 -> NULL
-  \`\`\`
-
----
-
-### Core Learning Objectives:
-1. Understand the anatomy of a **Node** (\`data\` payload and \`next\` pointer).
-2. Learn how **\`new Node()\`** dynamically allocates memory on the Heap.
-3. Understand how **\`head\`** anchors the list and why **\`temp\`** is used to append nodes.
-4. Master unidirectional pointer linking (\`temp->next = newNode;\`).
-5. Trace step-by-step traversal until \`temp == nullptr\`.`,
-    explanation_or_solution: `### Complete Pedagogical Breakdown & C++ Solution
-
-#### 1. What is a Node? (নোড কী?)
-A **Node** is a user-defined compound data structure containing two components:
-\`\`\`cpp
-struct Node {
-    int data;    // Holds the payload value (e.g. 10, 20)
-    Node* next;  // Holds the memory address of the successor Node
-};
-\`\`\`
-
-Visual representation of a single Node:
-\`\`\`text
-┌───────────┬──────────────┐
-│   data    │     next     │
-│    10     │      ●───────┼──→ Address of Next Node (or nullptr)
-└───────────┴──────────────┘
-\`\`\`
-
----
-
-#### 2. Complete C++ Implementation:
-\`\`\`cpp
-#include <iostream>
-using namespace std;
-
-struct Node {
-    int data;
-    Node* next;
-};
-
-int main() {
-    Node* head = nullptr;
-    Node* temp = nullptr;
-
-    // Create 5 nodes
-    for (int i = 0; i < 5; i++) {
-        int value;
-        cin >> value;
-
-        Node* newNode = new Node();
-
-        newNode->data = value;
-        newNode->next = nullptr;
-
-        // First node
-        if (head == nullptr) {
-            head = newNode;
-            temp = newNode;
-        }
-        // Other nodes
-        else {
-            temp->next = newNode;
-            temp = newNode;
-        }
-    }
-
-    // Print Linked List
-    temp = head;
-
-    while (temp != nullptr) {
-        cout << temp->data << " -> ";
-        temp = temp->next;
-    }
-
-    cout << "NULL" << endl;
-
-    return 0;
-}
-\`\`\`
-
----
-
-#### 3. 🇧🇩 সহজ বাংলায় সম্পূর্ণ কোডের লাইন-বাই-লাইন বিশ্লেষণ (Beginner's Line-by-Line Guide)
-
-একজন বিগিনার হিসেবে লিংকড লিস্ট বুঝতে হলে নিচের ৬টি ধাপ পরিষ্কারভাবে বোঝা জরুরি:
-
-##### 🔹 ধাপ ১: \`struct Node\` তৈরি (লাইন ৪-৭)
-\`\`\`cpp
-struct Node {
-    int data;
-    Node* next;
-};
-\`\`\`
-* সাধারণ ভ্যারিয়েবল (যেমন \`int x\`) শুধু একটি সংখ্যা মনে রাখতে পারে।
-* কিন্তু লিংকড লিস্টের প্রতিটি উপাদানকে **দুটি জিনিস** মনে রাখতে হয়:
-  1. **\`data\`**: তার নিজের মান (যেমন ১০, ২০)।
-  2. **\`next\`**: তার পরের নোডটি মেমরির কোন ঠিকানায় আছে (Address Pointer)।
-* তাই আমরা \`struct Node\` বানিয়ে দুই কুঠুরির একটি কাস্টম ডেটা টাইপ তৈরি করেছি।
-
----
-
-##### 🔹 ধাপ ২: \`head\` এবং \`temp\` পয়েন্টার ইনিশিয়ালাইজেশন (লাইন ১০-১১)
-\`\`\`cpp
-Node* head = nullptr;
-Node* temp = nullptr;
-\`\`\`
-* **\`head\` (ইঞ্জিন):** এটি ট্রেনের ইঞ্জিনের মতো। এটি সারাজীবন লিংকড লিস্টের একদম **প্রথম নোডের মেমরি ঠিকানা** ধরে রাখবে। \`head\` হারিয়ে গেলে পুরো ট্রেনের সব বগি মেমরিতে গায়েব হয়ে যাবে!
-* **\`temp\` (সহকারী):** নতুন নোডগুলোকে জোড়া লাগানোর জন্য এবং পুরো লিস্ট ঘুরে দেখার জন্য আমরা \`temp\` কে সামনে হাঁটাই, যাতে মূল \`head\` পয়েন্টারটি তার জায়গায় অক্ষত থাকে।
-* শুরুতে লিস্ট খালি থাকে বলে উভয়কেই \`nullptr\` (ঠিকানা 0x0) করে রাখা হয়।
-
----
-
-##### 🔹 ধাপ ৩: মেমরিতে নতুন নোড তৈরি \`new Node()\` (লাইন ১৮-২১)
-\`\`\`cpp
-Node* newNode = new Node();
-newNode->data = value;
-newNode->next = nullptr;
-\`\`\`
-* **\`new Node()\`**: C++ এর \`new\` কিওয়ার্ড হিপ (Heap) মেমরিতে একটি ব্র্যান্ড নিউ নোডের খালি জায়গা তৈরি করে তার মেমরি অ্যাড্রেস (যেমন \`0x1000\`) ফেরত দেয়।
-* সেই অ্যাড্রেসটি আমরা \`newNode\` পয়েন্টারে সংরক্ষণ করি।
-* এরপর \`newNode->data = value;\` দিয়ে ভেতরের ডেটা সেভ করি এবং \`newNode->next = nullptr;\` দিয়ে তার পরের অংশ নিরাপদ রাখি।
-
----
-
-##### 🔹 ধাপ ৪: প্রথম নোড বনাম পরবর্তী নোড যুক্ত করার লজিক (লাইন ২৪-৩২)
-\`\`\`cpp
-if (head == nullptr) {
-    head = newNode;
-    temp = newNode;
-}
-else {
-    temp->next = newNode;
-    temp = newNode;
-}
-\`\`\`
-* **কেস ১ (লিস্ট যখন খালি \`head == nullptr\`):** 
-  - এটিই আমাদের প্রথম নোড! তাই \`head\` এবং \`temp\` দুটোকেই এই নতুন নোডে দাঁড় করিয়ে দেওয়া হয়।
-* **কেস ২ (লিস্টে আগে থেকেই নোড থাকলে \`else\`):** 
-  - **\`temp->next = newNode;\`** $\rightarrow$ বর্তমানে \`temp\` যে নোডে দাঁড়িয়ে আছে, তার সাথে নতুন নোডের শিকল/কানেকশন তৈরি করা হলো।
-  - **\`temp = newNode;\`** $\rightarrow$ \`temp\` নিজে পেছনের নোড ছেড়ে হেঁটে এসে নতুন নোডের উপর দাঁড়াল, যাতে পরবর্তী লুপে এসে আবার নতুন নোড জোড়া লাগানো যায়।
-
----
-
-##### 🔹 ধাপ ৫: লিস্ট প্রিন্ট বা ট্রাভার্সাল (লাইন ৩৬-৪১)
-\`\`\`cpp
-temp = head;
-while (temp != nullptr) {
-    cout << temp->data << " -> ";
-    temp = temp->next;
-}
-cout << "NULL" << endl;
-\`\`\`
-1. **\`temp = head;\`** $\rightarrow$ পুরো লিস্ট দেখার জন্য \`temp\` কে আবার ট্রেনের শুরুতে (Head) নিয়ে আসা হলো।
-2. **\`while (temp != nullptr)\`** $\rightarrow$ যতক্ষণ না \`temp\` শেষ নোডের পরের খালি জায়গা (NULL) এ পৌঁছায়, ততক্ষণ লুপ চলবে।
-3. **\`cout << temp->data << " -> ";\`** $\rightarrow$ বর্তমান নোডের ডেটা কনসোলে প্রিন্ট করা হলো।
-4. **\`temp = temp->next;\`** $\rightarrow$ লিংক ধরে \`temp\` এক কদম সামনে এগিয়ে পরের নোডে গেল।
-
----
-
-#### 4. Stack vs. Heap Memory Layout:
-\`\`\`text
-STACK (Local Frame)                 HEAP (Dynamic Storage)
-
-head    ───→ 0x1000                 0x1000: [ 10 | next: 0x2000 ]
-temp    ───→ 0x5000                   ↓
-newNode ───→ 0x5000                 0x2000: [ 20 | next: 0x3000 ]
-value   ───→ 50                       ↓
-                                    0x3000: [ 30 | next: 0x4000 ]
-                                      ↓
-                                    0x4000: [ 40 | next: 0x5000 ]
-                                      ↓
-                                    0x5000: [ 50 | next: nullptr ]
-\`\`\`
-
----
-
-#### 5. Complexity Analysis:
-* **List Creation Time Complexity:** $\\mathbf{O(n)}$ — Each of the $n$ nodes is created and appended in $O(1)$ constant time using the tail pointer \`temp\`.
-* **List Creation Space Complexity:** $\\mathbf{O(n)}$ — $n$ Node objects allocated in Heap memory.
-* **Traversal Time Complexity:** $\\mathbf{O(n)}$ — Exactly $n$ node accesses.
-* **Traversal Auxiliary Space:** $\\mathbf{O(1)}$ — Requires only a single pointer variable (\`temp\`).`,
+    "id": "cm-topic-ch5",
+    "title": "Chapter 5: Linked Lists — Dynamic Memory, Pointers & AVAIL List",
+    "book_reference": "Lipschutz & Seymour, Data Structures, Revised 4th Ed., Chapter 5: Linked Lists",
+    "topic_tag": "Linked Lists",
+    "content_type": "topic",
+    "difficulty": "medium",
+    "assigned_date": null,
+    "created_by": null,
+    "created_at": "2026-09-09T08:38:12.697Z",
+    "updated_at": "2026-09-09T08:38:12.697Z",
+    "problem_statement": null,
+    "explanation_or_solution": "### Chapter 5: Linked Lists and Dynamic Pointer Representation\n\nA **Linked List** is a linear collection of data elements called **nodes**, where linear order is maintained via **pointers** rather than physical adjacency.\n\n---\n\n### Node Anatomy:\n1. **INFO / DATA:** Stores the actual data element.\n2. **LINK / NEXT:** Stores the memory address of the next node (or `NULL` for termination).\n\n---\n\n### The Free Storage Pool (AVAIL List):\n* `START`: Pointer to first node of active list.\n* `AVAIL`: Pointer to first free/empty node in memory.\n* **Overflow:** Occurs when trying to insert but $\\text{AVAIL} = \\text{NULL}$.\n* **Underflow:** Occurs when trying to delete from an empty list ($\\text{START} = \\text{NULL}$).",
+    "bangla_explanation": "### 🇧🇩 সহজ বাংলায় চ্যাপ্টার ৫: লিঙ্কড লিস্ট, পয়েন্টার এবং AVAIL মেমোরি পুল\n\n#### ১. লিঙ্কড লিস্ট কী এবং কেন অ্যারের চেয়ে আলাদা?\nঅ্যারেতে সব উপাদান মেমোরিতে পাশাপাশি রাখা বাধ্যতামূলক ছিল। কিন্তু লিঙ্কড লিস্টে উপাদানগুলো মেমোরির যেকোনো জায়গায় ছড়িয়ে ছিটিয়ে থাকতে পারে!\nপ্রতিটি উপাদানকে বলা হয় **Node (নোড)**, এবং একটি নোড অন্য নোডের সাথে **Pointer (মেমোরি ঠিকানা)** দিয়ে ট্রেনের বগির মতো যুক্ত থাকে।\n\n---\n\n#### ২. একটি নোডের দুটি অংশ:\n1. **DATA (তথ্য):** মূল মানটি (যেমন: সংখ্যা বা নাম)।\n2. **NEXT / LINK (পয়েন্টার):** পরবর্তী নোডটি মেমোরির কোন ঠিকানায় আছে তার রেফারেন্স। শেষ নোডের পয়েন্টার থাকে `NULL`।\n\n---\n\n#### ৩. গুরুত্বপূর্ণ পয়েন্টারসমূহ:\n* **START (হেড):** লিঙ্কড লিস্টের ১ম নোডের ঠিকানা ধরে রাখে।\n* **AVAIL (ফ্রি পুল):** মেমোরির যে ঘরগুলো এখনো খালি আছে তাদের একটি ফ্রি লিস্ট।\n* **Overflow (ওভারফ্লো):** যখন মেমোরি সম্পূর্ণ ফুল হয়ে যায় এবং নতুন নোড বানানোর কোনো জায়গা থাকে না ($`AVAIL == NULL`)।\n* **Underflow (আন্ডারফ্লো):** যখন খালি লিস্ট থেকে কোনো কিছু ডিলিট করার চেষ্টা করা হয় ($`START == NULL`)।\n\n* **সুবিধা:** মাঝখানে কোনো উপাদান ঢোকাতে বা মুছতে অন্য উপাদান সরানোর দরকার হয় না — কেবল পয়েন্টারের মুখ ঘুরিয়ে দিলেই কাজ শেষ ($O(1)$ সময়)।"
   },
-
-  // --- Algorithm 5.5: INSLOC ---
   {
-    id: "cm-algo-5-5",
-    title: "Algorithm 5.5: INSLOC — Inserting a Node into a Linked List (At Beginning or After LOC)",
-    book_reference: "Lipschutz, Seymour - Data Structures (Schaum's Outlines), Chapter 5: Linked Lists, Page 180 (Algorithm 5.5)",
-    topic_tag: "Linked Lists",
-    content_type: "algorithm",
-    difficulty: "medium",
-    assigned_date: null,
-    created_by: null,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-    problem_statement: `### Formal Problem Specification:
-Write an algorithm **\`INSLOC(INFO, LINK, START, AVAIL, LOC, ITEM)\`** that inserts \`ITEM\` into a linked list such that:
-1. \`ITEM\` follows the node with location \`LOC\`, OR
-2. \`ITEM\` is inserted as the **first node** of the list when $\\text{LOC} = \\text{NULL}$.
-
----
-
-### Input Parameters:
-* \`INFO\`: Array storing data contents of nodes.
-* \`LINK\`: Array storing link pointers to the next node in list.
-* \`START\`: Pointer to the first node in the active list.
-* \`AVAIL\`: Pointer to the first node in the free storage list.
-* \`LOC\`: Location index after which \`ITEM\` is to be inserted ($\`\\text{LOC} = \\text{NULL}\`$ for insertion at the beginning).
-* \`ITEM\`: The data payload to be stored in the new node.`,
-    explanation_or_solution: `### Algorithm 5.5: INSLOC(INFO, LINK, START, AVAIL, LOC, ITEM)
-
-This algorithm inserts \`ITEM\` so that \`ITEM\` follows the node with location \`LOC\` or inserts \`ITEM\` as the first node when $\\text{LOC} = \\text{NULL}$.
-
----
-
-### Step-by-Step Algorithm Pseudocode (Lipschutz Textbook):
-
-\`\`\`text
-1. [OVERFLOW?] If AVAIL = NULL, then: Write: OVERFLOW, and Exit.
-2. [Remove first node from AVAIL list.]
-   Set NEW := AVAIL and AVAIL := LINK[AVAIL].
-3. Set INFO[NEW] := ITEM. [Copies new data into new node.]
-4. If LOC = NULL, then: [Insert as first node.]
-      Set LINK[NEW] := START and START := NEW.
-   Else: [Insert after node with location LOC.]
-      Set LINK[NEW] := LINK[LOC] and LINK[LOC] := NEW.
-   [End of If structure.]
-5. Exit.
-\`\`\`
-
----
-
-### Detailed Mathematical & Pointer Mechanics Trace
-
-#### Case 1: Insertion as First Node (LOC = NULL)
-1. Allocate node from AVAIL: $\\text{NEW} := \\text{AVAIL}$, $\\text{AVAIL} := \\text{LINK}[\\text{AVAIL}]$.
-2. Store payload: $\\text{INFO}[\\text{NEW}] := \\text{ITEM}$.
-3. Link NEW to previous head: $\\text{LINK}[\\text{NEW}] := \\text{START}$.
-4. Update list head: $\\text{START} := \\text{NEW}$.
-
-$$\\text{START} \\xrightarrow{\\quad} [\\text{NEW} \\mid \\text{ITEM}] \\xrightarrow{\\text{LINK}} [\\text{Previous First Node}] \\longrightarrow \\dots$$
-
----
-
-#### Case 2: Insertion Following Node LOC (LOC ≠ NULL)
-1. Allocate node from AVAIL: $\\text{NEW} := \\text{AVAIL}$, $\\text{AVAIL} := \\text{LINK}[\\text{AVAIL}]$.
-2. Store payload: $\\text{INFO}[\\text{NEW}] := \\text{ITEM}$.
-3. Splice pointer chain:
-   * First point NEW to the node currently following LOC:
-     $$\\text{LINK}[\\text{NEW}] := \\text{LINK}[\\text{LOC}]$$
-   * Then update LOC's pointer to point to NEW:
-     $$\\text{LINK}[\\text{LOC}] := \\text{NEW}$$
-
-$$\\dots \\longrightarrow [\\text{Node LOC}] \\xrightarrow{\\text{LINK}} [\\text{NEW} \\mid \\text{ITEM}] \\xrightarrow{\\text{LINK}} [\\text{Successor Node}] \\longrightarrow \\dots$$
-
----
-
-### Complexity Analysis:
-* **Time Complexity:** $\\mathbf{O(1)}$ Constant Time (Given that pointer location \`LOC\` is already known).
-* **Auxiliary Space Complexity:** $\\mathbf{O(1)}$ Constant extra space for pointer rewiring.
-
----
-
-### Complete Multi-Language Implementations:
-
-#### 1. C++ (Standard Pointer / Struct Implementation)
-\`\`\`cpp
-#include <iostream>
-
-struct Node {
-    int data;
-    Node* next;
-    Node(int val) : data(val), next(nullptr) {}
-};
-
-// Algorithm 5.5: INSLOC in Modern C++
-void insertAfterLoc(Node*& start, Node* loc, int item) {
-    // Step 2 & 3: Allocate new node & copy data (Throws std::bad_alloc on overflow)
-    Node* newNode = new Node(item);
-
-    // Step 4: Relink pointers
-    if (loc == nullptr) {
-        // Insert as first node
-        newNode->next = start;
-        start = newNode;
-    } else {
-        // Insert after node loc
-        newNode->next = loc->next;
-        loc->next = newNode;
-    }
-}
-\`\`\`
-
-#### 2. C++ (Lipschutz Parallel Array Memory Pool Simulation)
-\`\`\`cpp
-#include <iostream>
-#include <vector>
-
-const int MEMORY_SIZE = 100;
-std::vector<int> INFO_ARR(MEMORY_SIZE);
-std::vector<int> LINK_ARR(MEMORY_SIZE);
-int START = 0; // 0 represents NULL
-int AVAIL = 1; // Free list head
-
-bool INSLOC(int& start, int& avail, int loc, int item) {
-    // Step 1: Overflow check
-    if (avail == 0) {
-        std::cerr << "OVERFLOW! Free storage exhausted.\\n";
-        return false;
-    }
-
-    // Step 2: Allocate first node from AVAIL list
-    int NEW = avail;
-    avail = LINK_ARR[avail];
-
-    // Step 3: Copy data
-    INFO_ARR[NEW] = item;
-
-    // Step 4: Splice into active list
-    if (loc == 0) {
-        LINK_ARR[NEW] = start;
-        start = NEW;
-    } else {
-        LINK_ARR[NEW] = LINK_ARR[loc];
-        LINK_ARR[loc] = NEW;
-    }
-
-    return true; // Step 5: Exit
-}
-\`\`\`
-
-#### 3. Java (OOP Node Splicing)
-\`\`\`java
-public class LinkedListInsLoc {
-    static class Node {
-        String info;
-        Node next;
-        Node(String val) { this.info = val; }
-    }
-
-    public static Node insLoc(Node start, Node loc, String item) {
-        Node newNode = new Node(item);
-        if (loc == null) {
-            newNode.next = start;
-            return newNode; // New START
-        } else {
-            newNode.next = loc.next;
-            loc.next = newNode;
-            return start;
-        }
-    }
-}
-\`\`\``,
+    "id": "cm-problem-5-1",
+    "title": "Problem 5.1: Singly Linked List — 5 Node Dynamic Creation, Pointers & Traversal",
+    "book_reference": "Lipschutz & Seymour, Data Structures, Revised 4th Ed., Chapter 5: Linked Lists, Page 98",
+    "topic_tag": "Linked Lists",
+    "content_type": "problem",
+    "difficulty": "easy",
+    "assigned_date": null,
+    "created_by": null,
+    "created_at": "2026-09-09T08:38:12.697Z",
+    "updated_at": "2026-09-09T08:38:12.697Z",
+    "problem_statement": "Given the input sequence of 5 integers `[10, 20, 30, 40, 50]`:\n\n1. Define a C++ `struct Node` containing integer data and a self-referential next pointer.\n2. Trace the dynamic memory allocation step-by-step: show how all 5 nodes are created on the Heap and how `head` and `next` pointers connect them into a linear chain.\n3. Write a traversal function to print the list and explain why the list terminates at `NULL`.",
+    "explanation_or_solution": "### Complete Solution for Problem 5.1 (5 Node Linked List)\n\n```cpp\n#include <iostream>\nusing namespace std;\n\n// 1. Definition of Node Structure\nstruct Node {\n    int data;       // Node Data\n    Node* next;     // Self-referential pointer to next node\n\n    Node(int val) : data(val), next(nullptr) {}\n};\n\n// 2. Traversal Function\nvoid printList(Node* head) {\n    Node* temp = head;\n    while (temp != nullptr) {\n        cout << temp->data << \" -> \";\n        temp = temp->next;\n    }\n    cout << \"NULL\" << endl;\n}\n\nint main() {\n    // Dynamic 5-Node Creation on Heap\n    Node* head = new Node(10);\n    head->next = new Node(20);\n    head->next->next = new Node(30);\n    head->next->next->next = new Node(40);\n    head->next->next->next->next = new Node(50);\n\n    printList(head);\n    return 0;\n}\n```\n\n---\n\n### Step-by-Step Memory Trace (5 Nodes):\n1. **Node 1 (`head`):** Address `0x1000`, Data = `10`, Next = `0x2000`\n2. **Node 2:** Address `0x2000`, Data = `20`, Next = `0x3000`\n3. **Node 3:** Address `0x3000`, Data = `30`, Next = `0x4000`\n4. **Node 4:** Address `0x4000`, Data = `40`, Next = `0x5000`\n5. **Node 5:** Address `0x5000`, Data = `50`, Next = `nullptr` (Termination)\n\n* **Termination:** Traversal stops when `temp == nullptr`.",
+    "bangla_explanation": "### 🇧🇩 সহজ বাংলায় প্রবলেম ৫.১: সি++ দিয়ে ৫টি নোডের লিঙ্কড লিস্ট তৈরি ও পয়েন্টার সংযোগ\n\n#### ১. নোড কী এবং সি++ এ কীভাবে তৈরি হয়?\n```cpp\nstruct Node {\n    int data;     // মূল সংখ্যা\n    Node* next;   // পরবর্তী নোডের মেমোরি অ্যাড্রেস\n};\n```\nপ্রতিটি নোড মেমোরির হিপ (Heap) সেকশনে `new` কিওয়ার্ড দিয়ে তৈরি হয়।\n\n---\n\n#### ২. কীভাবে ৫টি নোড একে অপরের সাথে জোড়া লাগে?\n* **ধাপ ১:** `head = new Node(10)` $\\rightarrow$ ১ম নোড তৈরি হলো (মান ১০, পয়েন্টার NULL)।\n* **ধাপ ২:** `head->next = new Node(20)` $\\rightarrow$ ১ম নোডের `next` পয়েন্টার এখন ২য় নোডকে নির্দেশ করছে।\n* **ধাপ ৩:** `head->next->next = new Node(30)` $\\rightarrow$ ৩য় নোড যুক্ত হলো।\n* **ধাপ ৪:** `head->next->next->next = new Node(40)` $\\rightarrow$ ৪র্থ নোড যুক্ত হলো।\n* **ধাপ ৫:** `head->next->next->next->next = new Node(50)` $\\rightarrow$ ৫ম নোড যুক্ত হলো (যার `next` হলো NULL)।\n\n---\n\n#### ৩. ট্রাভার্সাল কীভাবে কাজ করে?\nএকটি অস্থায়ী পয়েন্টার `temp = head` দিয়ে শুরু করে যতক্ষণ না `temp == NULL` হয়, ততক্ষণ এক নোড থেকে পরের নোডে (`temp = temp->next`) লাফিয়ে প্রিন্ট করা হয়:\n`10 -> 20 -> 30 -> 40 -> 50 -> NULL`।"
   },
+  {
+    "id": "cm-algo-5-5",
+    "title": "Algorithm 5.5: Inserting into a Linked List (INSLOC)",
+    "book_reference": "Lipschutz & Seymour, Data Structures, Revised 4th Ed., Chapter 5: Linked Lists, Page 104",
+    "topic_tag": "Linked Lists",
+    "content_type": "algorithm",
+    "difficulty": "medium",
+    "assigned_date": null,
+    "created_by": null,
+    "created_at": "2026-09-09T08:38:12.697Z",
+    "updated_at": "2026-09-09T08:38:12.697Z",
+    "problem_statement": null,
+    "explanation_or_solution": "### Algorithm 5.5: (Inserting at a Given Location)\n\n`INSLOC(INFO, LINK, START, AVAIL, LOC, ITEM)`: Inserts `ITEM` into the linked list following the node at location `LOC` (or as first node if `LOC = NULL`).\n\n```text\nAlgorithm 5.5:\n1. [OVERFLOW?] If AVAIL = NULL, then: Write: OVERFLOW, and Exit.\n2. [Remove first node from AVAIL list.]\n   Set NEW := AVAIL, AVAIL := LINK[AVAIL].\n3. [Copy item into new node.]\n   Set INFO[NEW] := ITEM.\n4. [Insert at beginning?] If LOC = NULL, then:\n      Set LINK[NEW] := START, START := NEW.\n   Else:\n      [Insert after node with location LOC.]\n      Set LINK[NEW] := LINK[LOC], LINK[LOC] := NEW.\n   [End of If structure.]\n5. Exit.\n```\n\n* **Time Complexity:** $O(1)$ constant time (pointer reassignment only, zero element shifting).",
+    "bangla_explanation": "### 🇧🇩 সহজ বাংলায় অ্যালগরিদম ৫.৫: লিঙ্কড লিস্টে নোড ইনসার্ট (INSLOC)\n\n#### কেন লিঙ্কড লিস্টে ইনসার্ট করা অ্যারের চেয়ে দ্রুত?\nঅ্যারেতে কোনো সংখ্যা ঢোকাতে হলে বাকি সব সংখ্যাকে ডানে সরাতে হতো ($O(n)$ সময়)। কিন্তু লিঙ্কড লিস্টে কোনো উপাদান সরাতে হয় না — কেবল ফাঁকা মেমোরি থেকে একটি নোড নিয়ে পয়েন্টার জোড়া লাগিয়ে দিলেই $O(1)$ সময়ে কাজ শেষ!\n\n---\n\n#### স্টেপ-বাই-স্টেপ অ্যালগরিদম ড্রাই-রান:\n1. **ধাপ ১ [ওভারফ্লো চেক]:** যদি $`AVAIL == NULL` হয়, অর্থাৎ মেমোরিতে কোনো ফাঁকা নোড না থাকে, তাহলে `OVERFLOW` মেসেজ দিয়ে বের হয়ে যাও।\n2. **ধাপ ২ [ফ্রি পুল থেকে নোড নেওয়া]:**\n   - `NEW = AVAIL` (ফ্রি পুলের প্রথম ফাঁকা নোডটি নিলাম)।\n   - `AVAIL = LINK[AVAIL]` (ফ্রি পুলের পয়েন্টারকে পরবর্তী ফাঁকা ঘরে সরিয়ে দিলাম)।\n3. **ধাপ ৩ [মান বসানো]:** `INFO[NEW] = ITEM` (নতুন নোডে কাঙ্ক্ষিত মানটি রাখলাম)।\n4. **ধাপ ৪ [পয়েন্টার সংযোগ]:**\n   - **যদি শুরুতে ঢোকাতে হয় ($LOC == NULL$):**\n     `LINK[NEW] = START` এবং `START = NEW`।\n   - **যদি মাঝখানে বা শেষে $LOC$ এর পরে ঢোকাতে হয়:**\n     `LINK[NEW] = LINK[LOC]` এবং `LINK[LOC] = NEW`।\n\n* **Time Complexity:** $O(1)$ কনস্ট্যান্ট টাইম!"
+  }
 ];
