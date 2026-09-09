@@ -1510,6 +1510,215 @@ Memory cells that are currently not used are linked together in a secondary link
 | **Memory Overhead** | Fixed size, potential waste | Extra pointer field (\`LINK\`) per node |`,
   },
 
+  // --- Problem 5.1: Dynamic Singly Linked List Creation & Traversal in C++ ---
+  {
+    id: "cm-problem-5-1",
+    title: "Problem 5.1: Dynamic Singly Linked List Creation & Traversal in C++",
+    book_reference: "Data Structures & Algorithms in C++, Chapter 5: Linked Lists — Dynamic Memory Allocation, Node Linking & Traversal",
+    topic_tag: "Linked Lists",
+    content_type: "problem",
+    difficulty: "easy",
+    assigned_date: null,
+    created_by: null,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    problem_statement: `### Problem Description:
+Create a Singly Linked List containing **5 nodes**. Take 5 integer values from standard input, dynamically allocate each node on the Heap, link them using pointer variables, and display the completed Linked List from \`head\` to \`NULL\`.
+
+---
+
+### Example Test Case:
+* **Input Values:**
+  \`\`\`text
+  10 20 30 40 50
+  \`\`\`
+* **Expected Output:**
+  \`\`\`text
+  10 -> 20 -> 30 -> 40 -> 50 -> NULL
+  \`\`\`
+
+---
+
+### Core Learning Objectives:
+1. Understand the anatomy of a **Node** (\`data\` payload and \`next\` pointer).
+2. Learn how **\`new Node()\`** dynamically allocates memory on the Heap.
+3. Understand how **\`head\`** anchors the list and why **\`temp\`** is used to append nodes.
+4. Master unidirectional pointer linking (\`temp->next = newNode;\`).
+5. Trace step-by-step traversal until \`temp == nullptr\`.`,
+    explanation_or_solution: `### Complete Pedagogical Breakdown & C++ Solution
+
+#### 1. What is a Node? (নোড কী?)
+A **Node** is a user-defined compound data structure containing two components:
+\`\`\`cpp
+struct Node {
+    int data;    // Holds the payload value (e.g. 10, 20)
+    Node* next;  // Holds the memory address of the successor Node
+};
+\`\`\`
+
+Visual representation of a single Node:
+\`\`\`text
+┌───────────┬──────────────┐
+│   data    │     next     │
+│    10     │      ●───────┼──→ Address of Next Node (or nullptr)
+└───────────┴──────────────┘
+\`\`\`
+
+---
+
+#### 2. Complete C++ Implementation:
+\`\`\`cpp
+#include <iostream>
+using namespace std;
+
+struct Node {
+    int data;
+    Node* next;
+};
+
+int main() {
+    Node* head = nullptr;
+    Node* temp = nullptr;
+
+    // Create 5 nodes
+    for (int i = 0; i < 5; i++) {
+        int value;
+        cin >> value;
+
+        Node* newNode = new Node();
+
+        newNode->data = value;
+        newNode->next = nullptr;
+
+        // First node
+        if (head == nullptr) {
+            head = newNode;
+            temp = newNode;
+        }
+        // Other nodes
+        else {
+            temp->next = newNode;
+            temp = newNode;
+        }
+    }
+
+    // Print Linked List
+    temp = head;
+
+    while (temp != nullptr) {
+        cout << temp->data << " -> ";
+        temp = temp->next;
+    }
+
+    cout << "NULL" << endl;
+
+    return 0;
+}
+\`\`\`
+
+---
+
+#### 3. 🇧🇩 সহজ বাংলায় সম্পূর্ণ কোডের লাইন-বাই-লাইন বিশ্লেষণ (Beginner's Line-by-Line Guide)
+
+একজন বিগিনার হিসেবে লিংকড লিস্ট বুঝতে হলে নিচের ৬টি ধাপ পরিষ্কারভাবে বোঝা জরুরি:
+
+##### 🔹 ধাপ ১: \`struct Node\` তৈরি (লাইন ৪-৭)
+\`\`\`cpp
+struct Node {
+    int data;
+    Node* next;
+};
+\`\`\`
+* সাধারণ ভ্যারিয়েবল (যেমন \`int x\`) শুধু একটি সংখ্যা মনে রাখতে পারে।
+* কিন্তু লিংকড লিস্টের প্রতিটি উপাদানকে **দুটি জিনিস** মনে রাখতে হয়:
+  1. **\`data\`**: তার নিজের মান (যেমন ১০, ২০)।
+  2. **\`next\`**: তার পরের নোডটি মেমরির কোন ঠিকানায় আছে (Address Pointer)।
+* তাই আমরা \`struct Node\` বানিয়ে দুই কুঠুরির একটি কাস্টম ডেটা টাইপ তৈরি করেছি।
+
+---
+
+##### 🔹 ধাপ ২: \`head\` এবং \`temp\` পয়েন্টার ইনিশিয়ালাইজেশন (লাইন ১০-১১)
+\`\`\`cpp
+Node* head = nullptr;
+Node* temp = nullptr;
+\`\`\`
+* **\`head\` (ইঞ্জিন):** এটি ট্রেনের ইঞ্জিনের মতো। এটি সারাজীবন লিংকড লিস্টের একদম **প্রথম নোডের মেমরি ঠিকানা** ধরে রাখবে। \`head\` হারিয়ে গেলে পুরো ট্রেনের সব বগি মেমরিতে গায়েব হয়ে যাবে!
+* **\`temp\` (সহকারী):** নতুন নোডগুলোকে জোড়া লাগানোর জন্য এবং পুরো লিস্ট ঘুরে দেখার জন্য আমরা \`temp\` কে সামনে হাঁটাই, যাতে মূল \`head\` পয়েন্টারটি তার জায়গায় অক্ষত থাকে।
+* শুরুতে লিস্ট খালি থাকে বলে উভয়কেই \`nullptr\` (ঠিকানা 0x0) করে রাখা হয়।
+
+---
+
+##### 🔹 ধাপ ৩: মেমরিতে নতুন নোড তৈরি \`new Node()\` (লাইন ১৮-২১)
+\`\`\`cpp
+Node* newNode = new Node();
+newNode->data = value;
+newNode->next = nullptr;
+\`\`\`
+* **\`new Node()\`**: C++ এর \`new\` কিওয়ার্ড হিপ (Heap) মেমরিতে একটি ব্র্যান্ড নিউ নোডের খালি জায়গা তৈরি করে তার মেমরি অ্যাড্রেস (যেমন \`0x1000\`) ফেরত দেয়।
+* সেই অ্যাড্রেসটি আমরা \`newNode\` পয়েন্টারে সংরক্ষণ করি।
+* এরপর \`newNode->data = value;\` দিয়ে ভেতরের ডেটা সেভ করি এবং \`newNode->next = nullptr;\` দিয়ে তার পরের অংশ নিরাপদ রাখি।
+
+---
+
+##### 🔹 ধাপ ৪: প্রথম নোড বনাম পরবর্তী নোড যুক্ত করার লজিক (লাইন ২৪-৩২)
+\`\`\`cpp
+if (head == nullptr) {
+    head = newNode;
+    temp = newNode;
+}
+else {
+    temp->next = newNode;
+    temp = newNode;
+}
+\`\`\`
+* **কেস ১ (লিস্ট যখন খালি \`head == nullptr\`):** 
+  - এটিই আমাদের প্রথম নোড! তাই \`head\` এবং \`temp\` দুটোকেই এই নতুন নোডে দাঁড় করিয়ে দেওয়া হয়।
+* **কেস ২ (লিস্টে আগে থেকেই নোড থাকলে \`else\`):** 
+  - **\`temp->next = newNode;\`** $\rightarrow$ বর্তমানে \`temp\` যে নোডে দাঁড়িয়ে আছে, তার সাথে নতুন নোডের শিকল/কানেকশন তৈরি করা হলো।
+  - **\`temp = newNode;\`** $\rightarrow$ \`temp\` নিজে পেছনের নোড ছেড়ে হেঁটে এসে নতুন নোডের উপর দাঁড়াল, যাতে পরবর্তী লুপে এসে আবার নতুন নোড জোড়া লাগানো যায়।
+
+---
+
+##### 🔹 ধাপ ৫: লিস্ট প্রিন্ট বা ট্রাভার্সাল (লাইন ৩৬-৪১)
+\`\`\`cpp
+temp = head;
+while (temp != nullptr) {
+    cout << temp->data << " -> ";
+    temp = temp->next;
+}
+cout << "NULL" << endl;
+\`\`\`
+1. **\`temp = head;\`** $\rightarrow$ পুরো লিস্ট দেখার জন্য \`temp\` কে আবার ট্রেনের শুরুতে (Head) নিয়ে আসা হলো।
+2. **\`while (temp != nullptr)\`** $\rightarrow$ যতক্ষণ না \`temp\` শেষ নোডের পরের খালি জায়গা (NULL) এ পৌঁছায়, ততক্ষণ লুপ চলবে।
+3. **\`cout << temp->data << " -> ";\`** $\rightarrow$ বর্তমান নোডের ডেটা কনসোলে প্রিন্ট করা হলো।
+4. **\`temp = temp->next;\`** $\rightarrow$ লিংক ধরে \`temp\` এক কদম সামনে এগিয়ে পরের নোডে গেল।
+
+---
+
+#### 4. Stack vs. Heap Memory Layout:
+\`\`\`text
+STACK (Local Frame)                 HEAP (Dynamic Storage)
+
+head    ───→ 0x1000                 0x1000: [ 10 | next: 0x2000 ]
+temp    ───→ 0x5000                   ↓
+newNode ───→ 0x5000                 0x2000: [ 20 | next: 0x3000 ]
+value   ───→ 50                       ↓
+                                    0x3000: [ 30 | next: 0x4000 ]
+                                      ↓
+                                    0x4000: [ 40 | next: 0x5000 ]
+                                      ↓
+                                    0x5000: [ 50 | next: nullptr ]
+\`\`\`
+
+---
+
+#### 5. Complexity Analysis:
+* **List Creation Time Complexity:** $\\mathbf{O(n)}$ — Each of the $n$ nodes is created and appended in $O(1)$ constant time using the tail pointer \`temp\`.
+* **List Creation Space Complexity:** $\\mathbf{O(n)}$ — $n$ Node objects allocated in Heap memory.
+* **Traversal Time Complexity:** $\\mathbf{O(n)}$ — Exactly $n$ node accesses.
+* **Traversal Auxiliary Space:** $\\mathbf{O(1)}$ — Requires only a single pointer variable (\`temp\`).`,
+  },
+
   // --- Algorithm 5.5: INSLOC ---
   {
     id: "cm-algo-5-5",

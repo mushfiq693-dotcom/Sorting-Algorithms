@@ -48,6 +48,13 @@ const LinkedListInsLocVisualizer = dynamic(
     ),
   { ssr: false, loading: () => <SimLabLoading /> }
 );
+const SinglyLinkedListStudio = dynamic(
+  () =>
+    import("@/components/course-material/SinglyLinkedListStudio").then(
+      (m) => m.SinglyLinkedListStudio
+    ),
+  { ssr: false, loading: () => <SimLabLoading /> }
+);
 import {
   BookOpen,
   HelpCircle,
@@ -865,12 +872,18 @@ export default function CourseMaterialPage() {
                               item.title.includes("3.5") ||
                               item.title.includes("3.6");
 
-                            const isLinkedListProblem =
-                              item.topic_tag === "Linked Lists" ||
-                              item.title.toLowerCase().includes("linked list") ||
+                            const isSinglyLinkedListProblem =
+                              item.id === "cm-problem-5-1" ||
+                              item.title.toLowerCase().includes("singly linked list") ||
+                              item.title.toLowerCase().includes("node creation") ||
+                              item.title.includes("5.1");
+
+                            const isLinkedListInsLocProblem =
                               item.title.includes("5.5") ||
                               item.title.includes("INSLOC") ||
                               item.id === "cm-algo-5-5";
+
+                            const isLinkedListProblem = isSinglyLinkedListProblem || isLinkedListInsLocProblem;
 
                             const hasVisualizer = isProblem26 || isProblem27 || isStringProblem || isLinkedListProblem;
                             const isVisualizerOpen = !!expandedVisualizers[item.id];
@@ -886,7 +899,9 @@ export default function CourseMaterialPage() {
                                       ? "Interactive loop counter available for 3-loop nested cubic growth and logarithmic stepping."
                                       : isStringProblem
                                       ? "Interactive string studio & algorithm execution trace available."
-                                      : isLinkedListProblem
+                                      : isSinglyLinkedListProblem
+                                      ? "Interactive Singly Linked List Studio (C++ dynamic node allocation, pointer linking & traversal) available."
+                                      : isLinkedListInsLocProblem
                                       ? "Interactive Algorithm 5.5 INSLOC Simulation Lab & Parallel Memory Arrays available."
                                       : "Attempt the question first before viewing the full step-by-step verification."}
                                   </div>
@@ -963,8 +978,15 @@ export default function CourseMaterialPage() {
                                   </div>
                                 )}
 
-                                {/* Embedded Simulation & Visualizer Studio for Linked List (5.5) */}
-                                {isLinkedListProblem && isVisualizerOpen && (
+                                {/* Embedded Simulation & Visualizer Studio for Singly Linked List (5.1) */}
+                                {isSinglyLinkedListProblem && isVisualizerOpen && (
+                                  <div className="animate-in fade-in slide-in-from-top-3 duration-300">
+                                    <SinglyLinkedListStudio />
+                                  </div>
+                                )}
+
+                                {/* Embedded Simulation & Visualizer Studio for Linked List INSLOC (5.5) */}
+                                {isLinkedListInsLocProblem && isVisualizerOpen && (
                                   <div className="animate-in fade-in slide-in-from-top-3 duration-300">
                                     <LinkedListInsLocVisualizer />
                                   </div>
