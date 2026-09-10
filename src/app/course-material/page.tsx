@@ -83,6 +83,13 @@ const LinkedListMemoryArrayStudio = dynamic(
     ),
   { ssr: false, loading: () => <SimLabLoading /> }
 );
+const StackOperationsStudio = dynamic(
+  () =>
+    import("@/components/course-material/StackOperationsStudio").then(
+      (m) => m.StackOperationsStudio
+    ),
+  { ssr: false, loading: () => <SimLabLoading /> }
+);
 import {
   BookOpen,
   HelpCircle,
@@ -124,6 +131,7 @@ const CHAPTER_OPTIONS = [
   { id: "Chapter 3", label: "Chapter 3: String Processing", icon: Bookmark },
   { id: "Chapter 4", label: "Chapter 4: Linear Arrays", icon: Bookmark },
   { id: "Chapter 5", label: "Chapter 5: Linked Lists", icon: Bookmark },
+  { id: "Chapter 6", label: "Chapter 6: Stacks, Queues & Recursion", icon: Bookmark },
 ];
 
 const TYPE_OPTIONS = [
@@ -286,8 +294,46 @@ function getCanonicalMaterialKey(m: CourseMaterial): string {
   if (m.id === "cm-problem-5-20") return "ch5-p5.20";
   if (m.id === "cm-topic-5-10") return "ch5-topic-5.10";
 
+  // Chapter 6: Stacks, Queues, Recursion
+  if (m.id === "cm-topic-6-2") return "ch6-topic-6.2";
+  if (m.id === "cm-topic-6-3") return "ch6-topic-6.3";
+  if (m.id === "cm-algo-6-1") return "ch6-algo-6.1";
+  if (m.id === "cm-algo-6-2") return "ch6-algo-6.2";
+  if (m.id === "cm-problem-6-3") return "ch6-p6.3";
+  if (m.id === "cm-topic-6-4") return "ch6-topic-6.4";
+  if (m.id === "cm-algo-6-3") return "ch6-algo-6.3";
+  if (m.id === "cm-algo-6-4") return "ch6-algo-6.4";
+  if (m.id === "cm-problem-6-4") return "ch6-p6.4";
+  if (m.id === "cm-topic-6-5") return "ch6-topic-6.5";
+  if (m.id === "cm-problem-6-5") return "ch6-p6.5";
+  if (m.id === "cm-algo-6-5") return "ch6-algo-6.5";
+  if (m.id === "cm-problem-6-6") return "ch6-p6.6";
+  if (m.id === "cm-algo-6-6") return "ch6-algo-6.6";
+  if (m.id === "cm-problem-6-7") return "ch6-p6.7";
+  if (m.id === "cm-topic-6-6") return "ch6-topic-6.6";
+  if (m.id === "cm-problem-6-8") return "ch6-p6.8";
+
   // 2. Text heuristics for imported/custom items
   const text = `${m.id} ${m.title} ${m.book_reference || ""}`.toLowerCase();
+
+  // Chapter 6: Stacks & Queues
+  if (text.includes("6.8") || (text.includes("quicksort") && text.includes("reduction"))) return "ch6-p6.8";
+  if (text.includes("6.6") && (text.includes("quicksort") || m.content_type === "topic")) return "ch6-topic-6.6";
+  if (text.includes("6.7") || (text.includes("infix") && text.includes("postfix") && text.includes("trace"))) return "ch6-p6.7";
+  if (text.includes("6.6") && (text.includes("polish") || m.content_type === "algorithm")) return "ch6-algo-6.6";
+  if (text.includes("6.6") && m.content_type === "problem") return "ch6-p6.6";
+  if (text.includes("6.5") && (text.includes("postfix") || m.content_type === "algorithm")) return "ch6-algo-6.5";
+  if (text.includes("6.5") && m.content_type === "problem") return "ch6-p6.5";
+  if (text.includes("6.5") || text.includes("polish notation") || text.includes("arithmetic expressions")) return "ch6-topic-6.5";
+  if (text.includes("6.4") && m.content_type === "problem") return "ch6-p6.4";
+  if (text.includes("6.4") && m.content_type === "algorithm") return "ch6-algo-6.4";
+  if (text.includes("6.3") && m.content_type === "algorithm") return "ch6-algo-6.3";
+  if (text.includes("6.4") || text.includes("linked stack") || text.includes("linked representation of stacks")) return "ch6-topic-6.4";
+  if (text.includes("6.3") && m.content_type === "problem") return "ch6-p6.3";
+  if (text.includes("6.2") && m.content_type === "algorithm") return "ch6-algo-6.2";
+  if (text.includes("6.1") && m.content_type === "algorithm") return "ch6-algo-6.1";
+  if (text.includes("6.3") || text.includes("array representation of stacks") || text.includes("maxstk")) return "ch6-topic-6.3";
+  if (text.includes("6.2") || text.includes("introduction to stacks") || ((text.includes("chapter 6") || text.includes("ch 6")) && m.content_type === "topic")) return "ch6-topic-6.2";
 
   // Chapter 5: Linked Lists
   if (text.includes("prereq") || text.includes("before you start")) return "ch5-prereq";
@@ -353,7 +399,7 @@ function getCanonicalMaterialKey(m: CourseMaterial): string {
   return `custom-${m.content_type}-${cleanTitle || m.id}`;
 }
 
-// Intelligent Sequential Sorting Key (Chapter 2 -> Chapter 3 -> Chapter 4 -> Chapter 5)
+// Intelligent Sequential Sorting Key (Chapter 2 -> Chapter 3 -> Chapter 4 -> Chapter 5 -> Chapter 6)
 function getMaterialSortKey(m: CourseMaterial): number {
   const key = getCanonicalMaterialKey(m);
 
@@ -415,6 +461,25 @@ function getMaterialSortKey(m: CourseMaterial): number {
   if (key === "ch5-algo-5.14") return 5090;
   if (key === "ch5-p5.20") return 5095;
   if (key === "ch5-topic-5.10") return 5100;
+
+  // Chapter 6: Stacks, Queues, Recursion
+  if (key === "ch6-topic-6.2") return 6020;
+  if (key === "ch6-topic-6.3") return 6030;
+  if (key === "ch6-algo-6.1") return 6031;
+  if (key === "ch6-algo-6.2") return 6032;
+  if (key === "ch6-p6.3") return 6033;
+  if (key === "ch6-topic-6.4") return 6040;
+  if (key === "ch6-algo-6.3") return 6041;
+  if (key === "ch6-algo-6.4") return 6042;
+  if (key === "ch6-p6.4") return 6043;
+  if (key === "ch6-topic-6.5") return 6050;
+  if (key === "ch6-p6.5") return 6051;
+  if (key === "ch6-algo-6.5") return 6052;
+  if (key === "ch6-p6.6") return 6053;
+  if (key === "ch6-algo-6.6") return 6054;
+  if (key === "ch6-p6.7") return 6055;
+  if (key === "ch6-topic-6.6") return 6060;
+  if (key === "ch6-p6.8") return 6061;
 
   // Regex fallback for custom additions
   const ref = ((m.book_reference || "") + " " + (m.title || "")).toLowerCase();
@@ -1129,7 +1194,15 @@ export default function CourseMaterialPage() {
 
                             const isLinkedListProblem = isSinglyLinkedListProblem || isLinkedListInsLocProblem || isMemoryArrayProblem;
 
-                            const hasVisualizer = isProblem26 || isProblem27 || isStringProblem || isBinarySearchProblem || isLinkedListProblem;
+                            const isStackProblem =
+                              item.topic_tag === "Stacks" ||
+                              item.title.toLowerCase().includes("stack") ||
+                              item.title.toLowerCase().includes("postfix") ||
+                              item.title.toLowerCase().includes("polish") ||
+                              item.title.toLowerCase().includes("quicksort") ||
+                              item.id.startsWith("cm-problem-6");
+
+                            const hasVisualizer = isProblem26 || isProblem27 || isStringProblem || isBinarySearchProblem || isLinkedListProblem || isStackProblem;
                             const isVisualizerOpen = !!expandedVisualizers[item.id];
 
                             return (
@@ -1151,6 +1224,8 @@ export default function CourseMaterialPage() {
                                       ? "Interactive Singly Linked List Studio (C++ dynamic node allocation, pointer linking & traversal) available."
                                       : isLinkedListInsLocProblem
                                       ? "Interactive Algorithm 5.5 INSLOC Simulation Lab & Parallel Memory Arrays available."
+                                      : isStackProblem
+                                      ? "Interactive Chapter 6 Simulation Studio (Array Stack Push/Pop, Postfix Evaluator & Quicksort Partitioning) available."
                                       : "Attempt the question first before viewing the full step-by-step verification."}
                                   </div>
 
@@ -1277,6 +1352,13 @@ export default function CourseMaterialPage() {
                                   </div>
                                 )}
 
+                                {/* Embedded Simulation & Visualizer Studio for Stack & Postfix Problems (6.3, 6.4, 6.5, 6.6, 6.7, 6.8) */}
+                                {isStackProblem && isVisualizerOpen && (
+                                  <div className="animate-in fade-in slide-in-from-top-3 duration-300">
+                                    <StackOperationsStudio />
+                                  </div>
+                                )}
+
                                 {/* Collapsible Bangla Explanation Card */}
                                 {isBanglaOpen && item.bangla_explanation && (
                                   <div className="rounded-2xl border border-amber-500/35 bg-gradient-to-br from-amber-500/[0.04] to-orange-500/[0.02] dark:bg-card/95 p-6 shadow-xl animate-in fade-in slide-in-from-top-3 duration-200">
@@ -1327,7 +1409,20 @@ export default function CourseMaterialPage() {
                             item.title.includes("INSLOC") ||
                             item.id === "cm-algo-5-5";
 
-                          const hasAlgoVisualizer = isLinearSearchAlgo || isBinarySearchAlgo || isLinkedListAlgo;
+                          const isStackAlgo =
+                            item.topic_tag === "Stacks & Queues" ||
+                            item.id.includes("algo-6-") ||
+                            item.title.includes("6.1") ||
+                            item.title.includes("6.2") ||
+                            item.title.includes("6.3") ||
+                            item.title.includes("6.4") ||
+                            item.title.includes("6.5") ||
+                            item.title.includes("6.6") ||
+                            item.title.toLowerCase().includes("push") ||
+                            item.title.toLowerCase().includes("pop") ||
+                            item.title.toLowerCase().includes("polish");
+
+                          const hasAlgoVisualizer = isLinearSearchAlgo || isBinarySearchAlgo || isLinkedListAlgo || isStackAlgo;
                           const isVisualizerOpen = !!expandedVisualizers[item.id];
 
                           return (
@@ -1341,6 +1436,8 @@ export default function CourseMaterialPage() {
                                     ? "Interactive Binary Search Studio (live Array Bars, segment halving, BEG/MID/END pointers & Example 4.9 trace) available."
                                     : isLinkedListAlgo
                                     ? "Interactive Algorithm 5.5 INSLOC Simulation Lab with Memory Array tracing (INFO, LINK, START, AVAIL) available."
+                                    : isStackAlgo
+                                    ? "Interactive Stacks & Polish Operations Studio (Push/Pop Array Stack, Postfix Evaluation & Quicksort Reduction) available."
                                     : "অ্যালগরিদমটির স্টেপ-বাই-স্টেপ বিশ্লেষণ ও বাংলা সারসংক্ষেপ।"}
                                 </div>
 
@@ -1385,7 +1482,9 @@ export default function CourseMaterialPage() {
                                           ? "🚀 Launch Linear Search Simulation Studio"
                                           : isBinarySearchAlgo
                                           ? "🚀 Launch Binary Search Simulation Studio"
-                                          : "🚀 Launch Algorithm 5.5 Simulation Lab"}
+                                          : isLinkedListAlgo
+                                          ? "🚀 Launch Algorithm 5.5 Simulation Lab"
+                                          : "🚀 Launch Stack & Polish Studio"}
                                       </span>
                                       {isVisualizerOpen ? (
                                         <ChevronUp className="h-3.5 w-3.5" />
@@ -1415,6 +1514,13 @@ export default function CourseMaterialPage() {
                               {isLinkedListAlgo && isVisualizerOpen && (
                                 <div className="animate-in fade-in slide-in-from-top-3 duration-300">
                                   <LinkedListInsLocVisualizer />
+                                </div>
+                              )}
+
+                              {/* Embedded Visualizer Studio for Stack & Polish Algorithms */}
+                              {isStackAlgo && isVisualizerOpen && (
+                                <div className="animate-in fade-in slide-in-from-top-3 duration-300">
+                                  <StackOperationsStudio />
                                 </div>
                               )}
 
@@ -1467,8 +1573,15 @@ export default function CourseMaterialPage() {
                             item.title.toLowerCase().includes("prerequisite") ||
                             item.title.toLowerCase().includes("before you start");
 
+                          const isStackTopic =
+                            item.topic_tag === "Stacks & Queues" ||
+                            item.id.includes("topic-6-") ||
+                            item.title.toLowerCase().includes("stack") ||
+                            item.title.toLowerCase().includes("polish") ||
+                            item.title.toLowerCase().includes("quicksort");
+
                           const isVisualizerOpen = !!expandedVisualizers[item.id];
-                          const hasTopicVisualizer = isPrereqTopic || isStringTopic || isLinearSearchTopic || isBinarySearchTopic;
+                          const hasTopicVisualizer = isPrereqTopic || isStringTopic || isLinearSearchTopic || isBinarySearchTopic || isStackTopic;
 
                           return (
                             <div className="space-y-4">
@@ -1483,6 +1596,8 @@ export default function CourseMaterialPage() {
                                     ? "Interactive Linear Search Studio (live Array Bars, sequential scan, comparisons & Sentinel mode) available."
                                     : isBinarySearchTopic
                                     ? "Interactive Binary Search Studio (live Array Bars, segment halving, BEG/MID/END pointers) available."
+                                    : isStackTopic
+                                    ? "Interactive Stacks & Polish Notation Studio (Array Stack, Postfix Evaluation & Quicksort Partitioning) available."
                                     : "টপিকটির সহজ বাংলা কনসেপ্ট সামারি ও রিয়েল লাইফ অ্যানালজি।"}
                                 </div>
 
@@ -1529,7 +1644,9 @@ export default function CourseMaterialPage() {
                                           ? "🚀 Launch String Studio"
                                           : isLinearSearchTopic
                                           ? "🚀 Launch Linear Search Studio"
-                                          : "🚀 Launch Binary Search Studio"}
+                                          : isBinarySearchTopic
+                                          ? "🚀 Launch Binary Search Studio"
+                                          : "🚀 Launch Stack & Polish Studio"}
                                       </span>
                                       {isVisualizerOpen ? (
                                         <ChevronUp className="h-3.5 w-3.5" />
@@ -1566,6 +1683,13 @@ export default function CourseMaterialPage() {
                               {isBinarySearchTopic && isVisualizerOpen && (
                                 <div className="animate-in fade-in slide-in-from-top-3 duration-300">
                                   <BinarySearchStudio />
+                                </div>
+                              )}
+
+                              {/* Embedded Stack Operations Studio */}
+                              {isStackTopic && isVisualizerOpen && (
+                                <div className="animate-in fade-in slide-in-from-top-3 duration-300">
+                                  <StackOperationsStudio />
                                 </div>
                               )}
 
