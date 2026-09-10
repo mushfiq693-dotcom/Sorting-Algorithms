@@ -207,32 +207,77 @@ function CustomDropdown({
   );
 }
 
-// Intelligent Sequential Sorting Key (Chapter 2 -> Chapter 3, Topics & Problems ordered)
-function getMaterialSortKey(m: CourseMaterial): number {
-  const ref = ((m.book_reference || "") + " " + (m.title || "") + " " + (m.id || "")).toLowerCase();
-
-  // Chapter 2: Complexity Analysis
-  if (ref.includes("step-counting") || (ref.includes("chapter 2") && m.content_type === "topic")) return 200;
-  if (ref.includes("2.6") || ref.includes("exercise 2.6") || ref.includes("maximum element")) return 206;
-  if (ref.includes("2.7") || ref.includes("exercise 2.7") || ref.includes("nested loops")) return 207;
-
-  // Chapter 3: String Processing (Topics & Problems)
-  if (ref.includes("3.5") && m.content_type === "topic") return 350;
-  if (ref.includes("3.5") && m.content_type === "problem") return 355;
-
-  if (ref.includes("3.6") && m.content_type === "topic") return 360;
-  if (ref.includes("3.6") && m.content_type === "problem") return 365;
-
-  if (ref.includes("3.1") || ref.includes("algorithm 3.1")) return 370;
-  if (ref.includes("3.2") || ref.includes("algorithm 3.2")) return 375;
+// Canonical Identifier for Deduplication (Chapter, Topic, Problem & Algorithm mapping)
+function getCanonicalMaterialKey(m: CourseMaterial): string {
+  const text = `${m.id} ${m.title} ${m.book_reference || ""}`.toLowerCase();
 
   // Chapter 5: Linked Lists
-  if (ref.includes("prereq") || ref.includes("before you start")) return 5000;
-  if (ref.includes("chapter 5") && m.content_type === "topic") return 5010;
-  if (ref.includes("5.1") || ref.includes("singly linked list")) return 5020;
-  if (ref.includes("5.5") || ref.includes("insloc")) return 5050;
+  if (text.includes("prereq") || text.includes("before you start")) return "ch5-prereq";
+  if ((text.includes("chapter 5") || text.includes("ch 5")) && m.content_type === "topic") return "ch5-topic";
+  if (text.includes("5.1") || text.includes("singly linked list") || text.includes("5 node dynamic")) return "ch5-p5.1";
+  if (text.includes("5.5") || text.includes("insloc")) return "ch5-algo5.5";
 
-  // Regex fallback
+  // Chapter 4: Linear Arrays
+  if ((text.includes("chapter 4") || text.includes("ch 4")) && m.content_type === "topic") return "ch4-topic";
+  if (text.includes("4.1") || text.includes("traversing a linear array")) return "ch4-algo4.1";
+  if (text.includes("4.2") || text.includes("inserting into a linear array")) return "ch4-algo4.2";
+  if (text.includes("4.3") || text.includes("deleting from a linear array")) return "ch4-algo4.3";
+
+  // Chapter 3: String Processing
+  if ((text.includes("chapter 3") || text.includes("ch 3") || text.includes("3.5")) && m.content_type === "topic") return "ch3-topic";
+  if (text.includes("3.1") || text.includes("substring") || text.includes("concatenation")) return "ch3-p3.1";
+  if (text.includes("3.2") || text.includes("indexing") || text.includes("replacement & insertion") || text.includes("inserting into a string")) return "ch3-p3.2";
+  if (text.includes("3.5") || text.includes("deletion & boundary") || text.includes("deleting from a string")) return "ch3-p3.5";
+  if (text.includes("3.6") || text.includes("pattern matching")) return "ch3-p3.6";
+
+  // Chapter 2: Complexity Analysis
+  if (text.includes("step-counting") || ((text.includes("chapter 2") || text.includes("ch 2")) && m.content_type === "topic")) return "ch2-topic";
+  if (text.includes("2.6") || text.includes("maximum element")) return "ch2-p2.6";
+  if (text.includes("2.7") || text.includes("nested loops")) return "ch2-p2.7";
+  if (text.includes("2.9") || text.includes("polynomial")) return "ch2-p2.9";
+  if (text.includes("2.10") || text.includes("big-omega")) return "ch2-p2.10";
+  if (text.includes("2.11") || text.includes("sum and product") || text.includes("sum rule")) return "ch2-p2.11";
+  if (text.includes("2.12") || text.includes("logarithmic loop")) return "ch2-p2.12";
+
+  // Fallback unique key for custom instructor materials
+  const cleanTitle = (m.title || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+  return `custom-${m.content_type}-${cleanTitle || m.id}`;
+}
+
+// Intelligent Sequential Sorting Key (Chapter 2 -> Chapter 3 -> Chapter 4 -> Chapter 5)
+function getMaterialSortKey(m: CourseMaterial): number {
+  const key = getCanonicalMaterialKey(m);
+
+  // Chapter 2: Complexity Analysis
+  if (key === "ch2-topic") return 200;
+  if (key === "ch2-p2.6") return 206;
+  if (key === "ch2-p2.7") return 207;
+  if (key === "ch2-p2.9") return 209;
+  if (key === "ch2-p2.10") return 210;
+  if (key === "ch2-p2.11") return 211;
+  if (key === "ch2-p2.12") return 212;
+
+  // Chapter 3: String Processing
+  if (key === "ch3-topic") return 300;
+  if (key === "ch3-p3.1") return 310;
+  if (key === "ch3-p3.2") return 320;
+  if (key === "ch3-p3.5") return 350;
+  if (key === "ch3-p3.6") return 360;
+
+  // Chapter 4: Linear Arrays
+  if (key === "ch4-topic") return 400;
+  if (key === "ch4-algo4.1") return 410;
+  if (key === "ch4-algo4.2") return 420;
+  if (key === "ch4-algo4.3") return 430;
+
+  // Chapter 5: Linked Lists
+  if (key === "ch5-prereq") return 5000;
+  if (key === "ch5-topic") return 5010;
+  if (key === "ch5-p5.1") return 5020;
+  if (key === "ch5-algo5.5") return 5050;
+
+  // Regex fallback for custom additions
+  const ref = ((m.book_reference || "") + " " + (m.title || "")).toLowerCase();
   const chapMatch = ref.match(/chapter\s+(\d+)/i);
   const secMatch = ref.match(/(?:problem|section|exercise|algorithm)\s+(\d+)(?:\.(\d+))?/i);
   const chap = chapMatch ? parseInt(chapMatch[1], 10) : 99;
@@ -247,17 +292,24 @@ export default function CourseMaterialPage() {
 
   const { user, role } = useAccessControl();
 
-  // Helper to reliably merge cached/db data with the latest default course materials
+  // Helper to reliably merge cached/db data with the latest default course materials (100% deduplicated)
   const mergeWithDefaults = (source: CourseMaterial[]): CourseMaterial[] => {
     const map = new Map<string, CourseMaterial>();
-    // 1. First add all current fresh default materials
-    DEFAULT_COURSE_MATERIALS.forEach((m) => map.set(m.id, m));
-    // 2. Overlay any database or custom materials
+
+    // 1. Seed with the fresh, rich verified default course materials (with full Bangla explanations)
+    DEFAULT_COURSE_MATERIALS.forEach((m) => {
+      const key = getCanonicalMaterialKey(m);
+      map.set(key, m);
+    });
+
+    // 2. Only add truly new custom materials from database if not already present in defaults
     source.forEach((m) => {
-      if (!map.has(m.id)) {
-        map.set(m.id, m);
+      const key = getCanonicalMaterialKey(m);
+      if (!map.has(key)) {
+        map.set(key, m);
       }
     });
+
     return Array.from(map.values());
   };
 
