@@ -62,6 +62,27 @@ const LinkedListPrereqStudio = dynamic(
     ),
   { ssr: false, loading: () => <SimLabLoading /> }
 );
+const BinarySearchStudio = dynamic(
+  () =>
+    import("@/components/course-material/BinarySearchStudio").then(
+      (m) => m.BinarySearchStudio
+    ),
+  { ssr: false, loading: () => <SimLabLoading /> }
+);
+const LinearSearchStudio = dynamic(
+  () =>
+    import("@/components/course-material/LinearSearchStudio").then(
+      (m) => m.LinearSearchStudio
+    ),
+  { ssr: false, loading: () => <SimLabLoading /> }
+);
+const LinkedListMemoryArrayStudio = dynamic(
+  () =>
+    import("@/components/course-material/LinkedListMemoryArrayStudio").then(
+      (m) => m.LinkedListMemoryArrayStudio
+    ),
+  { ssr: false, loading: () => <SimLabLoading /> }
+);
 import {
   BookOpen,
   HelpCircle,
@@ -209,19 +230,107 @@ function CustomDropdown({
 
 // Canonical Identifier for Deduplication (Chapter, Topic, Problem & Algorithm mapping)
 function getCanonicalMaterialKey(m: CourseMaterial): string {
+  // 1. Direct ID matching for primary defaults
+  if (m.id === "cm-topic-ch2") return "ch2-topic";
+  if (m.id === "cm-problem-2-6") return "ch2-p2.6";
+  if (m.id === "cm-problem-2-7") return "ch2-p2.7";
+  if (m.id === "cm-problem-2-9") return "ch2-p2.9";
+  if (m.id === "cm-problem-2-10") return "ch2-p2.10";
+  if (m.id === "cm-problem-2-11") return "ch2-p2.11";
+  if (m.id === "cm-problem-2-12") return "ch2-p2.12";
+
+  if (m.id === "cm-topic-3-5") return "ch3-topic";
+  if (m.id === "cm-problem-3-1") return "ch3-p3.1";
+  if (m.id === "cm-problem-3-2") return "ch3-p3.2";
+  if (m.id === "cm-problem-3-5") return "ch3-p3.5";
+  if (m.id === "cm-problem-3-6") return "ch3-p3.6";
+
+  if (m.id === "cm-topic-ch4") return "ch4-topic";
+  if (m.id === "cm-algo-4-1") return "ch4-algo4.1";
+  if (m.id === "cm-algo-4-2") return "ch4-algo4.2";
+  if (m.id === "cm-algo-4-3") return "ch4-algo4.3";
+  if (m.id === "cm-topic-4-7") return "ch4-topic-4.7";
+  if (m.id === "cm-algo-4-5") return "ch4-algo4.5";
+  if (m.id === "cm-topic-4-8") return "ch4-topic-4.8";
+  if (m.id === "cm-algo-4-6") return "ch4-algo4.6";
+  if (m.id === "cm-problem-4-9") return "ch4-p4.9";
+  if (m.id === "cm-problem-4-10") return "ch4-p4.10";
+  if (m.id === "cm-problem-4-7") return "ch4-p4.7";
+  if (m.id === "cm-algo-p4-7") return "ch4-algo-p4.7";
+  if (m.id === "cm-problem-4-8") return "ch4-p4.8";
+  if (m.id === "cm-topic-4-14") return "ch4-topic-4.14";
+  if (m.id === "cm-problem-4-25") return "ch4-p4.25";
+
+  if (m.id === "cm-topic-5-0-prereq") return "ch5-prereq";
+  if (m.id === "cm-topic-ch5") return "ch5-topic";
+  if (m.id === "cm-problem-5-1") return "ch5-p5.1";
+  if (m.id === "cm-problem-5-2") return "ch5-p5.2";
+  if (m.id === "cm-topic-5-4") return "ch5-topic-5.4";
+  if (m.id === "cm-algo-5-1") return "ch5-algo-5.1";
+  if (m.id === "cm-algo-5-2") return "ch5-algo5.2";
+  if (m.id === "cm-algo-5-3") return "ch5-algo5.3";
+  if (m.id === "cm-algo-5-4") return "ch5-algo-5.4";
+  if (m.id === "cm-problem-5-14") return "ch5-p5.14";
+  if (m.id === "cm-topic-5-6") return "ch5-topic-5.6";
+  if (m.id === "cm-algo-5-6-finda") return "ch5-algo-5.6-finda";
+  if (m.id === "cm-topic-5-7") return "ch5-topic-5.7";
+  if (m.id === "cm-algo-5-7") return "ch5-algo-5.7";
+  if (m.id === "cm-problem-5-15") return "ch5-p5.15";
+  if (m.id === "cm-algo-5-5") return "ch5-algo5.5";
+  if (m.id === "cm-topic-5-8") return "ch5-topic-5.8";
+  if (m.id === "cm-algo-5-8") return "ch5-algo-5.8";
+  if (m.id === "cm-topic-5-9") return "ch5-topic-5.9";
+  if (m.id === "cm-algo-5-12") return "ch5-algo-5.12";
+  if (m.id === "cm-algo-5-13") return "ch5-algo-5.13";
+  if (m.id === "cm-algo-5-14") return "ch5-algo-5.14";
+  if (m.id === "cm-problem-5-20") return "ch5-p5.20";
+  if (m.id === "cm-topic-5-10") return "ch5-topic-5.10";
+
+  // 2. Text heuristics for imported/custom items
   const text = `${m.id} ${m.title} ${m.book_reference || ""}`.toLowerCase();
 
   // Chapter 5: Linked Lists
   if (text.includes("prereq") || text.includes("before you start")) return "ch5-prereq";
-  if ((text.includes("chapter 5") || text.includes("ch 5")) && m.content_type === "topic") return "ch5-topic";
+  if (text.includes("5.20") || text.includes("polynomial")) return "ch5-p5.20";
+  if (text.includes("5.10") || text.includes("two-way") || text.includes("doubly")) return "ch5-topic-5.10";
+  if (text.includes("5.14") && m.content_type === "algorithm") return "ch5-algo-5.14";
+  if (text.includes("5.14") && m.content_type === "problem") return "ch5-p5.14";
+  if (text.includes("5.15")) return "ch5-p5.15";
+  if (text.includes("5.13")) return "ch5-algo-5.13";
+  if (text.includes("5.12")) return "ch5-algo-5.12";
+  if (text.includes("5.9")) return "ch5-topic-5.9";
+  if (text.includes("5.8") && m.content_type === "algorithm") return "ch5-algo-5.8";
+  if (text.includes("5.8") && m.content_type === "topic") return "ch5-topic-5.8";
+  if (text.includes("finda") || text.includes("5.6-finda")) return "ch5-algo-5.6-finda";
+  if (text.includes("5.7") && m.content_type === "algorithm") return "ch5-algo-5.7";
+  if (text.includes("5.4") && m.content_type === "algorithm") return "ch5-algo-5.4";
+  if (text.includes("5.2") && (text.includes("no exit") || text.includes("character") || text.includes("parallel arrays") || m.content_type === "problem")) return "ch5-p5.2";
+  if ((text.includes("5.2") || text.includes("unsorted")) && m.content_type === "algorithm") return "ch5-algo5.2";
+  if ((text.includes("5.3") || text.includes("sorted")) && m.content_type === "algorithm") return "ch5-algo5.3";
+  if (text.includes("5.4") && m.content_type === "topic") return "ch5-topic-5.4";
+  if (text.includes("5.1") && m.content_type === "algorithm") return "ch5-algo-5.1";
   if (text.includes("5.1") || text.includes("singly linked list") || text.includes("5 node dynamic")) return "ch5-p5.1";
+  if (text.includes("5.6")) return "ch5-topic-5.6";
+  if (text.includes("5.7")) return "ch5-topic-5.7";
   if (text.includes("5.5") || text.includes("insloc")) return "ch5-algo5.5";
+  if ((text.includes("chapter 5") || text.includes("ch 5")) && m.content_type === "topic") return "ch5-topic";
 
-  // Chapter 4: Linear Arrays
-  if ((text.includes("chapter 4") || text.includes("ch 4")) && m.content_type === "topic") return "ch4-topic";
+  // Chapter 4: Linear Arrays & Searching
+  if (text.includes("4.25")) return "ch4-p4.25";
+  if (text.includes("4.14") || text.includes("sparse")) return "ch4-topic-4.14";
+  if (text.includes("4.8") && m.content_type === "problem") return "ch4-p4.8";
+  if (text.includes("4.7") && (text.includes("binsrchins") || m.content_type === "algorithm")) return "ch4-algo-p4.7";
+  if (text.includes("4.7") && m.content_type === "problem") return "ch4-p4.7";
+  if (text.includes("4.7") || text.includes("sentinel optimization")) return "ch4-topic-4.7";
+  if (text.includes("4.5") || text.includes("sentinel") || (text.includes("linear search") && !text.includes("binary") && m.content_type === "algorithm")) return "ch4-algo4.5";
+  if (text.includes("4.8") || text.includes("segment halving")) return "ch4-topic-4.8";
+  if (text.includes("4.6") || (text.includes("binary search") && m.content_type === "algorithm")) return "ch4-algo4.6";
+  if (text.includes("4.9") || text.includes("search 40") || text.includes("search 85")) return "ch4-p4.9";
+  if (text.includes("4.10") || text.includes("limitations") || text.includes("1000000") || text.includes("1,000,000")) return "ch4-p4.10";
   if (text.includes("4.1") || text.includes("traversing a linear array")) return "ch4-algo4.1";
   if (text.includes("4.2") || text.includes("inserting into a linear array")) return "ch4-algo4.2";
   if (text.includes("4.3") || text.includes("deleting from a linear array")) return "ch4-algo4.3";
+  if ((text.includes("chapter 4") || text.includes("ch 4")) && m.content_type === "topic") return "ch4-topic";
 
   // Chapter 3: String Processing
   if ((text.includes("chapter 3") || text.includes("ch 3") || text.includes("3.5")) && m.content_type === "topic") return "ch3-topic";
@@ -264,17 +373,48 @@ function getMaterialSortKey(m: CourseMaterial): number {
   if (key === "ch3-p3.5") return 350;
   if (key === "ch3-p3.6") return 360;
 
-  // Chapter 4: Linear Arrays
+  // Chapter 4: Linear Arrays & Searching & Sparse Matrices
   if (key === "ch4-topic") return 400;
   if (key === "ch4-algo4.1") return 410;
   if (key === "ch4-algo4.2") return 420;
   if (key === "ch4-algo4.3") return 430;
+  if (key === "ch4-topic-4.7") return 470;
+  if (key === "ch4-algo4.5") return 475;
+  if (key === "ch4-topic-4.8") return 480;
+  if (key === "ch4-algo4.6") return 485;
+  if (key === "ch4-p4.9") return 490;
+  if (key === "ch4-p4.10") return 495;
+  if (key === "ch4-p4.7") return 496;
+  if (key === "ch4-algo-p4.7") return 497;
+  if (key === "ch4-p4.8") return 498;
+  if (key === "ch4-topic-4.14") return 499;
+  if (key === "ch4-p4.25") return 500;
 
   // Chapter 5: Linked Lists
   if (key === "ch5-prereq") return 5000;
   if (key === "ch5-topic") return 5010;
   if (key === "ch5-p5.1") return 5020;
-  if (key === "ch5-algo5.5") return 5050;
+  if (key === "ch5-p5.2") return 5025;
+  if (key === "ch5-topic-5.4") return 5030;
+  if (key === "ch5-algo-5.1") return 5035;
+  if (key === "ch5-algo5.2") return 5040;
+  if (key === "ch5-algo5.3") return 5045;
+  if (key === "ch5-algo-5.4") return 5048;
+  if (key === "ch5-p5.14") return 5049;
+  if (key === "ch5-topic-5.6") return 5050;
+  if (key === "ch5-algo-5.6-finda") return 5055;
+  if (key === "ch5-topic-5.7") return 5060;
+  if (key === "ch5-algo-5.7") return 5065;
+  if (key === "ch5-p5.15") return 5066;
+  if (key === "ch5-algo5.5") return 5070;
+  if (key === "ch5-topic-5.8") return 5072;
+  if (key === "ch5-algo-5.8") return 5075;
+  if (key === "ch5-topic-5.9") return 5080;
+  if (key === "ch5-algo-5.12") return 5085;
+  if (key === "ch5-algo-5.13") return 5087;
+  if (key === "ch5-algo-5.14") return 5090;
+  if (key === "ch5-p5.20") return 5095;
+  if (key === "ch5-topic-5.10") return 5100;
 
   // Regex fallback for custom additions
   const ref = ((m.book_reference || "") + " " + (m.title || "")).toLowerCase();
@@ -963,6 +1103,19 @@ export default function CourseMaterialPage() {
                               item.title.includes("3.5") ||
                               item.title.includes("3.6");
 
+                            const isBinarySearchProblem =
+                              item.id === "cm-problem-4-9" ||
+                              item.id === "cm-problem-4-10" ||
+                              item.title.includes("4.9") ||
+                              item.title.includes("4.10") ||
+                              item.title.toLowerCase().includes("binary search");
+
+                            const isMemoryArrayProblem =
+                              item.id === "cm-problem-5-2" ||
+                              item.title.includes("5.2") ||
+                              item.title.toLowerCase().includes("no exit") ||
+                              item.title.toLowerCase().includes("memory representation");
+
                             const isSinglyLinkedListProblem =
                               item.id === "cm-problem-5-1" ||
                               item.title.toLowerCase().includes("singly linked list") ||
@@ -974,9 +1127,9 @@ export default function CourseMaterialPage() {
                               item.title.includes("INSLOC") ||
                               item.id === "cm-algo-5-5";
 
-                            const isLinkedListProblem = isSinglyLinkedListProblem || isLinkedListInsLocProblem;
+                            const isLinkedListProblem = isSinglyLinkedListProblem || isLinkedListInsLocProblem || isMemoryArrayProblem;
 
-                            const hasVisualizer = isProblem26 || isProblem27 || isStringProblem || isLinkedListProblem;
+                            const hasVisualizer = isProblem26 || isProblem27 || isStringProblem || isBinarySearchProblem || isLinkedListProblem;
                             const isVisualizerOpen = !!expandedVisualizers[item.id];
 
                             return (
@@ -990,6 +1143,10 @@ export default function CourseMaterialPage() {
                                       ? "Interactive loop counter available for 3-loop nested cubic growth and logarithmic stepping."
                                       : isStringProblem
                                       ? "Interactive string studio & algorithm execution trace available."
+                                      : isBinarySearchProblem
+                                      ? "Interactive Binary Search Studio (live segment halving, BEG/MID/END pointers & Example 4.9 dry-run) available."
+                                      : isMemoryArrayProblem
+                                      ? "Interactive Lipschutz Example 5.2 Memory Array Studio (INFO, LINK, START pointer traversal) available."
                                       : isSinglyLinkedListProblem
                                       ? "Interactive Singly Linked List Studio (C++ dynamic node allocation, pointer linking & traversal) available."
                                       : isLinkedListInsLocProblem
@@ -1092,6 +1249,20 @@ export default function CourseMaterialPage() {
                                   </div>
                                 )}
 
+                                {/* Embedded Simulation & Visualizer Studio for Binary Search (4.9, 4.10) */}
+                                {isBinarySearchProblem && isVisualizerOpen && (
+                                  <div className="animate-in fade-in slide-in-from-top-3 duration-300">
+                                    <BinarySearchStudio />
+                                  </div>
+                                )}
+
+                                {/* Embedded Simulation & Visualizer Studio for Example 5.2 (NO EXIT Parallel Array) */}
+                                {isMemoryArrayProblem && isVisualizerOpen && (
+                                  <div className="animate-in fade-in slide-in-from-top-3 duration-300">
+                                    <LinkedListMemoryArrayStudio />
+                                  </div>
+                                )}
+
                                 {/* Embedded Simulation & Visualizer Studio for Singly Linked List (5.1) */}
                                 {isSinglyLinkedListProblem && isVisualizerOpen && (
                                   <div className="animate-in fade-in slide-in-from-top-3 duration-300">
@@ -1139,6 +1310,16 @@ export default function CourseMaterialPage() {
                       ) : isAlgorithm ? (
                         /* Algorithm Content (Direct display with code specification & optional Interactive Simulation Studio) */
                         (() => {
+                          const isLinearSearchAlgo =
+                            item.id === "cm-algo-4-5" ||
+                            item.title.toLowerCase().includes("linear search") ||
+                            item.title.includes("4.5");
+
+                          const isBinarySearchAlgo =
+                            item.id === "cm-algo-4-6" ||
+                            item.title.toLowerCase().includes("binary search") ||
+                            item.title.includes("4.6");
+
                           const isLinkedListAlgo =
                             item.topic_tag === "Linked Lists" ||
                             item.title.toLowerCase().includes("linked list") ||
@@ -1146,6 +1327,7 @@ export default function CourseMaterialPage() {
                             item.title.includes("INSLOC") ||
                             item.id === "cm-algo-5-5";
 
+                          const hasAlgoVisualizer = isLinearSearchAlgo || isBinarySearchAlgo || isLinkedListAlgo;
                           const isVisualizerOpen = !!expandedVisualizers[item.id];
 
                           return (
@@ -1153,7 +1335,11 @@ export default function CourseMaterialPage() {
                               {/* Simulation Lab & Bangla Action Bar for Algorithm */}
                               <div className="flex flex-wrap items-center justify-between gap-3 p-4 rounded-2xl border border-emerald-500/30 bg-emerald-950/10">
                                 <div className="text-xs text-muted-foreground font-sans">
-                                  {isLinkedListAlgo
+                                  {isLinearSearchAlgo
+                                    ? "Interactive Linear Search Studio (live Array Bars, sequential scan, comparisons & Sentinel mode) available."
+                                    : isBinarySearchAlgo
+                                    ? "Interactive Binary Search Studio (live Array Bars, segment halving, BEG/MID/END pointers & Example 4.9 trace) available."
+                                    : isLinkedListAlgo
                                     ? "Interactive Algorithm 5.5 INSLOC Simulation Lab with Memory Array tracing (INFO, LINK, START, AVAIL) available."
                                     : "অ্যালগরিদমটির স্টেপ-বাই-স্টেপ বিশ্লেষণ ও বাংলা সারসংক্ষেপ।"}
                                 </div>
@@ -1181,7 +1367,7 @@ export default function CourseMaterialPage() {
                                   )}
 
                                   {/* Simulation Lab Toggle for Algorithm */}
-                                  {isLinkedListAlgo && (
+                                  {hasAlgoVisualizer && (
                                     <button
                                       type="button"
                                       onClick={() => toggleVisualizer(item.id)}
@@ -1193,7 +1379,13 @@ export default function CourseMaterialPage() {
                                     >
                                       <Play className={`h-3.5 w-3.5 ${isVisualizerOpen ? "text-primary" : "text-primary-foreground fill-current"}`} />
                                       <span>
-                                        {isVisualizerOpen ? "Hide Simulation Lab" : "🚀 Launch Algorithm 5.5 Simulation Lab"}
+                                        {isVisualizerOpen
+                                          ? "Hide Simulation Lab"
+                                          : isLinearSearchAlgo
+                                          ? "🚀 Launch Linear Search Simulation Studio"
+                                          : isBinarySearchAlgo
+                                          ? "🚀 Launch Binary Search Simulation Studio"
+                                          : "🚀 Launch Algorithm 5.5 Simulation Lab"}
                                       </span>
                                       {isVisualizerOpen ? (
                                         <ChevronUp className="h-3.5 w-3.5" />
@@ -1204,6 +1396,20 @@ export default function CourseMaterialPage() {
                                   )}
                                 </div>
                               </div>
+
+                              {/* Embedded Visualizer Studio for Linear Search Algorithm */}
+                              {isLinearSearchAlgo && isVisualizerOpen && (
+                                <div className="animate-in fade-in slide-in-from-top-3 duration-300">
+                                  <LinearSearchStudio />
+                                </div>
+                              )}
+
+                              {/* Embedded Visualizer Studio for Binary Search Algorithm */}
+                              {isBinarySearchAlgo && isVisualizerOpen && (
+                                <div className="animate-in fade-in slide-in-from-top-3 duration-300">
+                                  <BinarySearchStudio />
+                                </div>
+                              )}
 
                               {/* Embedded Visualizer Studio for Linked List Algorithm */}
                               {isLinkedListAlgo && isVisualizerOpen && (
@@ -1248,12 +1454,21 @@ export default function CourseMaterialPage() {
                             item.title.toLowerCase().includes("3.5") ||
                             item.title.toLowerCase().includes("3.6");
 
+                          const isLinearSearchTopic =
+                            item.id === "cm-topic-4-7" ||
+                            (item.title.toLowerCase().includes("linear search") && item.topic_tag === "Arrays");
+
+                          const isBinarySearchTopic =
+                            item.id === "cm-topic-4-8" ||
+                            (item.title.toLowerCase().includes("binary search") && item.topic_tag === "Arrays");
+
                           const isPrereqTopic =
                             item.id === "cm-topic-5-0-prereq" ||
                             item.title.toLowerCase().includes("prerequisite") ||
                             item.title.toLowerCase().includes("before you start");
 
                           const isVisualizerOpen = !!expandedVisualizers[item.id];
+                          const hasTopicVisualizer = isPrereqTopic || isStringTopic || isLinearSearchTopic || isBinarySearchTopic;
 
                           return (
                             <div className="space-y-4">
@@ -1264,6 +1479,10 @@ export default function CourseMaterialPage() {
                                     ? "Interactive Prerequisite Studio (Pointer, Memory Address, DMA & 3-Node Chain) available."
                                     : isStringTopic
                                     ? "Interactive String Operations & Algorithm 3.1/3.2 Trace Studio available."
+                                    : isLinearSearchTopic
+                                    ? "Interactive Linear Search Studio (live Array Bars, sequential scan, comparisons & Sentinel mode) available."
+                                    : isBinarySearchTopic
+                                    ? "Interactive Binary Search Studio (live Array Bars, segment halving, BEG/MID/END pointers) available."
                                     : "টপিকটির সহজ বাংলা কনসেপ্ট সামারি ও রিয়েল লাইফ অ্যানালজি।"}
                                 </div>
 
@@ -1289,8 +1508,8 @@ export default function CourseMaterialPage() {
                                     </button>
                                   )}
 
-                                  {/* Prerequisite Interactive Studio Toggle */}
-                                  {isPrereqTopic && (
+                                  {/* Simulation Studio Toggle */}
+                                  {hasTopicVisualizer && (
                                     <button
                                       type="button"
                                       onClick={() => toggleVisualizer(item.id)}
@@ -1302,30 +1521,15 @@ export default function CourseMaterialPage() {
                                     >
                                       <Play className={`h-3.5 w-3.5 ${isVisualizerOpen ? "text-cyan-400" : "text-white fill-white"}`} />
                                       <span>
-                                        {isVisualizerOpen ? "Hide Prerequisite Studio" : "🚀 Launch Prerequisite Studio"}
-                                      </span>
-                                      {isVisualizerOpen ? (
-                                        <ChevronUp className="h-3.5 w-3.5" />
-                                      ) : (
-                                        <ChevronDown className="h-3.5 w-3.5" />
-                                      )}
-                                    </button>
-                                  )}
-
-                                  {/* String Studio Toggle */}
-                                  {isStringTopic && (
-                                    <button
-                                      type="button"
-                                      onClick={() => toggleVisualizer(item.id)}
-                                      className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all active:scale-95 shadow-md ${
-                                        isVisualizerOpen
-                                          ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/50 shadow-cyan-500/10"
-                                          : "bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 text-white hover:opacity-95 shadow-cyan-500/20 ring-2 ring-cyan-400/30"
-                                      }`}
-                                    >
-                                      <Play className={`h-3.5 w-3.5 ${isVisualizerOpen ? "text-cyan-400" : "text-white fill-white"}`} />
-                                      <span>
-                                        {isVisualizerOpen ? "Hide String Studio" : "🚀 Launch String Studio"}
+                                        {isVisualizerOpen
+                                          ? "Hide Simulation Studio"
+                                          : isPrereqTopic
+                                          ? "🚀 Launch Prerequisite Studio"
+                                          : isStringTopic
+                                          ? "🚀 Launch String Studio"
+                                          : isLinearSearchTopic
+                                          ? "🚀 Launch Linear Search Studio"
+                                          : "🚀 Launch Binary Search Studio"}
                                       </span>
                                       {isVisualizerOpen ? (
                                         <ChevronUp className="h-3.5 w-3.5" />
@@ -1348,6 +1552,20 @@ export default function CourseMaterialPage() {
                               {isStringTopic && isVisualizerOpen && (
                                 <div className="animate-in fade-in slide-in-from-top-3 duration-300">
                                   <StringOperationsVisualizer />
+                                </div>
+                              )}
+
+                              {/* Embedded Linear Search Studio */}
+                              {isLinearSearchTopic && isVisualizerOpen && (
+                                <div className="animate-in fade-in slide-in-from-top-3 duration-300">
+                                  <LinearSearchStudio />
+                                </div>
+                              )}
+
+                              {/* Embedded Binary Search Studio */}
+                              {isBinarySearchTopic && isVisualizerOpen && (
+                                <div className="animate-in fade-in slide-in-from-top-3 duration-300">
+                                  <BinarySearchStudio />
                                 </div>
                               )}
 
