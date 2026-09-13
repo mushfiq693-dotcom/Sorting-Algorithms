@@ -4,9 +4,18 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { SortingVisualizer } from "@/components/visualizer/SortingVisualizer";
+import { AlgorithmId } from "@/types/sorting";
 import { Lock, Sparkles, ShieldCheck, ArrowRight, Clock, GraduationCap } from "lucide-react";
 
-export function LockedVisualizerGate() {
+interface LockedVisualizerGateProps {
+  selectedAlgorithm?: AlgorithmId;
+  onSelectAlgorithm?: (algoId: AlgorithmId) => void;
+}
+
+export function LockedVisualizerGate({
+  selectedAlgorithm,
+  onSelectAlgorithm,
+}: LockedVisualizerGateProps = {}) {
   const supabase = createClient();
   const [isApproved, setIsApproved] = useState<boolean | null>(null);
   const [betaStatus, setBetaStatus] = useState<string>("anonymous");
@@ -79,7 +88,10 @@ export function LockedVisualizerGate() {
   // Render full interactive visualizer
   return (
     <div className="space-y-3">
-      <SortingVisualizer />
+      <SortingVisualizer
+        selectedAlgorithm={selectedAlgorithm}
+        onSelectAlgorithm={onSelectAlgorithm}
+      />
     </div>
   );
 }

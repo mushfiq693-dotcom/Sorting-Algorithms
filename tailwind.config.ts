@@ -81,10 +81,10 @@ const config: Config = {
         arch: "40% 40% 0 0 / 20% 20% 0 0",
       },
       fontFamily: {
-        heading: ["var(--font-heading)", "'Cormorant Garamond'", "serif"],
-        body: ["var(--font-sans)", "'Manrope'", "sans-serif"],
-        display: ["var(--font-sans)", "'Manrope'", "sans-serif"],
-        sans: ["var(--font-sans)", "'Manrope'", "sans-serif"],
+        heading: ["var(--font-sans)", "Outfit", "system-ui", "sans-serif"],
+        body: ["var(--font-sans)", "Outfit", "system-ui", "sans-serif"],
+        display: ["var(--font-sans)", "Outfit", "system-ui", "sans-serif"],
+        sans: ["var(--font-sans)", "Outfit", "system-ui", "sans-serif"],
         mono: ["var(--font-mono)", "JetBrains Mono", "monospace"],
       },
       boxShadow: {

@@ -109,7 +109,7 @@
   }
 
   h1, h2, h3, h4, h5, h6 {
-    @apply font-heading tracking-tight;
+    @apply font-sans tracking-tight;
   }
 
   /* High-Contrast Accessible Brass Focus Rings */
@@ -220,7 +220,6 @@
   font-size: 13px;
   background: #FAF6F0;
   padding: 0 12px;
-  font-family: var(--font-heading), 'Cormorant Garamond', serif;
 }
 
 .dark .ornate-divider::before {
@@ -230,7 +229,6 @@
 
 /* 4. Illuminated Manuscript Drop Cap */
 .drop-cap::first-letter {
-  font-family: var(--font-heading), 'Cormorant Garamond', serif;
   font-size: 4.25rem;
   line-height: 0.8;
   float: left;
@@ -253,7 +251,7 @@
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.35);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3), inset 0 -1px 0 rgba(0, 0, 0, 0.25), 0 2px 8px rgba(0, 0, 0, 0.35);
   transition: all 0.25s ease;
-  font-family: var(--font-sans), 'Manrope', sans-serif;
+  font-family: var(--font-sans), 'Outfit', sans-serif;
   font-weight: 600;
   letter-spacing: 0.08em;
 }
@@ -273,7 +271,7 @@
   background: transparent;
   border: 1.5px solid #B08422;
   color: #8C6210;
-  font-family: var(--font-sans), 'Manrope', sans-serif;
+  font-family: var(--font-sans), 'Outfit', sans-serif;
   font-weight: 600;
   letter-spacing: 0.08em;
   transition: all 0.3s ease;

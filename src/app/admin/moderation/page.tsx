@@ -244,7 +244,7 @@ export default function AdminModerationPage() {
             avatar_url: p.avatar_url || null,
             role: p.role || "student",
             created_at: p.created_at || new Date().toISOString(),
-            status: beta.status || "approved",
+            status: beta.status || (p.role === "admin" ? "approved" : "pending"),
             approved_at: beta.approved_at || null,
             notes: beta.notes || null,
             completed_steps: Array.isArray(prog.completed_steps) ? prog.completed_steps : [],
@@ -463,20 +463,26 @@ export default function AdminModerationPage() {
     }
   };
 
-  const handleUpdateStatus = async (userId: string, newStatus: "approved" | "suspended") => {
+  const handleUpdateStatus = async (
+    userId: string,
+    newStatus: "approved" | "suspended" | "rejected" | "pending"
+  ) => {
     setActionLoadingId(userId);
     try {
       const {
         data: { user: currentAdmin },
       } = await supabase.auth.getUser();
 
-      const { error } = await (supabase.from("beta_access") as any)
-        .update({
+      const { error } = await (supabase.from("beta_access") as any).upsert(
+        {
+          user_id: userId,
           status: newStatus,
           approved_by: newStatus === "approved" ? currentAdmin?.id : null,
           approved_at: newStatus === "approved" ? new Date().toISOString() : null,
-        })
-        .eq("user_id", userId);
+          updated_at: new Date().toISOString(),
+        },
+        { onConflict: "user_id" }
+      );
 
       if (error) throw error;
 
@@ -492,7 +498,11 @@ export default function AdminModerationPage() {
         )
       );
       if (inspectingUser && inspectingUser.id === userId) {
-        setInspectingUser({ ...inspectingUser, status: newStatus });
+        setInspectingUser({
+          ...inspectingUser,
+          status: newStatus,
+          approved_at: newStatus === "approved" ? new Date().toISOString() : null,
+        });
       }
     } catch (err: any) {
       alert(`Failed to update status: ${err.message}`);
@@ -567,6 +577,10 @@ export default function AdminModerationPage() {
     return users.reduce((acc, u) => acc + (u.completed_steps?.length || 0), 0);
   }, [users]);
 
+  const pendingUsersCount = useMemo(() => {
+    return users.filter((u) => u.status === "pending").length;
+  }, [users]);
+
   const pendingMentorCount = mentorApps.filter((m) => m.status === "pending").length;
   const openBugsCount = bugsList.filter((b) => b.status === "open").length;
 
@@ -614,27 +628,28 @@ export default function AdminModerationPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col font-sans antialiased selection:bg-[#C9A962]/35 selection:text-[#1C1714] transition-colors duration-200">
+    <div className="min-h-screen bg-background text-foreground flex flex-col font-sans selection:bg-[#C9A962]/35 selection:text-[#1C1714]">
       {/* Top Header Bar */}
-      <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur-xl transition-colors">
+      <header className="sticky top-0 z-40 w-full border-b border-border bg-background/95 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Link
               href="/"
-              className="p-2 rounded border border-border bg-card text-foreground hover:text-primary hover:border-primary transition-colors"
-              title="Back to AlgoHub"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded border border-border bg-card text-xs font-semibold text-foreground hover:text-primary hover:border-primary transition-colors"
             >
-              <ArrowLeft className="h-4 w-4" />
+              <ArrowLeft className="h-3.5 w-3.5" />
+              <span>Back to App</span>
             </Link>
+
+            <div className="h-4 w-px bg-border mx-1" />
+
             <div className="flex items-center gap-2">
-              <div className="h-7 w-7 rounded bg-primary/20 border border-primary/40 flex items-center justify-center text-primary">
-                <ShieldCheck className="h-4 w-4" />
-              </div>
-              <span className="font-heading text-lg sm:text-xl font-bold tracking-tight text-foreground">
-                AlgoHub Admin & Telemetry Dashboard
+              <span className="font-heading text-lg font-bold tracking-tight text-foreground">
+                AlgoHub Admin Center
               </span>
-              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-primary/15 text-primary border border-primary/30 font-bold ml-1">
-                Live Console
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-[#8B2635] text-white">
+                <ShieldAlert className="h-3 w-3" />
+                <span>ROOT ADMIN</span>
               </span>
             </div>
           </div>
@@ -669,7 +684,7 @@ export default function AdminModerationPage() {
             Admin <span className="italic font-semibold text-primary dark:text-[#D4B872]">Control Center</span>
           </h1>
           <p className="text-xs sm:text-sm text-muted-foreground font-sans">
-            Monitor real-time learner presence, inspect algorithm activity telemetry, manage permissions, and track platform growth.
+            Monitor real-time learner presence, inspect algorithm activity telemetry, manage permissions, and approve course materials access.
           </p>
         </div>
 
@@ -729,16 +744,16 @@ export default function AdminModerationPage() {
             <p className="text-[11px] text-muted-foreground font-sans">Total algorithm milestones</p>
           </div>
 
-          {/* Card 5: Feedback & Bugs */}
-          <div className="col-span-2 sm:col-span-1 lg:col-span-1 p-4 rounded-xl border border-border bg-card/80 space-y-1 shadow-sm corner-flourish">
-            <div className="flex items-center justify-between text-rose-500 dark:text-rose-400">
-              <span className="text-xs font-mono font-semibold">Feedback / Bugs</span>
-              <MessageSquare className="h-4 w-4" />
+          {/* Card 5: Pending Course Access & Feedback */}
+          <div className="col-span-2 sm:col-span-1 lg:col-span-1 p-4 rounded-xl border border-amber-500/40 bg-amber-500/5 space-y-1 shadow-sm corner-flourish">
+            <div className="flex items-center justify-between text-amber-600 dark:text-amber-400">
+              <span className="text-xs font-mono font-semibold">Course Requests</span>
+              <Clock className="h-4 w-4 text-amber-500" />
             </div>
-            <div className="text-2xl sm:text-3xl font-extrabold text-foreground font-mono">
-              {feedbackList.length} <span className="text-xs text-muted-foreground font-normal">/ {openBugsCount} bugs</span>
+            <div className="text-2xl sm:text-3xl font-extrabold text-amber-600 dark:text-amber-400 font-mono">
+              {pendingUsersCount} <span className="text-xs text-muted-foreground font-normal">pending</span>
             </div>
-            <p className="text-[11px] text-muted-foreground font-sans">Community submissions</p>
+            <p className="text-[11px] text-muted-foreground font-sans">Awaiting admin approval</p>
           </div>
         </div>
 
@@ -753,9 +768,14 @@ export default function AdminModerationPage() {
             }`}
           >
             <Users className="h-4 w-4" />
-            <span>Learners & Activity ({users.length})</span>
+            <span>Learners &amp; Activity ({users.length})</span>
+            {pendingUsersCount > 0 && (
+              <span className="px-2 py-0.5 rounded-full bg-amber-500 text-black text-[10px] font-mono font-bold animate-pulse">
+                {pendingUsersCount} Pending Course Access
+              </span>
+            )}
             {onlineCount > 0 && (
-              <span className="px-1.5 py-0.2 rounded-full bg-emerald-500 text-white text-[10px] font-mono font-bold animate-pulse">
+              <span className="px-1.5 py-0.2 rounded-full bg-emerald-500 text-white text-[10px] font-mono font-bold">
                 {onlineCount} Online
               </span>
             )}
@@ -806,7 +826,7 @@ export default function AdminModerationPage() {
         {/* TAB 1: USERS & REAL-TIME ACTIVITY TELEMETRY */}
         {activeTab === "users" && (
           <div className="space-y-4">
-            {/* Filters, Search, and Live Presence Filter */}
+            {/* Filters, Search, and Status Pills */}
             <div className="flex flex-col lg:flex-row gap-3 items-start lg:items-center justify-between">
               <div className="relative w-full sm:w-80">
                 <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -814,14 +834,59 @@ export default function AdminModerationPage() {
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search by name, email, institution..."
+                  placeholder="Search by name, email, student ID, department..."
                   className="w-full rounded border border-border bg-background pl-9 pr-4 py-2 text-xs text-foreground placeholder:text-muted-foreground/60 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none font-sans"
                 />
               </div>
 
-              {/* Presence & Status Pills */}
+              {/* Status & Presence Filter Pills */}
               <div className="flex flex-wrap items-center gap-2 text-xs font-mono">
-                {/* Presence Filter */}
+                {/* Course Access Status Filter */}
+                <div className="inline-flex rounded-lg border border-border bg-secondary/40 p-0.5">
+                  <button
+                    onClick={() => setStatusFilter("all")}
+                    className={`px-2.5 py-1 rounded text-[11px] font-semibold transition-all cursor-pointer ${
+                      statusFilter === "all"
+                        ? "bg-card text-foreground shadow-xs"
+                        : "text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    All Status
+                  </button>
+                  <button
+                    onClick={() => setStatusFilter("pending")}
+                    className={`px-2.5 py-1 rounded text-[11px] font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
+                      statusFilter === "pending"
+                        ? "bg-amber-500/20 text-amber-600 dark:text-amber-400 border border-amber-500/40 shadow-xs font-bold"
+                        : "text-muted-foreground hover:text-amber-500"
+                    }`}
+                  >
+                    <span className="h-1.5 w-1.5 rounded-full bg-amber-500" />
+                    <span>Pending Approval ({pendingUsersCount})</span>
+                  </button>
+                  <button
+                    onClick={() => setStatusFilter("approved")}
+                    className={`px-2.5 py-1 rounded text-[11px] font-semibold transition-all cursor-pointer ${
+                      statusFilter === "approved"
+                        ? "bg-card text-foreground shadow-xs"
+                        : "text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    Approved
+                  </button>
+                  <button
+                    onClick={() => setStatusFilter("suspended")}
+                    className={`px-2.5 py-1 rounded text-[11px] font-semibold transition-all cursor-pointer ${
+                      statusFilter === "suspended"
+                        ? "bg-card text-foreground shadow-xs"
+                        : "text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    Suspended
+                  </button>
+                </div>
+
+                {/* Live Presence Filter */}
                 <div className="inline-flex rounded-lg border border-border bg-secondary/40 p-0.5">
                   <button
                     onClick={() => setPresenceFilter("all")}
@@ -831,7 +896,7 @@ export default function AdminModerationPage() {
                         : "text-muted-foreground hover:text-foreground"
                     }`}
                   >
-                    All Users
+                    All Presence
                   </button>
                   <button
                     onClick={() => setPresenceFilter("online")}
@@ -843,16 +908,6 @@ export default function AdminModerationPage() {
                   >
                     <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
                     <span>🟢 Online ({onlineCount})</span>
-                  </button>
-                  <button
-                    onClick={() => setPresenceFilter("recent")}
-                    className={`px-2.5 py-1 rounded text-[11px] font-semibold transition-all cursor-pointer ${
-                      presenceFilter === "recent"
-                        ? "bg-card text-primary font-bold shadow-xs"
-                        : "text-muted-foreground hover:text-foreground"
-                    }`}
-                  >
-                    Active Recently
                   </button>
                 </div>
               </div>
@@ -941,9 +996,21 @@ export default function AdminModerationPage() {
                               </div>
                             </td>
 
-                            {/* Live Presence Column */}
+                            {/* Live Presence & Status Column */}
                             <td className="p-3.5">
-                              {onlineInfo.isOnline ? (
+                              {user.status === "pending" ? (
+                                <div className="space-y-1">
+                                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-500/15 border border-amber-500/40 text-amber-700 dark:text-amber-400 font-mono text-[11px] font-bold shadow-xs">
+                                    <Clock className="h-3.5 w-3.5 text-amber-500 animate-pulse" />
+                                    <span>Course Access Pending</span>
+                                  </span>
+                                  {user.notes && (
+                                    <div className="text-[10px] text-muted-foreground truncate max-w-[150px]" title={user.notes}>
+                                      {user.notes}
+                                    </div>
+                                  )}
+                                </div>
+                              ) : onlineInfo.isOnline ? (
                                 <div className="space-y-1">
                                   <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/40 text-emerald-700 dark:text-emerald-400 font-mono text-[11px] font-bold shadow-xs">
                                     <span className="relative flex h-2 w-2">
@@ -996,7 +1063,34 @@ export default function AdminModerationPage() {
 
                             {/* Moderation & Activity Inspection Actions */}
                             <td className="p-3.5 text-right font-sans">
-                              <div className="flex items-center justify-end gap-1.5">
+                              <div className="flex items-center justify-end gap-1.5 flex-wrap">
+                                {/* Approve Course Access Button if Pending */}
+                                {user.status === "pending" && (
+                                  <>
+                                    <button
+                                      onClick={() => handleUpdateStatus(user.id, "approved")}
+                                      disabled={actionLoadingId === user.id}
+                                      className="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-sm transition-all active:scale-95 disabled:opacity-50 cursor-pointer"
+                                      title="Approve Course Materials Access"
+                                    >
+                                      {actionLoadingId === user.id ? (
+                                        <Loader2 className="h-3 w-3 animate-spin" />
+                                      ) : (
+                                        <Check className="h-3 w-3" />
+                                      )}
+                                      <span>Approve</span>
+                                    </button>
+                                    <button
+                                      onClick={() => handleUpdateStatus(user.id, "rejected")}
+                                      disabled={actionLoadingId === user.id}
+                                      className="px-2 py-1 rounded border border-border bg-card text-muted-foreground hover:text-destructive hover:border-destructive/40 text-xs transition-colors disabled:opacity-50 cursor-pointer"
+                                      title="Reject Request"
+                                    >
+                                      Reject
+                                    </button>
+                                  </>
+                                )}
+
                                 {/* Inspect Telemetry / Activity History Button */}
                                 <button
                                   onClick={() => setInspectingUser(user)}
@@ -1029,7 +1123,7 @@ export default function AdminModerationPage() {
                                   >
                                     Unsuspend
                                   </button>
-                                ) : (
+                                ) : user.status !== "pending" ? (
                                   <button
                                     onClick={() => handleUpdateStatus(user.id, "suspended")}
                                     disabled={actionLoadingId === user.id || user.role === "admin"}
@@ -1038,7 +1132,7 @@ export default function AdminModerationPage() {
                                   >
                                     Suspend
                                   </button>
-                                )}
+                                ) : null}
                               </div>
                             </td>
                           </tr>

@@ -1,31 +1,23 @@
 import type { Metadata } from "next";
-import { Cormorant_Garamond, Manrope, JetBrains_Mono } from "next/font/google";
+import { Outfit, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { FeedbackWidget } from "@/components/feedback/FeedbackWidget";
 import { DeveloperCredit } from "@/components/brand/DeveloperCredit";
 import { AtmosphericOverlay } from "@/components/ui/AtmosphericOverlay";
 import { UserPresenceTracker } from "@/components/telemetry/UserPresenceTracker";
 
-// 1. Heading Font: Cormorant Garamond 600 (High-contrast serif for hero & headings)
-const cormorantGaramond = Cormorant_Garamond({
-  subsets: ["latin"],
-  variable: "--font-heading",
-  weight: ["400", "500", "600", "700"],
-  style: ["normal", "italic"],
-});
-
-// 2. Sans & Body Font: Manrope (Clean geometric sans for UI, subtitle, buttons, badges, & body)
-const manrope = Manrope({
+// 1. Primary & Heading Font: Outfit
+const outfit = Outfit({
   subsets: ["latin"],
   variable: "--font-sans",
-  weight: ["400", "500", "600", "700"],
+  weight: ["300", "400", "500", "600", "700", "800", "900"],
 });
 
-// 3. Monospace Font: JetBrains Mono (For code blocks & algorithms)
+// 2. Monospace Font: JetBrains Mono
 const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
   variable: "--font-mono",
-  weight: ["400", "500", "600", "700"],
+  weight: ["400", "500", "600", "700", "800"],
 });
 
 export const metadata: Metadata = {
@@ -99,7 +91,7 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${cormorantGaramond.variable} ${manrope.variable} ${jetbrainsMono.variable} font-sans font-normal bg-background text-foreground min-h-screen flex flex-col antialiased selection:bg-[#C9A962]/35 selection:text-[#1C1714]`}
+        className={`${outfit.variable} ${jetbrainsMono.variable} font-sans font-normal bg-background text-foreground min-h-screen flex flex-col antialiased selection:bg-[#C9A962]/35 selection:text-[#1C1714]`}
       >
         <AtmosphericOverlay />
         <UserPresenceTracker />

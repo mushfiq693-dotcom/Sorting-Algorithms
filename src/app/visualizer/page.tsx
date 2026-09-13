@@ -1,12 +1,16 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { LockedVisualizerGate } from "@/components/landing/LockedVisualizerGate";
 import { AmbientSortLogo } from "@/components/brand/AmbientSortLogo";
 import { AuthButton } from "@/components/auth/AuthButton";
 import { NotificationBell } from "@/components/notifications/NotificationBell";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
+import { TopicNavbarDropdown } from "@/components/navigation/TopicNavbarDropdown";
+import { AlgorithmId } from "@/types/sorting";
+import { ALL_TOPICS, ALGORITHMS } from "@/data/algorithms";
 import { LINKS } from "@/config/links";
 import {
   Layers,
@@ -15,13 +19,39 @@ import {
   GraduationCap,
 } from "lucide-react";
 
-export default function VisualizerPage() {
+function VisualizerWorkspace() {
+  const searchParams = useSearchParams();
+  const algoParam = searchParams.get("algo") as AlgorithmId | null;
+
+  const [selectedAlgorithm, setSelectedAlgorithm] = useState<AlgorithmId>(() => {
+    if (algoParam && ALL_TOPICS.includes(algoParam)) {
+      return algoParam;
+    }
+    return "bubble";
+  });
+
+  // Sync with URL query parameter if it changes
+  useEffect(() => {
+    if (algoParam && ALL_TOPICS.includes(algoParam)) {
+      setSelectedAlgorithm(algoParam);
+    }
+  }, [algoParam]);
+
+  const handleSelectAlgorithm = (algoId: AlgorithmId) => {
+    setSelectedAlgorithm(algoId);
+    const url = new URL(window.location.href);
+    url.searchParams.set("algo", algoId);
+    window.history.replaceState({}, "", url.toString());
+  };
+
+  const activeMeta = ALGORITHMS[selectedAlgorithm] || ALGORITHMS.bubble;
+
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground selection:bg-[#C9A962]/35 selection:text-[#1C1714] transition-colors duration-200 font-body">
       {/* Top Navbar */}
       <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur-xl transition-colors">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-3">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3 sm:gap-4 shrink-0">
             <Link href="/" className="flex items-center gap-2.5 group">
               <span className="font-heading text-xl sm:text-2xl font-bold tracking-tight text-foreground group-hover:text-primary transition-colors">
                 AlgoHub
@@ -30,7 +60,12 @@ export default function VisualizerPage() {
             </Link>
           </div>
 
-          <div className="flex items-center gap-2 sm:gap-3">
+          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+            {/* Topic Categories Dropdown next to Light/Dark Mode */}
+            <TopicNavbarDropdown
+              selectedTopic={selectedAlgorithm}
+              onSelectTopic={handleSelectAlgorithm}
+            />
             <ThemeToggle />
             <NotificationBell />
             <AuthButton />
@@ -49,7 +84,7 @@ export default function VisualizerPage() {
             </div>
             <h1 className="font-heading text-xl sm:text-2xl font-bold tracking-tight text-foreground flex items-center gap-2">
               <Layers className="h-5 w-5 text-primary" />
-              Interactive Visualizer Workspace
+              <span>Interactive Visualizer Workspace</span>
             </h1>
           </div>
 
@@ -67,7 +102,10 @@ export default function VisualizerPage() {
 
         {/* Visualizer Gate & Engine */}
         <div className="mb-12">
-          <LockedVisualizerGate />
+          <LockedVisualizerGate
+            selectedAlgorithm={selectedAlgorithm}
+            onSelectAlgorithm={handleSelectAlgorithm}
+          />
         </div>
       </main>
 
@@ -107,5 +145,19 @@ export default function VisualizerPage() {
         </div>
       </footer>
     </div>
+  );
+}
+
+export default function VisualizerPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center bg-background text-muted-foreground font-mono text-xs">
+          Loading visualizer studio...
+        </div>
+      }
+    >
+      <VisualizerWorkspace />
+    </Suspense>
   );
 }

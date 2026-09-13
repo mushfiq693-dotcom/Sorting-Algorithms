@@ -14,8 +14,15 @@ export interface AccessControlState {
   isAdmin: boolean;
   isMentor: boolean;
   isPending: boolean;
+  betaStatus: string;
+  isCourseApproved: boolean;
+  isCoursePending: boolean;
+  isCourseRejected: boolean;
+  isCourseSuspended: boolean;
   isTopicLocked: (topicId: AlgorithmId) => boolean;
   requestPremiumAccess: (reason?: string) => Promise<{ success: boolean; error?: string }>;
+  requestCourseAccess: (reason?: string) => Promise<{ success: boolean; error?: string }>;
+  refreshAccess: () => Promise<void>;
   showUnlockModal: boolean;
   lockedTopicForModal: AlgorithmId | string | null;
   openUnlockModal: (topicId?: AlgorithmId | string) => void;
@@ -51,7 +58,7 @@ export function useAccessControl(): AccessControlState {
         const userRole = profile?.role || "student";
         setRole(userRole);
 
-        // Fetch beta_access record to determine premium status
+        // Fetch beta_access record to determine access status
         const { data: accessRecord } = await (supabase.from("beta_access") as any)
           .select("status")
           .eq("user_id", currentUser.id)
@@ -103,22 +110,28 @@ export function useAccessControl(): AccessControlState {
 
   const isAdmin = role === "admin";
   const isMentor = role === "mentor";
-  // All users have full free access to all educational features across AlgoHub
+  // General features (visualizers, matrix, practice, docs) are free for all
   const isPremium = true;
-  const isPending = false;
+  
+  // Course Materials Access Logic
+  const isCourseApproved = isAdmin || isMentor || betaStatus === "approved";
+  const isCoursePending = betaStatus === "pending";
+  const isCourseRejected = betaStatus === "rejected";
+  const isCourseSuspended = betaStatus === "suspended";
+  const isPending = isCoursePending;
 
   const isTopicLocked = useCallback(
     (_topicId: AlgorithmId): boolean => {
-      // All algorithms and topics are 100% free and unlocked for everyone
+      // General algorithms and topics are 100% free and unlocked for everyone
       return false;
     },
     []
   );
 
-  const requestPremiumAccess = useCallback(
-    async (reason: string = "Requested from app"): Promise<{ success: boolean; error?: string }> => {
+  const requestCourseAccess = useCallback(
+    async (reason: string = "Course Material Access Request"): Promise<{ success: boolean; error?: string }> => {
       if (!user) {
-        return { success: false, error: "You must be signed in to request premium access." };
+        return { success: false, error: "You must be signed in to request course access." };
       }
 
       try {
@@ -144,6 +157,13 @@ export function useAccessControl(): AccessControlState {
     [supabase, user]
   );
 
+  const requestPremiumAccess = useCallback(
+    async (reason: string = "Requested from app"): Promise<{ success: boolean; error?: string }> => {
+      return requestCourseAccess(reason);
+    },
+    [requestCourseAccess]
+  );
+
   const openUnlockModal = useCallback((topicId?: AlgorithmId | string) => {
     setLockedTopicForModal(topicId || null);
     setShowUnlockModal(true);
@@ -161,8 +181,15 @@ export function useAccessControl(): AccessControlState {
     isAdmin,
     isMentor,
     isPending,
+    betaStatus,
+    isCourseApproved,
+    isCoursePending,
+    isCourseRejected,
+    isCourseSuspended,
     isTopicLocked,
     requestPremiumAccess,
+    requestCourseAccess,
+    refreshAccess: loadAccess,
     showUnlockModal,
     lockedTopicForModal,
     openUnlockModal,

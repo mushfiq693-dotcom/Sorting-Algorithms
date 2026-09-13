@@ -66,7 +66,7 @@ export default function Home() {
             </button>
 
             <Link href="/" className="flex items-center gap-2.5 group">
-              <span className="font-heading text-xl sm:text-2xl font-bold tracking-tight text-foreground group-hover:text-primary transition-colors">
+              <span className="font-sans text-xl sm:text-2xl font-bold tracking-tight text-foreground group-hover:text-primary transition-colors">
                 AlgoHub
               </span>
               <AmbientSortLogo />
@@ -334,10 +334,10 @@ export default function Home() {
               <span>Interactive Algorithm Learning Platform</span>
             </div>
 
-            {/* 2. Main Headline — Cormorant Garamond 600 & Cormorant Garamond 600 Italic */}
-            <h1 className="text-4xl sm:text-6xl md:text-7xl font-semibold tracking-tight text-foreground leading-[1.15] font-heading">
+            {/* 2. Main Headline */}
+            <h1 className="text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight text-foreground leading-[1.15] font-sans">
               Make Algorithms{" "}
-              <span className="italic font-semibold text-[#B08422] dark:text-[#D4B872]">
+              <span className="font-extrabold text-[#B08422] dark:text-[#D4B872]">
                 Make Sense.
               </span>
             </h1>
@@ -410,7 +410,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-6">
           <div className="space-y-1 text-center sm:text-left">
             <div className="flex items-center justify-center sm:justify-start gap-2">
-              <span className="font-heading text-base font-bold text-foreground">AlgoHub</span>
+              <span className="font-sans text-base font-bold text-foreground">AlgoHub</span>
               <span className="font-sans text-[10px] uppercase tracking-wider px-2 py-0.5 rounded bg-primary/10 text-primary border border-primary/30 font-semibold">
                 v1.0 Live
               </span>
