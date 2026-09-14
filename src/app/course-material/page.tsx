@@ -143,6 +143,137 @@ const CHAPTER_OPTIONS = [
   { id: "Chapter 6", label: "Chapter 6: Stacks, Queues & Recursion", icon: Bookmark },
 ];
 
+// Chapter Overview & Syllabus Metadata for Student/Locked View
+interface ChapterCurriculumItem {
+  id: string;
+  number: string;
+  title: string;
+  bookRef: string;
+  tag: string;
+  description: string;
+  topics: string[];
+  simulators: string[];
+  colorScheme: {
+    border: string;
+    glow: string;
+    badge: string;
+    accent: string;
+  };
+}
+
+const CHAPTER_CURRICULUM_DATA: ChapterCurriculumItem[] = [
+  {
+    id: "Chapter 2",
+    number: "02",
+    title: "Design and Analysis of Algorithms",
+    bookRef: "Lipschutz & Seymour (4th Ed.), Chapter 2 (Pages 43–47)",
+    tag: "Complexity Analysis",
+    description: "Foundational theory of computational complexity, step-counting equations, worst/best/average case analyses, asymptotic bounds, and algorithmic rate-of-growth verification.",
+    topics: [
+      "Algorithm Definitions & Execution Criteria",
+      "Step-Counting Methodologies & Case Formulations",
+      "Asymptotic Notations: Big-O (O), Big-Omega (Ω), Big-Theta (Θ)",
+      "Polynomial Dominance & Asymptotic Proofs",
+      "Complexity Arithmetic (Sum & Product Rules)",
+      "Logarithmic Loops & Step-Halving Behavior",
+    ],
+    simulators: ["Max Element Complexity Step-Counter", "Nested Loops Growth Simulator"],
+    colorScheme: {
+      border: "border-cyan-500/30 hover:border-cyan-500/60",
+      glow: "from-cyan-500/15 via-cyan-500/5 to-transparent",
+      badge: "bg-cyan-500/15 text-cyan-600 dark:text-cyan-300 border-cyan-500/30",
+      accent: "text-cyan-500 dark:text-cyan-400",
+    },
+  },
+  {
+    id: "Chapter 3",
+    number: "03",
+    title: "String Processing & Pattern Matching",
+    bookRef: "Lipschutz & Seymour (4th Ed.), Chapter 3",
+    tag: "String Processing",
+    description: "Memory representation of character sequences, first-occurrence pattern matching algorithms, string replacement, substring extraction, and string manipulation complexity.",
+    topics: [
+      "Sequential Memory Layout for Character Strings",
+      "First-Pattern Matching: Brute-Force & Sliding Window",
+      "Substrings, Concatenation, and In-Place Insertion",
+      "Pattern Replacement Transformations & Bounds",
+    ],
+    simulators: ["Interactive String Operations Visualizer"],
+    colorScheme: {
+      border: "border-indigo-500/30 hover:border-indigo-500/60",
+      glow: "from-indigo-500/15 via-indigo-500/5 to-transparent",
+      badge: "bg-indigo-500/15 text-indigo-600 dark:text-indigo-300 border-indigo-500/30",
+      accent: "text-indigo-500 dark:text-indigo-400",
+    },
+  },
+  {
+    id: "Chapter 4",
+    number: "04",
+    title: "Linear Arrays & Memory Operations",
+    bookRef: "Lipschutz & Seymour (4th Ed.), Chapter 4",
+    tag: "Linear Arrays",
+    description: "Linear array indexing, contiguous memory address calculation, linear searching, binary search on sorted sequences, bubble sort passes, and multi-dimensional matrices.",
+    topics: [
+      "1D Array Memory Addressing & Offset Math",
+      "Sequential Array Traversal & Element Insertion",
+      "Linear Search vs Binary Search Analysis",
+      "Bubble Sort Invariant & Step Verification",
+      "2D Matrix Row-Major vs Column-Major Mapping",
+    ],
+    simulators: ["Binary Search Studio", "Linear Search Studio"],
+    colorScheme: {
+      border: "border-emerald-500/30 hover:border-emerald-500/60",
+      glow: "from-emerald-500/15 via-emerald-500/5 to-transparent",
+      badge: "bg-emerald-500/15 text-emerald-600 dark:text-emerald-300 border-emerald-500/30",
+      accent: "text-emerald-500 dark:text-emerald-400",
+    },
+  },
+  {
+    id: "Chapter 5",
+    number: "05",
+    title: "Linked Lists & Dynamic Memory",
+    bookRef: "Lipschutz & Seymour (4th Ed.), Chapter 5",
+    tag: "Linked Lists",
+    description: "Pointer-based dynamic memory allocation, INFO/LINK node structures, traversing linked lists, node insertion at head or specific locations, node deletion, and two-way lists.",
+    topics: [
+      "Pointer Memory Layout & INFO/LINK Architecture",
+      "Traversing Linked Lists & Search Algorithms",
+      "Insertion at Beginning & at Specific LOC",
+      "Node Deletion, AVAIL List & Garbage Handling",
+      "Two-Way (Doubly Linked) List Operations",
+    ],
+    simulators: ["Singly Linked List Studio", "Linked List Memory Array Studio", "Insert at LOC Visualizer"],
+    colorScheme: {
+      border: "border-rose-500/30 hover:border-rose-500/60",
+      glow: "from-rose-500/15 via-rose-500/5 to-transparent",
+      badge: "bg-rose-500/15 text-rose-600 dark:text-rose-300 border-rose-500/30",
+      accent: "text-rose-500 dark:text-rose-400",
+    },
+  },
+  {
+    id: "Chapter 6",
+    number: "06",
+    title: "Stacks, Queues & Recursion",
+    bookRef: "Lipschutz & Seymour (4th Ed.), Chapter 6",
+    tag: "Stacks & Queues",
+    description: "LIFO/FIFO data structures, array-based stack implementation with overflow/underflow, Polish notation and infix-to-postfix translation, recursion trees, and queue operations.",
+    topics: [
+      "Stack Operations: PUSH and POP with Bounds Checking",
+      "Arithmetic Expression Polish Notation & Evaluation",
+      "Infix to Postfix Conversion using Stacks",
+      "Call Stacks in Recursive Algorithms & QuickSort",
+      "Linear Queues, Circular Queues & Deques",
+    ],
+    simulators: ["Stack Operations Studio"],
+    colorScheme: {
+      border: "border-amber-500/30 hover:border-amber-500/60",
+      glow: "from-amber-500/15 via-amber-500/5 to-transparent",
+      badge: "bg-amber-500/15 text-amber-600 dark:text-amber-300 border-amber-500/30",
+      accent: "text-amber-500 dark:text-amber-400",
+    },
+  },
+];
+
 const TYPE_OPTIONS = [
   { id: "all", label: "All Content Types", icon: Layers },
   { id: "topic", label: "Lecture Topics Only", icon: Lightbulb },
@@ -600,6 +731,13 @@ export default function CourseMaterialPage() {
     }
   };
 
+  const scrollToAccessGate = () => {
+    const el = document.getElementById("access-request-gate");
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
+
   // Helper to reliably merge cached/db data with the latest default course materials (100% deduplicated)
   const mergeWithDefaults = (source: CourseMaterial[]): CourseMaterial[] => {
     const map = new Map<string, CourseMaterial>();
@@ -920,11 +1058,138 @@ export default function CourseMaterialPage() {
           )}
         </div>
 
+        {/* Hero Section with Live Stats (Picture 2) */}
+        <div className="relative rounded-3xl border border-border/70 bg-card/60 p-6 sm:p-8 backdrop-blur-xl shadow-xl overflow-hidden mb-8">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20" />
+          <div className="relative z-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
+            <div className="flex-1">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono font-bold bg-cyan-500/15 text-cyan-600 dark:text-cyan-300 border border-cyan-500/30 mb-3">
+                <Bookmark className="h-3.5 w-3.5" />
+                <span>Lipschutz &amp; Seymour (4th Ed.)</span>
+              </div>
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-foreground tracking-tight font-sans">
+                Curriculum Syllabus &amp; Problem Directory
+              </h1>
+              <p className="text-sm sm:text-base text-muted-foreground mt-2 max-w-2xl leading-relaxed font-sans">
+                Curated lecture topics, complexity derivations, and worked textbook solutions arranged in sequential chapter order.
+                {!effectiveCourseApproved && (
+                  <span className="block mt-1 text-xs text-amber-600 dark:text-amber-400 font-semibold font-mono">
+                    🔒 Full inner topics, mathematical proofs &amp; interactive labs require student approval.
+                  </span>
+                )}
+              </p>
+            </div>
+
+            {/* Stat Counters Badges */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-5 gap-2.5 shrink-0">
+              {/* Total Problems Stat */}
+              <button
+                onClick={() => effectiveCourseApproved && setSelectedType(selectedType === "problem" ? "all" : "problem")}
+                disabled={!effectiveCourseApproved}
+                className={`p-3 rounded-2xl border text-left transition-all ${
+                  effectiveCourseApproved ? "active:scale-95 cursor-pointer" : "cursor-default"
+                } flex flex-col justify-between ${
+                  selectedType === "problem" && effectiveCourseApproved
+                    ? "bg-amber-500/20 border-amber-500/50 shadow-md shadow-amber-500/10 ring-2 ring-amber-400/30"
+                    : "bg-secondary/60 hover:bg-secondary border-border/80"
+                }`}
+              >
+                <div className="flex items-center justify-between text-muted-foreground mb-1">
+                  <span className="text-[10px] font-mono font-bold uppercase tracking-wider">Problems</span>
+                  <HelpCircle className="h-3.5 w-3.5 text-amber-500" />
+                </div>
+                <div className="text-xl font-extrabold text-foreground font-mono">
+                  {stats.totalProblems}
+                </div>
+                <div className="text-[10px] text-amber-600 dark:text-amber-400 font-medium mt-0.5">
+                  Assigned Exercises
+                </div>
+              </button>
+
+              {/* Total Topics Stat */}
+              <button
+                onClick={() => effectiveCourseApproved && setSelectedType(selectedType === "topic" ? "all" : "topic")}
+                disabled={!effectiveCourseApproved}
+                className={`p-3 rounded-2xl border text-left transition-all ${
+                  effectiveCourseApproved ? "active:scale-95 cursor-pointer" : "cursor-default"
+                } flex flex-col justify-between ${
+                  selectedType === "topic" && effectiveCourseApproved
+                    ? "bg-indigo-500/20 border-indigo-500/50 shadow-md shadow-indigo-500/10 ring-2 ring-indigo-400/30"
+                    : "bg-secondary/60 hover:bg-secondary border-border/80"
+                }`}
+              >
+                <div className="flex items-center justify-between text-muted-foreground mb-1">
+                  <span className="text-[10px] font-mono font-bold uppercase tracking-wider">Topics</span>
+                  <Lightbulb className="h-3.5 w-3.5 text-indigo-400" />
+                </div>
+                <div className="text-xl font-extrabold text-foreground font-mono">
+                  {stats.totalTopics}
+                </div>
+                <div className="text-[10px] text-indigo-600 dark:text-indigo-400 font-medium mt-0.5">
+                  Lecture Modules
+                </div>
+              </button>
+
+              {/* Total Algorithms Stat */}
+              <button
+                onClick={() => effectiveCourseApproved && setSelectedType(selectedType === "algorithm" ? "all" : "algorithm")}
+                disabled={!effectiveCourseApproved}
+                className={`p-3 rounded-2xl border text-left transition-all ${
+                  effectiveCourseApproved ? "active:scale-95 cursor-pointer" : "cursor-default"
+                } flex flex-col justify-between ${
+                  selectedType === "algorithm" && effectiveCourseApproved
+                    ? "bg-emerald-500/20 border-emerald-500/50 shadow-md shadow-emerald-500/10 ring-2 ring-emerald-400/30"
+                    : "bg-secondary/60 hover:bg-secondary border-border/80"
+                }`}
+              >
+                <div className="flex items-center justify-between text-muted-foreground mb-1">
+                  <span className="text-[10px] font-mono font-bold uppercase tracking-wider">Algorithms</span>
+                  <Code2 className="h-3.5 w-3.5 text-emerald-500" />
+                </div>
+                <div className="text-xl font-extrabold text-foreground font-mono">
+                  {stats.totalAlgorithms}
+                </div>
+                <div className="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium mt-0.5">
+                  Core Algorithms
+                </div>
+              </button>
+
+              {/* Chapters Stat */}
+              <div className="p-3 rounded-2xl border border-border/80 bg-secondary/60 flex flex-col justify-between">
+                <div className="flex items-center justify-between text-muted-foreground mb-1">
+                  <span className="text-[10px] font-mono font-bold uppercase tracking-wider">Chapters</span>
+                  <BookOpen className="h-3.5 w-3.5 text-cyan-400" />
+                </div>
+                <div className="text-xl font-extrabold text-foreground font-mono">
+                  {stats.totalChapters}
+                </div>
+                <div className="text-[10px] text-cyan-600 dark:text-cyan-400 font-medium mt-0.5">
+                  Ch 2, 3, 4, 5 &amp; 6
+                </div>
+              </div>
+
+              {/* Interactive Labs Stat */}
+              <div className="p-3 rounded-2xl border border-border/80 bg-secondary/60 flex flex-col justify-between">
+                <div className="flex items-center justify-between text-muted-foreground mb-1">
+                  <span className="text-[10px] font-mono font-bold uppercase tracking-wider">Labs</span>
+                  <Sparkles className="h-3.5 w-3.5 text-pink-400" />
+                </div>
+                <div className="text-xl font-extrabold text-foreground font-mono">
+                  5
+                </div>
+                <div className="text-[10px] text-pink-600 dark:text-pink-400 font-medium mt-0.5">
+                  Simulators
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {!effectiveCourseApproved && (
           /* ========================================================================
              LOCKED COURSE ACCESS GATE: Unauthenticated / Pending / Request Access
              ======================================================================== */
-          <div className="mb-8 animate-in fade-in duration-300">
+          <div id="access-request-gate" className="mb-8 animate-in fade-in duration-300">
             {/* Access Gate Banner */}
             <div className="relative rounded-3xl border border-border/80 bg-card/75 p-6 sm:p-10 backdrop-blur-xl shadow-xl overflow-hidden">
               <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-bl from-primary/10 via-amber-500/10 to-transparent rounded-full blur-3xl pointer-events-none" />
@@ -940,7 +1205,7 @@ export default function CourseMaterialPage() {
                     Course Materials &amp; Lipschutz Textbook Solutions
                   </h1>
                   <p className="text-sm sm:text-base text-muted-foreground leading-relaxed font-sans">
-                    Browse the complete syllabus index, assigned problems, and lecture topics below. All general sorting visualizers and comparison matrices across AlgoHub remain 100% free upon login. Access to worked step-by-step mathematical proofs and interactive simulation laboratories requires student verification and instructor approval.
+                    Browse the complete syllabus index below. All general sorting visualizers and comparison matrices across AlgoHub remain 100% free upon login. Access to worked step-by-step mathematical proofs, detailed problem solutions, and interactive simulation laboratories requires student verification and instructor approval.
                   </p>
                 </div>
 
@@ -1162,146 +1427,171 @@ export default function CourseMaterialPage() {
           </div>
         )}
 
-        {/* Hero Section with Live Stats */}
-        <div className="relative rounded-3xl border border-border/70 bg-card/60 p-6 sm:p-8 backdrop-blur-xl shadow-xl overflow-hidden mb-8">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20" />
-          <div className="relative z-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
-            <div className="flex-1">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono font-bold bg-cyan-500/15 text-cyan-600 dark:text-cyan-300 border border-cyan-500/30 mb-3">
-                <Bookmark className="h-3.5 w-3.5" />
-                <span>Lipschutz &amp; Seymour (4th Ed.)</span>
+        {/* CONDITIONAL RENDERING: Locked Chapter-Level View vs Full Interactive View */}
+        {!effectiveCourseApproved ? (
+          /* ========================================================================
+             LOCKED STUDENT SYLLABUS DIRECTORY: Shows ONLY Chapters, No Inner Topics
+             ======================================================================== */
+          <div className="space-y-6 animate-in fade-in duration-300">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-border/60">
+              <div>
+                <h2 className="text-xl sm:text-2xl font-extrabold text-foreground tracking-tight flex items-center gap-2.5 font-sans">
+                  <BookOpen className="h-5 w-5 text-cyan-500" />
+                  <span>Course Chapter Syllabus Directory</span>
+                </h2>
+                <p className="text-xs sm:text-sm text-muted-foreground mt-0.5 font-sans">
+                  Sequential chapter modules for CSE Data Structures &amp; Algorithms. Request student approval above to unlock step-by-step solutions and simulation labs.
+                </p>
               </div>
-              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-foreground tracking-tight font-sans">
-                Curriculum Syllabus &amp; Problem Directory
-              </h1>
-              <p className="text-sm sm:text-base text-muted-foreground mt-2 max-w-2xl leading-relaxed font-sans">
-                Curated lecture topics, complexity derivations, and worked textbook solutions arranged in sequential chapter order.
-                {!effectiveCourseApproved && (
-                  <span className="block mt-1 text-xs text-amber-600 dark:text-amber-400 font-semibold font-mono">
-                    🔒 Solutions &amp; interactive labs are locked. Request approval above to unlock.
-                  </span>
-                )}
-              </p>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono font-bold bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30 shrink-0 self-start sm:self-auto">
+                <Lock className="h-3.5 w-3.5" />
+                <span>Chapter-Level View</span>
+              </div>
             </div>
 
-            {/* Stat Counters Badges */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-5 gap-2.5 shrink-0">
-              {/* Total Problems Stat */}
-              <button
-                onClick={() => setSelectedType(selectedType === "problem" ? "all" : "problem")}
-                className={`p-3 rounded-2xl border text-left transition-all active:scale-95 flex flex-col justify-between ${
-                  selectedType === "problem"
-                    ? "bg-amber-500/20 border-amber-500/50 shadow-md shadow-amber-500/10 ring-2 ring-amber-400/30"
-                    : "bg-secondary/60 hover:bg-secondary border-border/80"
-                }`}
-              >
-                <div className="flex items-center justify-between text-muted-foreground mb-1">
-                  <span className="text-[10px] font-mono font-bold uppercase tracking-wider">Problems</span>
-                  <HelpCircle className="h-3.5 w-3.5 text-amber-500" />
-                </div>
-                <div className="text-xl font-extrabold text-foreground font-mono">
-                  {stats.totalProblems}
-                </div>
-                <div className="text-[10px] text-amber-600 dark:text-amber-400 font-medium mt-0.5">
-                  Assigned Exercises
-                </div>
-              </button>
+            {/* Chapter Cards Grid */}
+            <div className="grid grid-cols-1 gap-5">
+              {CHAPTER_CURRICULUM_DATA.map((ch) => {
+                const chapterItems = materials.filter((m) => {
+                  const ref = (m.book_reference || "").toLowerCase();
+                  const title = (m.title || "").toLowerCase();
+                  const target = ch.id.toLowerCase();
+                  return ref.includes(target) || title.includes(target);
+                });
 
-              {/* Total Topics Stat */}
-              <button
-                onClick={() => setSelectedType(selectedType === "topic" ? "all" : "topic")}
-                className={`p-3 rounded-2xl border text-left transition-all active:scale-95 flex flex-col justify-between ${
-                  selectedType === "topic"
-                    ? "bg-indigo-500/20 border-indigo-500/50 shadow-md shadow-indigo-500/10 ring-2 ring-indigo-400/30"
-                    : "bg-secondary/60 hover:bg-secondary border-border/80"
-                }`}
-              >
-                <div className="flex items-center justify-between text-muted-foreground mb-1">
-                  <span className="text-[10px] font-mono font-bold uppercase tracking-wider">Topics</span>
-                  <Lightbulb className="h-3.5 w-3.5 text-indigo-400" />
-                </div>
-                <div className="text-xl font-extrabold text-foreground font-mono">
-                  {stats.totalTopics}
-                </div>
-                <div className="text-[10px] text-indigo-600 dark:text-indigo-400 font-medium mt-0.5">
-                  Lecture Modules
-                </div>
-              </button>
+                const topicsCount = chapterItems.filter((m) => m.content_type === "topic").length || ch.topics.length;
+                const problemsCount = chapterItems.filter((m) => m.content_type === "problem").length;
+                const algorithmsCount = chapterItems.filter((m) => m.content_type === "algorithm").length;
 
-              {/* Total Algorithms Stat */}
-              <button
-                onClick={() => setSelectedType(selectedType === "algorithm" ? "all" : "algorithm")}
-                className={`p-3 rounded-2xl border text-left transition-all active:scale-95 flex flex-col justify-between ${
-                  selectedType === "algorithm"
-                    ? "bg-emerald-500/20 border-emerald-500/50 shadow-md shadow-emerald-500/10 ring-2 ring-emerald-400/30"
-                    : "bg-secondary/60 hover:bg-secondary border-border/80"
-                }`}
-              >
-                <div className="flex items-center justify-between text-muted-foreground mb-1">
-                  <span className="text-[10px] font-mono font-bold uppercase tracking-wider">Algorithms</span>
-                  <Code2 className="h-3.5 w-3.5 text-emerald-500" />
-                </div>
-                <div className="text-xl font-extrabold text-foreground font-mono">
-                  {stats.totalAlgorithms}
-                </div>
-                <div className="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium mt-0.5">
-                  Core Algorithms
-                </div>
-              </button>
+                return (
+                  <div
+                    key={ch.id}
+                    className={`rounded-3xl border ${ch.colorScheme.border} bg-card/85 p-6 sm:p-7 backdrop-blur-xl shadow-lg relative overflow-hidden transition-all duration-300 hover:shadow-2xl hover:scale-[1.005] group`}
+                  >
+                    {/* Background Glow */}
+                    <div
+                      className={`absolute top-0 right-0 w-80 h-80 bg-gradient-to-bl ${ch.colorScheme.glow} rounded-full blur-3xl pointer-events-none -mr-16 -mt-16`}
+                    />
 
-              {/* Chapters Stat */}
-              <div className="p-3 rounded-2xl border border-border/80 bg-secondary/60 flex flex-col justify-between">
-                <div className="flex items-center justify-between text-muted-foreground mb-1">
-                  <span className="text-[10px] font-mono font-bold uppercase tracking-wider">Chapters</span>
-                  <BookOpen className="h-3.5 w-3.5 text-cyan-400" />
-                </div>
-                <div className="text-xl font-extrabold text-foreground font-mono">
-                  {stats.totalChapters}
-                </div>
-                <div className="text-[10px] text-cyan-600 dark:text-cyan-400 font-medium mt-0.5">
-                  Ch 2, 3, 4 &amp; 5
-                </div>
-              </div>
+                    <div className="relative z-10 space-y-5">
+                      {/* Header Info */}
+                      <div className="flex flex-wrap items-center justify-between gap-3">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span className="h-8 px-3 rounded-xl bg-secondary border border-border flex items-center justify-center font-mono text-xs font-black text-foreground shrink-0 shadow-xs">
+                            CHAPTER {ch.number}
+                          </span>
+                          <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-mono font-bold border ${ch.colorScheme.badge}`}>
+                            <Bookmark className="h-3 w-3" />
+                            <span>{ch.bookRef}</span>
+                          </span>
+                          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl text-xs font-mono font-medium bg-secondary/80 text-muted-foreground border border-border">
+                            <Tag className="h-3 w-3 text-muted-foreground" />
+                            <span>{ch.tag}</span>
+                          </span>
+                        </div>
 
-              {/* Interactive Labs Stat */}
-              <div className="p-3 rounded-2xl border border-border/80 bg-secondary/60 flex flex-col justify-between">
-                <div className="flex items-center justify-between text-muted-foreground mb-1">
-                  <span className="text-[10px] font-mono font-bold uppercase tracking-wider">Labs</span>
-                  <Sparkles className="h-3.5 w-3.5 text-pink-400" />
-                </div>
-                <div className="text-xl font-extrabold text-foreground font-mono">
-                  5
-                </div>
-                <div className="text-[10px] text-pink-600 dark:text-pink-400 font-medium mt-0.5">
-                  Simulators
-                </div>
-              </div>
+                        {/* Lock Badge */}
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-bold bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30 shrink-0">
+                          <Lock className="h-3.5 w-3.5" />
+                          <span>Content Locked</span>
+                        </span>
+                      </div>
+
+                      {/* Title & Description */}
+                      <div>
+                        <h3 className="text-xl sm:text-2xl font-extrabold text-foreground tracking-tight group-hover:text-cyan-500 dark:group-hover:text-cyan-400 transition-colors font-sans">
+                          {ch.title}
+                        </h3>
+                        <p className="text-xs sm:text-sm text-muted-foreground mt-1.5 leading-relaxed font-sans max-w-3xl">
+                          {ch.description}
+                        </p>
+                      </div>
+
+                      {/* Topics Highlights Pill Box */}
+                      <div className="rounded-2xl border border-border/80 bg-secondary/40 p-4 sm:p-5 space-y-3">
+                        <div className="flex items-center gap-2 text-xs font-mono font-bold text-muted-foreground uppercase tracking-wider">
+                          <Lightbulb className={`h-3.5 w-3.5 ${ch.colorScheme.accent}`} />
+                          <span>Curriculum Topics &amp; Derivations Covered:</span>
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                          {ch.topics.map((topicName, tIdx) => (
+                            <div
+                              key={tIdx}
+                              className="flex items-center gap-2 text-xs text-foreground/80 bg-background/60 px-3 py-1.5 rounded-xl border border-border/50"
+                            >
+                              <span className="h-1.5 w-1.5 rounded-full bg-cyan-500 shrink-0" />
+                              <span className="truncate">{topicName}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Footer Meta & Action */}
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-3 border-t border-border/60">
+                        {/* Statistics counts for this chapter */}
+                        <div className="flex flex-wrap items-center gap-2 text-xs font-mono font-semibold">
+                          <span className="px-2.5 py-1 rounded-lg bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20">
+                            {topicsCount} Lecture Modules
+                          </span>
+                          <span className="px-2.5 py-1 rounded-lg bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
+                            {problemsCount} Assigned Problems
+                          </span>
+                          {algorithmsCount > 0 && (
+                            <span className="px-2.5 py-1 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+                              {algorithmsCount} Core Algorithms
+                            </span>
+                          )}
+                          {ch.simulators.length > 0 && (
+                            <span className="px-2.5 py-1 rounded-lg bg-pink-500/10 text-pink-600 dark:text-pink-400 border border-pink-500/20 flex items-center gap-1">
+                              <Sparkles className="h-3 w-3" />
+                              <span>{ch.simulators.length} Lab Simulators</span>
+                            </span>
+                          )}
+                        </div>
+
+                        {/* Unlock Button */}
+                        <button
+                          type="button"
+                          onClick={scrollToAccessGate}
+                          className="btn-brass inline-flex items-center justify-center gap-2 rounded px-5 py-2 text-xs font-sans font-semibold tracking-wide shadow-brass active:scale-95 transition-all cursor-pointer shrink-0"
+                        >
+                          <Lock className="h-3.5 w-3.5" />
+                          <span>Request Approval to Unlock</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
-        </div>
-
-        {/* Filter and Control Bar */}
-        <div className="rounded-2xl border border-border/80 bg-card/80 p-4 mb-6 backdrop-blur-md shadow-sm space-y-3">
-          <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3">
-            {/* Search Input */}
-            <div className="relative flex-1">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <input
-                type="text"
-                placeholder="Search topics, problems, complexity, algorithms..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-9 py-2 text-xs sm:text-sm rounded-xl border border-border/80 bg-secondary/70 focus:bg-background focus:outline-none focus:ring-2 focus:ring-cyan-500/40 focus:border-cyan-500/50 transition-all placeholder:text-muted-foreground"
-              />
-              {searchQuery && (
-                <button
-                  onClick={() => setSearchQuery("")}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground hover:text-foreground"
-                >
-                  <X className="h-3.5 w-3.5" />
-                </button>
-              )}
-            </div>
+        ) : (
+          /* ========================================================================
+             FULL UNLOCKED INTERACTIVE TOPIC & PROBLEM DIRECTORY (Approved / Admin)
+             ======================================================================== */
+          <>
+            {/* Filter and Control Bar */}
+            <div className="rounded-2xl border border-border/80 bg-card/80 p-4 mb-6 backdrop-blur-md shadow-sm space-y-3">
+              <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3">
+                {/* Search Input */}
+                <div className="relative flex-1">
+                  <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <input
+                    type="text"
+                    placeholder="Search topics, problems, complexity, algorithms..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full pl-10 pr-9 py-2 text-xs sm:text-sm rounded-xl border border-border/80 bg-secondary/70 focus:bg-background focus:outline-none focus:ring-2 focus:ring-cyan-500/40 focus:border-cyan-500/50 transition-all placeholder:text-muted-foreground"
+                  />
+                  {searchQuery && (
+                    <button
+                      onClick={() => setSearchQuery("")}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground hover:text-foreground"
+                    >
+                      <X className="h-3.5 w-3.5" />
+                    </button>
+                  )}
+                </div>
 
             {/* Custom Modern Dropdown Filters */}
             <div className="flex flex-wrap items-center gap-2">
@@ -2233,7 +2523,9 @@ export default function CourseMaterialPage() {
             })}
           </div>
         )}
-      </main>
-    </div>
-  );
+      </>
+    )}
+  </main>
+</div>
+);
 }
