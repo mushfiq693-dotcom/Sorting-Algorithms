@@ -143,9 +143,9 @@ export function LoopComplexityVisualizer() {
   };
 
   return (
-    <div className="rounded-3xl border border-indigo-500/30 bg-[#080d1a]/95 text-foreground overflow-hidden shadow-2xl backdrop-blur-2xl">
+    <div className="rounded-3xl border border-border dark:border-indigo-500/30 bg-card dark:bg-[#080d1a]/95 text-foreground overflow-hidden shadow-xl backdrop-blur-2xl">
       {/* Header Banner */}
-      <div className="p-5 sm:p-6 bg-gradient-to-r from-indigo-950/40 via-purple-950/30 to-background border-b border-border/70 flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="p-5 sm:p-6 bg-gradient-to-r from-indigo-500/10 via-purple-500/5 to-card dark:from-indigo-950/40 dark:via-purple-950/30 dark:to-background border-b border-border/70 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <div className="h-10 w-10 rounded-2xl bg-indigo-500/15 border border-indigo-500/30 flex items-center justify-center text-indigo-400 shadow-lg shadow-indigo-500/10 shrink-0">
             <Activity className="h-5 w-5" />
@@ -234,64 +234,64 @@ export function LoopComplexityVisualizer() {
 
             {/* Quick Math Pill */}
             <div className="px-3.5 py-1.5 rounded-xl bg-indigo-500/10 border border-indigo-500/30 text-xs font-mono text-indigo-300">
-              Total Executions: <span className="font-extrabold text-white">{totalNestedExecutions}</span>
+              Total Executions: <span className="font-extrabold text-foreground dark:text-white">{totalNestedExecutions}</span>
             </div>
           </div>
 
           {/* 3-Loop Live Stepper HUD (0-based Indexing) */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3 font-mono text-xs">
             {/* Loop 1 */}
-            <div className="p-4 rounded-2xl border border-indigo-500/30 bg-indigo-950/20 flex flex-col justify-between">
+            <div className="p-4 rounded-2xl border border-indigo-500/30 bg-indigo-500/10 dark:bg-indigo-950/20 flex flex-col justify-between">
               <div className="flex items-center justify-between text-indigo-400 text-[10px] font-bold uppercase">
                 <span>Outer Loop 1 (I)</span>
                 <span>0 to N-1</span>
               </div>
-              <div className="text-2xl font-black text-white my-2 flex items-center gap-2">
+              <div className="text-2xl font-black text-foreground dark:text-white my-2 flex items-center gap-2">
                 I = <span className="text-indigo-400">{activeNestedStep.i}</span>{" "}
                 <span className="text-xs text-muted-foreground font-normal">/ {nNested - 1}</span>
               </div>
-              <div className="text-[11px] text-slate-400 font-sans">
+              <div className="text-[11px] text-muted-foreground dark:text-slate-400 font-sans">
                 Controls inner boundary for K: runs for $K = I \dots N-1$.
               </div>
             </div>
 
             {/* Loop 2 */}
-            <div className="p-4 rounded-2xl border border-purple-500/30 bg-purple-950/20 flex flex-col justify-between">
+            <div className="p-4 rounded-2xl border border-purple-500/30 bg-purple-500/10 dark:bg-purple-950/20 flex flex-col justify-between">
               <div className="flex items-center justify-between text-purple-400 text-[10px] font-bold uppercase">
                 <span>Middle Loop 2 (J)</span>
                 <span>0 to N-1</span>
               </div>
-              <div className="text-2xl font-black text-white my-2 flex items-center gap-2">
+              <div className="text-2xl font-black text-foreground dark:text-white my-2 flex items-center gap-2">
                 J = <span className="text-purple-400">{activeNestedStep.j}</span>{" "}
                 <span className="text-xs text-muted-foreground font-normal">/ {nNested - 1}</span>
               </div>
-              <div className="text-[11px] text-slate-400 font-sans">
+              <div className="text-[11px] text-muted-foreground dark:text-slate-400 font-sans">
                 Repeats the $K$ loop independently exactly $N$ times.
               </div>
             </div>
 
             {/* Loop 3 */}
-            <div className="p-4 rounded-2xl border border-emerald-500/30 bg-emerald-950/20 flex flex-col justify-between">
+            <div className="p-4 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 dark:bg-emerald-950/20 flex flex-col justify-between">
               <div className="flex items-center justify-between text-emerald-400 text-[10px] font-bold uppercase">
                 <span>Inner Loop 3 (K)</span>
                 <span>I to N-1</span>
               </div>
-              <div className="text-2xl font-black text-white my-2 flex items-center gap-2">
+              <div className="text-2xl font-black text-foreground dark:text-white my-2 flex items-center gap-2">
                 K = <span className="text-emerald-400">{activeNestedStep.k}</span>{" "}
                 <span className="text-xs text-muted-foreground font-normal">
                   ({nNested - activeNestedStep.i} steps for current I)
                 </span>
               </div>
-              <div className="text-[11px] text-slate-400 font-sans">
+              <div className="text-[11px] text-muted-foreground dark:text-slate-400 font-sans">
                 Executes Module A on each step.
               </div>
             </div>
           </div>
 
           {/* Real-time Visual Execution Matrix */}
-          <div className="rounded-2xl border border-border/80 bg-black/50 p-5 space-y-4">
+          <div className="rounded-2xl border border-border/80 bg-muted/40 dark:bg-black/50 p-5 space-y-4">
             <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/60 pb-3">
-              <div className="flex items-center gap-2 text-xs font-mono font-bold text-slate-300">
+              <div className="flex items-center gap-2 text-xs font-mono font-bold text-foreground dark:text-slate-300">
                 <Code2 className="h-4 w-4 text-indigo-400" />
                 <span>Live Module A Trigger Grid (0-based Indexing)</span>
               </div>
@@ -315,12 +315,12 @@ export function LoopComplexityVisualizer() {
                     key={iVal}
                     className={`p-3.5 rounded-xl border transition-all text-xs font-mono ${
                       isCurrentI
-                        ? "border-indigo-500 bg-indigo-950/30 shadow-lg shadow-indigo-500/20 ring-2 ring-indigo-500/30"
+                        ? "border-indigo-500 bg-indigo-500/15 dark:bg-indigo-950/30 shadow-lg shadow-indigo-500/20 ring-2 ring-indigo-500/30"
                         : "border-border/60 bg-secondary/30 opacity-70"
                     }`}
                   >
                     <div className="flex items-center justify-between text-[11px] font-bold">
-                      <span className={isCurrentI ? "text-indigo-300" : "text-slate-300"}>
+                      <span className={isCurrentI ? "text-indigo-300" : "text-foreground dark:text-slate-300"}>
                         Pass I = {iVal}
                       </span>
                       <span className="text-muted-foreground">K runs {kCount} times</span>
@@ -380,7 +380,7 @@ export function LoopComplexityVisualizer() {
                   }
                   setIsPlayingNested(!isPlayingNested);
                 }}
-                className="px-5 py-2 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-400 hover:to-purple-500 text-white font-bold text-xs flex items-center gap-2 shadow-lg shadow-indigo-500/20 transition-all active:scale-95"
+                className="px-5 py-2 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-400 hover:to-purple-500 text-foreground dark:text-white font-bold text-xs flex items-center gap-2 shadow-lg shadow-indigo-500/20 transition-all active:scale-95"
               >
                 {isPlayingNested ? (
                   <>
@@ -432,33 +432,33 @@ export function LoopComplexityVisualizer() {
           </div>
 
           {/* Mathematical Proof Card */}
-          <div className="rounded-2xl border border-indigo-500/30 bg-indigo-950/20 p-5 space-y-3 font-mono text-xs">
+          <div className="rounded-2xl border border-indigo-500/30 bg-indigo-500/10 dark:bg-indigo-950/20 p-5 space-y-3 font-mono text-xs">
             <div className="text-xs font-bold text-indigo-300 flex items-center gap-2 uppercase tracking-wider">
               <Calculator className="h-4 w-4" />
               <span>Step-by-Step Closed Form Complexity Calculation</span>
             </div>
 
-            <div className="space-y-2 text-slate-300">
+            <div className="space-y-2 text-foreground dark:text-slate-300">
               <div>
                 1. For a fixed <span className="text-indigo-400 font-bold">I</span>, the{" "}
                 <span className="text-emerald-400 font-bold">K</span> loop executes{" "}
-                <span className="text-white font-bold">(N - I + 1)</span> times.
+                <span className="text-foreground dark:text-white font-bold">(N - I + 1)</span> times.
               </div>
               <div>
                 2. For a fixed <span className="text-indigo-400 font-bold">I</span>, the{" "}
                 <span className="text-purple-400 font-bold">J</span> loop runs{" "}
-                <span className="text-white font-bold">N</span> times. Thus, Module A executes:
-                <div className="p-2 bg-black/40 rounded-lg mt-1 text-cyan-300">
+                <span className="text-foreground dark:text-white font-bold">N</span> times. Thus, Module A executes:
+                <div className="p-2 bg-muted/60 dark:bg-black/40 rounded-lg mt-1 text-cyan-300">
                   Executions(I) = N × (N - I + 1)
                 </div>
               </div>
               <div>
                 3. Summing over all <span className="text-indigo-400 font-bold">I from 1 to N</span>:
-                <div className="p-2 bg-black/40 rounded-lg mt-1 text-emerald-300">
+                <div className="p-2 bg-muted/60 dark:bg-black/40 rounded-lg mt-1 text-emerald-300">
                   Total = ∑(I=1 to N) [N × (N - I + 1)] = N × [N + (N-1) + ... + 1] = N × [N(N+1) / 2] = (N³ + N²) / 2
                 </div>
               </div>
-              <div className="pt-1 text-sm font-extrabold text-white">
+              <div className="pt-1 text-sm font-extrabold text-foreground dark:text-white">
                 Final Complexity:{" "}
                 <span className="text-amber-400">
                   C(n) = M × (n³ + n²) / 2 = O(n³)
@@ -511,7 +511,7 @@ export function LoopComplexityVisualizer() {
                     }}
                     className={`px-3 py-1 rounded-lg border transition-all ${
                       bLog === base
-                        ? "bg-indigo-500 text-white font-bold border-indigo-400"
+                        ? "bg-indigo-500 text-foreground dark:text-white font-bold border-indigo-400"
                         : "bg-secondary border-border text-muted-foreground hover:text-foreground"
                     }`}
                   >
@@ -536,9 +536,9 @@ export function LoopComplexityVisualizer() {
           </div>
 
           {/* Exponential Jumps Visualization Canvas */}
-          <div className="rounded-2xl border border-border/80 bg-black/50 p-6 space-y-5">
+          <div className="rounded-2xl border border-border/80 bg-muted/40 dark:bg-black/50 p-6 space-y-5">
             <div className="flex items-center justify-between border-b border-border/60 pb-3">
-              <span className="text-xs font-mono font-bold text-slate-300 flex items-center gap-2">
+              <span className="text-xs font-mono font-bold text-foreground dark:text-slate-300 flex items-center gap-2">
                 <TrendingUp className="h-4 w-4 text-indigo-400" />
                 <span>Logarithmic Stepping Progression (J := B × J)</span>
               </span>
@@ -558,14 +558,14 @@ export function LoopComplexityVisualizer() {
                     <div
                       className={`px-4 py-3 rounded-2xl border transition-all duration-300 font-mono text-center min-w-[90px] ${
                         isActive
-                          ? "border-emerald-400 bg-emerald-950/40 shadow-xl shadow-emerald-500/30 ring-4 ring-emerald-500/30 scale-105"
+                          ? "border-emerald-400 bg-emerald-500/20 dark:bg-emerald-950/40 shadow-xl shadow-emerald-500/30 ring-4 ring-emerald-500/30 scale-105"
                           : isPast
-                          ? "border-indigo-500/60 bg-indigo-950/20 text-slate-300"
-                          : "border-border/60 bg-secondary/30 text-slate-500"
+                          ? "border-indigo-500/60 bg-indigo-500/10 dark:bg-indigo-950/20 text-foreground dark:text-slate-300"
+                          : "border-border/60 bg-secondary/30 text-muted-foreground dark:text-slate-500"
                       }`}
                     >
                       <div className="text-[10px] text-muted-foreground uppercase">Step {step.iteration}</div>
-                      <div className="text-lg font-black text-white mt-0.5">J = {step.j}</div>
+                      <div className="text-lg font-black text-foreground dark:text-white mt-0.5">J = {step.j}</div>
                       <div className="text-[10px] text-indigo-400 mt-0.5 font-sans">
                         B^{step.iteration - 1} = {step.j}
                       </div>
@@ -581,7 +581,7 @@ export function LoopComplexityVisualizer() {
               {/* Exit Card */}
               <div className="flex items-center gap-2">
                 <ArrowRight className="h-4 w-4 text-muted-foreground shrink-0" />
-                <div className="px-3.5 py-3 rounded-2xl border border-rose-500/30 bg-rose-950/20 font-mono text-center text-xs opacity-75">
+                <div className="px-3.5 py-3 rounded-2xl border border-rose-500/30 bg-rose-500/10 dark:bg-rose-950/20 font-mono text-center text-xs opacity-75">
                   <div className="text-[10px] text-rose-400 uppercase font-bold">Exit Condition</div>
                   <div className="font-bold text-rose-300 mt-0.5">
                     J = {activeLogStep.j * bLog} &gt; {nLog}
@@ -591,7 +591,7 @@ export function LoopComplexityVisualizer() {
             </div>
 
             {/* Current Step Description */}
-            <div className="p-4 rounded-xl border border-indigo-500/30 bg-indigo-950/20 text-xs font-mono text-foreground flex items-center justify-between gap-3">
+            <div className="p-4 rounded-xl border border-indigo-500/30 bg-indigo-500/10 dark:bg-indigo-950/20 text-xs font-mono text-foreground flex items-center justify-between gap-3">
               <div className="flex items-center gap-2">
                 <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
                 <span>
@@ -636,7 +636,7 @@ export function LoopComplexityVisualizer() {
                   }
                   setIsPlayingLog(!isPlayingLog);
                 }}
-                className="px-5 py-2 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 hover:opacity-90 text-white font-bold text-xs flex items-center gap-2 transition-all active:scale-95"
+                className="px-5 py-2 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 hover:opacity-90 text-foreground dark:text-white font-bold text-xs flex items-center gap-2 transition-all active:scale-95"
               >
                 {isPlayingLog ? (
                   <>
@@ -670,28 +670,28 @@ export function LoopComplexityVisualizer() {
           </div>
 
           {/* Mathematical Proof Card */}
-          <div className="rounded-2xl border border-purple-500/30 bg-purple-950/20 p-5 space-y-3 font-mono text-xs">
+          <div className="rounded-2xl border border-purple-500/30 bg-purple-500/10 dark:bg-purple-950/20 p-5 space-y-3 font-mono text-xs">
             <div className="text-xs font-bold text-purple-300 flex items-center gap-2 uppercase tracking-wider">
               <Calculator className="h-4 w-4" />
               <span>Logarithmic Growth Derivation</span>
             </div>
 
-            <div className="space-y-2 text-slate-300">
+            <div className="space-y-2 text-foreground dark:text-slate-300">
               <div>
                 1. <span className="text-indigo-400 font-bold">J</span> multiplies by{" "}
-                <span className="text-white font-bold">B</span> on each iteration:
-                <div className="p-2 bg-black/40 rounded-lg mt-1 text-cyan-300">
+                <span className="text-foreground dark:text-white font-bold">B</span> on each iteration:
+                <div className="p-2 bg-muted/60 dark:bg-black/40 rounded-lg mt-1 text-cyan-300">
                   J values: 1, B, B², B³, ..., B^(k-1)
                 </div>
               </div>
               <div>
                 2. The loop terminates when <span className="text-rose-400 font-bold">B^(k-1) &gt; N</span>.
                 Taking logarithm base B:
-                <div className="p-2 bg-black/40 rounded-lg mt-1 text-emerald-300">
+                <div className="p-2 bg-muted/60 dark:bg-black/40 rounded-lg mt-1 text-emerald-300">
                   k - 1 ≤ log_B(N) ⟹ Number of Iterations k = ⌊log_B(N)⌋ + 1
                 </div>
               </div>
-              <div className="pt-1 text-sm font-extrabold text-white">
+              <div className="pt-1 text-sm font-extrabold text-foreground dark:text-white">
                 Final Complexity:{" "}
                 <span className="text-amber-400">
                   C(n) = M × (⌊log_b n⌋ + 1) = O(log_b n) = O(log n)

@@ -351,24 +351,24 @@ export function MaxElementComplexityVisualizer() {
   const maxValInArray = Math.max(...(array.length ? array : [100]), 100);
 
   return (
-    <div className="rounded-3xl border border-cyan-500/30 bg-[#080d1a]/95 text-foreground overflow-hidden shadow-2xl backdrop-blur-2xl">
+    <div className="rounded-3xl border border-border dark:border-cyan-500/30 bg-card dark:bg-[#080d1a]/95 text-foreground overflow-hidden shadow-xl backdrop-blur-2xl">
       {/* Header Banner */}
-      <div className="p-5 sm:p-6 bg-gradient-to-r from-cyan-950/40 via-indigo-950/30 to-background border-b border-border/70 flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="p-5 sm:p-6 bg-gradient-to-r from-cyan-500/10 via-indigo-500/5 to-card dark:from-cyan-950/40 dark:via-indigo-950/30 dark:to-background border-b border-border flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <div className="h-10 w-10 rounded-2xl bg-cyan-500/15 border border-cyan-500/30 flex items-center justify-center text-cyan-400 shadow-lg shadow-cyan-500/10 shrink-0">
+          <div className="h-10 w-10 rounded-2xl bg-cyan-500/15 border border-cyan-500/30 flex items-center justify-center text-cyan-600 dark:text-cyan-400 shadow-md shadow-cyan-500/10 shrink-0">
             <Activity className="h-5 w-5" />
           </div>
           <div>
             <div className="flex flex-wrap items-center gap-2">
-              <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
+              <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-cyan-500/15 text-cyan-700 dark:text-cyan-300 border border-cyan-500/30">
                 Algorithm 2.3 Simulation
               </span>
-              <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-amber-500/15 text-amber-300 border border-amber-500/30">
+              <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/30">
                 Problem 2.6 Lab
               </span>
             </div>
             <h3 className="text-lg sm:text-xl font-black text-foreground tracking-tight mt-1 flex items-center gap-2">
-              Max Element & Step 3 Update Complexity <span className="text-cyan-400 font-mono">C(n)</span>
+              Max Element & Step 3 Update Complexity <span className="text-cyan-600 dark:text-cyan-400 font-mono">C(n)</span>
             </h3>
           </div>
         </div>
@@ -469,10 +469,10 @@ export function MaxElementComplexityVisualizer() {
 
           {/* Active Preset Description Banner */}
           {activePreset !== "custom" && (
-            <div className="text-xs text-muted-foreground flex items-start gap-2 bg-cyan-950/20 border border-cyan-500/20 rounded-xl p-3">
-              <Sparkles className="h-4 w-4 text-cyan-400 shrink-0 mt-0.5" />
+            <div className="text-xs text-muted-foreground flex items-start gap-2 bg-cyan-500/10 dark:bg-cyan-950/20 border border-cyan-500/25 rounded-xl p-3">
+              <Sparkles className="h-4 w-4 text-cyan-600 dark:text-cyan-400 shrink-0 mt-0.5" />
               <div>
-                <span className="font-semibold text-cyan-300">
+                <span className="font-semibold text-cyan-700 dark:text-cyan-300">
                   {PRESETS.find((p) => p.id === activePreset)?.name}:
                 </span>{" "}
                 {PRESETS.find((p) => p.id === activePreset)?.description}
@@ -481,7 +481,7 @@ export function MaxElementComplexityVisualizer() {
           )}
 
           {/* Real-time Visual Array Canvas */}
-          <div className="relative rounded-2xl border border-white/[0.08] bg-black/40 p-6 sm:p-8 flex flex-col items-center justify-between min-h-[300px] overflow-hidden">
+          <div className="relative rounded-2xl border border-border dark:border-white/[0.08] bg-muted/40 dark:bg-black/40 p-6 sm:p-8 flex flex-col items-center justify-between min-h-[300px] overflow-hidden">
             {/* Background Glow */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-32 bg-cyan-500/10 blur-3xl pointer-events-none" />
 
@@ -516,7 +516,7 @@ export function MaxElementComplexityVisualizer() {
                     {/* Bar Component */}
                     <div
                       style={{ height: `${heightPercent}%` }}
-                      className={`w-full rounded-2xl border transition-all duration-300 flex flex-col items-center justify-between p-2 shadow-lg relative ${
+                      className={`w-full rounded-2xl border transition-all duration-300 flex flex-col items-center justify-between p-2 shadow-sm relative ${
                         isUpdateTarget
                           ? "bg-gradient-to-t from-emerald-600 via-emerald-500 to-emerald-400 border-emerald-300 shadow-emerald-500/40 ring-4 ring-emerald-500/30 scale-105"
                           : isComparedNow
@@ -524,13 +524,13 @@ export function MaxElementComplexityVisualizer() {
                           : isLoc
                           ? "bg-gradient-to-t from-amber-600 via-amber-500 to-amber-400 border-amber-300 shadow-amber-500/30"
                           : isScanned
-                          ? "bg-slate-800/80 border-slate-700 text-slate-400"
-                          : "bg-slate-900/60 border-slate-800/80 text-slate-500"
+                          ? "bg-card dark:bg-slate-800/80 border-border dark:border-slate-700 text-foreground dark:text-slate-400"
+                          : "bg-muted dark:bg-slate-900/60 border-border dark:border-slate-800/80 text-muted-foreground dark:text-slate-500"
                       }`}
                     >
                       <span
                         className={`font-mono text-xs sm:text-sm font-extrabold ${
-                          isUpdateTarget || isComparedNow || isLoc ? "text-white" : "text-slate-300"
+                          isUpdateTarget || isComparedNow || isLoc ? "text-white" : "text-foreground dark:text-slate-300"
                         }`}
                       >
                         {val}
@@ -549,21 +549,21 @@ export function MaxElementComplexityVisualizer() {
             </div>
 
             {/* Live Step Explanation Message Banner */}
-            <div className="w-full mt-4 p-4 rounded-xl border border-cyan-500/30 bg-cyan-950/30 backdrop-blur-md flex items-center justify-between gap-3 text-xs sm:text-sm z-10">
+            <div className="w-full mt-4 p-4 rounded-xl border border-cyan-500/30 bg-cyan-500/10 dark:bg-cyan-950/30 backdrop-blur-md flex items-center justify-between gap-3 text-xs sm:text-sm z-10 text-cyan-900 dark:text-cyan-200">
               <div className="flex items-center gap-2.5">
                 {currentStep.comparisonType === "compare_true" ? (
-                  <CheckCircle2 className="h-5 w-5 text-emerald-400 shrink-0" />
+                  <CheckCircle2 className="h-5 w-5 text-emerald-500 dark:text-emerald-400 shrink-0" />
                 ) : currentStep.comparisonType === "compare_false" ? (
-                  <AlertCircle className="h-5 w-5 text-slate-400 shrink-0" />
+                  <AlertCircle className="h-5 w-5 text-muted-foreground dark:text-slate-400 shrink-0" />
                 ) : currentStep.comparisonType === "finished" ? (
-                  <Award className="h-5 w-5 text-amber-400 shrink-0" />
+                  <Award className="h-5 w-5 text-amber-500 dark:text-amber-400 shrink-0" />
                 ) : (
-                  <Sparkles className="h-5 w-5 text-cyan-400 shrink-0" />
+                  <Sparkles className="h-5 w-5 text-cyan-600 dark:text-cyan-400 shrink-0" />
                 )}
                 <span className="font-mono text-foreground">{currentStep.message}</span>
               </div>
 
-              <div className="shrink-0 text-[11px] font-mono text-cyan-400 bg-cyan-500/10 px-2.5 py-1 rounded-lg border border-cyan-500/20">
+              <div className="shrink-0 text-[11px] font-mono text-cyan-700 dark:text-cyan-400 bg-cyan-500/10 px-2.5 py-1 rounded-lg border border-cyan-500/20 font-bold">
                 Step {currentStepIdx + 1} / {steps.length}
               </div>
             </div>
@@ -659,16 +659,16 @@ export function MaxElementComplexityVisualizer() {
           {/* Two-Column Analytics: Algorithm Code Tracker + Live Complexity HUD */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
             {/* Algorithm 2.3 Pseudocode / C++ Step Synchronizer (7 cols) */}
-            <div className="lg:col-span-7 rounded-2xl border border-border/80 bg-black/60 p-5 space-y-3 font-mono text-xs">
-              <div className="flex items-center justify-between border-b border-border/60 pb-2.5">
-                <span className="font-bold text-slate-300 flex items-center gap-2">
-                  <Code2 className="h-4 w-4 text-cyan-400" />
+            <div className="lg:col-span-7 rounded-2xl border border-border bg-muted/40 dark:bg-black/60 p-5 space-y-3 font-mono text-xs">
+              <div className="flex items-center justify-between border-b border-border/80 pb-2.5">
+                <span className="font-bold text-foreground dark:text-slate-300 flex items-center gap-2">
+                  <Code2 className="h-4 w-4 text-cyan-600 dark:text-cyan-400" />
                   Algorithm 2.3 Execution Tracker
                 </span>
-                <span className="text-[10px] text-cyan-400 font-bold">1-Indexed Notation</span>
+                <span className="text-[10px] text-cyan-700 dark:text-cyan-400 font-bold">1-Indexed Notation</span>
               </div>
 
-              <div className="space-y-1 text-slate-300">
+              <div className="space-y-1 text-foreground/80 dark:text-slate-300">
                 {[
                   {
                     line: 1,
@@ -703,14 +703,14 @@ export function MaxElementComplexityVisualizer() {
                       className={`px-3 py-1.5 rounded-lg transition-all flex items-center justify-between ${
                         isActive
                           ? item.isUpdateLine
-                            ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-bold"
-                            : "bg-cyan-500/20 text-cyan-200 border border-cyan-500/40 font-bold"
-                          : "hover:bg-white/[0.02]"
+                            ? "bg-emerald-500/20 text-emerald-800 dark:text-emerald-300 border border-emerald-500/40 font-bold"
+                            : "bg-cyan-500/20 text-cyan-900 dark:text-cyan-200 border border-cyan-500/40 font-bold"
+                          : "hover:bg-muted/60 dark:hover:bg-white/[0.02]"
                       }`}
                     >
                       <span>{item.text}</span>
                       {isActive && (
-                        <span className="text-[10px] px-1.5 py-0.5 rounded bg-cyan-500/30 text-cyan-300 font-bold">
+                        <span className="text-[10px] px-1.5 py-0.5 rounded bg-cyan-500/30 text-cyan-800 dark:text-cyan-300 font-bold">
                           ACTIVE
                         </span>
                       )}
@@ -721,36 +721,36 @@ export function MaxElementComplexityVisualizer() {
             </div>
 
             {/* Live Complexity HUD Stats (5 cols) */}
-            <div className="lg:col-span-5 rounded-2xl border border-border/80 bg-card/80 p-5 flex flex-col justify-between gap-4">
-              <div className="flex items-center justify-between border-b border-border/60 pb-2.5">
+            <div className="lg:col-span-5 rounded-2xl border border-border bg-card p-5 flex flex-col justify-between gap-4">
+              <div className="flex items-center justify-between border-b border-border/80 pb-2.5">
                 <span className="text-xs font-mono font-bold text-foreground flex items-center gap-1.5">
-                  <Activity className="h-4 w-4 text-cyan-400" />
+                  <Activity className="h-4 w-4 text-cyan-600 dark:text-cyan-400" />
                   Live Complexity HUD
                 </span>
-                <span className="text-[10px] font-mono font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
+                <span className="text-[10px] font-mono font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
                   n = {array.length}
                 </span>
               </div>
 
               <div className="grid grid-cols-2 gap-3 font-mono">
                 {/* Total Comparisons */}
-                <div className="p-3 rounded-xl border border-cyan-500/30 bg-cyan-950/20">
+                <div className="p-3 rounded-xl border border-cyan-500/30 bg-cyan-500/10 dark:bg-cyan-950/20">
                   <div className="text-[10px] text-muted-foreground uppercase">Comparisons</div>
-                  <div className="text-lg font-black text-cyan-300 mt-1">
+                  <div className="text-lg font-black text-cyan-700 dark:text-cyan-300 mt-1">
                     {currentStep.totalComparisonsSoFar}{" "}
                     <span className="text-xs text-muted-foreground font-normal">/ {array.length - 1}</span>
                   </div>
-                  <div className="text-[10px] text-cyan-400/80 mt-0.5 font-sans">Invariant: Exactly n - 1</div>
+                  <div className="text-[10px] text-cyan-700 dark:text-cyan-400/80 mt-0.5 font-sans">Invariant: Exactly n - 1</div>
                 </div>
 
                 {/* Updates C(n) */}
-                <div className="p-3 rounded-xl border border-emerald-500/30 bg-emerald-950/20">
+                <div className="p-3 rounded-xl border border-emerald-500/30 bg-emerald-500/10 dark:bg-emerald-950/20">
                   <div className="text-[10px] text-muted-foreground uppercase">Updates C(n)</div>
-                  <div className="text-lg font-black text-emerald-300 mt-1">
+                  <div className="text-lg font-black text-emerald-700 dark:text-emerald-300 mt-1">
                     {currentStep.totalUpdatesSoFar}{" "}
                     <span className="text-xs text-muted-foreground font-normal">times</span>
                   </div>
-                  <div className="text-[10px] text-emerald-400/80 mt-0.5 font-sans">
+                  <div className="text-[10px] text-emerald-700 dark:text-emerald-400/80 mt-0.5 font-sans">
                     {currentStep.totalUpdatesSoFar === array.length - 1
                       ? "🔴 Worst Case (n - 1)"
                       : currentStep.totalUpdatesSoFar === 0
@@ -760,27 +760,27 @@ export function MaxElementComplexityVisualizer() {
                 </div>
 
                 {/* Current Max */}
-                <div className="p-3 rounded-xl border border-amber-500/30 bg-amber-950/20">
+                <div className="p-3 rounded-xl border border-amber-500/30 bg-amber-500/10 dark:bg-amber-950/20">
                   <div className="text-[10px] text-muted-foreground uppercase">Current MAX</div>
-                  <div className="text-lg font-black text-amber-300 mt-1">{currentStep.maxVal}</div>
-                  <div className="text-[10px] text-amber-400/80 mt-0.5">Found at LOC = {currentStep.loc}</div>
+                  <div className="text-lg font-black text-amber-700 dark:text-amber-300 mt-1">{currentStep.maxVal}</div>
+                  <div className="text-[10px] text-amber-700 dark:text-amber-400/80 mt-0.5">Found at LOC = {currentStep.loc}</div>
                 </div>
 
                 {/* Theoretical Bound */}
-                <div className="p-3 rounded-xl border border-indigo-500/30 bg-indigo-950/20">
+                <div className="p-3 rounded-xl border border-indigo-500/30 bg-indigo-500/10 dark:bg-indigo-950/20">
                   <div className="text-[10px] text-muted-foreground uppercase">Average Expected</div>
-                  <div className="text-lg font-black text-indigo-300 mt-1">
+                  <div className="text-lg font-black text-indigo-700 dark:text-indigo-300 mt-1">
                     {getHarmonicMinusOne(array.length).toFixed(2)}
                   </div>
-                  <div className="text-[10px] text-indigo-400/80 mt-0.5">H_{array.length} - 1 updates</div>
+                  <div className="text-[10px] text-indigo-700 dark:text-indigo-400/80 mt-0.5">H_{array.length} - 1 updates</div>
                 </div>
               </div>
 
               <div className="text-[11px] text-muted-foreground bg-secondary/50 p-2.5 rounded-xl border border-border">
                 <span className="font-semibold text-foreground">Core Takeaway:</span> While comparisons are always{" "}
-                <span className="font-mono text-cyan-400 font-bold">{array.length - 1}</span>, Step 3 updates range strictly between{" "}
-                <span className="font-mono text-emerald-400 font-bold">0 (Best)</span> and{" "}
-                <span className="font-mono text-rose-400 font-bold">{array.length - 1} (Worst)</span> depending on order.
+                <span className="font-mono text-cyan-600 dark:text-cyan-400 font-bold">{array.length - 1}</span>, Step 3 updates range strictly between{" "}
+                <span className="font-mono text-emerald-600 dark:text-emerald-400 font-bold">0 (Best)</span> and{" "}
+                <span className="font-mono text-rose-600 dark:text-rose-400 font-bold">{array.length - 1} (Worst)</span> depending on order.
               </div>
             </div>
           </div>
@@ -792,10 +792,10 @@ export function MaxElementComplexityVisualizer() {
       {/* ========================================================================= */}
       {activeTab === "permutations" && (
         <div className="p-5 sm:p-7 space-y-6">
-          <div className="rounded-2xl border border-cyan-500/20 bg-cyan-950/20 p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="rounded-2xl border border-cyan-500/20 bg-cyan-500/10 dark:bg-cyan-950/20 p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
               <h4 className="text-base font-extrabold text-foreground flex items-center gap-2">
-                <Layers className="h-4 w-4 text-cyan-400" />
+                <Layers className="h-4 w-4 text-cyan-600 dark:text-cyan-400" />
                 Problem 2.6 (c): Complete Permutations Matrix for n = 3
               </h4>
               <p className="text-xs text-muted-foreground mt-1">
@@ -806,17 +806,17 @@ export function MaxElementComplexityVisualizer() {
             {/* Quick Result Pill */}
             <div className="px-4 py-2 rounded-2xl bg-cyan-500/10 border border-cyan-500/30 text-center shrink-0">
               <div className="text-[10px] font-mono font-bold text-muted-foreground uppercase">Expected Average C(3)</div>
-              <div className="text-xl font-extrabold text-cyan-400 font-mono">
+              <div className="text-xl font-extrabold text-cyan-700 dark:text-cyan-400 font-mono">
                 5 / 6 <span className="text-xs text-muted-foreground">≈ 0.833</span>
               </div>
             </div>
           </div>
 
           {/* Interactive Permutations Table */}
-          <div className="rounded-2xl border border-border/80 bg-card/90 overflow-hidden shadow-lg">
+          <div className="rounded-2xl border border-border bg-card overflow-hidden shadow-md">
             <div className="overflow-x-auto">
               <table className="w-full text-xs text-left">
-                <thead className="bg-secondary/70 border-b border-border/80 font-mono text-[11px] uppercase tracking-wider text-muted-foreground">
+                <thead className="bg-muted/70 border-b border-border font-mono text-[11px] uppercase tracking-wider text-muted-foreground">
                   <tr>
                     <th className="p-3.5 pl-5">#</th>
                     <th className="p-3.5">Permutation DATA</th>
@@ -837,9 +837,9 @@ export function MaxElementComplexityVisualizer() {
                         key={idx}
                         className={`transition-colors hover:bg-cyan-500/[0.04] ${
                           isWorst
-                            ? "bg-rose-500/[0.02]"
+                            ? "bg-rose-500/[0.04]"
                             : isBest
-                            ? "bg-emerald-500/[0.02]"
+                            ? "bg-emerald-500/[0.04]"
                             : ""
                         }`}
                       >
@@ -854,24 +854,24 @@ export function MaxElementComplexityVisualizer() {
                         </td>
                         <td className="p-3.5">
                           {p.k2 ? (
-                            <span className="inline-flex items-center gap-1 text-emerald-400 font-bold">
+                            <span className="inline-flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-bold">
                               <CheckCircle2 className="h-3.5 w-3.5" />
                               {p.arr[1]} &gt; {p.arr[0]} (Update MAX={p.arr[1]})
                             </span>
                           ) : (
-                            <span className="text-slate-400">
+                            <span className="text-muted-foreground dark:text-slate-400">
                               {p.arr[1]} &lt; {p.arr[0]} (No update)
                             </span>
                           )}
                         </td>
                         <td className="p-3.5">
                           {p.k3 ? (
-                            <span className="inline-flex items-center gap-1 text-emerald-400 font-bold">
+                            <span className="inline-flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-bold">
                               <CheckCircle2 className="h-3.5 w-3.5" />
                               {p.arr[2]} &gt; {Math.max(p.arr[0], p.arr[1])} (Update MAX={p.arr[2]})
                             </span>
                           ) : (
-                            <span className="text-slate-400">
+                            <span className="text-muted-foreground dark:text-slate-400">
                               {p.arr[2]} &lt; {Math.max(p.arr[0], p.arr[1])} (No update)
                             </span>
                           )}
@@ -880,10 +880,10 @@ export function MaxElementComplexityVisualizer() {
                           <span
                             className={`inline-block px-2.5 py-1 rounded-lg font-extrabold text-xs border ${
                               isWorst
-                                ? "bg-rose-500/15 text-rose-400 border-rose-500/30"
+                                ? "bg-rose-500/15 text-rose-700 dark:text-rose-400 border-rose-500/30"
                                 : isBest
-                                ? "bg-emerald-500/15 text-emerald-400 border-emerald-500/30"
-                                : "bg-amber-500/15 text-amber-400 border-amber-500/30"
+                                ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border-emerald-500/30"
+                                : "bg-amber-500/15 text-amber-700 dark:text-amber-400 border-amber-500/30"
                             }`}
                           >
                             {p.updates}
@@ -892,7 +892,7 @@ export function MaxElementComplexityVisualizer() {
                         <td className="p-3.5 pr-5 text-right font-sans">
                           <button
                             onClick={() => loadPermutationToStudio(p.arr)}
-                            className="inline-flex items-center gap-1 px-3 py-1 rounded-xl text-[11px] font-semibold bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 border border-cyan-500/20 transition-all active:scale-95"
+                            className="inline-flex items-center gap-1 px-3 py-1 rounded-xl text-[11px] font-semibold bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-700 dark:text-cyan-400 border border-cyan-500/30 transition-all active:scale-95"
                           >
                             <Play className="h-3 w-3" />
                             <span>Simulate</span>
@@ -908,26 +908,26 @@ export function MaxElementComplexityVisualizer() {
 
           {/* Mathematical Proof Card */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 font-mono text-xs">
-            <div className="p-4 rounded-2xl border border-border/80 bg-secondary/40 space-y-1">
+            <div className="p-4 rounded-2xl border border-border bg-secondary/40 space-y-1">
               <div className="text-muted-foreground uppercase text-[10px]">1. Total Sum of Updates</div>
               <div className="text-xl font-extrabold text-foreground">
-                ∑ C(3) = 2 + 1 + 1 + 1 + 0 + 0 = <span className="text-cyan-400">5</span>
+                ∑ C(3) = 2 + 1 + 1 + 1 + 0 + 0 = <span className="text-cyan-600 dark:text-cyan-400">5</span>
               </div>
               <div className="text-[11px] text-muted-foreground font-sans">Sum of updates across all 6 permutations.</div>
             </div>
 
-            <div className="p-4 rounded-2xl border border-border/80 bg-secondary/40 space-y-1">
+            <div className="p-4 rounded-2xl border border-border bg-secondary/40 space-y-1">
               <div className="text-muted-foreground uppercase text-[10px]">2. Total Permutations</div>
               <div className="text-xl font-extrabold text-foreground">
-                N = 3! = 3 × 2 × 1 = <span className="text-cyan-400">6</span>
+                N = 3! = 3 × 2 × 1 = <span className="text-cyan-600 dark:text-cyan-400">6</span>
               </div>
               <div className="text-[11px] text-muted-foreground font-sans">All permutations equally probable (p = 1/6).</div>
             </div>
 
-            <div className="p-4 rounded-2xl border border-emerald-500/30 bg-emerald-950/20 space-y-1">
-              <div className="text-emerald-400 uppercase text-[10px] font-bold">3. Final Average Result</div>
-              <div className="text-xl font-extrabold text-emerald-300">
-                E[C(3)] = 5 / 6 ≈ <span className="text-emerald-400">0.8333</span>
+            <div className="p-4 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 dark:bg-emerald-950/20 space-y-1">
+              <div className="text-emerald-700 dark:text-emerald-400 uppercase text-[10px] font-bold">3. Final Average Result</div>
+              <div className="text-xl font-extrabold text-emerald-700 dark:text-emerald-300">
+                E[C(3)] = 5 / 6 ≈ <span className="text-emerald-600 dark:text-emerald-400">0.8333</span>
               </div>
               <div className="text-[11px] text-muted-foreground font-sans">Matches theoretical Harmonic sum ½ + ⅓ = ⅚.</div>
             </div>
@@ -940,16 +940,16 @@ export function MaxElementComplexityVisualizer() {
       {/* ========================================================================= */}
       {activeTab === "harmonic" && (
         <div className="p-5 sm:p-7 space-y-6">
-          <div className="rounded-2xl border border-indigo-500/20 bg-indigo-950/20 p-4 sm:p-5 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+          <div className="rounded-2xl border border-indigo-500/20 bg-indigo-500/10 dark:bg-indigo-950/20 p-4 sm:p-5 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
             <div>
               <h4 className="text-base font-extrabold text-foreground flex items-center gap-2">
-                <TrendingUp className="h-4 w-4 text-indigo-400" />
+                <TrendingUp className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
                 General Average Complexity for Arbitrary n (Harmonic Series)
               </h4>
               <p className="text-xs text-muted-foreground mt-1 max-w-3xl leading-relaxed">
                 By probability theory, the $k$-th element is the maximum of the first $k$ elements with probability{" "}
-                <span className="font-mono text-cyan-400 font-bold">P(update at k) = 1/k</span>. Therefore, by linearity of expectation:{" "}
-                <span className="font-mono text-indigo-300 font-bold">E[C(n)] = ∑(k=2 to n) 1/k = H_n - 1 ≈ ln(n) + γ - 1</span>.
+                <span className="font-mono text-cyan-600 dark:text-cyan-400 font-bold">P(update at k) = 1/k</span>. Therefore, by linearity of expectation:{" "}
+                <span className="font-mono text-indigo-600 dark:text-indigo-300 font-bold">E[C(n)] = ∑(k=2 to n) 1/k = H_n - 1 ≈ ln(n) + γ - 1</span>.
               </p>
             </div>
 
@@ -964,7 +964,7 @@ export function MaxElementComplexityVisualizer() {
                 onChange={(e) => setHarmonicN(parseInt(e.target.value, 10))}
                 className="w-28 sm:w-36 accent-cyan-500 cursor-pointer"
               />
-              <span className="font-mono font-extrabold text-cyan-400 text-sm w-6 text-right">
+              <span className="font-mono font-extrabold text-cyan-600 dark:text-cyan-400 text-sm w-6 text-right">
                 {harmonicN}
               </span>
             </div>
@@ -972,38 +972,38 @@ export function MaxElementComplexityVisualizer() {
 
           {/* Bounds Comparison for current n */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 font-mono text-xs">
-            <div className="p-3.5 rounded-2xl border border-emerald-500/30 bg-emerald-950/20">
-              <div className="text-[10px] text-emerald-400 uppercase font-bold">Best Case</div>
-              <div className="text-xl font-extrabold text-emerald-300 mt-1">0</div>
-              <div className="text-[10px] text-slate-400 font-sans mt-0.5">Largest element at index 1</div>
+            <div className="p-3.5 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 dark:bg-emerald-950/20">
+              <div className="text-[10px] text-emerald-700 dark:text-emerald-400 uppercase font-bold">Best Case</div>
+              <div className="text-xl font-extrabold text-emerald-700 dark:text-emerald-300 mt-1">0</div>
+              <div className="text-[10px] text-muted-foreground dark:text-slate-400 font-sans mt-0.5">Largest element at index 1</div>
             </div>
 
-            <div className="p-3.5 rounded-2xl border border-cyan-500/30 bg-cyan-950/20">
-              <div className="text-[10px] text-cyan-400 uppercase font-bold">Harmonic Average</div>
-              <div className="text-xl font-extrabold text-cyan-300 mt-1">
+            <div className="p-3.5 rounded-2xl border border-cyan-500/30 bg-cyan-500/10 dark:bg-cyan-950/20">
+              <div className="text-[10px] text-cyan-700 dark:text-cyan-400 uppercase font-bold">Harmonic Average</div>
+              <div className="text-xl font-extrabold text-cyan-700 dark:text-cyan-300 mt-1">
                 {theoreticalMeanForN.toFixed(3)}
               </div>
-              <div className="text-[10px] text-slate-400 font-sans mt-0.5">H_{harmonicN} - 1 updates</div>
+              <div className="text-[10px] text-muted-foreground dark:text-slate-400 font-sans mt-0.5">H_{harmonicN} - 1 updates</div>
             </div>
 
-            <div className="p-3.5 rounded-2xl border border-rose-500/30 bg-rose-950/20">
-              <div className="text-[10px] text-rose-400 uppercase font-bold">Worst Case</div>
-              <div className="text-xl font-extrabold text-rose-300 mt-1">{harmonicN - 1}</div>
-              <div className="text-[10px] text-slate-400 font-sans mt-0.5">Strictly ascending array</div>
+            <div className="p-3.5 rounded-2xl border border-rose-500/30 bg-rose-500/10 dark:bg-rose-950/20">
+              <div className="text-[10px] text-rose-700 dark:text-rose-400 uppercase font-bold">Worst Case</div>
+              <div className="text-xl font-extrabold text-rose-700 dark:text-rose-300 mt-1">{harmonicN - 1}</div>
+              <div className="text-[10px] text-muted-foreground dark:text-slate-400 font-sans mt-0.5">Strictly ascending array</div>
             </div>
 
-            <div className="p-3.5 rounded-2xl border border-indigo-500/30 bg-indigo-950/20">
-              <div className="text-[10px] text-indigo-400 uppercase font-bold">Total Comparisons</div>
-              <div className="text-xl font-extrabold text-indigo-300 mt-1">{harmonicN - 1}</div>
-              <div className="text-[10px] text-slate-400 font-sans mt-0.5">Always invariant</div>
+            <div className="p-3.5 rounded-2xl border border-indigo-500/30 bg-indigo-500/10 dark:bg-indigo-950/20">
+              <div className="text-[10px] text-indigo-700 dark:text-indigo-400 uppercase font-bold">Total Comparisons</div>
+              <div className="text-xl font-extrabold text-indigo-700 dark:text-indigo-300 mt-1">{harmonicN - 1}</div>
+              <div className="text-[10px] text-muted-foreground dark:text-slate-400 font-sans mt-0.5">Always invariant</div>
             </div>
           </div>
 
           {/* Monte Carlo Live Trial Section */}
-          <div className="rounded-2xl border border-border/80 bg-card/90 p-5 space-y-4 shadow-xl">
+          <div className="rounded-2xl border border-border bg-card p-5 space-y-4 shadow-sm">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-border/60 pb-3">
               <div className="flex items-center gap-2">
-                <Dice5 className="h-4 w-4 text-cyan-400" />
+                <Dice5 className="h-4 w-4 text-cyan-600 dark:text-cyan-400" />
                 <span className="text-xs font-mono font-bold text-foreground">
                   Monte Carlo Empirical Verification Engine
                 </span>
@@ -1020,7 +1020,7 @@ export function MaxElementComplexityVisualizer() {
                     disabled={isSimulatingMonteCarlo}
                     className={`px-3 py-1 rounded-xl text-xs font-semibold border transition-all ${
                       monteCarloTrials === count
-                        ? "bg-cyan-500 text-white border-cyan-400 shadow-sm"
+                        ? "bg-cyan-500 text-white border-cyan-400 shadow-xs"
                         : "bg-secondary border-border text-muted-foreground hover:text-foreground"
                     }`}
                   >
@@ -1030,7 +1030,7 @@ export function MaxElementComplexityVisualizer() {
                 <button
                   onClick={runMonteCarloSimulation}
                   disabled={isSimulatingMonteCarlo}
-                  className="px-3.5 py-1 rounded-xl bg-gradient-to-r from-cyan-500 to-indigo-600 hover:opacity-90 text-white font-bold text-xs flex items-center gap-1.5 transition-all active:scale-95 shadow-sm"
+                  className="px-3.5 py-1 rounded-xl bg-gradient-to-r from-cyan-500 to-indigo-600 hover:opacity-90 text-white font-bold text-xs flex items-center gap-1.5 transition-all active:scale-95 shadow-xs"
                 >
                   <RefreshCw className={`h-3 w-3 ${isSimulatingMonteCarlo ? "animate-spin" : ""}`} />
                   <span>Run</span>
@@ -1042,23 +1042,23 @@ export function MaxElementComplexityVisualizer() {
             {monteCarloResult && (
               <div className="space-y-4">
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 font-mono text-xs">
-                  <div className="p-3.5 rounded-xl border border-cyan-500/30 bg-cyan-950/20">
+                  <div className="p-3.5 rounded-xl border border-cyan-500/30 bg-cyan-500/10 dark:bg-cyan-950/20">
                     <div className="text-[10px] text-muted-foreground">Empirical Sample Mean (from {monteCarloResult.totalSimulated.toLocaleString()} trials)</div>
-                    <div className="text-xl font-extrabold text-cyan-300 mt-1">
+                    <div className="text-xl font-extrabold text-cyan-700 dark:text-cyan-300 mt-1">
                       {monteCarloResult.empiricalMean.toFixed(4)}
                     </div>
                   </div>
 
-                  <div className="p-3.5 rounded-xl border border-indigo-500/30 bg-indigo-950/20">
+                  <div className="p-3.5 rounded-xl border border-indigo-500/30 bg-indigo-500/10 dark:bg-indigo-950/20">
                     <div className="text-[10px] text-muted-foreground">Exact Theoretical Mean (H_{harmonicN} - 1)</div>
-                    <div className="text-xl font-extrabold text-indigo-300 mt-1">
+                    <div className="text-xl font-extrabold text-indigo-700 dark:text-indigo-300 mt-1">
                       {monteCarloResult.theoreticalMean.toFixed(4)}
                     </div>
                   </div>
 
-                  <div className="p-3.5 rounded-xl border border-emerald-500/30 bg-emerald-950/20">
+                  <div className="p-3.5 rounded-xl border border-emerald-500/30 bg-emerald-500/10 dark:bg-emerald-950/20">
                     <div className="text-[10px] text-muted-foreground">Error Discrepancy</div>
-                    <div className="text-xl font-extrabold text-emerald-300 mt-1">
+                    <div className="text-xl font-extrabold text-emerald-700 dark:text-emerald-300 mt-1">
                       {Math.abs(monteCarloResult.empiricalMean - monteCarloResult.theoreticalMean).toFixed(4)}{" "}
                       <span className="text-xs text-muted-foreground font-normal">
                         (
@@ -1074,10 +1074,10 @@ export function MaxElementComplexityVisualizer() {
                 </div>
 
                 {/* Histogram Frequency Chart */}
-                <div className="p-4 rounded-xl border border-border/70 bg-black/40 space-y-2">
+                <div className="p-4 rounded-xl border border-border bg-muted/40 dark:bg-black/40 space-y-2">
                   <div className="text-[11px] font-mono font-bold text-muted-foreground flex items-center justify-between">
                     <span>Frequency Distribution of Updates C({harmonicN}) across {monteCarloResult.totalSimulated.toLocaleString()} trials:</span>
-                    <span className="text-cyan-400">Peak around E[C(n)] ≈ {monteCarloResult.theoreticalMean.toFixed(2)}</span>
+                    <span className="text-cyan-600 dark:text-cyan-400">Peak around E[C(n)] ≈ {monteCarloResult.theoreticalMean.toFixed(2)}</span>
                   </div>
 
                   <div className="space-y-1.5 pt-2">

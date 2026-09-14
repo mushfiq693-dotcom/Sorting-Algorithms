@@ -970,8 +970,8 @@ export function SinglyLinkedListStudio() {
         {/* ===================================================================== */}
         <div className="lg:col-span-5 space-y-3.5 flex flex-col justify-between">
           {/* C++ Code Window */}
-          <div className="rounded-xl border border-[#4A3F35] bg-[#14100D] overflow-hidden shadow-xl flex flex-col h-[380px]">
-            <div className="flex items-center justify-between px-3.5 py-2 border-b border-[#4A3F35] bg-[#1C1714] text-xs font-mono">
+          <div className="rounded-xl border border-border dark:border-[#4A3F35] bg-card dark:bg-[#14100D] overflow-hidden shadow-xs dark:shadow-xl flex flex-col h-[380px]">
+            <div className="flex items-center justify-between px-3.5 py-2 border-b border-border dark:border-[#4A3F35] bg-muted/60 dark:bg-[#1C1714] text-xs font-mono">
               <span className="flex items-center gap-1.5 text-primary font-bold">
                 <FileCode2 className="h-3.5 w-3.5 text-primary" />
                 <span>main.cpp ({lang === "bn" ? "সি++ কোড এক্সিকিউশন" : "C++ Execution Tracer"})</span>
@@ -993,7 +993,7 @@ export function SinglyLinkedListStudio() {
                         ? "bg-primary/25 border-l-4 border-primary text-white font-bold shadow-brass-sm"
                         : isHighlighted
                           ? "bg-white/5 text-amber-200"
-                          : "text-slate-400 hover:text-slate-200"
+                          : "text-muted-foreground hover:text-foreground"
                       }`}
                   >
                     <div className="flex items-start">
@@ -1198,27 +1198,27 @@ export function SinglyLinkedListStudio() {
                                     ? "ring-2 ring-primary border-primary bg-primary/20 scale-105"
                                     : isTemp
                                       ? "ring-1 ring-cyan-400 border-cyan-400 bg-cyan-500/10"
-                                      : "border-[#4A3F35] bg-[#14100D]"
+                                      : "border-border dark:border-[#4A3F35] bg-card dark:bg-[#14100D]"
                                   }`}
                               >
                                 {/* Left Compartment: Data Field */}
-                                <div className="px-3 py-2 border-r border-[#4A3F35] flex flex-col items-center justify-center min-w-[50px]">
+                                <div className="px-3 py-2 border-r border-border dark:border-[#4A3F35] flex flex-col items-center justify-center min-w-[50px]">
                                   <span className="text-[9px] text-muted-foreground uppercase font-semibold">
                                     data
                                   </span>
-                                  <span className="text-sm font-bold text-white mt-0.5">
+                                  <span className="text-sm font-bold text-foreground dark:text-white mt-0.5">
                                     {node.data}
                                   </span>
                                 </div>
 
                                 {/* Right Compartment: Next Pointer Field */}
-                                <div className="px-3 py-2 flex flex-col items-center justify-center min-w-[65px] bg-[#1C1714] rounded-r-xl">
+                                <div className="px-3 py-2 flex flex-col items-center justify-center min-w-[65px] bg-muted/70 dark:bg-[#1C1714] rounded-r-xl">
                                   <span className="text-[9px] text-cyan-400 uppercase font-semibold">
                                     next
                                   </span>
                                   <div className="flex items-center gap-1 mt-0.5">
                                     <span className="h-2 w-2 rounded-full bg-cyan-400 inline-block" />
-                                    <span className="text-[10px] text-slate-300 font-bold">
+                                    <span className="text-[10px] text-foreground dark:text-foreground dark:text-slate-300 font-bold">
                                       {node.nextAddress ? node.nextAddress : "NULL"}
                                     </span>
                                   </div>
@@ -1226,7 +1226,7 @@ export function SinglyLinkedListStudio() {
                               </div>
 
                               {/* Bottom Memory Address Badge */}
-                              <span className="text-[9px] font-mono text-slate-500 mt-1">
+                              <span className="text-[9px] font-mono text-muted-foreground dark:text-slate-500 mt-1">
                                 {node.address}
                               </span>
                             </div>
@@ -1255,15 +1255,15 @@ export function SinglyLinkedListStudio() {
               </div>
 
               {/* Console Output Stream Terminal */}
-              <div className="rounded-xl border border-[#4A3F35] bg-[#14100D] p-3 shadow-inner">
-                <div className="flex items-center justify-between border-b border-[#4A3F35]/70 pb-1.5 mb-2 font-mono text-xs">
+              <div className="rounded-xl border border-border dark:border-[#4A3F35] bg-card dark:bg-[#14100D] p-3 shadow-xs">
+                <div className="flex items-center justify-between border-b border-border dark:border-[#4A3F35]/70 pb-1.5 mb-2 font-mono text-xs">
                   <span className="text-muted-foreground flex items-center gap-1.5">
                     <Terminal className="h-3 w-3 text-emerald-400" />
                     {lang === "bn" ? "কনসোল আউটপুট (cout):" : "Standard Output Stream (cout):"}
                   </span>
                   <span className="text-[10px] text-emerald-400 font-bold">Live Stream</span>
                 </div>
-                <div className="font-mono text-xs text-emerald-400 bg-black/50 p-2.5 rounded-lg border border-emerald-500/20 min-h-[36px] flex items-center">
+                <div className="font-mono text-xs text-emerald-700 dark:text-emerald-400 bg-muted/40 dark:bg-black/50 p-2.5 rounded-lg border border-emerald-500/30 min-h-[36px] flex items-center">
                   <span>
                     &gt; {currentStep.outputStream || (lang === "bn" ? "প্রিন্ট আউটের অপেক্ষায়..." : "Awaiting print execution...")}
                   </span>
@@ -1277,7 +1277,7 @@ export function SinglyLinkedListStudio() {
 
           {/* TAB 2: 🇧🇩 সহজ বাংলা গাইড (LINE-BY-LINE BEGINNER GUIDE) */}
           {activeTab === "bangla_guide" && (
-            <div className="rounded-xl border border-amber-500/40 bg-[#17120E] p-4 space-y-4 shadow-xl text-xs font-sans text-foreground leading-relaxed max-h-[420px] overflow-y-auto scrollbar-thin">
+            <div className="rounded-xl border border-amber-500/30 bg-card dark:bg-[#17120E] p-4 space-y-4 shadow-xl text-xs font-sans text-foreground leading-relaxed max-h-[420px] overflow-y-auto scrollbar-thin">
               <div className="flex items-center gap-2 border-b border-amber-500/30 pb-2.5">
                 <Compass className="h-4 w-4 text-amber-400" />
                 <h4 className="font-heading text-sm font-bold text-amber-300">
@@ -1420,7 +1420,7 @@ export function SinglyLinkedListStudio() {
                           className="p-1.5 rounded bg-card border border-border/60 flex items-center justify-between text-[11px]"
                         >
                           <span className="text-cyan-400 font-bold">{n.address}:</span>
-                          <span className="text-slate-300">
+                          <span className="text-foreground dark:text-slate-300">
                             struct Node &#123; data: <b>{n.data}</b>, next:{" "}
                             <b>{n.nextAddress ?? "nullptr"}</b> &#125;
                           </span>

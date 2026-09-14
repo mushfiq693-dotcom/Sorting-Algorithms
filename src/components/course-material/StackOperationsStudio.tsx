@@ -163,7 +163,7 @@ export function StackOperationsStudio() {
           <div>
             <h3 className="text-base font-bold text-foreground flex items-center gap-2">
               Chapter 6: Stacks & Partitioning Interactive Lab
-              <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+              <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-500/20">
                 Simulation
               </span>
             </h3>
@@ -253,7 +253,7 @@ export function StackOperationsStudio() {
                 ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-500"
                 : stackStatusMessage.type === "warning"
                 ? "bg-amber-500/10 border-amber-500/30 text-amber-500"
-                : "bg-cyan-500/10 border-cyan-500/30 text-cyan-400"
+                : "bg-cyan-500/10 border-cyan-500/30 text-cyan-600 dark:text-cyan-400"
             }`}
           >
             {stackStatusMessage.type === "error" ? (
@@ -286,7 +286,7 @@ export function StackOperationsStudio() {
                     <div
                       className={`w-full h-16 rounded-xl border flex flex-col items-center justify-center font-mono text-sm font-bold transition-all relative ${
                         isTop
-                          ? "bg-cyan-500/20 border-cyan-500 text-cyan-400 shadow-md shadow-cyan-500/20 scale-105"
+                          ? "bg-cyan-500/20 border-cyan-500 text-cyan-600 dark:text-cyan-400 shadow-md shadow-cyan-500/20 scale-105"
                           : isOccupied
                           ? "bg-secondary/90 border-border text-foreground"
                           : "bg-background/40 border-dashed border-border/60 text-muted-foreground/40"
@@ -313,7 +313,7 @@ export function StackOperationsStudio() {
         <div className="space-y-6 animate-in fade-in duration-200">
           <div className="flex items-center justify-between">
             <div>
-              <span className="text-xs font-mono text-cyan-400">Expression P:</span>
+              <span className="text-xs font-mono text-cyan-600 dark:text-cyan-400">Expression P:</span>
               <p className="text-sm font-mono font-bold text-foreground mt-0.5">
                 5, 6, 2, +, *, 12, 4, /, - )
               </p>
@@ -388,7 +388,7 @@ export function StackOperationsStudio() {
                 Step {currentPostfixStep} of {postfixSteps.length - 1}
               </span>
               <h4 className="text-sm font-bold text-foreground">
-                Scanned: <span className="text-cyan-400 font-mono">"{postfixSteps[currentPostfixStep].scanned}"</span>
+                Scanned: <span className="text-cyan-600 dark:text-cyan-400 font-mono">"{postfixSteps[currentPostfixStep].scanned}"</span>
               </h4>
               <p className="text-xs text-muted-foreground">
                 {postfixSteps[currentPostfixStep].action}
@@ -406,7 +406,7 @@ export function StackOperationsStudio() {
                   postfixSteps[currentPostfixStep].stack.map((val, idx) => (
                     <div
                       key={idx}
-                      className="px-3 py-1.5 rounded-xl bg-cyan-500/20 border border-cyan-500/40 text-cyan-400 text-xs font-bold"
+                      className="px-3 py-1.5 rounded-xl bg-cyan-500/20 border border-cyan-500/40 text-cyan-600 dark:text-cyan-400 text-xs font-bold"
                     >
                       {val}
                     </div>
@@ -423,7 +423,7 @@ export function StackOperationsStudio() {
         <div className="space-y-6 animate-in fade-in duration-200">
           <div className="flex items-center justify-between">
             <div>
-              <span className="text-xs font-mono text-cyan-400">Example 6.8 Partition Step:</span>
+              <span className="text-xs font-mono text-cyan-600 dark:text-cyan-400">Example 6.8 Partition Step:</span>
               <p className="text-xs text-muted-foreground">
                 Pivot = <strong>44</strong> | Dividing into left (&lt;44) and right (&gt;44) sublists
               </p>
@@ -454,7 +454,7 @@ export function StackOperationsStudio() {
 
           {/* Step description */}
           <div className="p-3.5 rounded-2xl bg-secondary/40 border border-border/80 text-xs text-foreground font-medium">
-            <span className="text-cyan-400 font-bold font-mono">Pass {quicksortSteps[currentQsStep].step}: </span>
+            <span className="text-cyan-600 dark:text-cyan-400 font-bold font-mono">Pass {quicksortSteps[currentQsStep].step}: </span>
             {quicksortSteps[currentQsStep].desc}
           </div>
 
@@ -472,19 +472,19 @@ export function StackOperationsStudio() {
                   <div
                     className={`w-full h-14 rounded-xl border flex flex-col items-center justify-center font-mono text-xs font-bold transition-all ${
                       isPivot
-                        ? "bg-amber-500/25 border-amber-500 text-amber-400 shadow-md shadow-amber-500/20 scale-105"
+                        ? "bg-amber-500/25 border-amber-500 text-amber-600 dark:text-amber-400 shadow-md shadow-amber-500/20 scale-105"
                         : isSwapped
-                        ? "bg-cyan-500/20 border-cyan-500 text-cyan-400"
+                        ? "bg-cyan-500/20 border-cyan-500 text-cyan-600 dark:text-cyan-400"
                         : isLeftSublist
-                        ? "bg-emerald-500/15 border-emerald-500/30 text-emerald-400"
+                        ? "bg-emerald-500/15 border-emerald-500/30 text-emerald-600 dark:text-emerald-400"
                         : isRightSublist
-                        ? "bg-indigo-500/15 border-indigo-500/30 text-indigo-400"
+                        ? "bg-indigo-500/15 border-indigo-500/30 text-indigo-600 dark:text-indigo-400"
                         : "bg-background/80 border-border text-foreground"
                     }`}
                   >
                     {val}
                     {isPivot && (
-                      <span className="text-[8px] uppercase tracking-wider font-bold text-amber-400">
+                      <span className="text-[8px] uppercase tracking-wider font-bold text-amber-600 dark:text-amber-400">
                         Pivot
                       </span>
                     )}

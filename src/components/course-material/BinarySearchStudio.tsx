@@ -212,7 +212,7 @@ export function BinarySearchStudio() {
       </div>
 
       {/* Target Selection & Presets Bar */}
-      <div className="flex flex-wrap items-center gap-2 mb-5 p-3 rounded-xl bg-slate-900/70 border border-slate-800">
+      <div className="flex flex-wrap items-center gap-2 mb-5 p-3 rounded-xl bg-muted/50 dark:bg-slate-900/70 border border-border dark:border-slate-800">
         <span className="text-xs font-semibold text-muted-foreground mr-1">
           {lang === "bn" ? "লিপশুটজ প্রিসেট:" : "Lipschutz Presets:"}
         </span>
@@ -222,7 +222,7 @@ export function BinarySearchStudio() {
           onClick={() => handleApplyTarget(40)}
           className={`px-3 py-1.5 rounded-lg text-xs font-bold border transition-all cursor-pointer ${
             target === 40
-              ? "bg-emerald-500/20 text-emerald-300 border-emerald-500/50 shadow-sm"
+              ? "bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border-emerald-500/50 shadow-xs"
               : "bg-secondary/60 hover:bg-secondary text-foreground/80 border-border"
           }`}
         >
@@ -234,7 +234,7 @@ export function BinarySearchStudio() {
           onClick={() => handleApplyTarget(85)}
           className={`px-3 py-1.5 rounded-lg text-xs font-bold border transition-all cursor-pointer ${
             target === 85
-              ? "bg-rose-500/20 text-rose-300 border-rose-500/50 shadow-sm"
+              ? "bg-rose-500/20 text-rose-700 dark:text-rose-300 border-rose-500/50 shadow-xs"
               : "bg-secondary/60 hover:bg-secondary text-foreground/80 border-border"
           }`}
         >
@@ -246,7 +246,7 @@ export function BinarySearchStudio() {
           onClick={() => handleApplyTarget(55)}
           className={`px-3 py-1.5 rounded-lg text-xs font-bold border transition-all cursor-pointer ${
             target === 55
-              ? "bg-amber-500/20 text-amber-300 border-amber-500/50 shadow-sm"
+              ? "bg-amber-500/20 text-amber-700 dark:text-amber-300 border-amber-500/50 shadow-xs"
               : "bg-secondary/60 hover:bg-secondary text-foreground/80 border-border"
           }`}
         >
@@ -264,7 +264,7 @@ export function BinarySearchStudio() {
                 if (!isNaN(parsed)) handleApplyTarget(parsed);
               }
             }}
-            className="w-16 px-2 py-1 rounded-lg bg-slate-950 border border-border text-xs text-foreground font-mono text-center focus:outline-none focus:border-cyan-500"
+            className="w-16 px-2 py-1 rounded-lg bg-background dark:bg-slate-950 border border-border text-xs text-foreground font-mono text-center focus:outline-none focus:border-cyan-500"
             placeholder="Target"
           />
           <button
@@ -273,7 +273,7 @@ export function BinarySearchStudio() {
               const parsed = parseInt(inputVal, 10);
               if (!isNaN(parsed)) handleApplyTarget(parsed);
             }}
-            className="px-2.5 py-1 rounded-lg text-xs font-bold bg-cyan-600 hover:bg-cyan-500 text-white transition-all shadow-sm cursor-pointer"
+            className="px-2.5 py-1 rounded-lg text-xs font-bold bg-cyan-600 hover:bg-cyan-500 text-white transition-all shadow-xs cursor-pointer"
           >
             {lang === "bn" ? "সার্চ" : "Search"}
           </button>
@@ -283,7 +283,7 @@ export function BinarySearchStudio() {
       {/* ========================================================================= */}
       {/* VERTICAL ARRAY BARS VISUALIZER CANVAS */}
       {/* ========================================================================= */}
-      <div className="relative p-5 sm:p-6 rounded-2xl bg-slate-950/90 border border-cyan-500/30 mb-5 overflow-hidden shadow-inner">
+      <div className="relative p-5 sm:p-6 rounded-2xl bg-muted/40 dark:bg-slate-950/90 border border-border dark:border-cyan-500/30 mb-5 overflow-hidden shadow-inner">
         {/* Ambient Glow */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-36 bg-cyan-500/10 blur-3xl pointer-events-none" />
 
@@ -325,11 +325,11 @@ export function BinarySearchStudio() {
                         B=E
                       </span>
                     ) : isBeg ? (
-                      <span className="px-1.5 py-0.5 rounded-md bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-bold text-[8px]">
+                      <span className="px-1.5 py-0.5 rounded-md bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border border-emerald-500/40 font-bold text-[8px]">
                         BEG
                       </span>
                     ) : isEnd ? (
-                      <span className="px-1.5 py-0.5 rounded-md bg-indigo-500/20 text-indigo-300 border border-indigo-500/40 font-bold text-[8px]">
+                      <span className="px-1.5 py-0.5 rounded-md bg-indigo-500/20 text-indigo-700 dark:text-indigo-300 border border-indigo-500/40 font-bold text-[8px]">
                         END
                       </span>
                     ) : null}
@@ -346,8 +346,8 @@ export function BinarySearchStudio() {
                         : isMid
                         ? "bg-gradient-to-t from-amber-600/90 via-amber-500/90 to-amber-400/90 border-amber-300 text-slate-950 font-bold"
                         : inRange
-                        ? "bg-gradient-to-t from-cyan-900/80 via-cyan-600/70 to-blue-500/80 border-cyan-400/60 text-white font-bold hover:brightness-110"
-                        : "bg-slate-900/60 border-slate-800/80 text-slate-500"
+                        ? "bg-gradient-to-t from-cyan-600 via-cyan-500 to-blue-500 border-cyan-400/60 text-white font-bold hover:brightness-110"
+                        : "bg-muted dark:bg-slate-900/60 border-border dark:border-slate-800/80 text-muted-foreground dark:text-slate-500"
                     }`}
                   >
                     <span
@@ -364,12 +364,12 @@ export function BinarySearchStudio() {
                     <span
                       className={`text-[10px] font-mono font-bold ${
                         isMid
-                          ? "text-amber-400"
+                          ? "text-amber-600 dark:text-amber-400"
                           : isBeg || isEnd
-                          ? "text-cyan-300"
+                          ? "text-cyan-700 dark:text-cyan-300"
                           : inRange
-                          ? "text-slate-400"
-                          : "text-slate-600"
+                          ? "text-muted-foreground dark:text-slate-400"
+                          : "text-muted-foreground/50 dark:text-slate-600"
                       }`}
                     >
                       [{pos}]
@@ -381,27 +381,27 @@ export function BinarySearchStudio() {
           </div>
 
           {/* Pointer HUD & Legend */}
-          <div className="flex flex-wrap items-center justify-between gap-3 mt-4 text-[11px] text-muted-foreground border-t border-slate-800/80 pt-3 font-mono">
+          <div className="flex flex-wrap items-center justify-between gap-3 mt-4 text-[11px] text-muted-foreground border-t border-border dark:border-slate-800/80 pt-3 font-mono">
             <div className="flex flex-wrap items-center gap-3">
               <span className="flex items-center gap-1.5">
                 <span className="h-2.5 w-2.5 rounded-full bg-emerald-500 inline-block shadow-sm" />
-                <span className="text-emerald-400 font-bold">BEG = {currentStep.beg}</span>
+                <span className="text-emerald-700 dark:text-emerald-400 font-bold">BEG = {currentStep.beg}</span>
               </span>
               <span className="flex items-center gap-1.5">
                 <span className="h-2.5 w-2.5 rounded-full bg-amber-500 inline-block shadow-sm" />
-                <span className="text-amber-400 font-bold">
+                <span className="text-amber-700 dark:text-amber-400 font-bold">
                   MID = {currentStep.mid > 0 ? `${currentStep.mid} (DATA[${currentStep.mid}]=${currentStep.midVal})` : "—"}
                 </span>
               </span>
               <span className="flex items-center gap-1.5">
                 <span className="h-2.5 w-2.5 rounded-full bg-indigo-500 inline-block shadow-sm" />
-                <span className="text-indigo-400 font-bold">END = {currentStep.end}</span>
+                <span className="text-indigo-700 dark:text-indigo-400 font-bold">END = {currentStep.end}</span>
               </span>
             </div>
 
             <div className="flex items-center gap-2">
               <span className="text-muted-foreground">{lang === "bn" ? "টার্গেট সংখ্যা:" : "Search Target:"}</span>
-              <span className="px-2.5 py-0.5 rounded-md bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 font-bold font-mono text-xs">
+              <span className="px-2.5 py-0.5 rounded-md bg-cyan-500/20 text-cyan-700 dark:text-cyan-300 border border-cyan-500/40 font-bold font-mono text-xs">
                 ITEM = {target}
               </span>
             </div>
@@ -410,16 +410,16 @@ export function BinarySearchStudio() {
       </div>
 
       {/* Step Explanation Banner */}
-      <div className="p-4 rounded-xl bg-cyan-950/40 border border-cyan-500/30 text-xs sm:text-sm text-cyan-200 mb-5 flex items-start gap-3 shadow-md">
+      <div className="p-4 rounded-xl bg-cyan-500/10 dark:bg-cyan-950/40 border border-cyan-500/30 text-xs sm:text-sm text-cyan-900 dark:text-cyan-200 mb-5 flex items-start gap-3 shadow-xs">
         {currentStep.status === "found" ? (
-          <Award className="h-5 w-5 text-emerald-400 shrink-0 mt-0.5" />
+          <Award className="h-5 w-5 text-emerald-500 dark:text-emerald-400 shrink-0 mt-0.5" />
         ) : currentStep.status === "not_found" ? (
-          <AlertCircle className="h-5 w-5 text-rose-400 shrink-0 mt-0.5" />
+          <AlertCircle className="h-5 w-5 text-rose-500 dark:text-rose-400 shrink-0 mt-0.5" />
         ) : (
-          <Sparkles className="h-5 w-5 text-cyan-400 shrink-0 mt-0.5" />
+          <Sparkles className="h-5 w-5 text-cyan-600 dark:text-cyan-400 shrink-0 mt-0.5" />
         )}
         <div>
-          <div className="font-bold text-cyan-300 mb-0.5">
+          <div className="font-bold text-cyan-700 dark:text-cyan-300 mb-0.5">
             {lang === "bn"
               ? `ধাপ ${currentStepIndex + 1} / ${steps.length} — ${
                   currentStep.status === "found"
@@ -436,7 +436,7 @@ export function BinarySearchStudio() {
                     : "Interval Halving"
                 }`}
           </div>
-          <p className="text-slate-300 leading-relaxed font-sans">
+          <p className="text-foreground/90 dark:text-slate-300 leading-relaxed font-sans">
             {lang === "bn" ? currentStep.explanationBn : currentStep.explanationEn}
           </p>
         </div>
@@ -445,8 +445,8 @@ export function BinarySearchStudio() {
       {/* Algorithm 4.6 Pseudocode Line Tracker & Controls */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
         {/* Algorithm Pseudocode Sync (7 cols) */}
-        <div className="lg:col-span-7 rounded-xl border border-slate-800 bg-slate-950/80 p-4 font-mono text-xs text-slate-300 space-y-1.5 shadow-sm">
-          <div className="flex items-center justify-between border-b border-slate-800 pb-2 mb-2 text-cyan-400 font-bold">
+        <div className="lg:col-span-7 rounded-xl border border-border dark:border-slate-800 bg-muted/40 dark:bg-slate-950/80 p-4 font-mono text-xs text-foreground/85 dark:text-slate-300 space-y-1.5 shadow-xs">
+          <div className="flex items-center justify-between border-b border-border dark:border-slate-800 pb-2 mb-2 text-cyan-600 dark:text-cyan-400 font-bold">
             <span className="flex items-center gap-1.5">
               <Activity className="h-3.5 w-3.5" />
               Algorithm 4.6 Execution Sync (BINARY)
@@ -477,16 +477,16 @@ export function BinarySearchStudio() {
                 className={`px-2.5 py-1 rounded transition-all flex items-center justify-between ${
                   isActive
                     ? currentStep.status === "found"
-                      ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-bold"
+                      ? "bg-emerald-500/20 text-emerald-800 dark:text-emerald-300 border border-emerald-500/40 font-bold"
                       : currentStep.status === "not_found"
-                      ? "bg-rose-500/20 text-rose-300 border border-rose-500/40 font-bold"
-                      : "bg-cyan-500/20 text-cyan-200 border border-cyan-500/40 font-bold"
-                    : "hover:bg-slate-900/50"
+                      ? "bg-rose-500/20 text-rose-800 dark:text-rose-300 border border-rose-500/40 font-bold"
+                      : "bg-cyan-500/20 text-cyan-900 dark:text-cyan-200 border border-cyan-500/40 font-bold"
+                    : "hover:bg-muted dark:hover:bg-slate-900/50"
                 }`}
               >
                 <span>{code.text}</span>
                 {isActive && (
-                  <span className="text-[9px] px-1.5 py-0.5 rounded bg-cyan-500/30 text-cyan-300 font-bold">
+                  <span className="text-[9px] px-1.5 py-0.5 rounded bg-cyan-500/30 text-cyan-800 dark:text-cyan-300 font-bold">
                     ACTIVE
                   </span>
                 )}
@@ -496,11 +496,11 @@ export function BinarySearchStudio() {
         </div>
 
         {/* Playback Controls & Speed (5 cols) */}
-        <div className="lg:col-span-5 rounded-xl border border-slate-800 bg-slate-950/80 p-4 flex flex-col justify-between gap-3 shadow-sm">
+        <div className="lg:col-span-5 rounded-xl border border-border dark:border-slate-800 bg-card dark:bg-slate-950/80 p-4 flex flex-col justify-between gap-3 shadow-xs">
           <div>
-            <div className="text-xs font-bold text-slate-300 mb-2 font-mono flex items-center justify-between">
+            <div className="text-xs font-bold text-foreground dark:text-slate-300 mb-2 font-mono flex items-center justify-between">
               <span>{lang === "bn" ? "প্লেব্যাক কন্ট্রোল" : "Playback Controls"}</span>
-              <span className="text-[10px] text-cyan-400 font-mono">
+              <span className="text-[10px] text-cyan-600 dark:text-cyan-400 font-mono font-bold">
                 {currentStepIndex + 1} / {steps.length}
               </span>
             </div>
@@ -528,7 +528,7 @@ export function BinarySearchStudio() {
               <button
                 type="button"
                 onClick={() => setIsPlaying(!isPlaying)}
-                className="flex-1 py-2 px-4 rounded-lg bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-md shadow-cyan-500/20 transition-all active:scale-95 cursor-pointer"
+                className="flex-1 py-2 px-4 rounded-lg bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-xs shadow-cyan-500/20 transition-all active:scale-95 cursor-pointer"
               >
                 {isPlaying ? (
                   <>
@@ -556,7 +556,7 @@ export function BinarySearchStudio() {
           </div>
 
           {/* Speed Selector */}
-          <div className="pt-2 border-t border-slate-800/80 flex items-center justify-between text-xs font-mono text-muted-foreground">
+          <div className="pt-2 border-t border-border dark:border-slate-800/80 flex items-center justify-between text-xs font-mono text-muted-foreground">
             <span>{lang === "bn" ? "গতি:" : "Speed:"}</span>
             <div className="flex items-center gap-1.5">
               {[
@@ -570,8 +570,8 @@ export function BinarySearchStudio() {
                   onClick={() => setSpeed(s.val)}
                   className={`px-2 py-0.5 rounded text-[11px] font-bold border transition-all cursor-pointer ${
                     speed === s.val
-                      ? "bg-cyan-500/20 text-cyan-300 border-cyan-500/50"
-                      : "bg-slate-900 border-slate-800 text-muted-foreground hover:text-foreground"
+                      ? "bg-cyan-500/20 text-cyan-700 dark:text-cyan-300 border-cyan-500/50"
+                      : "bg-secondary border-border dark:bg-slate-900 dark:border-slate-800 text-muted-foreground hover:text-foreground"
                   }`}
                 >
                   {s.label}

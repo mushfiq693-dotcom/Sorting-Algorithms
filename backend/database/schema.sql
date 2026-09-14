@@ -339,8 +339,8 @@ BEGIN
     status
   ) VALUES (
     NEW.id,
-    'approved'
-  ) ON CONFLICT (user_id) DO UPDATE SET status = 'approved';
+    'pending'
+  ) ON CONFLICT (user_id) DO NOTHING;
 
   INSERT INTO public.user_progress (
     user_id,

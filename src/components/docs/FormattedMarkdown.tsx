@@ -124,7 +124,7 @@ function renderInlineText(text: string): React.ReactNode[] {
       return (
         <span
           key={index}
-          className="inline-block my-1.5 px-3 py-1 rounded-xl bg-cyan-950/30 border border-cyan-500/30 font-mono font-bold text-cyan-300 text-sm sm:text-base shadow-sm"
+          className="inline-block my-1.5 px-3 py-1 rounded-xl bg-cyan-500/10 dark:bg-cyan-950/40 border border-cyan-500/30 font-mono font-bold text-cyan-700 dark:text-cyan-300 text-sm sm:text-base shadow-xs"
         >
           {math}
         </span>
@@ -137,7 +137,7 @@ function renderInlineText(text: string): React.ReactNode[] {
       return (
         <span
           key={index}
-          className="font-serif italic font-semibold text-cyan-400 dark:text-cyan-300 mx-1 text-[1.05em] tracking-wide"
+          className="font-serif italic font-semibold text-cyan-700 dark:text-cyan-300 mx-1 text-[1.05em] tracking-wide"
         >
           {math}
         </span>
@@ -150,7 +150,7 @@ function renderInlineText(text: string): React.ReactNode[] {
       return (
         <code
           key={index}
-          className="font-mono text-[13px] sm:text-[14px] text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded-lg mx-1 font-medium"
+          className="font-mono text-[13px] sm:text-[14px] text-amber-700 dark:text-amber-300 bg-amber-500/10 border border-amber-500/25 px-2 py-0.5 rounded-lg mx-1 font-medium"
         >
           {code}
         </code>
@@ -195,21 +195,21 @@ function CodeBlock({ code, lang }: { code: string; lang: string }) {
   };
 
   return (
-    <div className="my-6 rounded bg-[#14100D] border border-[#4A3F35] overflow-hidden shadow-2xl corner-flourish">
-      <div className="flex items-center justify-between px-5 py-3 border-b border-[#4A3F35] bg-[#1C1714] text-xs font-mono text-[#9C8B7A]">
+    <div className="my-6 rounded-2xl bg-muted/30 dark:bg-[#14100D] border border-border dark:border-[#4A3F35] overflow-hidden shadow-xs dark:shadow-2xl">
+      <div className="flex items-center justify-between px-5 py-3 border-b border-border/80 dark:border-[#4A3F35] bg-muted/60 dark:bg-[#1C1714] text-xs font-mono text-muted-foreground dark:text-[#9C8B7A]">
         <div className="flex items-center gap-2">
-          <Terminal className="h-4 w-4 text-[#C9A962]" />
-          <span className="text-[#E8DFD4] font-display font-bold uppercase tracking-wider">{lang || "Code"}</span>
+          <Terminal className="h-4 w-4 text-cyan-600 dark:text-[#C9A962]" />
+          <span className="text-foreground dark:text-[#E8DFD4] font-semibold uppercase tracking-wider">{lang || "Code"}</span>
         </div>
         <button
           onClick={handleCopy}
-          className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded border border-[#4A3F35] bg-[#251E19] text-xs font-display uppercase tracking-wider text-[#E8DFD4] hover:text-[#C9A962] hover:border-[#C9A962] transition-all cursor-pointer"
+          className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-border dark:border-[#4A3F35] bg-background dark:bg-[#251E19] text-xs font-semibold uppercase tracking-wider text-foreground dark:text-[#E8DFD4] hover:text-cyan-600 dark:hover:text-[#C9A962] hover:border-cyan-500/50 dark:hover:border-[#C9A962] transition-all cursor-pointer shadow-2xs"
         >
-          {copied ? <Check className="h-3.5 w-3.5 text-emerald-400" /> : <Copy className="h-3.5 w-3.5 text-[#C9A962]" />}
+          {copied ? <Check className="h-3.5 w-3.5 text-emerald-500 dark:text-emerald-400" /> : <Copy className="h-3.5 w-3.5 text-cyan-600 dark:text-[#C9A962]" />}
           <span>{copied ? "Copied!" : "Copy"}</span>
         </button>
       </div>
-      <pre className="p-5 sm:p-6 font-mono text-sm sm:text-base text-[#E8DFD4] overflow-x-auto leading-relaxed selection:bg-[#C9A962]/30">
+      <pre className="p-5 sm:p-6 font-mono text-sm sm:text-base text-foreground dark:text-[#E8DFD4] bg-background/50 dark:bg-[#14100D] overflow-x-auto leading-relaxed selection:bg-cyan-500/20 dark:selection:bg-[#C9A962]/30">
         <code>{code}</code>
       </pre>
     </div>
@@ -220,8 +220,8 @@ function DisplayMathCard({ math }: { math: string }) {
   const formatted = formatMathString(math);
 
   return (
-    <div className="my-6 py-4 px-6 rounded border border-[#C9A962]/40 bg-gradient-to-r from-[#251E19] via-[#1C1714] to-[#251E19] shadow-inner text-center overflow-x-auto corner-flourish">
-      <div className="font-mono text-base sm:text-lg md:text-xl font-bold text-[#C9A962] tracking-wide select-text py-1">
+    <div className="my-6 py-4 px-6 rounded-2xl border border-cyan-500/30 dark:border-[#C9A962]/40 bg-gradient-to-r from-cyan-500/5 via-blue-500/5 to-cyan-500/5 dark:from-[#251E19] dark:via-[#1C1714] dark:to-[#251E19] shadow-2xs text-center overflow-x-auto">
+      <div className="font-mono text-base sm:text-lg md:text-xl font-bold text-cyan-700 dark:text-[#C9A962] tracking-wide select-text py-1">
         {formatted}
       </div>
     </div>
@@ -242,13 +242,13 @@ function MarkdownTable({ tableLines }: { tableLines: string[] }) {
   const dataRows = tableLines.slice(2).map(parseRow);
 
   return (
-    <div className="my-6 rounded border border-[#4A3F35] bg-[#251E19] overflow-hidden shadow-2xl corner-flourish">
+    <div className="my-6 rounded-2xl border border-border dark:border-[#4A3F35] bg-card dark:bg-[#251E19] overflow-hidden shadow-xs dark:shadow-2xl">
       <div className="overflow-x-auto">
         <table className="w-full text-left text-sm sm:text-base border-collapse">
           <thead>
-            <tr className="border-b border-[#4A3F35] bg-[#1C1714] text-[#E8DFD4]">
+            <tr className="border-b border-border dark:border-[#4A3F35] bg-muted/70 dark:bg-[#1C1714] text-foreground dark:text-[#E8DFD4]">
               {headerCells.map((cell, idx) => (
-                <th key={idx} className="py-3.5 px-5 font-display text-[#C9A962] font-bold text-xs sm:text-sm uppercase tracking-wider">
+                <th key={idx} className="py-3.5 px-5 font-semibold text-cyan-700 dark:text-[#C9A962] text-xs sm:text-sm uppercase tracking-wider">
                   {renderInlineText(cell)}
                 </th>
               ))}
@@ -259,7 +259,7 @@ function MarkdownTable({ tableLines }: { tableLines: string[] }) {
               <tr
                 key={rIdx}
                 className={`transition-colors ${
-                  rIdx % 2 === 0 ? "bg-transparent" : "bg-secondary/20"
+                  rIdx % 2 === 0 ? "bg-transparent" : "bg-muted/30 dark:bg-secondary/20"
                 } hover:bg-cyan-500/[0.05]`}
               >
                 {row.map((cell, cIdx) => (
@@ -275,6 +275,8 @@ function MarkdownTable({ tableLines }: { tableLines: string[] }) {
     </div>
   );
 }
+
+
 
 export const FormattedMarkdown = memo(function FormattedMarkdown({
   content,

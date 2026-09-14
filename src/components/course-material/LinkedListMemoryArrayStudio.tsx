@@ -172,23 +172,23 @@ export function LinkedListMemoryArrayStudio() {
 
       {/* Live String Output & START Box */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-5">
-        <div className="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800 flex items-center justify-between">
+        <div className="p-3.5 rounded-xl bg-muted/50 dark:bg-slate-900/80 border border-border dark:border-slate-800 flex items-center justify-between">
           <div className="text-xs font-semibold text-muted-foreground">
             {lang === "bn" ? "শুরুর পয়েন্টার (START):" : "Start Pointer (START):"}
           </div>
-          <div className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-indigo-500/20 text-indigo-300 border border-indigo-500/40 font-mono font-bold text-sm">
+          <div className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-indigo-500/15 text-indigo-700 dark:text-indigo-300 border border-indigo-500/30 font-mono font-bold text-sm">
             <span>START = 9</span>
           </div>
         </div>
 
-        <div className="md:col-span-2 p-3.5 rounded-xl bg-slate-900/80 border border-slate-800 flex items-center justify-between">
+        <div className="md:col-span-2 p-3.5 rounded-xl bg-muted/50 dark:bg-slate-900/80 border border-border dark:border-slate-800 flex items-center justify-between">
           <div className="text-xs font-semibold text-muted-foreground">
             {lang === "bn" ? "উদ্ধারকৃত স্ট্রিং (Output):" : "Reconstructed String:"}
           </div>
-          <div className="flex items-center gap-1 font-mono font-bold text-base px-3 py-1 rounded-lg bg-slate-950 border border-indigo-500/30 text-amber-300 tracking-widest">
+          <div className="flex items-center gap-1 font-mono font-bold text-base px-3 py-1 rounded-lg bg-card dark:bg-slate-950 border border-indigo-500/30 text-amber-700 dark:text-amber-300 tracking-widest shadow-2xs">
             <span>"{currentStep.builtString}"</span>
             {stepIdx === TRAVERSAL_SEQUENCE.length - 1 && (
-              <span className="text-xs px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-sans ml-2">
+              <span className="text-xs px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 font-sans ml-2 font-semibold">
                 ✓ Done
               </span>
             )}
@@ -197,18 +197,18 @@ export function LinkedListMemoryArrayStudio() {
       </div>
 
       {/* Memory Table Layout */}
-      <div className="p-4 rounded-xl bg-slate-950/80 border border-indigo-500/20 mb-5 overflow-x-auto">
+      <div className="p-4 rounded-xl bg-card dark:bg-slate-950/80 border border-border dark:border-indigo-500/20 mb-5 overflow-x-auto shadow-2xs">
         <div className="min-w-[500px]">
           <table className="w-full text-xs font-mono">
             <thead>
-              <tr className="border-b border-slate-800 text-muted-foreground text-left">
+              <tr className="border-b border-border dark:border-slate-800 text-muted-foreground text-left">
                 <th className="py-2 px-3 w-16 text-center">INDEX</th>
-                <th className="py-2 px-3 w-28 text-center bg-indigo-500/10 text-indigo-300">INFO (Data)</th>
-                <th className="py-2 px-3 w-28 text-center bg-cyan-500/10 text-cyan-300">LINK (Pointer)</th>
+                <th className="py-2 px-3 w-28 text-center bg-indigo-500/10 text-indigo-700 dark:text-indigo-300">INFO (Data)</th>
+                <th className="py-2 px-3 w-28 text-center bg-cyan-500/10 text-cyan-700 dark:text-cyan-300">LINK (Pointer)</th>
                 <th className="py-2 px-3 text-left">TRAVERSAL STATE</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800/60">
+            <tbody className="divide-y divide-border/60 dark:divide-slate-800/60">
               {MEMORY_TABLE.map((row) => {
                 const isCurrent = row.index === currentStep.ptr;
                 const isVisited =
@@ -221,8 +221,8 @@ export function LinkedListMemoryArrayStudio() {
                       isCurrent
                         ? "bg-indigo-500/20 font-bold"
                         : isVisited
-                        ? "bg-slate-900/40 text-muted-foreground"
-                        : "hover:bg-slate-900/20"
+                        ? "bg-muted/30 dark:bg-slate-900/40 text-muted-foreground"
+                        : "hover:bg-muted/50 dark:hover:bg-slate-900/20"
                     }`}
                   >
                     <td className="py-2 px-3 text-center text-muted-foreground font-bold">
@@ -232,7 +232,7 @@ export function LinkedListMemoryArrayStudio() {
                     </td>
                     <td className="py-2 px-3 text-center font-bold text-sm">
                       {row.info ? (
-                        <span className={`px-2 py-0.5 rounded ${isCurrent ? "bg-amber-500 text-slate-950" : "text-amber-300"}`}>
+                        <span className={`px-2 py-0.5 rounded ${isCurrent ? "bg-amber-500 text-slate-950 font-black" : "text-amber-700 dark:text-amber-300"}`}>
                           {row.info === "␣" ? "␣ (space)" : row.info}
                         </span>
                       ) : (
@@ -241,7 +241,7 @@ export function LinkedListMemoryArrayStudio() {
                     </td>
                     <td className="py-2 px-3 text-center font-bold">
                       {row.link !== null ? (
-                        <span className={`px-2 py-0.5 rounded ${row.link === 0 ? "text-rose-400 bg-rose-500/10" : "text-cyan-300"}`}>
+                        <span className={`px-2 py-0.5 rounded ${row.link === 0 ? "text-rose-600 dark:text-rose-400 bg-rose-500/10" : "text-cyan-700 dark:text-cyan-300"}`}>
                           {row.link === 0 ? "0 (NULL)" : row.link}
                         </span>
                       ) : (
@@ -250,20 +250,20 @@ export function LinkedListMemoryArrayStudio() {
                     </td>
                     <td className="py-2 px-3">
                       {isCurrent ? (
-                        <div className="flex items-center gap-2 text-indigo-300 font-bold">
-                          <ArrowRight className="h-3.5 w-3.5 animate-pulse text-amber-400" />
+                        <div className="flex items-center gap-2 text-indigo-700 dark:text-indigo-300 font-bold">
+                          <ArrowRight className="h-3.5 w-3.5 animate-pulse text-amber-500" />
                           <span>
                             {lang === "bn" ? `বর্তমান নোড: ক্যারেক্টার '${row.info}'` : `Current Node: '${row.info}'`}
                           </span>
                         </div>
                       ) : isVisited ? (
-                        <span className="text-emerald-400/70 flex items-center gap-1 text-[11px]">
+                        <span className="text-emerald-700 dark:text-emerald-400/80 flex items-center gap-1 text-[11px] font-semibold">
                           <CheckCircle2 className="h-3 w-3" /> {lang === "bn" ? "ভিজিট সম্পন্ন" : "Visited"}
                         </span>
                       ) : row.info ? (
-                        <span className="text-muted-foreground/50 text-[11px]">{row.description}</span>
+                        <span className="text-muted-foreground/70 text-[11px]">{row.description}</span>
                       ) : (
-                        <span className="text-muted-foreground/20 text-[11px] font-sans">
+                        <span className="text-muted-foreground/30 text-[11px] font-sans">
                           {lang === "bn" ? "খালি স্লট" : "Empty slot"}
                         </span>
                       )}
@@ -277,10 +277,10 @@ export function LinkedListMemoryArrayStudio() {
       </div>
 
       {/* Step Explanation Banner */}
-      <div className="p-3.5 rounded-xl bg-indigo-950/40 border border-indigo-500/30 text-xs text-indigo-200 mb-5 flex items-start gap-2.5">
-        <Sparkles className="h-4 w-4 text-indigo-400 shrink-0 mt-0.5" />
+      <div className="p-3.5 rounded-xl bg-indigo-500/10 dark:bg-indigo-950/40 border border-indigo-500/30 text-xs text-indigo-900 dark:text-indigo-200 mb-5 flex items-start gap-2.5 shadow-2xs">
+        <Sparkles className="h-4 w-4 text-indigo-600 dark:text-indigo-400 shrink-0 mt-0.5" />
         <div>
-          <span className="font-bold text-indigo-300 mr-1">
+          <span className="font-bold text-indigo-700 dark:text-indigo-300 mr-1">
             {lang === "bn" ? `ধাপ ${stepIdx + 1}/${TRAVERSAL_SEQUENCE.length}:` : `Step ${stepIdx + 1}/${TRAVERSAL_SEQUENCE.length}:`}
           </span>
           {lang === "bn" ? currentStep.bn : currentStep.en}
@@ -288,7 +288,7 @@ export function LinkedListMemoryArrayStudio() {
       </div>
 
       {/* Controls */}
-      <div className="flex flex-wrap items-center justify-between gap-3 p-3 rounded-xl bg-slate-900/80 border border-slate-800">
+      <div className="flex flex-wrap items-center justify-between gap-3 p-3 rounded-xl bg-muted/50 dark:bg-slate-900/80 border border-border dark:border-slate-800">
         <div className="flex items-center gap-1.5">
           <button
             type="button"

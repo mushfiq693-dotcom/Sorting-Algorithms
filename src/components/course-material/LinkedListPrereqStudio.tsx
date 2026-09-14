@@ -192,7 +192,7 @@ export function LinkedListPrereqStudio() {
               {/* Memory Simulation Box */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center justify-center">
                 {/* Variable Box */}
-                <div className="p-4 rounded-xl border border-emerald-500/40 bg-emerald-950/20 space-y-2 relative">
+                <div className="p-4 rounded-xl border border-emerald-500/40 bg-emerald-500/10 dark:bg-emerald-950/20 space-y-2 relative">
                   <span className="absolute top-2 right-3 text-[10px] font-mono text-emerald-400">
                     Address: <code>0x7FFE1000</code>
                   </span>
@@ -206,7 +206,7 @@ export function LinkedListPrereqStudio() {
                 </div>
 
                 {/* Pointer Box */}
-                <div className="p-4 rounded-xl border border-cyan-500/40 bg-cyan-950/20 space-y-2 relative">
+                <div className="p-4 rounded-xl border border-cyan-500/40 bg-cyan-500/10 dark:bg-cyan-950/20 space-y-2 relative">
                   <span className="absolute top-2 right-3 text-[10px] font-mono text-cyan-400">
                     Address: <code>0x7FFE2000</code>
                   </span>
@@ -258,7 +258,7 @@ export function LinkedListPrereqStudio() {
                     Easy
                   </span>
                 </div>
-                <pre className="p-3 rounded-xl bg-slate-950 text-slate-200 text-xs font-mono overflow-x-auto leading-relaxed">
+                <pre className="p-3 rounded-xl bg-muted/40 dark:bg-slate-950 text-foreground dark:text-slate-200 border border-border/80 dark:border-transparent text-xs font-mono overflow-x-auto leading-relaxed">
 {`int x = 10;
 int* ptr = &x; // ptr holds address of x
 
@@ -282,7 +282,7 @@ cout << x; // Output: 25`}
                     Medium
                   </span>
                 </div>
-                <pre className="p-3 rounded-xl bg-slate-950 text-slate-200 text-xs font-mono overflow-x-auto leading-relaxed">
+                <pre className="p-3 rounded-xl bg-muted/40 dark:bg-slate-950 text-foreground dark:text-slate-200 border border-border/80 dark:border-transparent text-xs font-mono overflow-x-auto leading-relaxed">
 {`void swap(int* a, int* b) {
     int temp = *a;
     *a = *b;
@@ -370,7 +370,7 @@ cout << x; // Output: 25`}
                 <div
                   className={`p-4 rounded-xl border transition-all ${
                     selectedVar === "a"
-                      ? "border-cyan-500 bg-cyan-950/40 ring-2 ring-cyan-500/30 scale-102"
+                      ? "border-cyan-500 bg-cyan-500/15 dark:bg-cyan-950/40 ring-2 ring-cyan-500/30 scale-102"
                       : "border-border/60 bg-card"
                   }`}
                 >
@@ -390,7 +390,7 @@ cout << x; // Output: 25`}
                 <div
                   className={`p-4 rounded-xl border transition-all ${
                     selectedVar === "b"
-                      ? "border-cyan-500 bg-cyan-950/40 ring-2 ring-cyan-500/30 scale-102"
+                      ? "border-cyan-500 bg-cyan-500/15 dark:bg-cyan-950/40 ring-2 ring-cyan-500/30 scale-102"
                       : "border-border/60 bg-card"
                   }`}
                 >
@@ -407,7 +407,7 @@ cout << x; // Output: 25`}
                 </div>
 
                 {/* Pointer Inspect */}
-                <div className="p-4 rounded-xl border border-amber-500/40 bg-amber-950/20">
+                <div className="p-4 rounded-xl border border-amber-500/40 bg-amber-500/10 dark:bg-amber-950/20">
                   <div className="text-[11px] font-mono text-amber-300 font-bold mb-1">
                     Pointer <code>ptr</code>
                   </div>
@@ -426,7 +426,7 @@ cout << x; // Output: 25`}
               <span className="text-xs font-mono font-bold text-cyan-400 uppercase">
                 {lang === "bn" ? "লাইন-বাই-লাইন কোড বিশ্লেষণ" : "Line-by-Line Code Breakdown"}
               </span>
-              <pre className="p-3 rounded-xl bg-slate-950 text-slate-200 text-xs font-mono overflow-x-auto leading-relaxed">
+              <pre className="p-3 rounded-xl bg-muted/40 dark:bg-slate-950 text-foreground dark:text-slate-200 border border-border/80 dark:border-transparent text-xs font-mono overflow-x-auto leading-relaxed">
 {`int a = 100, b = 200;
 int* ptr = &a; // ptr point করছে 0x1000 ঠিকানায় (*ptr = 100)
 
@@ -534,7 +534,7 @@ ptr = &b;      // ptr এর মান বদলে হলো 0x1004 (*ptr = 200
                 <span className="text-xs font-mono font-bold text-emerald-400 uppercase">
                   {lang === "bn" ? "সহজ ডাইনামিক ইনটিজার" : "Easy: Dynamic Integer"}
                 </span>
-                <pre className="p-3 rounded-xl bg-slate-950 text-slate-200 text-xs font-mono overflow-x-auto leading-relaxed">
+                <pre className="p-3 rounded-xl bg-muted/40 dark:bg-slate-950 text-foreground dark:text-slate-200 border border-border/80 dark:border-transparent text-xs font-mono overflow-x-auto leading-relaxed">
 {`int* p = new int(50); // হিপে ৫০ স্টোর
 cout << *p;            // Output: 50
 
@@ -547,7 +547,7 @@ p = nullptr;`}
                 <span className="text-xs font-mono font-bold text-amber-400 uppercase">
                   {lang === "bn" ? "মাঝারি: ডাইনামিক স্ট্রাক্ট অবজেক্ট" : "Medium: Dynamic Struct Object"}
                 </span>
-                <pre className="p-3 rounded-xl bg-slate-950 text-slate-200 text-xs font-mono overflow-x-auto leading-relaxed">
+                <pre className="p-3 rounded-xl bg-muted/40 dark:bg-slate-950 text-foreground dark:text-slate-200 border border-border/80 dark:border-transparent text-xs font-mono overflow-x-auto leading-relaxed">
 {`struct Node { int data; };
 
 Node* n = new Node{100};
@@ -679,7 +679,7 @@ n = nullptr;`}
               <span className="text-xs font-mono font-bold text-cyan-400 uppercase">
                 {lang === "bn" ? "৩টি নোড ম্যানুয়ালি কানেক্ট করার পূর্ণাঙ্গ কোড" : "Full 3-Node Manual Connection Code"}
               </span>
-              <pre className="p-3 rounded-xl bg-slate-950 text-slate-200 text-xs font-mono overflow-x-auto leading-relaxed">
+              <pre className="p-3 rounded-xl bg-muted/40 dark:bg-slate-950 text-foreground dark:text-slate-200 border border-border/80 dark:border-transparent text-xs font-mono overflow-x-auto leading-relaxed">
 {`struct Node {
     int data;
     Node* next;

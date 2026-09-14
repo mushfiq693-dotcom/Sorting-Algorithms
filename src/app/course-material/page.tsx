@@ -143,6 +143,140 @@ const CHAPTER_OPTIONS = [
   { id: "Chapter 6", label: "Chapter 6: Stacks, Queues & Recursion", icon: Bookmark },
 ];
 
+// Explicit 1-to-1 Visualizer Mapping Registry
+interface VisualizerConfig {
+  label: string;
+  hint: string;
+  component: React.ComponentType;
+}
+
+const COURSE_MATERIAL_VISUALIZERS: Record<string, VisualizerConfig> = {
+  // Chapter 2: Complexity Analysis
+  "cm-problem-2-6": {
+    label: "🚀 Launch Max Element Step-Counter",
+    hint: "Interactive step-counter lab for worst/best/average case permutations (3! = 6 cases).",
+    component: MaxElementComplexityVisualizer,
+  },
+  "cm-problem-2-7": {
+    label: "🚀 Launch Nested Loops Growth Simulator",
+    hint: "Interactive loop step counter for 3-loop nested cubic growth and step counting.",
+    component: LoopComplexityVisualizer,
+  },
+  "cm-problem-2-12": {
+    label: "🚀 Launch Logarithmic Loop Simulator",
+    hint: "Interactive step-halving and doubling loop complexity visualization.",
+    component: LoopComplexityVisualizer,
+  },
+
+  // Chapter 3: String Processing
+  "cm-topic-3-5": {
+    label: "🚀 Launch String Operations Studio",
+    hint: "Interactive string studio for SUBSTRING, INDEX, CONCAT, INSERT, DELETE, REPLACE operations.",
+    component: StringOperationsVisualizer,
+  },
+  "cm-problem-3-5": {
+    label: "🚀 Launch String Modification Studio",
+    hint: "Interactive string modification and boundary validation laboratory.",
+    component: StringOperationsVisualizer,
+  },
+  "cm-problem-3-6": {
+    label: "🚀 Launch Pattern Matching & Replace Studio",
+    hint: "Interactive Algorithm 3.1 & 3.2 pattern matching and in-place replacement visualizer.",
+    component: StringOperationsVisualizer,
+  },
+
+  // Chapter 4: Linear Arrays & Searching
+  "cm-topic-4-7": {
+    label: "🚀 Launch Linear Search Simulation Studio",
+    hint: "Interactive Linear Search Studio with live array bars, sequential scan, comparisons, and sentinel mode.",
+    component: LinearSearchStudio,
+  },
+  "cm-algo-4-5": {
+    label: "🚀 Launch Linear Search Simulation Studio",
+    hint: "Interactive Algorithm 4.5 Linear Search with Sentinel simulation lab.",
+    component: LinearSearchStudio,
+  },
+  "cm-topic-4-8": {
+    label: "🚀 Launch Binary Search Simulation Studio",
+    hint: "Interactive Binary Search Studio with segment halving, BEG/MID/END pointers, and comparison scaling.",
+    component: BinarySearchStudio,
+  },
+  "cm-algo-4-6": {
+    label: "🚀 Launch Binary Search Simulation Studio",
+    hint: "Interactive Algorithm 4.6 Binary Search (BINARY) step-by-step simulator.",
+    component: BinarySearchStudio,
+  },
+  "cm-problem-4-9": {
+    label: "🚀 Launch Binary Search Trace Studio",
+    hint: "Interactive 13-element binary search tracing studio for ITEM = 55 and ITEM = 42.",
+    component: BinarySearchStudio,
+  },
+
+  // Chapter 5: Linked Lists
+  "cm-topic-5-0-prereq": {
+    label: "🚀 Launch Prerequisite Pointer Studio",
+    hint: "Interactive pointer memory address, struct memory layout, DMA, and 3-node chain visualizer.",
+    component: LinkedListPrereqStudio,
+  },
+  "cm-problem-5-1": {
+    label: "🚀 Launch Singly Linked List Studio",
+    hint: "Interactive C++ dynamic memory node allocation, pointer linking, and traversal studio.",
+    component: SinglyLinkedListStudio,
+  },
+  "cm-algo-5-1": {
+    label: "🚀 Launch Linked List Traversal Studio",
+    hint: "Interactive Singly Linked List traversal and node inspection studio.",
+    component: SinglyLinkedListStudio,
+  },
+  "cm-problem-5-2": {
+    label: "🚀 Launch 'NO EXIT' Memory Array Studio",
+    hint: "Interactive Lipschutz Example 5.2 parallel memory arrays (INFO & LINK) traversal studio.",
+    component: LinkedListMemoryArrayStudio,
+  },
+  "cm-algo-5-5": {
+    label: "🚀 Launch Algorithm 5.5 INSLOC Simulation Lab",
+    hint: "Interactive Algorithm 5.5 INSLOC insertion after LOC with parallel memory arrays & AVAIL list.",
+    component: LinkedListInsLocVisualizer,
+  },
+
+  // Chapter 6: Stacks, Queues & Recursion
+  "cm-topic-6-2": {
+    label: "🚀 Launch Stack Operations Studio",
+    hint: "Interactive LIFO Stack Studio with PUSH, POP, Peek, and capacity checks.",
+    component: StackOperationsStudio,
+  },
+  "cm-topic-6-3": {
+    label: "🚀 Launch Stack Array Studio",
+    hint: "Interactive Array Stack Studio with TOP index pointer, OVERFLOW, and UNDERFLOW handling.",
+    component: StackOperationsStudio,
+  },
+  "cm-algo-6-1": {
+    label: "🚀 Launch Procedure 6.1 PUSH Simulation",
+    hint: "Interactive Procedure 6.1 PUSH with overflow detection and TOP pointer update.",
+    component: StackOperationsStudio,
+  },
+  "cm-algo-6-2": {
+    label: "🚀 Launch Procedure 6.2 POP Simulation",
+    hint: "Interactive Procedure 6.2 POP with underflow detection and element extraction.",
+    component: StackOperationsStudio,
+  },
+  "cm-topic-6-5": {
+    label: "🚀 Launch Arithmetic Expressions & Polish Studio",
+    hint: "Interactive Polish notation and Postfix expression evaluation studio.",
+    component: StackOperationsStudio,
+  },
+  "cm-algo-6-5": {
+    label: "🚀 Launch Postfix Evaluation Studio",
+    hint: "Interactive Algorithm 6.5 Postfix evaluation using stack operand push and operator reduction.",
+    component: StackOperationsStudio,
+  },
+  "cm-problem-6-6": {
+    label: "🚀 Launch Postfix Evaluation Trace Studio",
+    hint: "Interactive step-by-step stack evaluation trace studio for Example 6.6.",
+    component: StackOperationsStudio,
+  },
+};
+
 // Chapter Overview & Syllabus Metadata for Student/Locked View
 interface ChapterCurriculumItem {
   id: string;
@@ -660,8 +794,8 @@ export default function CourseMaterialPage() {
   const [isRefreshingStatus, setIsRefreshingStatus] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [submitSuccess, setSubmitSuccess] = useState<string | null>(null);
+  const [showEditPendingForm, setShowEditPendingForm] = useState<boolean>(false);
 
-  // Effective Access for rendering (allows Admin to preview the student locked experience)
   const effectiveCourseApproved = isCourseApproved && (!isAdmin || !adminPreviewStudent);
 
   // Load User Profile for prefilling form
@@ -1185,153 +1319,244 @@ export default function CourseMaterialPage() {
           </div>
         </div>
 
-        {!effectiveCourseApproved && (
+        {!effectiveCourseApproved ? (
           /* ========================================================================
-             LOCKED COURSE ACCESS GATE: Unauthenticated / Pending / Request Access
+             LOCKED STUDENT SYLLABUS DIRECTORY: Shows Highlighted Master Gate + Chapters
              ======================================================================== */
-          <div id="access-request-gate" className="mb-8 animate-in fade-in duration-300">
-            {/* Access Gate Banner */}
-            <div className="relative rounded-3xl border border-border/80 bg-card/75 p-6 sm:p-10 backdrop-blur-xl shadow-xl overflow-hidden">
-              <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-bl from-primary/10 via-amber-500/10 to-transparent rounded-full blur-3xl pointer-events-none" />
+          <div className="space-y-8 animate-in fade-in duration-300">
+            {/* Master Access Request Gate (Prominently Highlighted) */}
+            <div id="access-request-gate" className="relative rounded-3xl border-2 border-[#C9A962]/50 dark:border-[#C9A962]/40 bg-gradient-to-br from-card via-card/95 to-amber-500/[0.05] p-6 sm:p-10 backdrop-blur-2xl shadow-2xl overflow-hidden ring-1 ring-[#C9A962]/20">
+              {/* Multi-layered Glowing Ambient Radiance */}
+              <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-gradient-to-bl from-[#C9A962]/20 via-amber-500/15 to-transparent rounded-full blur-3xl pointer-events-none -mr-24 -mt-24 animate-pulse" />
+              <div className="absolute bottom-0 left-0 w-80 h-80 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none -ml-20 -mb-20" />
 
-              <div className="relative z-10 max-w-3xl space-y-6">
-                <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-xs font-mono font-bold bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30">
-                  <Lock className="h-3.5 w-3.5" />
-                  <span>Restricted Course Materials</span>
+              <div className="relative z-10 max-w-4xl space-y-6">
+                {/* Highlighted Master Badge */}
+                <div className="flex flex-wrap items-center gap-2">
+                  <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-mono font-extrabold bg-[#C9A962]/20 text-[#8B6B23] dark:text-[#E8D196] border border-[#C9A962]/40 shadow-xs">
+                    <Sparkles className="h-3.5 w-3.5 text-[#C9A962]" />
+                    <span>ONE-TIME STUDENT VERIFICATION • UNLOCKS ENTIRE COURSE</span>
+                  </div>
+                  <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-[11px] font-mono font-semibold bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
+                    <Lock className="h-3 w-3" />
+                    <span>All 10+ Chapters Included</span>
+                  </span>
                 </div>
 
-                <div className="space-y-2">
-                  <h1 className="text-2xl sm:text-4xl font-extrabold text-foreground tracking-tight font-sans">
-                    Course Materials &amp; Lipschutz Textbook Solutions
+                <div className="space-y-2.5">
+                  <h1 className="text-2xl sm:text-4xl lg:text-5xl font-extrabold text-foreground tracking-tight font-sans">
+                    Request Full Course Materials Approval
                   </h1>
-                  <p className="text-sm sm:text-base text-muted-foreground leading-relaxed font-sans">
-                    Browse the complete syllabus index below. All general sorting visualizers and comparison matrices across AlgoHub remain 100% free upon login. Access to worked step-by-step mathematical proofs, detailed problem solutions, and interactive simulation laboratories requires student verification and instructor approval.
+                  <p className="text-sm sm:text-base text-muted-foreground leading-relaxed font-sans max-w-3xl">
+                    One single approval from your instructor unlocks access to <strong className="text-foreground font-semibold">all chapters</strong>, textbook proofs, Lipschutz assigned problem solutions, and interactive simulation laboratories across the entire platform.
                   </p>
                 </div>
 
                 {/* DYNAMIC ACCESS STATUS & ACTION CARD */}
                 {!user ? (
                   /* Case 1: Unauthenticated Student */
-                  <div className="p-5 sm:p-6 rounded-2xl border border-border/80 bg-secondary/60 space-y-4 shadow-sm">
-                    <div className="flex items-start gap-3.5">
-                      <div className="h-10 w-10 rounded-xl bg-primary/15 text-primary border border-primary/30 flex items-center justify-center shrink-0 mt-0.5">
-                        <Lock className="h-5 w-5" />
+                  <div className="p-6 sm:p-8 rounded-2xl border-2 border-primary/30 bg-secondary/80 space-y-5 shadow-lg">
+                    <div className="flex items-start gap-4">
+                      <div className="h-12 w-12 rounded-2xl bg-primary/20 text-primary border border-primary/40 flex items-center justify-center shrink-0 mt-0.5 shadow-inner">
+                        <Lock className="h-6 w-6" />
                       </div>
-                      <div className="space-y-1">
-                        <h3 className="text-sm sm:text-base font-bold text-foreground">Sign in with your Student Account</h3>
-                        <p className="text-xs text-muted-foreground leading-relaxed">
-                          Sign in or create a student account to request access to full lecture solutions and interactive laboratories.
+                      <div className="space-y-1.5">
+                        <h3 className="text-base sm:text-lg font-bold text-foreground font-sans">Sign in to Request 1-Click Course Access</h3>
+                        <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+                          Sign in or create a student account with your university email. Submitting your Student ID once will unlock the entire curriculum after instructor confirmation.
                         </p>
                       </div>
                     </div>
 
-                    <div className="pt-2 flex flex-wrap items-center gap-3">
+                    <div className="pt-2 flex flex-wrap items-center gap-3.5">
                       <Link
                         href="/auth/login?next=/course-material"
-                        className="btn-brass inline-flex items-center gap-2 rounded px-6 py-2.5 text-xs font-sans font-semibold tracking-wide shadow-brass active:scale-95 transition-all"
+                        className="btn-brass inline-flex items-center gap-2.5 rounded-xl px-8 py-3.5 text-sm font-sans font-bold tracking-wide shadow-brass hover:scale-[1.02] active:scale-95 transition-all"
                       >
-                        <Sparkles className="h-3.5 w-3.5" />
-                        <span>Sign In / Register to Request Access</span>
+                        <Sparkles className="h-4 w-4" />
+                        <span>Sign In / Register to Unlock All Chapters</span>
                       </Link>
                       <Link
                         href="/visualizer"
-                        className="px-4 py-2.5 rounded-xl border border-border bg-card/80 text-xs font-semibold text-foreground hover:bg-card transition-colors"
+                        className="px-5 py-3 rounded-xl border border-border bg-card/90 text-xs font-semibold text-foreground hover:bg-card hover:border-primary/40 transition-colors"
                       >
-                        Explore Free Visualizers
+                        Explore Free Algorithm Visualizers
                       </Link>
                     </div>
                   </div>
                 ) : isCoursePending ? (
-                  /* Case 2: Authenticated & Pending Approval */
-                  <div className="p-5 sm:p-6 rounded-2xl border border-amber-500/40 bg-amber-500/10 dark:bg-amber-500/5 space-y-4 shadow-md">
-                    <div className="flex items-start gap-3.5">
-                      <div className="h-10 w-10 rounded-xl bg-amber-500/20 text-amber-500 border border-amber-500/40 flex items-center justify-center shrink-0 mt-0.5 animate-pulse">
-                        <Clock className="h-5 w-5" />
+                  /* Case 2: Authenticated & Pending Approval with Interactive Form */
+                  <div className="p-6 sm:p-8 rounded-2xl border-2 border-amber-500/50 bg-amber-500/10 dark:bg-amber-500/[0.07] space-y-6 shadow-xl ring-1 ring-amber-500/20">
+                    <div className="flex items-start gap-4">
+                      <div className="h-12 w-12 rounded-2xl bg-amber-500/25 text-amber-500 border border-amber-500/50 flex items-center justify-center shrink-0 mt-0.5 animate-pulse shadow-inner">
+                        <Clock className="h-6 w-6" />
                       </div>
-                      <div className="space-y-1">
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <h3 className="text-sm sm:text-base font-bold text-foreground">Access Request Pending Approval</h3>
-                          <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-amber-500/20 text-amber-600 dark:text-amber-400 border border-amber-500/30">
-                            Under Review
+                      <div className="space-y-1.5 flex-1">
+                        <div className="flex items-center gap-2.5 flex-wrap">
+                          <h3 className="text-base sm:text-lg font-bold text-foreground font-sans">Course Access Request Under Review</h3>
+                          <span className="px-3 py-1 rounded-full text-xs font-mono font-extrabold bg-amber-500/25 text-amber-600 dark:text-amber-300 border border-amber-500/40 animate-pulse">
+                            Pending Admin Approval
                           </span>
                         </div>
-                        <p className="text-xs text-muted-foreground leading-relaxed">
-                          Your request for Course Materials access has been submitted for <span className="font-mono text-foreground font-semibold">{user.email}</span>. The course administrator will review your Student ID and grant full access shortly.
+                        <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+                          Your one-time access verification request for <span className="font-mono text-foreground font-bold">{user.email}</span> is currently awaiting admin approval. Once approved, <strong className="text-foreground font-semibold">all chapters and labs will unlock simultaneously</strong>.
                         </p>
                       </div>
                     </div>
 
-                    <div className="pt-2 flex flex-wrap items-center gap-3">
+                    {/* Action Bar: Check Status & Toggle Form */}
+                    <div className="flex flex-wrap items-center gap-3.5 pt-1 border-t border-amber-500/20">
                       <button
+                        type="button"
                         onClick={handleRefreshStatus}
                         disabled={isRefreshingStatus}
-                        className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold bg-card border border-amber-500/40 text-foreground hover:bg-card/80 transition-all active:scale-95 shadow-sm cursor-pointer disabled:opacity-60"
+                        className="btn-brass inline-flex items-center gap-2.5 px-6 py-2.5 rounded-xl text-xs font-sans font-bold shadow-brass hover:scale-[1.02] active:scale-95 transition-all cursor-pointer disabled:opacity-60"
                       >
-                        <RefreshCw className={`h-3.5 w-3.5 text-amber-500 ${isRefreshingStatus ? "animate-spin" : ""}`} />
-                        <span>{isRefreshingStatus ? "Checking Status..." : "Refresh / Check Approval Status"}</span>
+                        <RefreshCw className={`h-4 w-4 ${isRefreshingStatus ? "animate-spin" : ""}`} />
+                        <span>{isRefreshingStatus ? "Checking Status..." : "Check Approval Status"}</span>
                       </button>
+
+                      <button
+                        type="button"
+                        onClick={() => setShowEditPendingForm(!showEditPendingForm)}
+                        className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-amber-500/40 bg-card/80 text-xs font-semibold text-foreground hover:bg-card hover:border-amber-500 transition-all cursor-pointer active:scale-95 shadow-sm"
+                      >
+                        <Send className="h-3.5 w-3.5 text-amber-500" />
+                        <span>{showEditPendingForm ? "Hide Request Form" : "✏️ Update Student ID & Details"}</span>
+                      </button>
+
                       <Link
                         href="/visualizer"
-                        className="px-4 py-2.5 rounded-xl border border-border bg-card/80 text-xs font-semibold text-foreground hover:bg-card transition-colors"
+                        className="px-4 py-2.5 rounded-xl border border-border bg-card/80 text-xs font-semibold text-muted-foreground hover:text-foreground hover:bg-card transition-colors"
                       >
                         Explore Free Visualizers Meanwhile
                       </Link>
                     </div>
+
+                    {/* Interactive Request Form (Always available to submit or update details) */}
+                    {showEditPendingForm && (
+                      <form onSubmit={handleRequestAccess} className="pt-4 mt-2 border-t border-amber-500/20 space-y-4 animate-in fade-in duration-200">
+                        <div className="flex items-center justify-between pb-1">
+                          <span className="text-xs font-mono font-bold text-foreground uppercase tracking-wider">
+                            Update Student Information for Verification:
+                          </span>
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          <div>
+                            <label className="block text-[11px] font-mono font-bold text-muted-foreground uppercase mb-1.5">Student ID *</label>
+                            <input
+                              type="text"
+                              required
+                              placeholder="e.g. 2202051"
+                              value={studentIdInput}
+                              onChange={(e) => setStudentIdInput(e.target.value)}
+                              className="w-full px-4 py-2.5 text-xs sm:text-sm rounded-xl border border-border bg-background focus:ring-2 focus:ring-primary focus:outline-none"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-[11px] font-mono font-bold text-muted-foreground uppercase mb-1.5">Department *</label>
+                            <input
+                              type="text"
+                              required
+                              placeholder="e.g. CSE"
+                              value={departmentInput}
+                              onChange={(e) => setDepartmentInput(e.target.value)}
+                              className="w-full px-4 py-2.5 text-xs sm:text-sm rounded-xl border border-border bg-background focus:ring-2 focus:ring-primary focus:outline-none"
+                            />
+                          </div>
+                        </div>
+
+                        <div>
+                          <label className="block text-[11px] font-mono font-bold text-muted-foreground uppercase mb-1.5">Batch / Note for Instructor</label>
+                          <input
+                            type="text"
+                            placeholder="e.g. Batch 22 - Enrolled in DSA Course"
+                            value={reasonInput}
+                            onChange={(e) => setReasonInput(e.target.value)}
+                            className="w-full px-4 py-2.5 text-xs sm:text-sm rounded-xl border border-border bg-background focus:ring-2 focus:ring-primary focus:outline-none"
+                          />
+                        </div>
+
+                        {submitError && (
+                          <div className="p-3.5 rounded-xl bg-destructive/15 border border-destructive/30 text-destructive text-xs">
+                            {submitError}
+                          </div>
+                        )}
+
+                        {submitSuccess && (
+                          <div className="p-3.5 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 text-xs flex items-center gap-2">
+                            <CheckCircle2 className="h-4 w-4 shrink-0" />
+                            <span>{submitSuccess}</span>
+                          </div>
+                        )}
+
+                        <div className="flex items-center gap-3 pt-1">
+                          <button
+                            type="submit"
+                            disabled={isSubmittingRequest}
+                            className="btn-brass inline-flex items-center gap-2.5 rounded-xl px-7 py-3 text-xs sm:text-sm font-sans font-bold tracking-wide shadow-brass hover:scale-[1.02] active:scale-95 transition-all cursor-pointer disabled:opacity-60"
+                          >
+                            {isSubmittingRequest ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+                            <span>{isSubmittingRequest ? "Submitting..." : "Submit / Update Access Request"}</span>
+                          </button>
+                        </div>
+                      </form>
+                    )}
                   </div>
                 ) : isCourseRejected ? (
                   /* Case 3: Authenticated & Rejected */
-                  <div className="p-5 sm:p-6 rounded-2xl border border-destructive/40 bg-destructive/10 space-y-4 shadow-md">
-                    <div className="flex items-start gap-3.5">
-                      <div className="h-10 w-10 rounded-xl bg-destructive/20 text-destructive border border-destructive/40 flex items-center justify-center shrink-0 mt-0.5">
-                        <ShieldAlert className="h-5 w-5" />
+                  <div className="p-6 sm:p-8 rounded-2xl border-2 border-destructive/50 bg-destructive/10 space-y-5 shadow-xl">
+                    <div className="flex items-start gap-4">
+                      <div className="h-12 w-12 rounded-2xl bg-destructive/20 text-destructive border border-destructive/40 flex items-center justify-center shrink-0 mt-0.5">
+                        <ShieldAlert className="h-6 w-6" />
                       </div>
-                      <div className="space-y-1">
-                        <h3 className="text-sm sm:text-base font-bold text-foreground">Request Not Approved</h3>
-                        <p className="text-xs text-muted-foreground leading-relaxed">
-                          Your previous access request could not be verified by the course administrator. Please make sure you provide your correct student ID and department below to resubmit.
+                      <div className="space-y-1.5">
+                        <h3 className="text-base sm:text-lg font-bold text-foreground font-sans">Verification Required: Resubmit Details</h3>
+                        <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+                          Your previous access request could not be matched with enrolled students. Please enter your valid Student ID and Department to resubmit for approval.
                         </p>
                       </div>
                     </div>
 
-                    <form onSubmit={handleRequestAccess} className="pt-2 space-y-3">
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <form onSubmit={handleRequestAccess} className="pt-2 space-y-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                          <label className="block text-[11px] font-mono font-bold text-muted-foreground uppercase mb-1">Student ID *</label>
+                          <label className="block text-[11px] font-mono font-bold text-muted-foreground uppercase mb-1.5">Student ID *</label>
                           <input
                             type="text"
                             required
                             placeholder="e.g. 2202051"
                             value={studentIdInput}
                             onChange={(e) => setStudentIdInput(e.target.value)}
-                            className="w-full px-3.5 py-2 text-xs rounded-xl border border-border bg-background focus:ring-2 focus:ring-primary focus:outline-none"
+                            className="w-full px-4 py-2.5 text-xs sm:text-sm rounded-xl border border-border bg-background focus:ring-2 focus:ring-primary focus:outline-none"
                           />
                         </div>
                         <div>
-                          <label className="block text-[11px] font-mono font-bold text-muted-foreground uppercase mb-1">Department *</label>
+                          <label className="block text-[11px] font-mono font-bold text-muted-foreground uppercase mb-1.5">Department *</label>
                           <input
                             type="text"
                             required
                             placeholder="e.g. CSE"
                             value={departmentInput}
                             onChange={(e) => setDepartmentInput(e.target.value)}
-                            className="w-full px-3.5 py-2 text-xs rounded-xl border border-border bg-background focus:ring-2 focus:ring-primary focus:outline-none"
+                            className="w-full px-4 py-2.5 text-xs sm:text-sm rounded-xl border border-border bg-background focus:ring-2 focus:ring-primary focus:outline-none"
                           />
                         </div>
                       </div>
 
                       <div>
-                        <label className="block text-[11px] font-mono font-bold text-muted-foreground uppercase mb-1">Batch / Reason Note</label>
+                        <label className="block text-[11px] font-mono font-bold text-muted-foreground uppercase mb-1.5">Batch / Note for Instructor</label>
                         <input
                           type="text"
                           placeholder="e.g. Batch 22 - Resubmitting verification"
                           value={reasonInput}
                           onChange={(e) => setReasonInput(e.target.value)}
-                          className="w-full px-3.5 py-2 text-xs rounded-xl border border-border bg-background focus:ring-2 focus:ring-primary focus:outline-none"
+                          className="w-full px-4 py-2.5 text-xs sm:text-sm rounded-xl border border-border bg-background focus:ring-2 focus:ring-primary focus:outline-none"
                         />
                       </div>
 
                       {submitError && (
-                        <div className="p-3 rounded-xl bg-destructive/15 border border-destructive/30 text-destructive text-xs">
+                        <div className="p-3.5 rounded-xl bg-destructive/15 border border-destructive/30 text-destructive text-xs">
                           {submitError}
                         </div>
                       )}
@@ -1339,74 +1564,74 @@ export default function CourseMaterialPage() {
                       <button
                         type="submit"
                         disabled={isSubmittingRequest}
-                        className="btn-brass inline-flex items-center gap-2 rounded px-6 py-2.5 text-xs font-sans font-semibold tracking-wide shadow-brass active:scale-95 transition-all cursor-pointer disabled:opacity-60"
+                        className="btn-brass inline-flex items-center gap-2.5 rounded-xl px-8 py-3 text-xs sm:text-sm font-sans font-bold tracking-wide shadow-brass hover:scale-[1.02] active:scale-95 transition-all cursor-pointer disabled:opacity-60"
                       >
-                        {isSubmittingRequest ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Send className="h-3.5 w-3.5" />}
-                        <span>{isSubmittingRequest ? "Submitting..." : "Resubmit Access Request"}</span>
+                        {isSubmittingRequest ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+                        <span>{isSubmittingRequest ? "Submitting..." : "Resubmit Course Access Request"}</span>
                       </button>
                     </form>
                   </div>
                 ) : (
                   /* Case 4: Authenticated & Not Requested Yet */
-                  <div className="p-5 sm:p-6 rounded-2xl border border-border/80 bg-secondary/60 space-y-4 shadow-sm">
-                    <div className="flex items-start gap-3.5">
-                      <div className="h-10 w-10 rounded-xl bg-indigo-500/15 text-indigo-500 border border-indigo-500/30 flex items-center justify-center shrink-0 mt-0.5">
-                        <GraduationCap className="h-5 w-5" />
+                  <div className="p-6 sm:p-8 rounded-2xl border-2 border-[#C9A962]/40 bg-card/90 space-y-5 shadow-xl ring-1 ring-[#C9A962]/20">
+                    <div className="flex items-start gap-4">
+                      <div className="h-12 w-12 rounded-2xl bg-indigo-500/15 text-indigo-500 dark:text-indigo-400 border border-indigo-500/30 flex items-center justify-center shrink-0 mt-0.5 shadow-inner">
+                        <GraduationCap className="h-6 w-6" />
                       </div>
-                      <div className="space-y-1">
-                        <h3 className="text-sm sm:text-base font-bold text-foreground">Request Student Access Permission</h3>
-                        <p className="text-xs text-muted-foreground leading-relaxed">
-                          Enter your Student ID and Department below. Your request will be instantly dispatched to the instructor's moderation dashboard for 1-click approval.
+                      <div className="space-y-1.5">
+                        <h3 className="text-base sm:text-lg font-bold text-foreground font-sans">One-Time Student Verification Request</h3>
+                        <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+                          Provide your Student ID and Department below. Your request will be immediately dispatched to the instructor's console for full course approval.
                         </p>
                       </div>
                     </div>
 
-                    <form onSubmit={handleRequestAccess} className="pt-2 space-y-3">
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <form onSubmit={handleRequestAccess} className="pt-2 space-y-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                          <label className="block text-[11px] font-mono font-bold text-muted-foreground uppercase mb-1">Student ID *</label>
+                          <label className="block text-[11px] font-mono font-bold text-muted-foreground uppercase mb-1.5">Student ID *</label>
                           <input
                             type="text"
                             required
                             placeholder="e.g. 2202051"
                             value={studentIdInput}
                             onChange={(e) => setStudentIdInput(e.target.value)}
-                            className="w-full px-3.5 py-2 text-xs rounded-xl border border-border bg-background focus:ring-2 focus:ring-primary focus:outline-none"
+                            className="w-full px-4 py-2.5 text-xs sm:text-sm rounded-xl border border-border bg-background focus:ring-2 focus:ring-primary focus:outline-none"
                           />
                         </div>
                         <div>
-                          <label className="block text-[11px] font-mono font-bold text-muted-foreground uppercase mb-1">Department *</label>
+                          <label className="block text-[11px] font-mono font-bold text-muted-foreground uppercase mb-1.5">Department *</label>
                           <input
                             type="text"
                             required
                             placeholder="e.g. CSE"
                             value={departmentInput}
                             onChange={(e) => setDepartmentInput(e.target.value)}
-                            className="w-full px-3.5 py-2 text-xs rounded-xl border border-border bg-background focus:ring-2 focus:ring-primary focus:outline-none"
+                            className="w-full px-4 py-2.5 text-xs sm:text-sm rounded-xl border border-border bg-background focus:ring-2 focus:ring-primary focus:outline-none"
                           />
                         </div>
                       </div>
 
                       <div>
-                        <label className="block text-[11px] font-mono font-bold text-muted-foreground uppercase mb-1">Batch / Reason Note (Optional)</label>
+                        <label className="block text-[11px] font-mono font-bold text-muted-foreground uppercase mb-1.5">Batch / Note (Optional)</label>
                         <input
                           type="text"
-                          placeholder="e.g. Batch 22 - Enrolled in DSA Course"
+                          placeholder="e.g. Batch 22 - Enrolled in DSA Theory & Sessional"
                           value={reasonInput}
                           onChange={(e) => setReasonInput(e.target.value)}
-                          className="w-full px-3.5 py-2 text-xs rounded-xl border border-border bg-background focus:ring-2 focus:ring-primary focus:outline-none"
+                          className="w-full px-4 py-2.5 text-xs sm:text-sm rounded-xl border border-border bg-background focus:ring-2 focus:ring-primary focus:outline-none"
                         />
                       </div>
 
                       {submitError && (
-                        <div className="p-3 rounded-xl bg-destructive/15 border border-destructive/30 text-destructive text-xs">
+                        <div className="p-3.5 rounded-xl bg-destructive/15 border border-destructive/30 text-destructive text-xs">
                           {submitError}
                         </div>
                       )}
 
                       {submitSuccess && (
-                        <div className="p-3 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 text-xs flex items-center gap-2">
-                          <CheckCircle2 className="h-4 w-4 shrink-0" />
+                        <div className="p-4 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 text-xs sm:text-sm flex items-center gap-2.5">
+                          <CheckCircle2 className="h-5 w-5 shrink-0" />
                           <span>{submitSuccess}</span>
                         </div>
                       )}
@@ -1414,25 +1639,18 @@ export default function CourseMaterialPage() {
                       <button
                         type="submit"
                         disabled={isSubmittingRequest}
-                        className="btn-brass inline-flex items-center gap-2 rounded px-6 py-2.5 text-xs font-sans font-semibold tracking-wide shadow-brass active:scale-95 transition-all cursor-pointer disabled:opacity-60"
+                        className="btn-brass inline-flex items-center gap-2.5 rounded-xl px-8 py-3.5 text-xs sm:text-sm font-sans font-bold tracking-wide shadow-brass hover:scale-[1.02] active:scale-95 transition-all cursor-pointer disabled:opacity-60"
                       >
-                        {isSubmittingRequest ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Send className="h-3.5 w-3.5" />}
-                        <span>{isSubmittingRequest ? "Submitting Request..." : "Submit Access Request"}</span>
+                        {isSubmittingRequest ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
+                        <span>{isSubmittingRequest ? "Submitting Request..." : "Submit 1-Time Access Request (Unlock All Chapters)"}</span>
                       </button>
                     </form>
                   </div>
                 )}
               </div>
             </div>
-          </div>
-        )}
 
-        {/* CONDITIONAL RENDERING: Locked Chapter-Level View vs Full Interactive View */}
-        {!effectiveCourseApproved ? (
-          /* ========================================================================
-             LOCKED STUDENT SYLLABUS DIRECTORY: Shows ONLY Chapters, No Inner Topics
-             ======================================================================== */
-          <div className="space-y-6 animate-in fade-in duration-300">
+            {/* Chapter Syllabus Directory Header */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-border/60">
               <div>
                 <h2 className="text-xl sm:text-2xl font-extrabold text-foreground tracking-tight flex items-center gap-2.5 font-sans">
@@ -1440,12 +1658,12 @@ export default function CourseMaterialPage() {
                   <span>Course Chapter Syllabus Directory</span>
                 </h2>
                 <p className="text-xs sm:text-sm text-muted-foreground mt-0.5 font-sans">
-                  Sequential chapter modules for CSE Data Structures &amp; Algorithms. Request student approval above to unlock step-by-step solutions and simulation labs.
+                  Sequential chapter modules for CSE Data Structures &amp; Algorithms. All chapters unlock together upon instructor approval above.
                 </p>
               </div>
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono font-bold bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30 shrink-0 self-start sm:self-auto">
                 <Lock className="h-3.5 w-3.5" />
-                <span>Chapter-Level View</span>
+                <span>Chapter Directory (Locked)</span>
               </div>
             </div>
 
@@ -1491,9 +1709,9 @@ export default function CourseMaterialPage() {
                         </div>
 
                         {/* Lock Badge */}
-                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-bold bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30 shrink-0">
-                          <Lock className="h-3.5 w-3.5" />
-                          <span>Content Locked</span>
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-semibold bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 shrink-0">
+                          <Lock className="h-3.5 w-3.5 text-amber-500" />
+                          <span>Unlocks with Course Approval</span>
                         </span>
                       </div>
 
@@ -1526,7 +1744,7 @@ export default function CourseMaterialPage() {
                         </div>
                       </div>
 
-                      {/* Footer Meta & Action */}
+                      {/* Footer Meta & Unified Action Indicator */}
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-3 border-t border-border/60">
                         {/* Statistics counts for this chapter */}
                         <div className="flex flex-wrap items-center gap-2 text-xs font-mono font-semibold">
@@ -1549,15 +1767,18 @@ export default function CourseMaterialPage() {
                           )}
                         </div>
 
-                        {/* Unlock Button */}
-                        <button
-                          type="button"
-                          onClick={scrollToAccessGate}
-                          className="btn-brass inline-flex items-center justify-center gap-2 rounded px-5 py-2 text-xs font-sans font-semibold tracking-wide shadow-brass active:scale-95 transition-all cursor-pointer shrink-0"
-                        >
-                          <Lock className="h-3.5 w-3.5" />
-                          <span>Request Approval to Unlock</span>
-                        </button>
+                        {/* Unified Action: Quick Scroll Link to Top Master Request Gate */}
+                        <div className="flex items-center gap-2 self-end sm:self-center">
+                          <button
+                            type="button"
+                            onClick={scrollToAccessGate}
+                            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-sans font-semibold text-primary hover:text-foreground bg-primary/10 hover:bg-primary/20 border border-primary/30 transition-all cursor-pointer active:scale-95"
+                            title="Scroll to Course Access Request Gate at top"
+                          >
+                            <Sparkles className="h-3.5 w-3.5 text-primary" />
+                            <span>Request Course Approval ↑</span>
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -1570,7 +1791,6 @@ export default function CourseMaterialPage() {
              FULL UNLOCKED INTERACTIVE TOPIC & PROBLEM DIRECTORY (Approved / Admin)
              ======================================================================== */
           <>
-            {/* Filter and Control Bar */}
             <div className="rounded-2xl border border-border/80 bg-card/80 p-4 mb-6 backdrop-blur-md shadow-sm space-y-3">
               <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3">
                 {/* Search Input */}
@@ -1856,457 +2076,179 @@ export default function CourseMaterialPage() {
                         </div>
                       )}
 
-                      {/* Problem Action Bar & Interactive Visualizer / Solution Blocks */}
-                      {isProblem ? (
-                        <div className="space-y-6 pt-2">
-                          {!effectiveCourseApproved ? (
-                            /* Locked Solution Card for Unenrolled/Pending Students */
-                            <div className="rounded-2xl border border-amber-500/30 bg-gradient-to-br from-amber-500/[0.06] to-amber-500/[0.02] p-6 text-center space-y-3.5 shadow-sm">
-                              <div className="inline-flex items-center justify-center h-11 w-11 rounded-2xl bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30 shadow-inner">
-                                <Lock className="h-5 w-5" />
-                              </div>
-                              <div className="space-y-1">
-                                <h4 className="text-sm sm:text-base font-bold text-foreground font-sans">
-                                  Step-by-Step Worked Solution &amp; Interactive Lab Locked
-                                </h4>
-                                <p className="text-xs text-muted-foreground max-w-lg mx-auto leading-relaxed font-sans">
-                                  Full step-by-step mathematical proofs, C++ source implementations, Bengali lecture guides, and interactive visualizer laboratories are reserved for enrolled students.
-                                </p>
-                              </div>
-                              <div className="pt-1">
-                                <button
-                                  type="button"
-                                  onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-                                  className="btn-brass inline-flex items-center gap-2 rounded px-5 py-2.5 text-xs font-sans font-semibold tracking-wide shadow-brass active:scale-95 transition-all cursor-pointer"
-                                >
-                                  <Sparkles className="h-3.5 w-3.5" />
-                                  <span>Request Student Approval to Unlock</span>
-                                </button>
-                              </div>
-                            </div>
-                          ) : (
-                            /* Approved: Full Action Buttons & Worked Solution */
-                            (() => {
-                              const isProblem26 =
-                                item.title.toLowerCase().includes("maximum element") ||
-                                item.title.includes("2.6") ||
-                                (item.problem_statement && item.problem_statement.includes("Algorithm 2.3")) ||
-                                item.id === "cm-problem-2-6";
-
-                              const isProblem27 =
-                                item.title.toLowerCase().includes("nested loops") ||
-                                item.title.includes("2.7") ||
-                                (item.problem_statement && item.problem_statement.includes("Algorithm P2.7")) ||
-                                item.id === "cm-problem-2-7";
-
-                              const isStringProblem =
-                                item.topic_tag === "String Processing" ||
-                                item.title.toLowerCase().includes("string") ||
-                                item.title.toLowerCase().includes("word processing") ||
-                                item.title.includes("3.1") ||
-                                item.title.includes("3.2") ||
-                                item.title.includes("3.5") ||
-                                item.title.includes("3.6");
-
-                              const isBinarySearchProblem =
-                                item.id === "cm-problem-4-9" ||
-                                item.id === "cm-problem-4-10" ||
-                                item.title.includes("4.9") ||
-                                item.title.includes("4.10") ||
-                                item.title.toLowerCase().includes("binary search");
-
-                              const isMemoryArrayProblem =
-                                item.id === "cm-problem-5-2" ||
-                                item.title.includes("5.2") ||
-                                item.title.toLowerCase().includes("no exit") ||
-                                item.title.toLowerCase().includes("memory representation");
-
-                              const isSinglyLinkedListProblem =
-                                item.id === "cm-problem-5-1" ||
-                                item.title.toLowerCase().includes("singly linked list") ||
-                                item.title.toLowerCase().includes("node creation") ||
-                                item.title.includes("5.1");
-
-                              const isLinkedListInsLocProblem =
-                                item.title.includes("5.5") ||
-                                item.title.includes("INSLOC") ||
-                                item.id === "cm-algo-5-5";
-
-                              const isLinkedListProblem = isSinglyLinkedListProblem || isLinkedListInsLocProblem || isMemoryArrayProblem;
-
-                              const isStackProblem =
-                                item.topic_tag === "Stacks" ||
-                                item.title.toLowerCase().includes("stack") ||
-                                item.title.toLowerCase().includes("postfix") ||
-                                item.title.toLowerCase().includes("polish") ||
-                                item.title.toLowerCase().includes("quicksort") ||
-                                item.id.startsWith("cm-problem-6");
-
-                              const hasVisualizer = isProblem26 || isProblem27 || isStringProblem || isBinarySearchProblem || isLinkedListProblem || isStackProblem;
-                              const isVisualizerOpen = !!expandedVisualizers[item.id];
-
-                              return (
-                                <>
-                                  {/* Action Buttons Row */}
-                                  <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border/60 pt-4">
-                                    <div className="text-xs text-muted-foreground">
-                                      {isProblem26
-                                        ? "Interactive visualizer available to test Worst Case, Best Case, and Average Case permutations."
-                                        : isProblem27
-                                        ? "Interactive loop counter available for 3-loop nested cubic growth and logarithmic stepping."
-                                        : isStringProblem
-                                        ? "Interactive string studio & algorithm execution trace available."
-                                        : isBinarySearchProblem
-                                        ? "Interactive Binary Search Studio (live segment halving, BEG/MID/END pointers & Example 4.9 dry-run) available."
-                                        : isMemoryArrayProblem
-                                        ? "Interactive Lipschutz Example 5.2 Memory Array Studio (INFO, LINK, START pointer traversal) available."
-                                        : isSinglyLinkedListProblem
-                                        ? "Interactive Singly Linked List Studio (C++ dynamic node allocation, pointer linking & traversal) available."
-                                        : isLinkedListInsLocProblem
-                                        ? "Interactive Algorithm 5.5 INSLOC Simulation Lab & Parallel Memory Arrays available."
-                                        : isStackProblem
-                                        ? "Interactive Chapter 6 Simulation Studio (Array Stack Push/Pop, Postfix Evaluator & Quicksort Partitioning) available."
-                                        : "Attempt the question first before viewing the full step-by-step verification."}
-                                    </div>
-
-                                    <div className="flex flex-wrap items-center gap-2.5">
-                                      {/* Bangla Explanation Toggle Button (Dropdown) */}
-                                      {item.bangla_explanation && (
-                                        <button
-                                          type="button"
-                                          onClick={() => toggleBangla(item.id)}
-                                          className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all active:scale-95 shadow-sm ${
-                                            isBanglaOpen
-                                              ? "bg-amber-500/20 text-amber-600 dark:text-amber-300 border border-amber-500/50 shadow-amber-500/10"
-                                              : "bg-gradient-to-r from-amber-500/15 via-orange-500/15 to-amber-600/15 hover:bg-amber-500/25 text-amber-700 dark:text-amber-300 border border-amber-500/30"
-                                          }`}
-                                        >
-                                          <span>🇧🇩</span>
-                                          <span>{isBanglaOpen ? "বাংলা ব্যাখ্যা লুকান" : "সহজ বাংলা ব্যাখ্যা"}</span>
-                                          {isBanglaOpen ? (
-                                            <ChevronUp className="h-3.5 w-3.5 text-amber-500" />
-                                          ) : (
-                                            <ChevronDown className="h-3.5 w-3.5 text-amber-500" />
-                                          )}
-                                        </button>
-                                      )}
-
-                                      {/* Interactive Visualizer Toggle Button */}
-                                      {hasVisualizer && (
-                                        <button
-                                          type="button"
-                                          onClick={() => toggleVisualizer(item.id)}
-                                          className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all active:scale-95 shadow-md ${
-                                            isVisualizerOpen
-                                              ? "bg-indigo-500/20 text-indigo-300 border border-indigo-500/50 shadow-indigo-500/10"
-                                              : "bg-gradient-to-r from-indigo-500 via-purple-600 to-pink-600 text-white hover:opacity-95 shadow-indigo-500/20 ring-2 ring-indigo-400/30"
-                                          }`}
-                                        >
-                                          <Play className={`h-3.5 w-3.5 ${isVisualizerOpen ? "text-indigo-400" : "text-white fill-white"}`} />
-                                          <span>
-                                            {isVisualizerOpen ? "Hide Simulation Lab" : "🚀 Launch Simulation Lab"}
-                                          </span>
-                                          {isVisualizerOpen ? (
-                                            <ChevronUp className="h-3.5 w-3.5" />
-                                          ) : (
-                                            <ChevronDown className="h-3.5 w-3.5" />
-                                          )}
-                                        </button>
-                                      )}
-
-                                      {/* Solution Toggle Button */}
-                                      <button
-                                        type="button"
-                                        onClick={() => toggleSolution(item.id)}
-                                        className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all active:scale-95 shadow-sm ${
-                                          isSolutionOpen
-                                            ? "bg-secondary text-foreground border border-border hover:bg-secondary/80"
-                                            : hasVisualizer
-                                            ? "bg-secondary hover:bg-secondary/80 text-foreground border border-border"
-                                            : "bg-gradient-to-r from-cyan-500 to-blue-600 text-white hover:opacity-90 shadow-cyan-500/20"
-                                        }`}
-                                      >
-                                        {isSolutionOpen ? (
-                                          <>
-                                            <EyeOff className="h-3.5 w-3.5" />
-                                            <span>Hide Solution</span>
-                                            <ChevronUp className="h-3.5 w-3.5" />
-                                          </>
-                                        ) : (
-                                          <>
-                                            <Eye className="h-3.5 w-3.5" />
-                                            <span>Show Worked Solution</span>
-                                            <ChevronDown className="h-3.5 w-3.5" />
-                                          </>
-                                        )}
-                                      </button>
-                                    </div>
-                                  </div>
-
-                                  {/* Embedded Simulation & Visualizer Studio for Problem 2.6 */}
-                                  {isProblem26 && isVisualizerOpen && (
-                                    <div className="animate-in fade-in slide-in-from-top-3 duration-300">
-                                      <MaxElementComplexityVisualizer />
-                                    </div>
-                                  )}
-
-                                  {/* Embedded Simulation & Visualizer Studio for Problem 2.7 */}
-                                  {isProblem27 && isVisualizerOpen && (
-                                    <div className="animate-in fade-in slide-in-from-top-3 duration-300">
-                                      <LoopComplexityVisualizer />
-                                    </div>
-                                  )}
-
-                                  {/* Embedded Simulation & Visualizer Studio for String Problems (3.1, 3.2, 3.5, 3.6) */}
-                                  {isStringProblem && isVisualizerOpen && (
-                                    <div className="animate-in fade-in slide-in-from-top-3 duration-300">
-                                      <StringOperationsVisualizer />
-                                    </div>
-                                  )}
-
-                                  {/* Embedded Simulation & Visualizer Studio for Binary Search (4.9, 4.10) */}
-                                  {isBinarySearchProblem && isVisualizerOpen && (
-                                    <div className="animate-in fade-in slide-in-from-top-3 duration-300">
-                                      <BinarySearchStudio />
-                                    </div>
-                                  )}
-
-                                  {/* Embedded Simulation & Visualizer Studio for Example 5.2 (NO EXIT Parallel Array) */}
-                                  {isMemoryArrayProblem && isVisualizerOpen && (
-                                    <div className="animate-in fade-in slide-in-from-top-3 duration-300">
-                                      <LinkedListMemoryArrayStudio />
-                                    </div>
-                                  )}
-
-                                  {/* Embedded Simulation & Visualizer Studio for Singly Linked List (5.1) */}
-                                  {isSinglyLinkedListProblem && isVisualizerOpen && (
-                                    <div className="animate-in fade-in slide-in-from-top-3 duration-300">
-                                      <SinglyLinkedListStudio />
-                                    </div>
-                                  )}
-
-                                  {/* Embedded Simulation & Visualizer Studio for Linked List INSLOC (5.5) */}
-                                  {isLinkedListInsLocProblem && isVisualizerOpen && (
-                                    <div className="animate-in fade-in slide-in-from-top-3 duration-300">
-                                      <LinkedListInsLocVisualizer />
-                                    </div>
-                                  )}
-
-                                  {/* Embedded Simulation & Visualizer Studio for Stack & Postfix Problems (6.3, 6.4, 6.5, 6.6, 6.7, 6.8) */}
-                                  {isStackProblem && isVisualizerOpen && (
-                                    <div className="animate-in fade-in slide-in-from-top-3 duration-300">
-                                      <StackOperationsStudio />
-                                    </div>
-                                  )}
-
-                                  {/* Collapsible Bangla Explanation Card */}
-                                  {isBanglaOpen && item.bangla_explanation && (
-                                    <div className="rounded-2xl border border-amber-500/35 bg-gradient-to-br from-amber-500/[0.04] to-orange-500/[0.02] dark:bg-card/95 p-6 shadow-xl animate-in fade-in slide-in-from-top-3 duration-200">
-                                      <div className="flex items-center justify-between pb-3 border-b border-amber-500/20 mb-4">
-                                        <div className="flex items-center gap-2 text-xs font-mono font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider">
-                                          <span className="text-base">🇧🇩</span>
-                                          <span>সহজ বাংলা কনসেপ্ট ও সমাধান বিশ্লেষণ (Beginner-Friendly Explanation)</span>
-                                        </div>
-                                        <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/30 font-semibold font-mono">
-                                          বাংলা গাইড
-                                        </span>
-                                      </div>
-                                      <FormattedMarkdown content={item.bangla_explanation} />
-                                    </div>
-                                  )}
-
-                                  {/* Collapsible Solution Content */}
-                                  {isSolutionOpen && (
-                                    <div className="rounded-2xl border border-emerald-500/30 bg-card p-6 shadow-xl animate-in fade-in slide-in-from-top-3 duration-200">
-                                      <div className="flex items-center gap-2 text-xs font-mono font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider pb-3 border-b border-border/60 mb-4">
-                                        <CheckCircle2 className="h-4 w-4 text-emerald-500" />
-                                        <span>Step-by-Step Worked Solution &amp; Mathematical Verification</span>
-                                      </div>
-                                      <FormattedMarkdown content={item.explanation_or_solution} />
-                                    </div>
-                                  )}
-                                </>
-                              );
-                            })()
-                          )}
-                        </div>
-                      ) : isAlgorithm ? (
-                        /* Algorithm Content (Locked or Full Display) */
-                        !effectiveCourseApproved ? (
-                          /* Locked Algorithm Card for Unenrolled/Pending Students */
-                          <div className="rounded-2xl border border-amber-500/30 bg-gradient-to-br from-amber-500/[0.06] to-amber-500/[0.02] p-6 text-center space-y-3.5 shadow-sm">
-                            <div className="inline-flex items-center justify-center h-11 w-11 rounded-2xl bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30 shadow-inner">
-                              <Lock className="h-5 w-5" />
-                            </div>
-                            <div className="space-y-1">
-                              <h4 className="text-sm sm:text-base font-bold text-foreground font-sans">
-                                Formal Algorithm Specification &amp; Simulation Lab Locked
-                              </h4>
-                              <p className="text-xs text-muted-foreground max-w-lg mx-auto leading-relaxed font-sans">
-                                Textbook algorithm pseudo-code, memory array dry-runs, Bengali guides, and live simulation studios are reserved for enrolled students.
-                              </p>
-                            </div>
-                            <div className="pt-1">
-                              <button
-                                type="button"
-                                onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-                                className="btn-brass inline-flex items-center gap-2 rounded px-5 py-2.5 text-xs font-sans font-semibold tracking-wide shadow-brass active:scale-95 transition-all cursor-pointer"
-                              >
-                                <Sparkles className="h-3.5 w-3.5" />
-                                <span>Request Student Approval to Unlock</span>
-                              </button>
-                            </div>
+                      {/* Interactive Visualizer / Bangla Guide / Solution Blocks */}
+                      {!effectiveCourseApproved ? (
+                        /* Locked Content Card for Unenrolled/Pending Students */
+                        <div className="rounded-2xl border border-amber-500/30 bg-gradient-to-br from-amber-500/[0.06] to-amber-500/[0.02] p-6 text-center space-y-3.5 shadow-sm">
+                          <div className="inline-flex items-center justify-center h-11 w-11 rounded-2xl bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30 shadow-inner">
+                            <Lock className="h-5 w-5" />
                           </div>
-                        ) : (
-                          (() => {
-                            const isLinearSearchAlgo =
-                              item.id === "cm-algo-4-5" ||
-                              item.title.toLowerCase().includes("linear search") ||
-                              item.title.includes("4.5");
+                          <div className="space-y-1">
+                            <h4 className="text-sm sm:text-base font-bold text-foreground font-sans">
+                              {isProblem
+                                ? "Step-by-Step Worked Solution & Interactive Lab Locked"
+                                : isAlgorithm
+                                ? "Formal Algorithm Specification & Simulation Lab Locked"
+                                : "Lecture Notes, Derivations & Simulation Studios Locked"}
+                            </h4>
+                            <p className="text-xs text-muted-foreground max-w-lg mx-auto leading-relaxed font-sans">
+                              {isProblem
+                                ? "Full step-by-step mathematical proofs, C++ source implementations, Bengali lecture guides, and interactive visualizer laboratories are reserved for enrolled students."
+                                : isAlgorithm
+                                ? "Textbook algorithm pseudo-code, memory array dry-runs, Bengali guides, and live simulation studios are reserved for enrolled students."
+                                : "Detailed lecture notes, asymptotic derivations, real-world analogies, Bengali guides, and interactive concept studios are reserved for enrolled students."}
+                            </p>
+                          </div>
+                          <div className="pt-1">
+                            <button
+                              type="button"
+                              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+                              className="btn-brass inline-flex items-center gap-2 rounded px-5 py-2.5 text-xs font-sans font-semibold tracking-wide shadow-brass active:scale-95 transition-all cursor-pointer"
+                            >
+                              <Sparkles className="h-3.5 w-3.5" />
+                              <span>Request Student Approval to Unlock</span>
+                            </button>
+                          </div>
+                        </div>
+                      ) : (
+                        /* Unlocked View for Approved Students and Admins */
+                        (() => {
+                          const visualizerConfig = COURSE_MATERIAL_VISUALIZERS[item.id];
+                          const hasVisualizer = !!visualizerConfig;
+                          const isVisualizerOpen = !!expandedVisualizers[item.id];
+                          const VisualizerComponent = visualizerConfig?.component;
 
-                            const isBinarySearchAlgo =
-                              item.id === "cm-algo-4-6" ||
-                              item.title.toLowerCase().includes("binary search") ||
-                              item.title.includes("4.6");
-
-                            const isLinkedListAlgo =
-                              item.topic_tag === "Linked Lists" ||
-                              item.title.toLowerCase().includes("linked list") ||
-                              item.title.includes("5.5") ||
-                              item.title.includes("INSLOC") ||
-                              item.id === "cm-algo-5-5";
-
-                            const isStackAlgo =
-                              item.topic_tag === "Stacks & Queues" ||
-                              item.id.includes("algo-6-") ||
-                              item.title.includes("6.1") ||
-                              item.title.includes("6.2") ||
-                              item.title.includes("6.3") ||
-                              item.title.includes("6.4") ||
-                              item.title.includes("6.5") ||
-                              item.title.includes("6.6") ||
-                              item.title.toLowerCase().includes("push") ||
-                              item.title.toLowerCase().includes("pop") ||
-                              item.title.toLowerCase().includes("polish");
-
-                            const hasAlgoVisualizer = isLinearSearchAlgo || isBinarySearchAlgo || isLinkedListAlgo || isStackAlgo;
-                            const isVisualizerOpen = !!expandedVisualizers[item.id];
-
-                            return (
-                              <div className="space-y-4">
-                                {/* Simulation Lab & Bangla Action Bar for Algorithm */}
-                                <div className="flex flex-wrap items-center justify-between gap-3 p-4 rounded-2xl border border-emerald-500/30 bg-emerald-950/10">
-                                  <div className="text-xs text-muted-foreground font-sans">
-                                    {isLinearSearchAlgo
-                                      ? "Interactive Linear Search Studio (live Array Bars, sequential scan, comparisons & Sentinel mode) available."
-                                      : isBinarySearchAlgo
-                                      ? "Interactive Binary Search Studio (live Array Bars, segment halving, BEG/MID/END pointers & Example 4.9 trace) available."
-                                      : isLinkedListAlgo
-                                      ? "Interactive Algorithm 5.5 INSLOC Simulation Lab with Memory Array tracing (INFO, LINK, START, AVAIL) available."
-                                      : isStackAlgo
-                                      ? "Interactive Stacks & Polish Operations Studio (Push/Pop Array Stack, Postfix Evaluation & Quicksort Reduction) available."
-                                      : "অ্যালগরিদমটির স্টেপ-বাই-স্টেপ বিশ্লেষণ ও বাংলা সারসংক্ষেপ।"}
-                                  </div>
-
-                                  <div className="flex flex-wrap items-center gap-2.5">
-                                    {/* Bangla Toggle Button */}
-                                    {item.bangla_explanation && (
-                                      <button
-                                        type="button"
-                                        onClick={() => toggleBangla(item.id)}
-                                        className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all active:scale-95 shadow-sm ${
-                                          isBanglaOpen
-                                            ? "bg-amber-500/20 text-amber-600 dark:text-amber-300 border border-amber-500/50 shadow-amber-500/10"
-                                            : "bg-gradient-to-r from-amber-500/15 via-orange-500/15 to-amber-600/15 hover:bg-amber-500/25 text-amber-700 dark:text-amber-300 border border-amber-500/30"
-                                        }`}
-                                      >
-                                        <span>🇧🇩</span>
-                                        <span>{isBanglaOpen ? "বাংলা ব্যাখ্যা লুকান" : "সহজ বাংলা ব্যাখ্যা"}</span>
-                                        {isBanglaOpen ? (
-                                          <ChevronUp className="h-3.5 w-3.5 text-amber-500" />
-                                        ) : (
-                                          <ChevronDown className="h-3.5 w-3.5 text-amber-500" />
-                                        )}
-                                      </button>
-                                    )}
-
-                                    {/* Simulation Lab Toggle for Algorithm */}
-                                    {hasAlgoVisualizer && (
-                                      <button
-                                        type="button"
-                                        onClick={() => toggleVisualizer(item.id)}
-                                        className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all active:scale-95 shadow-md cursor-pointer ${
-                                          isVisualizerOpen
-                                            ? "bg-primary/20 text-primary border border-primary/50 shadow-primary/10"
-                                            : "btn-brass text-primary-foreground shadow-brass hover:scale-[1.02] ring-2 ring-primary/30"
-                                        }`}
-                                      >
-                                        <Play className={`h-3.5 w-3.5 ${isVisualizerOpen ? "text-primary" : "text-primary-foreground fill-current"}`} />
-                                        <span>
-                                          {isVisualizerOpen
-                                            ? "Hide Simulation Lab"
-                                            : isLinearSearchAlgo
-                                            ? "🚀 Launch Linear Search Simulation Studio"
-                                            : isBinarySearchAlgo
-                                            ? "🚀 Launch Binary Search Simulation Studio"
-                                            : isLinkedListAlgo
-                                            ? "🚀 Launch Algorithm 5.5 Simulation Lab"
-                                            : "🚀 Launch Stack & Polish Studio"}
-                                        </span>
-                                        {isVisualizerOpen ? (
-                                          <ChevronUp className="h-3.5 w-3.5" />
-                                        ) : (
-                                          <ChevronDown className="h-3.5 w-3.5" />
-                                        )}
-                                      </button>
-                                    )}
-                                  </div>
+                          return (
+                            <div className="space-y-5">
+                              {/* Action Buttons Bar */}
+                              <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border/60 pt-4">
+                                <div className="text-xs text-muted-foreground font-sans max-w-md">
+                                  {visualizerConfig
+                                    ? visualizerConfig.hint
+                                    : isProblem
+                                    ? "Attempt the problem first before viewing the full step-by-step verification."
+                                    : isAlgorithm
+                                    ? "অ্যালগরিদমটির স্টেপ-বাই-স্টেপ বিশ্লেষণ ও বাংলা সারসংক্ষেপ।"
+                                    : "টপিকটির সহজ বাংলা কনসেপ্ট সামারি ও রিয়েল লাইফ অ্যানালজি।"}
                                 </div>
 
-                                {/* Embedded Visualizer Studio for Linear Search Algorithm */}
-                                {isLinearSearchAlgo && isVisualizerOpen && (
-                                  <div className="animate-in fade-in slide-in-from-top-3 duration-300">
-                                    <LinearSearchStudio />
-                                  </div>
-                                )}
+                                <div className="flex flex-wrap items-center gap-2.5">
+                                  {/* Bangla Explanation Toggle Button */}
+                                  {item.bangla_explanation && (
+                                    <button
+                                      type="button"
+                                      onClick={() => toggleBangla(item.id)}
+                                      className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all active:scale-95 shadow-sm cursor-pointer ${
+                                        isBanglaOpen
+                                          ? "bg-amber-500/20 text-amber-600 dark:text-amber-300 border border-amber-500/50 shadow-amber-500/10 font-bold"
+                                          : "bg-gradient-to-r from-amber-500/15 via-orange-500/15 to-amber-600/15 hover:bg-amber-500/25 text-amber-700 dark:text-amber-300 border border-amber-500/30"
+                                      }`}
+                                    >
+                                      <span>🇧🇩</span>
+                                      <span>{isBanglaOpen ? "বাংলা ব্যাখ্যা লুকান" : "সহজ বাংলা ব্যাখ্যা"}</span>
+                                      {isBanglaOpen ? (
+                                        <ChevronUp className="h-3.5 w-3.5 text-amber-500" />
+                                      ) : (
+                                        <ChevronDown className="h-3.5 w-3.5 text-amber-500" />
+                                      )}
+                                    </button>
+                                  )}
 
-                                {/* Embedded Visualizer Studio for Binary Search Algorithm */}
-                                {isBinarySearchAlgo && isVisualizerOpen && (
-                                  <div className="animate-in fade-in slide-in-from-top-3 duration-300">
-                                    <BinarySearchStudio />
-                                  </div>
-                                )}
+                                  {/* Interactive Visualizer Button (ONLY for registered items) */}
+                                  {hasVisualizer && (
+                                    <button
+                                      type="button"
+                                      onClick={() => toggleVisualizer(item.id)}
+                                      className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all active:scale-95 shadow-md cursor-pointer ${
+                                        isVisualizerOpen
+                                          ? "bg-indigo-500/20 text-indigo-300 border border-indigo-500/50 shadow-indigo-500/10"
+                                          : "bg-gradient-to-r from-indigo-500 via-purple-600 to-pink-600 text-white hover:opacity-95 shadow-indigo-500/20 ring-2 ring-indigo-400/30"
+                                      }`}
+                                    >
+                                      <Play className={`h-3.5 w-3.5 ${isVisualizerOpen ? "text-indigo-400" : "text-white fill-white"}`} />
+                                      <span>
+                                        {isVisualizerOpen ? "Hide Simulation Lab" : visualizerConfig.label}
+                                      </span>
+                                      {isVisualizerOpen ? (
+                                        <ChevronUp className="h-3.5 w-3.5" />
+                                      ) : (
+                                        <ChevronDown className="h-3.5 w-3.5" />
+                                      )}
+                                    </button>
+                                  )}
 
-                                {/* Embedded Visualizer Studio for Linked List Algorithm */}
-                                {isLinkedListAlgo && isVisualizerOpen && (
-                                  <div className="animate-in fade-in slide-in-from-top-3 duration-300">
-                                    <LinkedListInsLocVisualizer />
-                                  </div>
-                                )}
+                                  {/* Problem Solution Toggle Button */}
+                                  {isProblem && (
+                                    <button
+                                      type="button"
+                                      onClick={() => toggleSolution(item.id)}
+                                      className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all active:scale-95 shadow-sm cursor-pointer ${
+                                        isSolutionOpen
+                                          ? "bg-secondary text-foreground border border-border hover:bg-secondary/80"
+                                          : hasVisualizer
+                                          ? "bg-secondary hover:bg-secondary/80 text-foreground border border-border"
+                                          : "bg-gradient-to-r from-cyan-500 to-blue-600 text-white hover:opacity-90 shadow-cyan-500/20"
+                                      }`}
+                                    >
+                                      {isSolutionOpen ? (
+                                        <>
+                                          <EyeOff className="h-3.5 w-3.5" />
+                                          <span>Hide Solution</span>
+                                          <ChevronUp className="h-3.5 w-3.5" />
+                                        </>
+                                      ) : (
+                                        <>
+                                          <Eye className="h-3.5 w-3.5" />
+                                          <span>Show Worked Solution</span>
+                                          <ChevronDown className="h-3.5 w-3.5" />
+                                        </>
+                                      )}
+                                    </button>
+                                  )}
+                                </div>
+                              </div>
 
-                                {/* Embedded Visualizer Studio for Stack & Polish Algorithms */}
-                                {isStackAlgo && isVisualizerOpen && (
-                                  <div className="animate-in fade-in slide-in-from-top-3 duration-300">
-                                    <StackOperationsStudio />
-                                  </div>
-                                )}
+                              {/* Embedded Interactive Simulation Lab (Registered Component) */}
+                              {hasVisualizer && isVisualizerOpen && VisualizerComponent && (
+                                <div className="animate-in fade-in slide-in-from-top-3 duration-300">
+                                  <VisualizerComponent />
+                                </div>
+                              )}
 
-                                {/* Collapsible Bangla Explanation Card */}
-                                {isBanglaOpen && item.bangla_explanation && (
-                                  <div className="rounded-2xl border border-amber-500/35 bg-gradient-to-br from-amber-500/[0.04] to-orange-500/[0.02] dark:bg-card/95 p-6 shadow-xl animate-in fade-in slide-in-from-top-3 duration-200">
-                                    <div className="flex items-center justify-between pb-3 border-b border-amber-500/20 mb-4">
-                                      <div className="flex items-center gap-2 text-xs font-mono font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider">
-                                        <span className="text-base">🇧🇩</span>
-                                        <span>সহজ বাংলা অ্যালগরিদম বিশ্লেষণ ও ড্রাই-রান (Beginner-Friendly Explanation)</span>
-                                      </div>
-                                      <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/30 font-semibold font-mono">
-                                        বাংলা গাইড
+                              {/* Collapsible Bangla Explanation Card */}
+                              {isBanglaOpen && item.bangla_explanation && (
+                                <div className="rounded-2xl border border-amber-500/35 bg-gradient-to-br from-amber-500/[0.04] to-orange-500/[0.02] dark:bg-card/95 p-6 shadow-xl animate-in fade-in slide-in-from-top-3 duration-200">
+                                  <div className="flex items-center justify-between pb-3 border-b border-amber-500/20 mb-4">
+                                    <div className="flex items-center gap-2 text-xs font-mono font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider">
+                                      <span className="text-base">🇧🇩</span>
+                                      <span>
+                                        {isProblem
+                                          ? "সহজ বাংলা কনসেপ্ট ও সমাধান বিশ্লেষণ (Beginner-Friendly Explanation)"
+                                          : isAlgorithm
+                                          ? "সহজ বাংলা অ্যালগরিদম বিশ্লেষণ ও ড্রাই-রান (Beginner-Friendly Explanation)"
+                                          : "সহজ বাংলা কনসেপ্ট সামারি ও অ্যানালজি (Beginner-Friendly Explanation)"}
                                       </span>
                                     </div>
-                                    <FormattedMarkdown content={item.bangla_explanation} />
+                                    <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/30 font-semibold font-mono">
+                                      বাংলা গাইড
+                                    </span>
                                   </div>
-                                )}
+                                  <FormattedMarkdown content={item.bangla_explanation} />
+                                </div>
+                              )}
 
+                              {/* Solution Box (for Problem) OR Formal Specification (for Algorithm/Topic) */}
+                              {isProblem ? (
+                                isSolutionOpen && (
+                                  <div className="rounded-2xl border border-emerald-500/30 bg-card p-6 shadow-xl animate-in fade-in slide-in-from-top-3 duration-200">
+                                    <div className="flex items-center gap-2 text-xs font-mono font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider pb-3 border-b border-border/60 mb-4">
+                                      <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+                                      <span>Step-by-Step Worked Solution &amp; Mathematical Verification</span>
+                                    </div>
+                                    <FormattedMarkdown content={item.explanation_or_solution} />
+                                  </div>
+                                )
+                              ) : isAlgorithm ? (
                                 <div className="rounded-2xl border border-emerald-500/30 bg-card p-6 shadow-sm">
                                   <div className="flex items-center gap-2 text-xs font-mono font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider pb-3 border-b border-border/60 mb-4">
                                     <Code2 className="h-4 w-4 text-emerald-500" />
@@ -2314,196 +2256,7 @@ export default function CourseMaterialPage() {
                                   </div>
                                   <FormattedMarkdown content={item.explanation_or_solution} />
                                 </div>
-                              </div>
-                            );
-                          })()
-                        )
-                      ) : (
-                        /* Topic Explanation (Locked or Full Display) */
-                        !effectiveCourseApproved ? (
-                          /* Locked Topic Card for Unenrolled/Pending Students */
-                          <div className="rounded-2xl border border-amber-500/30 bg-gradient-to-br from-amber-500/[0.06] to-amber-500/[0.02] p-6 text-center space-y-3.5 shadow-sm">
-                            <div className="inline-flex items-center justify-center h-11 w-11 rounded-2xl bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30 shadow-inner">
-                              <Lock className="h-5 w-5" />
-                            </div>
-                            <div className="space-y-1">
-                              <h4 className="text-sm sm:text-base font-bold text-foreground font-sans">
-                                Lecture Notes, Derivations &amp; Simulation Studios Locked
-                              </h4>
-                              <p className="text-xs text-muted-foreground max-w-lg mx-auto leading-relaxed font-sans">
-                                Detailed lecture notes, asymptotic derivations, real-world analogies, Bengali guides, and interactive concept studios are reserved for enrolled students.
-                              </p>
-                            </div>
-                            <div className="pt-1">
-                              <button
-                                type="button"
-                                onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-                                className="btn-brass inline-flex items-center gap-2 rounded px-5 py-2.5 text-xs font-sans font-semibold tracking-wide shadow-brass active:scale-95 transition-all cursor-pointer"
-                              >
-                                <Sparkles className="h-3.5 w-3.5" />
-                                <span>Request Student Approval to Unlock</span>
-                              </button>
-                            </div>
-                          </div>
-                        ) : (
-                          (() => {
-                            const isStringTopic =
-                              item.topic_tag === "String Processing" ||
-                              item.title.toLowerCase().includes("string") ||
-                              item.title.toLowerCase().includes("word processing") ||
-                              item.title.toLowerCase().includes("3.5") ||
-                              item.title.toLowerCase().includes("3.6");
-
-                            const isLinearSearchTopic =
-                              item.id === "cm-topic-4-7" ||
-                              (item.title.toLowerCase().includes("linear search") && item.topic_tag === "Arrays");
-
-                            const isBinarySearchTopic =
-                              item.id === "cm-topic-4-8" ||
-                              (item.title.toLowerCase().includes("binary search") && item.topic_tag === "Arrays");
-
-                            const isPrereqTopic =
-                              item.id === "cm-topic-5-0-prereq" ||
-                              item.title.toLowerCase().includes("prerequisite") ||
-                              item.title.toLowerCase().includes("before you start");
-
-                            const isStackTopic =
-                              item.topic_tag === "Stacks & Queues" ||
-                              item.id.includes("topic-6-") ||
-                              item.title.toLowerCase().includes("stack") ||
-                              item.title.toLowerCase().includes("polish") ||
-                              item.title.toLowerCase().includes("quicksort");
-
-                            const isVisualizerOpen = !!expandedVisualizers[item.id];
-                            const hasTopicVisualizer = isPrereqTopic || isStringTopic || isLinearSearchTopic || isBinarySearchTopic || isStackTopic;
-
-                            return (
-                              <div className="space-y-4">
-                                {/* Action / Visualizer Toggle Bar for Topic */}
-                                <div className="flex flex-wrap items-center justify-between gap-3 p-3.5 rounded-2xl border border-cyan-500/30 bg-cyan-950/20">
-                                  <div className="text-xs text-muted-foreground">
-                                    {isPrereqTopic
-                                      ? "Interactive Prerequisite Studio (Pointer, Memory Address, DMA & 3-Node Chain) available."
-                                      : isStringTopic
-                                      ? "Interactive String Operations & Algorithm 3.1/3.2 Trace Studio available."
-                                      : isLinearSearchTopic
-                                      ? "Interactive Linear Search Studio (live Array Bars, sequential scan, comparisons & Sentinel mode) available."
-                                      : isBinarySearchTopic
-                                      ? "Interactive Binary Search Studio (live Array Bars, segment halving, BEG/MID/END pointers) available."
-                                      : isStackTopic
-                                      ? "Interactive Stacks & Polish Notation Studio (Array Stack, Postfix Evaluation & Quicksort Partitioning) available."
-                                      : "টপিকটির সহজ বাংলা কনসেপ্ট সামারি ও রিয়েল লাইফ অ্যানালজি।"}
-                                  </div>
-
-                                  <div className="flex flex-wrap items-center gap-2.5">
-                                    {/* Bangla Toggle Button */}
-                                    {item.bangla_explanation && (
-                                      <button
-                                        type="button"
-                                        onClick={() => toggleBangla(item.id)}
-                                        className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all active:scale-95 shadow-sm ${
-                                          isBanglaOpen
-                                            ? "bg-amber-500/20 text-amber-600 dark:text-amber-300 border border-amber-500/50 shadow-amber-500/10"
-                                            : "bg-gradient-to-r from-amber-500/15 via-orange-500/15 to-amber-600/15 hover:bg-amber-500/25 text-amber-700 dark:text-amber-300 border border-amber-500/30"
-                                        }`}
-                                      >
-                                        <span>🇧🇩</span>
-                                        <span>{isBanglaOpen ? "বাংলা ব্যাখ্যা লুকান" : "সহজ বাংলা ব্যাখ্যা"}</span>
-                                        {isBanglaOpen ? (
-                                          <ChevronUp className="h-3.5 w-3.5 text-amber-500" />
-                                        ) : (
-                                          <ChevronDown className="h-3.5 w-3.5 text-amber-500" />
-                                        )}
-                                      </button>
-                                    )}
-
-                                    {/* Simulation Studio Toggle */}
-                                    {hasTopicVisualizer && (
-                                      <button
-                                        type="button"
-                                        onClick={() => toggleVisualizer(item.id)}
-                                        className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all active:scale-95 shadow-md ${
-                                          isVisualizerOpen
-                                            ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/50 shadow-cyan-500/10"
-                                            : "bg-gradient-to-r from-cyan-500 via-indigo-600 to-purple-600 text-white hover:opacity-95 shadow-cyan-500/20 ring-2 ring-cyan-400/30"
-                                        }`}
-                                      >
-                                        <Play className={`h-3.5 w-3.5 ${isVisualizerOpen ? "text-cyan-400" : "text-white fill-white"}`} />
-                                        <span>
-                                          {isVisualizerOpen
-                                            ? "Hide Simulation Studio"
-                                            : isPrereqTopic
-                                            ? "🚀 Launch Prerequisite Studio"
-                                            : isStringTopic
-                                            ? "🚀 Launch String Studio"
-                                            : isLinearSearchTopic
-                                            ? "🚀 Launch Linear Search Studio"
-                                            : isBinarySearchTopic
-                                            ? "🚀 Launch Binary Search Studio"
-                                            : "🚀 Launch Stack & Polish Studio"}
-                                        </span>
-                                        {isVisualizerOpen ? (
-                                          <ChevronUp className="h-3.5 w-3.5" />
-                                        ) : (
-                                          <ChevronDown className="h-3.5 w-3.5" />
-                                        )}
-                                      </button>
-                                    )}
-                                  </div>
-                                </div>
-
-                                {/* Embedded Prerequisite Studio */}
-                                {isPrereqTopic && isVisualizerOpen && (
-                                  <div className="animate-in fade-in slide-in-from-top-3 duration-300">
-                                    <LinkedListPrereqStudio />
-                                  </div>
-                                )}
-
-                                {/* Embedded String Visualizer */}
-                                {isStringTopic && isVisualizerOpen && (
-                                  <div className="animate-in fade-in slide-in-from-top-3 duration-300">
-                                    <StringOperationsVisualizer />
-                                  </div>
-                                )}
-
-                                {/* Embedded Linear Search Studio */}
-                                {isLinearSearchTopic && isVisualizerOpen && (
-                                  <div className="animate-in fade-in slide-in-from-top-3 duration-300">
-                                    <LinearSearchStudio />
-                                  </div>
-                                )}
-
-                                {/* Embedded Binary Search Studio */}
-                                {isBinarySearchTopic && isVisualizerOpen && (
-                                  <div className="animate-in fade-in slide-in-from-top-3 duration-300">
-                                    <BinarySearchStudio />
-                                  </div>
-                                )}
-
-                                {/* Embedded Stack Operations Studio */}
-                                {isStackTopic && isVisualizerOpen && (
-                                  <div className="animate-in fade-in slide-in-from-top-3 duration-300">
-                                    <StackOperationsStudio />
-                                  </div>
-                                )}
-
-                                {/* Collapsible Bangla Explanation Card */}
-                                {isBanglaOpen && item.bangla_explanation && (
-                                  <div className="rounded-2xl border border-amber-500/35 bg-gradient-to-br from-amber-500/[0.04] to-orange-500/[0.02] dark:bg-card/95 p-6 shadow-xl animate-in fade-in slide-in-from-top-3 duration-200">
-                                    <div className="flex items-center justify-between pb-3 border-b border-amber-500/20 mb-4">
-                                      <div className="flex items-center gap-2 text-xs font-mono font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider">
-                                        <span className="text-base">🇧🇩</span>
-                                        <span>সহজ বাংলা কনসেপ্ট সামারি ও অ্যানালজি (Beginner-Friendly Explanation)</span>
-                                      </div>
-                                      <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/30 font-semibold font-mono">
-                                        বাংলা গাইড
-                                      </span>
-                                    </div>
-                                    <FormattedMarkdown content={item.bangla_explanation} />
-                                  </div>
-                                )}
-
-                                {/* Topic Content */}
+                              ) : (
                                 <div className="rounded-2xl border border-border bg-card p-6 shadow-sm">
                                   <div className="flex items-center gap-2 text-xs font-mono font-bold text-cyan-600 dark:text-cyan-400 uppercase tracking-wider pb-3 border-b border-border/60 mb-4">
                                     <Lightbulb className="h-4 w-4 text-cyan-500" />
@@ -2511,10 +2264,10 @@ export default function CourseMaterialPage() {
                                   </div>
                                   <FormattedMarkdown content={item.explanation_or_solution} />
                                 </div>
-                              </div>
-                            );
-                          })()
-                        )
+                              )}
+                            </div>
+                          );
+                        })()
                       )}
                     </div>
                   )}

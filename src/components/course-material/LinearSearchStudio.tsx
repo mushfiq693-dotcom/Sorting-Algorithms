@@ -273,7 +273,7 @@ export function LinearSearchStudio() {
       </div>
 
       {/* Target Selection & Complexity Presets Bar */}
-      <div className="flex flex-wrap items-center gap-2 mb-5 p-3 rounded-xl bg-slate-900/70 border border-slate-800">
+      <div className="flex flex-wrap items-center gap-2 mb-5 p-3 rounded-xl bg-muted/50 dark:bg-slate-900/70 border border-border dark:border-slate-800">
         <span className="text-xs font-semibold text-muted-foreground mr-1">
           {lang === "bn" ? "কেস প্রিসেট:" : "Case Presets:"}
         </span>
@@ -283,7 +283,7 @@ export function LinearSearchStudio() {
           onClick={() => handleApplyTarget(22)}
           className={`px-2.5 py-1 rounded-lg text-xs font-bold border transition-all cursor-pointer ${
             target === 22
-              ? "bg-emerald-500/20 text-emerald-300 border-emerald-500/50"
+              ? "bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border-emerald-500/50"
               : "bg-secondary/60 hover:bg-secondary text-foreground/80 border-border"
           }`}
         >
@@ -295,7 +295,7 @@ export function LinearSearchStudio() {
           onClick={() => handleApplyTarget(77)}
           className={`px-2.5 py-1 rounded-lg text-xs font-bold border transition-all cursor-pointer ${
             target === 77
-              ? "bg-cyan-500/20 text-cyan-300 border-cyan-500/50"
+              ? "bg-cyan-500/20 text-cyan-700 dark:text-cyan-300 border-cyan-500/50"
               : "bg-secondary/60 hover:bg-secondary text-foreground/80 border-border"
           }`}
         >
@@ -307,7 +307,7 @@ export function LinearSearchStudio() {
           onClick={() => handleApplyTarget(50)}
           className={`px-2.5 py-1 rounded-lg text-xs font-bold border transition-all cursor-pointer ${
             target === 50
-              ? "bg-indigo-500/20 text-indigo-300 border-indigo-500/50"
+              ? "bg-indigo-500/20 text-indigo-700 dark:text-indigo-300 border-indigo-500/50"
               : "bg-secondary/60 hover:bg-secondary text-foreground/80 border-border"
           }`}
         >
@@ -319,7 +319,7 @@ export function LinearSearchStudio() {
           onClick={() => handleApplyTarget(999)}
           className={`px-2.5 py-1 rounded-lg text-xs font-bold border transition-all cursor-pointer ${
             target === 999
-              ? "bg-rose-500/20 text-rose-300 border-rose-500/50"
+              ? "bg-rose-500/20 text-rose-700 dark:text-rose-300 border-rose-500/50"
               : "bg-secondary/60 hover:bg-secondary text-foreground/80 border-border"
           }`}
         >
@@ -337,7 +337,7 @@ export function LinearSearchStudio() {
                 if (!isNaN(parsed)) handleApplyTarget(parsed);
               }
             }}
-            className="w-16 px-2 py-1 rounded-lg bg-slate-950 border border-border text-xs text-foreground font-mono text-center focus:outline-none focus:border-emerald-500"
+            className="w-16 px-2 py-1 rounded-lg bg-background dark:bg-slate-950 border border-border text-xs text-foreground font-mono text-center focus:outline-none focus:border-emerald-500"
             placeholder="Target"
           />
           <button
@@ -346,7 +346,7 @@ export function LinearSearchStudio() {
               const parsed = parseInt(inputVal, 10);
               if (!isNaN(parsed)) handleApplyTarget(parsed);
             }}
-            className="px-2.5 py-1 rounded-lg text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white transition-all shadow-sm cursor-pointer"
+            className="px-2.5 py-1 rounded-lg text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white transition-all shadow-xs cursor-pointer"
           >
             {lang === "bn" ? "সার্চ" : "Search"}
           </button>
@@ -356,7 +356,7 @@ export function LinearSearchStudio() {
       {/* ========================================================================= */}
       {/* VERTICAL ARRAY BARS VISUALIZER CANVAS */}
       {/* ========================================================================= */}
-      <div className="relative p-5 sm:p-6 rounded-2xl bg-slate-950/90 border border-emerald-500/30 mb-5 overflow-hidden shadow-inner">
+      <div className="relative p-5 sm:p-6 rounded-2xl bg-muted/40 dark:bg-slate-950/90 border border-border dark:border-emerald-500/30 mb-5 overflow-hidden shadow-inner">
         {/* Ambient Glow */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-36 bg-emerald-500/10 blur-3xl pointer-events-none" />
 
@@ -396,7 +396,7 @@ export function LinearSearchStudio() {
                         LOC={pos}
                       </span>
                     ) : isSentinelSlot ? (
-                      <span className="px-1 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40 font-bold text-[8px]">
+                      <span className="px-1 py-0.5 rounded bg-amber-500/20 text-amber-700 dark:text-amber-300 border border-amber-500/40 font-bold text-[8px]">
                         SENTINEL
                       </span>
                     ) : null}
@@ -413,10 +413,10 @@ export function LinearSearchStudio() {
                         : isCurrentK
                         ? "bg-gradient-to-t from-amber-600 via-amber-500 to-amber-400 border-amber-200 ring-4 ring-amber-400/40 text-slate-950 font-black shadow-amber-500/40 scale-105"
                         : isSentinelSlot
-                        ? "bg-gradient-to-t from-amber-950/60 via-amber-900/60 to-amber-700/60 border-amber-500/50 text-amber-200 border-dashed"
+                        ? "bg-gradient-to-t from-amber-500/20 via-amber-600/30 to-amber-500/40 border-amber-500/50 text-amber-800 dark:text-amber-200 border-dashed"
                         : isPastScanned
-                        ? "bg-slate-900/70 border-slate-800 text-slate-400"
-                        : "bg-gradient-to-t from-emerald-950/70 via-emerald-800/60 to-teal-600/70 border-emerald-500/40 text-white font-bold hover:brightness-110"
+                        ? "bg-muted dark:bg-slate-900/70 border-border dark:border-slate-800 text-muted-foreground dark:text-slate-400"
+                        : "bg-gradient-to-t from-emerald-600 via-teal-500 to-cyan-500 border-emerald-400/60 text-white font-bold hover:brightness-110"
                     }`}
                   >
                     <span
@@ -433,10 +433,10 @@ export function LinearSearchStudio() {
                     <span
                       className={`text-[10px] font-mono font-bold ${
                         isCurrentK
-                          ? "text-amber-400"
+                          ? "text-amber-600 dark:text-amber-400"
                           : isSentinelSlot
-                          ? "text-amber-300"
-                          : "text-slate-400"
+                          ? "text-amber-700 dark:text-amber-300"
+                          : "text-muted-foreground dark:text-slate-400"
                       }`}
                     >
                       [{pos}]
@@ -448,23 +448,23 @@ export function LinearSearchStudio() {
           </div>
 
           {/* Complexity HUD & Stats */}
-          <div className="flex flex-wrap items-center justify-between gap-3 mt-4 text-[11px] text-muted-foreground border-t border-slate-800/80 pt-3 font-mono">
+          <div className="flex flex-wrap items-center justify-between gap-3 mt-4 text-[11px] text-muted-foreground border-t border-border dark:border-slate-800/80 pt-3 font-mono">
             <div className="flex flex-wrap items-center gap-3">
               <span className="flex items-center gap-1.5">
                 <span className="h-2.5 w-2.5 rounded-full bg-emerald-500 inline-block shadow-sm" />
-                <span className="text-emerald-400 font-bold">
+                <span className="text-emerald-700 dark:text-emerald-400 font-bold">
                   {lang === "bn" ? "মোট তুলনা:" : "Comparisons:"} {currentStep.comparisons} / {array.length}
                 </span>
               </span>
               <span className="flex items-center gap-1.5">
                 <span className="h-2.5 w-2.5 rounded-full bg-amber-500 inline-block shadow-sm" />
-                <span className="text-amber-400 font-bold">
+                <span className="text-amber-700 dark:text-amber-400 font-bold">
                   {lang === "bn" ? "গড় প্রত্যাশিত:" : "Average Expected:"} (n+1)/2 = {( (array.length + 1) / 2 ).toFixed(1)}
                 </span>
               </span>
               <span className="flex items-center gap-1.5">
                 <span className="h-2.5 w-2.5 rounded-full bg-rose-500 inline-block shadow-sm" />
-                <span className="text-rose-400 font-bold">
+                <span className="text-rose-700 dark:text-rose-400 font-bold">
                   {lang === "bn" ? "সর্বোচ্চ (Worst):" : "Worst Case:"} {useSentinel ? "n + 1" : "n"} = {useSentinel ? array.length + 1 : array.length}
                 </span>
               </span>
@@ -472,7 +472,7 @@ export function LinearSearchStudio() {
 
             <div className="flex items-center gap-2">
               <span className="text-muted-foreground">{lang === "bn" ? "টার্গেট সংখ্যা:" : "Search Target:"}</span>
-              <span className="px-2.5 py-0.5 rounded-md bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-bold font-mono text-xs">
+              <span className="px-2.5 py-0.5 rounded-md bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border border-emerald-500/40 font-bold font-mono text-xs">
                 ITEM = {target}
               </span>
             </div>
@@ -481,16 +481,16 @@ export function LinearSearchStudio() {
       </div>
 
       {/* Step Explanation Banner */}
-      <div className="p-4 rounded-xl bg-emerald-950/40 border border-emerald-500/30 text-xs sm:text-sm text-emerald-200 mb-5 flex items-start gap-3 shadow-md">
+      <div className="p-4 rounded-xl bg-emerald-500/10 dark:bg-emerald-950/40 border border-emerald-500/30 text-xs sm:text-sm text-emerald-900 dark:text-emerald-200 mb-5 flex items-start gap-3 shadow-xs">
         {currentStep.status === "match" ? (
-          <Award className="h-5 w-5 text-emerald-400 shrink-0 mt-0.5" />
+          <Award className="h-5 w-5 text-emerald-500 dark:text-emerald-400 shrink-0 mt-0.5" />
         ) : currentStep.status === "sentinel_found" || currentStep.status === "not_found" ? (
-          <AlertCircle className="h-5 w-5 text-rose-400 shrink-0 mt-0.5" />
+          <AlertCircle className="h-5 w-5 text-rose-500 dark:text-rose-400 shrink-0 mt-0.5" />
         ) : (
-          <Sparkles className="h-5 w-5 text-emerald-400 shrink-0 mt-0.5" />
+          <Sparkles className="h-5 w-5 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
         )}
         <div>
-          <div className="font-bold text-emerald-300 mb-0.5">
+          <div className="font-bold text-emerald-700 dark:text-emerald-300 mb-0.5">
             {lang === "bn"
               ? `ধাপ ${currentStepIndex + 1} / ${steps.length} — ${
                   currentStep.status === "match"
@@ -507,7 +507,7 @@ export function LinearSearchStudio() {
                     : "Sequential Scan"
                 }`}
           </div>
-          <p className="text-slate-300 leading-relaxed font-sans">
+          <p className="text-foreground/90 dark:text-slate-300 leading-relaxed font-sans">
             {lang === "bn" ? currentStep.explanationBn : currentStep.explanationEn}
           </p>
         </div>
@@ -516,8 +516,8 @@ export function LinearSearchStudio() {
       {/* Algorithm 4.5 Pseudocode Line Tracker & Controls */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
         {/* Algorithm Pseudocode Sync (7 cols) */}
-        <div className="lg:col-span-7 rounded-xl border border-slate-800 bg-slate-950/80 p-4 font-mono text-xs text-slate-300 space-y-1.5 shadow-sm">
-          <div className="flex items-center justify-between border-b border-slate-800 pb-2 mb-2 text-emerald-400 font-bold">
+        <div className="lg:col-span-7 rounded-xl border border-border dark:border-slate-800 bg-muted/40 dark:bg-slate-950/80 p-4 font-mono text-xs text-foreground/85 dark:text-slate-300 space-y-1.5 shadow-xs">
+          <div className="flex items-center justify-between border-b border-border dark:border-slate-800 pb-2 mb-2 text-emerald-600 dark:text-emerald-400 font-bold">
             <span className="flex items-center gap-1.5">
               <Activity className="h-3.5 w-3.5" />
               Algorithm 4.5 Execution Sync (LINEAR)
@@ -544,16 +544,16 @@ export function LinearSearchStudio() {
                   className={`px-2.5 py-1 rounded transition-all flex items-center justify-between ${
                     isActive
                       ? currentStep.status === "match"
-                        ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-bold"
+                        ? "bg-emerald-500/20 text-emerald-800 dark:text-emerald-300 border border-emerald-500/40 font-bold"
                         : currentStep.status === "sentinel_found"
-                        ? "bg-rose-500/20 text-rose-300 border border-rose-500/40 font-bold"
-                        : "bg-emerald-500/20 text-emerald-200 border border-emerald-500/40 font-bold"
-                      : "hover:bg-slate-900/50"
+                        ? "bg-rose-500/20 text-rose-800 dark:text-rose-300 border border-rose-500/40 font-bold"
+                        : "bg-emerald-500/20 text-emerald-900 dark:text-emerald-200 border border-emerald-500/40 font-bold"
+                      : "hover:bg-muted dark:hover:bg-slate-900/50"
                   }`}
                 >
                   <span>{code.text}</span>
                   {isActive && (
-                    <span className="text-[9px] px-1.5 py-0.5 rounded bg-emerald-500/30 text-emerald-300 font-bold">
+                    <span className="text-[9px] px-1.5 py-0.5 rounded bg-emerald-500/30 text-emerald-800 dark:text-emerald-300 font-bold">
                       ACTIVE
                     </span>
                   )}
@@ -580,16 +580,16 @@ export function LinearSearchStudio() {
                   className={`px-2.5 py-1 rounded transition-all flex items-center justify-between ${
                     isActive
                       ? currentStep.status === "match"
-                        ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-bold"
+                        ? "bg-emerald-500/20 text-emerald-800 dark:text-emerald-300 border border-emerald-500/40 font-bold"
                         : currentStep.status === "not_found"
-                        ? "bg-rose-500/20 text-rose-300 border border-rose-500/40 font-bold"
-                        : "bg-emerald-500/20 text-emerald-200 border border-emerald-500/40 font-bold"
-                      : "hover:bg-slate-900/50"
+                        ? "bg-rose-500/20 text-rose-800 dark:text-rose-300 border border-rose-500/40 font-bold"
+                        : "bg-emerald-500/20 text-emerald-900 dark:text-emerald-200 border border-emerald-500/40 font-bold"
+                      : "hover:bg-muted dark:hover:bg-slate-900/50"
                   }`}
                 >
                   <span>{code.text}</span>
                   {isActive && (
-                    <span className="text-[9px] px-1.5 py-0.5 rounded bg-emerald-500/30 text-emerald-300 font-bold">
+                    <span className="text-[9px] px-1.5 py-0.5 rounded bg-emerald-500/30 text-emerald-800 dark:text-emerald-300 font-bold">
                       ACTIVE
                     </span>
                   )}
@@ -600,11 +600,11 @@ export function LinearSearchStudio() {
         </div>
 
         {/* Playback Controls & Speed (5 cols) */}
-        <div className="lg:col-span-5 rounded-xl border border-slate-800 bg-slate-950/80 p-4 flex flex-col justify-between gap-3 shadow-sm">
+        <div className="lg:col-span-5 rounded-xl border border-border dark:border-slate-800 bg-card dark:bg-slate-950/80 p-4 flex flex-col justify-between gap-3 shadow-xs">
           <div>
-            <div className="text-xs font-bold text-slate-300 mb-2 font-mono flex items-center justify-between">
+            <div className="text-xs font-bold text-foreground dark:text-slate-300 mb-2 font-mono flex items-center justify-between">
               <span>{lang === "bn" ? "প্লেব্যাক কন্ট্রোল" : "Playback Controls"}</span>
-              <span className="text-[10px] text-emerald-400 font-mono">
+              <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-mono font-bold">
                 {currentStepIndex + 1} / {steps.length}
               </span>
             </div>
@@ -632,7 +632,7 @@ export function LinearSearchStudio() {
               <button
                 type="button"
                 onClick={() => setIsPlaying(!isPlaying)}
-                className="flex-1 py-2 px-4 rounded-lg bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-md shadow-emerald-500/20 transition-all active:scale-95 cursor-pointer"
+                className="flex-1 py-2 px-4 rounded-lg bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-xs shadow-emerald-500/20 transition-all active:scale-95 cursor-pointer"
               >
                 {isPlaying ? (
                   <>
@@ -660,7 +660,7 @@ export function LinearSearchStudio() {
           </div>
 
           {/* Speed Selector */}
-          <div className="pt-2 border-t border-slate-800/80 flex items-center justify-between text-xs font-mono text-muted-foreground">
+          <div className="pt-2 border-t border-border dark:border-slate-800/80 flex items-center justify-between text-xs font-mono text-muted-foreground">
             <span>{lang === "bn" ? "গতি:" : "Speed:"}</span>
             <div className="flex items-center gap-1.5">
               {[
@@ -674,8 +674,8 @@ export function LinearSearchStudio() {
                   onClick={() => setSpeed(s.val)}
                   className={`px-2 py-0.5 rounded text-[11px] font-bold border transition-all cursor-pointer ${
                     speed === s.val
-                      ? "bg-emerald-500/20 text-emerald-300 border-emerald-500/50"
-                      : "bg-slate-900 border-slate-800 text-muted-foreground hover:text-foreground"
+                      ? "bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border-emerald-500/50"
+                      : "bg-secondary border-border dark:bg-slate-900 dark:border-slate-800 text-muted-foreground hover:text-foreground"
                   }`}
                 >
                   {s.label}

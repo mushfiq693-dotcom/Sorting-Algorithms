@@ -590,8 +590,8 @@ export function LinkedListInsLocVisualizer() {
         {/* ===================================================================== */}
         <div className="lg:col-span-5 space-y-3.5 flex flex-col justify-between">
           {/* Algorithm Code Execution Card */}
-          <div className="rounded-xl border border-[#4A3F35] bg-[#14100D] overflow-hidden shadow-xl">
-            <div className="flex items-center justify-between px-3.5 py-2 border-b border-[#4A3F35] bg-[#1C1714] text-xs font-mono">
+          <div className="rounded-xl border border-border dark:border-[#4A3F35] bg-card dark:bg-[#14100D] overflow-hidden shadow-xs dark:shadow-xl">
+            <div className="flex items-center justify-between px-3.5 py-2 border-b border-border dark:border-[#4A3F35] bg-muted/60 dark:bg-[#1C1714] text-xs font-mono">
               <span className="flex items-center gap-1.5 text-primary font-bold">
                 <FileCode2 className="h-3.5 w-3.5 text-primary" />
                 <span>Textbook Algorithm 5.5 INSLOC</span>
@@ -609,18 +609,18 @@ export function LinkedListInsLocVisualizer() {
                     key={step.line}
                     className={`p-2 rounded-lg transition-all duration-200 ${
                       isCurrent
-                        ? "bg-primary/25 border-l-4 border-primary text-white font-bold shadow-brass-sm"
-                        : "text-slate-400 hover:text-slate-300 hover:bg-white/5 opacity-85"
+                        ? "bg-primary/25 border-l-4 border-primary text-foreground dark:text-white font-bold shadow-brass-sm"
+                        : "text-muted-foreground hover:text-foreground hover:bg-muted/40 dark:hover:bg-white/5 opacity-85"
                     }`}
                   >
                     <div className="flex items-start justify-between gap-2">
                       <div className="space-y-0.5 min-w-0">
                         <div className="flex items-center gap-2">
-                          <span className={`text-[10px] uppercase font-bold ${isCurrent ? "text-amber-400" : "text-slate-500"}`}>
+                          <span className={`text-[10px] uppercase font-bold ${isCurrent ? "text-amber-600 dark:text-amber-400" : "text-muted-foreground"}`}>
                             {step.label}
                           </span>
                         </div>
-                        <pre className="text-[11px] font-mono whitespace-pre-wrap leading-tight overflow-x-auto text-slate-200">
+                        <pre className="text-[11px] font-mono whitespace-pre-wrap leading-tight overflow-x-auto text-foreground dark:text-slate-200">
                           {step.code}
                         </pre>
                       </div>
@@ -727,15 +727,15 @@ export function LinkedListInsLocVisualizer() {
             </div>
 
             {/* Memory Grid Table (Lipschutz format with pointers) */}
-            <div className="overflow-x-auto rounded-xl border border-[#4A3F35] bg-[#14100D] p-2.5 shadow-inner">
+            <div className="overflow-x-auto rounded-xl border border-border dark:border-[#4A3F35] bg-muted/30 dark:bg-[#14100D] p-2.5 shadow-inner">
               <div className="min-w-[580px] grid grid-cols-10 gap-1.5 font-mono text-center">
                 {/* Header Column */}
                 <div className="flex flex-col gap-1 text-[11px] font-bold text-muted-foreground">
                   <div className="h-6 flex items-center justify-center">Index</div>
-                  <div className="h-9 flex items-center justify-center rounded bg-[#1C1714] border border-[#4A3F35]/60 text-[#D4B872]">
+                  <div className="h-9 flex items-center justify-center rounded bg-muted/70 dark:bg-[#1C1714] border border-border dark:border-[#4A3F35]/60 text-amber-700 dark:text-[#D4B872]">
                     INFO
                   </div>
-                  <div className="h-9 flex items-center justify-center rounded bg-[#1C1714] border border-[#4A3F35]/60 text-cyan-400">
+                  <div className="h-9 flex items-center justify-center rounded bg-muted/70 dark:bg-[#1C1714] border border-border dark:border-[#4A3F35]/60 text-cyan-600 dark:text-cyan-400">
                     LINK
                   </div>
                 </div>
@@ -749,8 +749,8 @@ export function LinkedListInsLocVisualizer() {
                   const isStart = currentStep.start === idx;
                   const isAvailHead = currentStep.avail === idx;
 
-                  let cellBorder = "border-[#3D332A]";
-                  let cellBg = "bg-[#181310]";
+                  let cellBorder = "border-border dark:border-[#3D332A]";
+                  let cellBg = "bg-background dark:bg-[#181310]";
                   let tag = null;
                   let tagClass = "bg-card border-border text-muted-foreground";
 
@@ -775,7 +775,7 @@ export function LinkedListInsLocVisualizer() {
                   return (
                     <div key={idx} className="flex flex-col gap-1 text-xs">
                       {/* Index Header with Tag */}
-                      <div className="h-6 flex items-center justify-center text-[11px] text-slate-400 font-bold relative">
+                      <div className="h-6 flex items-center justify-center text-[11px] text-foreground dark:text-slate-400 font-bold relative">
                         <span>{idx}</span>
                         {tag && (
                           <span
@@ -789,7 +789,7 @@ export function LinkedListInsLocVisualizer() {
                       {/* INFO[k] Value */}
                       <div
                         className={`h-9 flex items-center justify-center rounded-lg border font-bold transition-all text-xs ${cellBorder} ${cellBg} ${
-                          val ? "text-white" : "text-slate-600 italic"
+                          val ? "text-foreground dark:text-white" : "text-muted-foreground/60 dark:text-slate-600 italic"
                         }`}
                       >
                         {val !== null && val !== undefined ? val : "—"}
@@ -797,8 +797,8 @@ export function LinkedListInsLocVisualizer() {
 
                       {/* LINK[k] Pointer */}
                       <div
-                        className={`h-9 flex items-center justify-center rounded-lg border border-[#3D332A] bg-[#181310] font-bold text-xs text-cyan-300 transition-all ${
-                          nextPtr === null ? "text-rose-400" : ""
+                        className={`h-9 flex items-center justify-center rounded-lg border border-border dark:border-[#3D332A] bg-background dark:bg-[#181310] font-bold text-xs text-cyan-700 dark:text-cyan-300 transition-all ${
+                          nextPtr === null ? "text-rose-600 dark:text-rose-400" : ""
                         }`}
                       >
                         {nextPtr !== null && nextPtr !== undefined ? nextPtr : "0 (NULL)"}

@@ -280,9 +280,9 @@ export function StringOperationsVisualizer() {
   const activeStep = algoSteps[currentStepIdx] || algoSteps[0];
 
   return (
-    <div className="rounded-3xl border border-cyan-500/30 bg-[#060e1e]/95 text-foreground overflow-hidden shadow-2xl backdrop-blur-2xl">
+    <div className="rounded-3xl border border-border dark:border-cyan-500/30 bg-card dark:bg-[#060e1e]/95 text-foreground overflow-hidden shadow-xl backdrop-blur-2xl">
       {/* Header Banner */}
-      <div className="p-5 sm:p-6 bg-gradient-to-r from-cyan-950/40 via-blue-950/30 to-background border-b border-border/70 flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="p-5 sm:p-6 bg-gradient-to-r from-cyan-500/10 via-blue-500/5 to-card dark:from-cyan-950/40 dark:via-blue-950/30 dark:to-background border-b border-border/70 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <div className="h-10 w-10 rounded-2xl bg-cyan-500/15 border border-cyan-500/30 flex items-center justify-center text-cyan-400 shadow-lg shadow-cyan-500/10 shrink-0">
             <Scissors className="h-5 w-5" />
@@ -364,7 +364,7 @@ export function StringOperationsVisualizer() {
           </div>
 
           {/* Operation Controls & Visual Box */}
-          <div className="rounded-2xl border border-border/80 bg-black/50 p-6 space-y-5">
+          <div className="rounded-2xl border border-border/80 bg-muted/40 dark:bg-black/50 p-6 space-y-5">
             {/* SUBSTRING */}
             {selectedOp === "substring" && (
               <div className="space-y-4">
@@ -447,7 +447,7 @@ export function StringOperationsVisualizer() {
                           key={idx}
                           className={`flex flex-col items-center justify-center min-w-[28px] h-12 rounded-lg border text-xs transition-all ${
                             isHighlighted
-                              ? "border-cyan-400 bg-cyan-950/50 text-cyan-200 font-black ring-2 ring-cyan-500/30 scale-105 shadow-md shadow-cyan-500/20"
+                              ? "border-cyan-400 bg-cyan-500/20 dark:bg-cyan-950/50 text-cyan-200 font-black ring-2 ring-cyan-500/30 scale-105 shadow-md shadow-cyan-500/20"
                               : "border-border/60 bg-secondary/30 text-muted-foreground"
                           }`}
                         >
@@ -462,10 +462,10 @@ export function StringOperationsVisualizer() {
                 </div>
 
                 {/* Result Display */}
-                <div className="p-4 rounded-xl border border-cyan-500/30 bg-cyan-950/20 flex flex-col sm:flex-row sm:items-center justify-between gap-3 font-mono">
+                <div className="p-4 rounded-xl border border-cyan-500/30 bg-cyan-500/10 dark:bg-cyan-950/20 flex flex-col sm:flex-row sm:items-center justify-between gap-3 font-mono">
                   <div>
                     <span className="text-xs text-muted-foreground">Computed Expression:</span>
-                    <div className="text-sm font-bold text-white mt-0.5">
+                    <div className="text-sm font-bold text-foreground dark:text-white mt-0.5">
                       SUBSTRING(&apos;{rawStringS}&apos;, {subInitial}, {subLength})
                     </div>
                   </div>
@@ -519,7 +519,7 @@ export function StringOperationsVisualizer() {
                           key={idx}
                           className={`flex flex-col items-center justify-center min-w-[28px] h-12 rounded-lg border text-xs transition-all ${
                             isMatch
-                              ? "border-emerald-400 bg-emerald-950/60 text-emerald-200 font-black ring-2 ring-emerald-500/40 shadow-lg shadow-emerald-500/20 scale-105"
+                              ? "border-emerald-400 bg-emerald-500/20 dark:bg-emerald-950/60 text-emerald-200 font-black ring-2 ring-emerald-500/40 shadow-lg shadow-emerald-500/20 scale-105"
                               : "border-border/60 bg-secondary/30 text-muted-foreground"
                           }`}
                         >
@@ -534,10 +534,10 @@ export function StringOperationsVisualizer() {
                 </div>
 
                 {/* Result */}
-                <div className="p-4 rounded-xl border border-emerald-500/30 bg-emerald-950/20 flex flex-col sm:flex-row sm:items-center justify-between gap-3 font-mono">
+                <div className="p-4 rounded-xl border border-emerald-500/30 bg-emerald-500/10 dark:bg-emerald-950/20 flex flex-col sm:flex-row sm:items-center justify-between gap-3 font-mono">
                   <div>
                     <span className="text-xs text-muted-foreground">Computed Expression:</span>
-                    <div className="text-sm font-bold text-white mt-0.5">
+                    <div className="text-sm font-bold text-foreground dark:text-white mt-0.5">
                       INDEX(&apos;{indexText}&apos;, &apos;{indexPattern}&apos;)
                     </div>
                   </div>
@@ -581,10 +581,10 @@ export function StringOperationsVisualizer() {
                   </div>
                 </div>
 
-                <div className="p-4 rounded-xl border border-purple-500/30 bg-purple-950/20 flex flex-col sm:flex-row sm:items-center justify-between gap-3 font-mono">
+                <div className="p-4 rounded-xl border border-purple-500/30 bg-purple-500/10 dark:bg-purple-950/20 flex flex-col sm:flex-row sm:items-center justify-between gap-3 font-mono">
                   <div>
                     <span className="text-xs text-muted-foreground">Concatenation Formula:</span>
-                    <div className="text-sm font-bold text-white mt-0.5">
+                    <div className="text-sm font-bold text-foreground dark:text-white mt-0.5">
                       S1 // &apos;{concatDelim}&apos; // S2
                     </div>
                   </div>
@@ -630,14 +630,14 @@ export function StringOperationsVisualizer() {
                   </div>
                 </div>
 
-                <div className="p-4 rounded-xl border border-amber-500/30 bg-amber-950/20 space-y-2 font-mono text-xs">
+                <div className="p-4 rounded-xl border border-amber-500/30 bg-amber-500/10 dark:bg-amber-950/20 space-y-2 font-mono text-xs">
                   <div className="text-amber-300 font-bold">
                     0-Based Substring Formula:
                   </div>
-                  <div className="text-slate-300 text-[11px]">
+                  <div className="text-foreground/90 dark:text-slate-300 text-[11px]">
                     INSERT(T, K, S) = SUBSTRING(T, 0, {insertPos}) // &apos;{insertStr}&apos; // SUBSTRING(T, {insertPos}, {insertText.length - insertPos})
                   </div>
-                  <div className="pt-2 text-base font-black text-white">
+                  <div className="pt-2 text-base font-black text-foreground dark:text-white">
                     Result: <span className="text-amber-400">&apos;{insertResult}&apos;</span>
                   </div>
                 </div>
@@ -681,14 +681,14 @@ export function StringOperationsVisualizer() {
                   </div>
                 </div>
 
-                <div className="p-4 rounded-xl border border-rose-500/30 bg-rose-950/20 space-y-2 font-mono text-xs">
+                <div className="p-4 rounded-xl border border-rose-500/30 bg-rose-500/10 dark:bg-rose-950/20 space-y-2 font-mono text-xs">
                   <div className="text-rose-300 font-bold">
                     0-Based Substring Formula:
                   </div>
-                  <div className="text-slate-300 text-[11px]">
+                  <div className="text-foreground/90 dark:text-slate-300 text-[11px]">
                     DELETE(T, K, L) = SUBSTRING(T, 0, {deletePos}) // SUBSTRING(T, {deletePos + deleteLen}, {deleteText.length - deletePos - deleteLen})
                   </div>
-                  <div className="pt-2 text-base font-black text-white">
+                  <div className="pt-2 text-base font-black text-foreground dark:text-white">
                     Result: <span className="text-rose-400">&apos;{deleteResult}&apos;</span>
                   </div>
                 </div>
@@ -728,11 +728,11 @@ export function StringOperationsVisualizer() {
                   </div>
                 </div>
 
-                <div className="p-4 rounded-xl border border-cyan-500/30 bg-cyan-950/20 space-y-2 font-mono text-xs">
+                <div className="p-4 rounded-xl border border-cyan-500/30 bg-cyan-500/10 dark:bg-cyan-950/20 space-y-2 font-mono text-xs">
                   <div className="text-cyan-300 font-bold">
                     0-Based Steps: (1) K = INDEX(T, P1) ➔ (2) DELETE(T, K, len) ➔ (3) INSERT(T, K, P2)
                   </div>
-                  <div className="pt-2 text-base font-black text-white">
+                  <div className="pt-2 text-base font-black text-foreground dark:text-white">
                     Result: <span className="text-cyan-400">&apos;{replaceResult}&apos;</span>
                   </div>
                 </div>
@@ -832,9 +832,9 @@ export function StringOperationsVisualizer() {
           </div>
 
           {/* Visual Execution Arena */}
-          <div className="rounded-2xl border border-border/80 bg-black/60 p-6 space-y-5 font-mono">
+          <div className="rounded-2xl border border-border/80 bg-muted/40 dark:bg-black/60 p-6 space-y-5 font-mono">
             <div className="flex items-center justify-between border-b border-border/60 pb-3 text-xs">
-              <span className="font-bold text-slate-300 flex items-center gap-2">
+              <span className="font-bold text-foreground/90 dark:text-slate-300 flex items-center gap-2">
                 <Code2 className="h-4 w-4 text-cyan-400" />
                 <span>Live State: Step {activeStep.stepNum} / {algoSteps.length}</span>
               </span>
@@ -861,7 +861,7 @@ export function StringOperationsVisualizer() {
                       key={idx}
                       className={`flex flex-col items-center justify-center min-w-[36px] h-14 rounded-xl border text-sm font-bold transition-all duration-300 ${
                         isHighlighted
-                          ? "border-amber-400 bg-amber-950/60 text-amber-200 ring-4 ring-amber-500/30 scale-110 shadow-xl shadow-amber-500/20"
+                          ? "border-amber-400 bg-amber-500/20 dark:bg-amber-950/60 text-amber-200 ring-4 ring-amber-500/30 scale-110 shadow-xl shadow-amber-500/20"
                           : "border-border/70 bg-secondary/40 text-foreground"
                       }`}
                     >
@@ -874,7 +874,7 @@ export function StringOperationsVisualizer() {
             </div>
 
             {/* Step Explanation Banner */}
-            <div className="p-4 rounded-xl border border-cyan-500/30 bg-cyan-950/20 text-xs text-foreground flex items-center gap-3">
+            <div className="p-4 rounded-xl border border-cyan-500/30 bg-cyan-500/10 dark:bg-cyan-950/20 text-xs text-foreground flex items-center gap-3">
               <CheckCircle2 className="h-4 w-4 text-cyan-400 shrink-0" />
               <span>{activeStep.description}</span>
             </div>
