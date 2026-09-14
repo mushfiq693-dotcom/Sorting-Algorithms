@@ -12,7 +12,6 @@ import { NotificationBell } from "@/components/notifications/NotificationBell";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { LINKS } from "@/config/links";
 import {
-  Code2,
   Sparkles,
   Layers,
   Table,
@@ -31,19 +30,14 @@ export default function Home() {
 
   // Dropdown states
   const [learnDropdownOpen, setLearnDropdownOpen] = useState<boolean>(false);
-  const [practiceDropdownOpen, setPracticeDropdownOpen] = useState<boolean>(false);
 
   const learnRef = useRef<HTMLDivElement>(null);
-  const practiceRef = useRef<HTMLDivElement>(null);
 
   // Close dropdowns on outside click
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (learnRef.current && !learnRef.current.contains(event.target as Node)) {
         setLearnDropdownOpen(false);
-      }
-      if (practiceRef.current && !practiceRef.current.contains(event.target as Node)) {
-        setPracticeDropdownOpen(false);
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
@@ -79,10 +73,7 @@ export default function Home() {
               {/* 1. Learn Dropdown */}
               <div className="relative" ref={learnRef}>
                 <button
-                  onClick={() => {
-                    setLearnDropdownOpen(!learnDropdownOpen);
-                    setPracticeDropdownOpen(false);
-                  }}
+                  onClick={() => setLearnDropdownOpen(!learnDropdownOpen)}
                   className={`inline-flex items-center gap-1.5 rounded border px-3 py-1.5 font-semibold transition-all active:scale-95 shadow-sm ${
                     learnDropdownOpen
                       ? "border-primary bg-card text-primary shadow-brass"
@@ -140,89 +131,7 @@ export default function Home() {
                 )}
               </div>
 
-              {/* 2. Practice Dropdown */}
-              <div className="relative" ref={practiceRef}>
-                <button
-                  onClick={() => {
-                    setPracticeDropdownOpen(!practiceDropdownOpen);
-                    setLearnDropdownOpen(false);
-                  }}
-                  className={`inline-flex items-center gap-1.5 rounded border px-3 py-1.5 font-semibold transition-all active:scale-95 shadow-sm ${
-                    practiceDropdownOpen
-                      ? "border-primary bg-card text-primary shadow-brass"
-                      : "border-border bg-card/80 text-foreground hover:text-primary hover:border-primary/50 hover:bg-card"
-                  }`}
-                  aria-expanded={practiceDropdownOpen}
-                >
-                  <Terminal className="h-3.5 w-3.5 text-primary" />
-                  <span>Practice</span>
-                  <ChevronDown
-                    className={`h-3 w-3 text-muted-foreground transition-transform duration-200 ${
-                      practiceDropdownOpen ? "rotate-180 text-primary" : ""
-                    }`}
-                  />
-                </button>
-
-                {practiceDropdownOpen && (
-                  <div className="absolute top-full left-0 mt-2 w-72 rounded-lg border-2 border-[#B08422]/50 dark:border-[#C9A962]/50 bg-[#FFFFFF] dark:bg-[#251E19] p-2.5 shadow-[0_20px_50px_rgba(0,0,0,0.5)] z-50 corner-flourish">
-                    <Link
-                      href="/visualizer"
-                      onClick={() => setPracticeDropdownOpen(false)}
-                      className="flex items-start gap-3 p-2.5 rounded-md hover:bg-[#F5EFEB] dark:hover:bg-[#1C1714] transition-colors group"
-                    >
-                      <div className="p-2 rounded border border-[#D8CBB8] dark:border-[#4A3F35] bg-[#FAF6F0] dark:bg-[#1C1714] text-[#B08422] dark:text-[#C9A962] shrink-0 mt-0.5 group-hover:border-primary group-hover:bg-[#8B2635] group-hover:text-white transition-colors">
-                        <Layers className="h-4 w-4" />
-                      </div>
-                      <div>
-                        <div className="font-sans text-xs font-semibold text-[#1C1714] dark:text-[#E8DFD4] group-hover:text-primary tracking-wide transition-colors">
-                          Interactive Visualizer
-                        </div>
-                        <div className="font-sans text-xs text-[#5C4D42] dark:text-[#9C8B7A] leading-relaxed mt-0.5 normal-case font-normal">
-                          Studio controls & step-by-step array animations
-                        </div>
-                      </div>
-                    </Link>
-
-                    <Link
-                      href="/compare"
-                      onClick={() => setPracticeDropdownOpen(false)}
-                      className="flex items-start gap-3 p-2.5 rounded-md hover:bg-[#F5EFEB] dark:hover:bg-[#1C1714] transition-colors group"
-                    >
-                      <div className="p-2 rounded border border-[#D8CBB8] dark:border-[#4A3F35] bg-[#FAF6F0] dark:bg-[#1C1714] text-[#B08422] dark:text-[#C9A962] shrink-0 mt-0.5 group-hover:border-primary group-hover:bg-[#8B2635] group-hover:text-white transition-colors">
-                        <Table className="h-4 w-4" />
-                      </div>
-                      <div>
-                        <div className="font-sans text-xs font-semibold text-[#1C1714] dark:text-[#E8DFD4] group-hover:text-primary tracking-wide transition-colors">
-                          Comparison Matrix
-                        </div>
-                        <div className="font-sans text-xs text-[#5C4D42] dark:text-[#9C8B7A] leading-relaxed mt-0.5 normal-case font-normal">
-                          Side-by-side Big-O trade-offs & characteristics
-                        </div>
-                      </div>
-                    </Link>
-
-                    <Link
-                      href="/algorithms/bubble"
-                      onClick={() => setPracticeDropdownOpen(false)}
-                      className="flex items-start gap-3 p-2.5 rounded-md hover:bg-[#F5EFEB] dark:hover:bg-[#1C1714] transition-colors group"
-                    >
-                      <div className="p-2 rounded border border-[#D8CBB8] dark:border-[#4A3F35] bg-[#FAF6F0] dark:bg-[#1C1714] text-[#B08422] dark:text-[#C9A962] shrink-0 mt-0.5 group-hover:border-primary group-hover:bg-[#8B2635] group-hover:text-white transition-colors">
-                        <Code2 className="h-4 w-4" />
-                      </div>
-                      <div>
-                        <div className="font-sans text-xs font-semibold text-[#1C1714] dark:text-[#E8DFD4] group-hover:text-primary tracking-wide transition-colors">
-                          Code Debugger
-                        </div>
-                        <div className="font-sans text-xs text-[#5C4D42] dark:text-[#9C8B7A] leading-relaxed mt-0.5 normal-case font-normal">
-                          Inspect live variables, scope & call stack
-                        </div>
-                      </div>
-                    </Link>
-                  </div>
-                )}
-              </div>
-
-              {/* 3. Course Material */}
+              {/* 2. Course Material */}
               <Link
                 href="/course-material"
                 className="inline-flex items-center gap-1.5 rounded border border-border bg-card/80 px-3 py-1.5 font-semibold text-foreground hover:border-primary hover:text-primary hover:bg-card transition-all active:scale-95 shadow-sm"
