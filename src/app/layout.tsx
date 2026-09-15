@@ -24,15 +24,21 @@ export const metadata: Metadata = {
   metadataBase: new URL(
     process.env.NEXT_PUBLIC_SITE_URL || "https://algo-hub-eight.vercel.app"
   ),
-  title: "AlgoHub — Interactive Algorithm Learning Platform",
+  title: "AlgoHub — Interactive Data Structures & Algorithms (DSA) Learning Platform",
   description:
-    "Interactive algorithm learning platform with real-time visualization, code execution, debugging, and hands-on practice.",
+    "Master Data Structures & Algorithms (DSA) with real-time interactive visualizers, step-by-step memory tracers (Linked Lists, Stacks, Arrays), C++ debugging, Bengali explanations, and textbook problem solutions.",
   keywords: [
+    "data structures visualizer",
     "algorithm visualizer",
     "data structures and algorithms",
     "sorting algorithms",
     "interactive DSA learning",
+    "linked list visualizer",
+    "stack visualizer",
+    "binary search simulator",
     "algorithm debugger",
+    "DSA in Bangla",
+    "Lipschutz data structures solutions",
     "AlgoHub",
   ],
   authors: [{ name: "AlgoHub Team" }],
@@ -49,9 +55,9 @@ export const metadata: Metadata = {
     shortcut: "/favicon.ico",
   },
   openGraph: {
-    title: "AlgoHub — Interactive Algorithm Learning Platform",
+    title: "AlgoHub — Interactive Data Structures & Algorithms (DSA) Learning Platform",
     description:
-      "Don't just learn Algorithms. See them. Break them. Fix them. Master them.",
+      "Don't just memorize DSA codes. See them. Break them. Fix them. Master them.",
     type: "website",
     siteName: "AlgoHub",
     images: [

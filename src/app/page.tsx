@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { HeroAnimation } from "@/components/landing/HeroAnimation";
+import { CoveredTopicsHub } from "@/components/landing/CoveredTopicsHub";
 import { LearningJourney } from "@/components/landing/LearningJourney";
 import { WhyChooseAlgoHub } from "@/components/landing/WhyChooseAlgoHub";
 import { BetaBanner } from "@/components/landing/BetaBanner";
@@ -237,26 +238,23 @@ export default function Home() {
         {/* HERO SECTION — FULL VIEWPORT FOCUSED HERO */}
         <section className="relative overflow-hidden min-h-[calc(100vh-4rem)] flex flex-col justify-center items-center py-12 sm:py-16 border-b border-border">
           <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center flex flex-col items-center my-auto">
-            {/* 1. Hero Badge — Manrope 600 uppercase */}
+            {/* 1. Hero Badge — Next-Gen Data Structures & Algorithms (DSA) Learning Platform */}
             <div className="inline-flex items-center gap-2 px-3.5 sm:px-4 py-1.5 rounded-full border border-primary/40 bg-card text-primary text-xs sm:text-sm font-sans font-semibold uppercase tracking-wider mb-4 backdrop-blur-md shadow-sm">
               <Sparkles className="h-4 w-4 text-primary" />
-              <span>Interactive Algorithm Learning Platform</span>
+              <span>Next-Gen Data Structures & Algorithms (DSA) Learning Platform</span>
             </div>
 
             {/* 2. Main Headline */}
             <h1 className="text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight text-foreground leading-[1.15] font-sans">
-              Make Algorithms{" "}
+              Don&apos;t just memorize{" "}
               <span className="font-extrabold text-[#B08422] dark:text-[#D4B872]">
-                Make Sense.
+                DSA codes.
               </span>
             </h1>
 
-            {/* 3. Hero Tagline / Subtitle — Manrope 500 */}
+            {/* 3. Hero Tagline / Subtitle */}
             <div className="mt-4 sm:mt-5 text-lg sm:text-2xl md:text-3xl font-medium tracking-tight text-foreground leading-snug font-sans max-w-3xl">
-              <p className="text-muted-foreground font-medium">
-                Don&apos;t just learn Algorithms.
-              </p>
-              <p className="mt-1 flex flex-wrap items-center justify-center gap-x-2.5 sm:gap-x-3.5">
+              <p className="flex flex-wrap items-center justify-center gap-x-2.5 sm:gap-x-3.5">
                 <span className="text-[#B08422] dark:text-[#C9A962] font-semibold">See them.</span>
                 <span className="text-[#8B2635] font-semibold">Break them.</span>
                 <span className="text-amber-600 dark:text-amber-500 font-semibold">Fix them.</span>
@@ -307,10 +305,13 @@ export default function Home() {
         {/* 1. PRIMARY NARRATIVE: 4-STAGE LEARNING JOURNEY */}
         <LearningJourney />
 
-        {/* 2. WHY CHOOSE ALGOHUB SECTION — UNIQUENESS & DIFFERENTIATION */}
+        {/* 2. COVERED TOPICS & VISUALIZER HUB (COMPREHENSIVE DSA CURRICULUM FOR GOOGLE SEO) */}
+        <CoveredTopicsHub />
+
+        {/* 3. WHY CHOOSE ALGOHUB SECTION — UNIQUENESS & DIFFERENTIATION */}
         <WhyChooseAlgoHub />
 
-        {/* 3. COMMUNITY & FEEDBACK BANNER */}
+        {/* 4. COMMUNITY & FEEDBACK BANNER */}
         <BetaBanner />
       </main>
 

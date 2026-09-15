@@ -27,6 +27,12 @@ export async function updateSession(request: NextRequest) {
     pathname.startsWith("/auth/") ||
     pathname.startsWith("/_next") ||
     pathname.startsWith("/api/public") ||
+    pathname.startsWith("/visualizer") ||
+    pathname.startsWith("/compare") ||
+    pathname.startsWith("/docs") ||
+    pathname.startsWith("/learn") ||
+    pathname.startsWith("/algorithms") ||
+    pathname.startsWith("/course-material") ||
     pathname === "/favicon.ico" ||
     pathname.includes(".");
 
