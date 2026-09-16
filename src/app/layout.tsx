@@ -11,6 +11,7 @@ const outfit = Outfit({
   subsets: ["latin"],
   variable: "--font-sans",
   weight: ["300", "400", "500", "600", "700", "800", "900"],
+  display: "swap",
 });
 
 // 2. Monospace Font: JetBrains Mono
@@ -18,6 +19,7 @@ const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
   variable: "--font-mono",
   weight: ["400", "500", "600", "700", "800"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {

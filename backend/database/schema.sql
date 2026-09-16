@@ -22,6 +22,7 @@ CREATE TABLE IF NOT EXISTS public.profiles (
 
 CREATE INDEX IF NOT EXISTS idx_profiles_email ON public.profiles(email);
 CREATE INDEX IF NOT EXISTS idx_profiles_role ON public.profiles(role);
+CREATE INDEX IF NOT EXISTS idx_profiles_created_at ON public.profiles(created_at DESC);
 
 -- Beta Access Control Table
 CREATE TABLE IF NOT EXISTS public.beta_access (
@@ -37,6 +38,8 @@ CREATE TABLE IF NOT EXISTS public.beta_access (
 
 CREATE INDEX IF NOT EXISTS idx_beta_access_user_id ON public.beta_access(user_id);
 CREATE INDEX IF NOT EXISTS idx_beta_access_status ON public.beta_access(status);
+CREATE INDEX IF NOT EXISTS idx_beta_access_user_status ON public.beta_access(user_id, status);
+CREATE INDEX IF NOT EXISTS idx_beta_access_approved_by ON public.beta_access(approved_by);
 
 -- Mentor Applications Table
 CREATE TABLE IF NOT EXISTS public.mentor_applications (
@@ -53,6 +56,9 @@ CREATE TABLE IF NOT EXISTS public.mentor_applications (
 
 CREATE INDEX IF NOT EXISTS idx_mentor_apps_user_id ON public.mentor_applications(user_id);
 CREATE INDEX IF NOT EXISTS idx_mentor_apps_status ON public.mentor_applications(status);
+CREATE INDEX IF NOT EXISTS idx_mentor_apps_user_status ON public.mentor_applications(user_id, status);
+CREATE INDEX IF NOT EXISTS idx_mentor_apps_reviewed_by ON public.mentor_applications(reviewed_by);
+CREATE INDEX IF NOT EXISTS idx_mentor_apps_created_at ON public.mentor_applications(created_at DESC);
 
 -- Notices Table (Broadcast messages sent by mentors/admins)
 CREATE TABLE IF NOT EXISTS public.notices (
@@ -66,6 +72,7 @@ CREATE TABLE IF NOT EXISTS public.notices (
 
 CREATE INDEX IF NOT EXISTS idx_notices_sender_id ON public.notices(sender_id);
 CREATE INDEX IF NOT EXISTS idx_notices_created_at ON public.notices(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_notices_target_created ON public.notices(target_filter, created_at DESC);
 
 -- Notice Reads Table (Tracks per-user read/unread state)
 CREATE TABLE IF NOT EXISTS public.notice_reads (
@@ -77,6 +84,8 @@ CREATE TABLE IF NOT EXISTS public.notice_reads (
 );
 
 CREATE INDEX IF NOT EXISTS idx_notice_reads_user_id ON public.notice_reads(user_id);
+CREATE INDEX IF NOT EXISTS idx_notice_reads_notice_id ON public.notice_reads(notice_id);
+CREATE INDEX IF NOT EXISTS idx_notice_reads_user_read ON public.notice_reads(user_id, read_at DESC);
 
 -- User Progress & Telemetry Table (Cloud sync for localStorage & Adaptive Dashboard)
 CREATE TABLE IF NOT EXISTS public.user_progress (
@@ -91,6 +100,8 @@ CREATE TABLE IF NOT EXISTS public.user_progress (
   updated_at TIMESTAMPTZ NOT NULL DEFAULT timezone('utc'::text, now())
 );
 
+CREATE INDEX IF NOT EXISTS idx_user_progress_last_active ON public.user_progress(last_active_at DESC);
+
 -- Feedback Submissions Table
 CREATE TABLE IF NOT EXISTS public.feedback (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -104,6 +115,8 @@ CREATE TABLE IF NOT EXISTS public.feedback (
 
 CREATE INDEX IF NOT EXISTS idx_feedback_user_id ON public.feedback(user_id);
 CREATE INDEX IF NOT EXISTS idx_feedback_created_at ON public.feedback(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_feedback_category ON public.feedback(category);
+CREATE INDEX IF NOT EXISTS idx_feedback_user_created ON public.feedback(user_id, created_at DESC);
 
 -- Bug Reports Table
 CREATE TABLE IF NOT EXISTS public.bug_reports (
@@ -123,6 +136,31 @@ CREATE TABLE IF NOT EXISTS public.bug_reports (
 CREATE INDEX IF NOT EXISTS idx_bug_reports_user_id ON public.bug_reports(user_id);
 CREATE INDEX IF NOT EXISTS idx_bug_reports_status ON public.bug_reports(status);
 CREATE INDEX IF NOT EXISTS idx_bug_reports_created_at ON public.bug_reports(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_bug_reports_status_created ON public.bug_reports(status, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_bug_reports_algo_status ON public.bug_reports(algorithm_id, status);
+
+-- Course Materials Table (Lipschutz & Seymour 4th Ed courseware)
+CREATE TABLE IF NOT EXISTS public.course_materials (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  title TEXT NOT NULL,
+  book_reference TEXT,
+  topic_tag TEXT,
+  content_type TEXT NOT NULL CHECK (content_type IN ('topic', 'problem', 'algorithm')),
+  problem_statement TEXT,
+  explanation_or_solution TEXT NOT NULL,
+  difficulty TEXT CHECK (difficulty IN ('easy', 'medium', 'hard')),
+  assigned_date DATE,
+  created_by UUID REFERENCES public.profiles(id) ON DELETE SET NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT timezone('utc'::text, now()),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT timezone('utc'::text, now())
+);
+
+CREATE INDEX IF NOT EXISTS idx_course_materials_topic_tag ON public.course_materials(topic_tag);
+CREATE INDEX IF NOT EXISTS idx_course_materials_content_type ON public.course_materials(content_type);
+CREATE INDEX IF NOT EXISTS idx_course_materials_created_at ON public.course_materials(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_course_materials_created_by ON public.course_materials(created_by);
+CREATE INDEX IF NOT EXISTS idx_course_materials_assigned_date ON public.course_materials(assigned_date DESC);
+CREATE INDEX IF NOT EXISTS idx_course_materials_type_tag ON public.course_materials(content_type, topic_tag);
 
 -- ----------------------------------------------------------------------------
 -- 2. ROW LEVEL SECURITY (RLS) POLICIES
@@ -136,6 +174,7 @@ ALTER TABLE public.notice_reads ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.user_progress ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.feedback ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.bug_reports ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.course_materials ENABLE ROW LEVEL SECURITY;
 
 -- Helper function: Is Admin Check
 CREATE OR REPLACE FUNCTION public.is_admin()
@@ -182,10 +221,27 @@ CREATE POLICY "beta_access_select_own_or_admin"
   ON public.beta_access FOR SELECT
   USING (auth.uid() = user_id OR public.is_admin());
 
-CREATE POLICY "beta_access_update_admin_only"
+CREATE POLICY "beta_access_insert_own_pending"
+  ON public.beta_access FOR INSERT
+  WITH CHECK (auth.uid() = user_id AND status = 'pending');
+
+CREATE POLICY "beta_access_insert_admin"
+  ON public.beta_access FOR INSERT
+  WITH CHECK (public.is_admin());
+
+CREATE POLICY "beta_access_update_own_pending"
+  ON public.beta_access FOR UPDATE
+  USING (auth.uid() = user_id AND status = 'pending')
+  WITH CHECK (auth.uid() = user_id AND status = 'pending');
+
+CREATE POLICY "beta_access_update_admin"
   ON public.beta_access FOR UPDATE
   USING (public.is_admin())
   WITH CHECK (public.is_admin());
+
+CREATE POLICY "beta_access_delete_admin"
+  ON public.beta_access FOR DELETE
+  USING (public.is_admin());
 
 -- Mentor Applications Policies
 CREATE POLICY "mentor_apps_select_own_or_admin"
@@ -259,6 +315,34 @@ CREATE POLICY "bug_reports_update_admin"
   USING (public.is_admin())
   WITH CHECK (public.is_admin());
 
+-- Course Materials Policies
+CREATE OR REPLACE FUNCTION public.is_beta_approved()
+RETURNS BOOLEAN AS $$
+BEGIN
+  RETURN EXISTS (
+    SELECT 1 FROM public.beta_access
+    WHERE user_id = auth.uid() AND status = 'approved'
+  ) OR public.is_admin();
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
+
+CREATE POLICY "course_materials_select_approved"
+  ON public.course_materials FOR SELECT
+  USING (public.is_beta_approved() OR public.is_admin());
+
+CREATE POLICY "course_materials_insert_admin"
+  ON public.course_materials FOR INSERT
+  WITH CHECK (public.is_admin());
+
+CREATE POLICY "course_materials_update_admin"
+  ON public.course_materials FOR UPDATE
+  USING (public.is_admin())
+  WITH CHECK (public.is_admin());
+
+CREATE POLICY "course_materials_delete_admin"
+  ON public.course_materials FOR DELETE
+  USING (public.is_admin());
+
 -- ----------------------------------------------------------------------------
 -- 3. FUNCTIONS & TRIGGERS
 -- ----------------------------------------------------------------------------
@@ -290,6 +374,11 @@ CREATE TRIGGER trigger_user_progress_updated_at
 DROP TRIGGER IF EXISTS trigger_bug_reports_updated_at ON public.bug_reports;
 CREATE TRIGGER trigger_bug_reports_updated_at
   BEFORE UPDATE ON public.bug_reports
+  FOR EACH ROW EXECUTE FUNCTION public.handle_updated_at();
+
+DROP TRIGGER IF EXISTS trigger_course_materials_updated_at ON public.course_materials;
+CREATE TRIGGER trigger_course_materials_updated_at
+  BEFORE UPDATE ON public.course_materials
   FOR EACH ROW EXECUTE FUNCTION public.handle_updated_at();
 
 -- Automatic User Provisioning Trigger Function
@@ -333,14 +422,6 @@ BEGIN
   ) ON CONFLICT (id) DO UPDATE SET
     full_name = CASE WHEN profiles.full_name IS NULL OR profiles.full_name = '' THEN EXCLUDED.full_name ELSE profiles.full_name END,
     avatar_url = CASE WHEN profiles.avatar_url IS NULL OR profiles.avatar_url = '' THEN EXCLUDED.avatar_url ELSE profiles.avatar_url END;
-
-  INSERT INTO public.beta_access (
-    user_id,
-    status
-  ) VALUES (
-    NEW.id,
-    'pending'
-  ) ON CONFLICT (user_id) DO NOTHING;
 
   INSERT INTO public.user_progress (
     user_id,

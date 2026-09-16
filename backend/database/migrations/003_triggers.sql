@@ -66,16 +66,7 @@ BEGIN
     'student' -- Explicit hardcoded default: client cannot elevate to admin during signup
   ) ON CONFLICT (id) DO NOTHING;
 
-  -- 2. Create Beta Access Entry (Always defaults status to 'pending')
-  INSERT INTO public.beta_access (
-    user_id,
-    status
-  ) VALUES (
-    NEW.id,
-    'pending' -- Explicit hardcoded default: requires manual admin approval
-  ) ON CONFLICT (user_id) DO NOTHING;
-
-  -- 3. Initialize Empty User Progress State
+  -- 2. Initialize Empty User Progress State
   INSERT INTO public.user_progress (
     user_id,
     completed_steps,

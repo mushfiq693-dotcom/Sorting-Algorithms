@@ -56,11 +56,30 @@ CREATE POLICY "beta_access_select_own_or_admin"
   ON public.beta_access FOR SELECT
   USING (auth.uid() = user_id OR public.is_admin());
 
--- UPDATE: ONLY Admins can modify status (approve, reject, suspend)
-CREATE POLICY "beta_access_update_admin_only"
+-- INSERT: Authenticated users can insert their own request with status = 'pending'; Admins can insert any
+CREATE POLICY "beta_access_insert_own_pending"
+  ON public.beta_access FOR INSERT
+  WITH CHECK (auth.uid() = user_id AND status = 'pending');
+
+CREATE POLICY "beta_access_insert_admin"
+  ON public.beta_access FOR INSERT
+  WITH CHECK (public.is_admin());
+
+-- UPDATE: Users can update their own notes/details while status is 'pending'; Admins can update any
+CREATE POLICY "beta_access_update_own_pending"
+  ON public.beta_access FOR UPDATE
+  USING (auth.uid() = user_id AND status = 'pending')
+  WITH CHECK (auth.uid() = user_id AND status = 'pending');
+
+CREATE POLICY "beta_access_update_admin"
   ON public.beta_access FOR UPDATE
   USING (public.is_admin())
   WITH CHECK (public.is_admin());
+
+-- DELETE: Admins can delete access records
+CREATE POLICY "beta_access_delete_admin"
+  ON public.beta_access FOR DELETE
+  USING (public.is_admin());
 
 -- ============================================================================
 -- 4. USER PROGRESS POLICIES

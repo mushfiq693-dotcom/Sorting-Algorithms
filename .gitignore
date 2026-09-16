@@ -35,3 +35,9 @@ next-env.d.ts
 
 # cache
 .npm-cache/
+
+# benchmark & audit reports
+autocannon-*.json
+lh-*.json
+lighthouse-*.json
+

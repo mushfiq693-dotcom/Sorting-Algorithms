@@ -65,7 +65,7 @@ interface ProfileUser {
   avatar_url: string | null;
   role: "student" | "mentor" | "admin";
   created_at: string;
-  status: "pending" | "approved" | "rejected" | "suspended";
+  status: "pending" | "approved" | "rejected" | "suspended" | "not_requested";
   approved_at: string | null;
   notes: string | null;
   // Telemetry fields from user_progress
@@ -244,7 +244,7 @@ export default function AdminModerationPage() {
             avatar_url: p.avatar_url || null,
             role: p.role || "student",
             created_at: p.created_at || new Date().toISOString(),
-            status: beta.status || (p.role === "admin" ? "approved" : "pending"),
+            status: beta.status || (p.role === "admin" ? "approved" : "not_requested"),
             approved_at: beta.approved_at || null,
             notes: beta.notes || null,
             completed_steps: Array.isArray(prog.completed_steps) ? prog.completed_steps : [],
@@ -469,22 +469,32 @@ export default function AdminModerationPage() {
   ) => {
     setActionLoadingId(userId);
     try {
-      const {
-        data: { user: currentAdmin },
-      } = await supabase.auth.getUser();
+      // 1. Try server-side API route first for authenticated & validated execution
+      const res = await fetch("/api/admin/users/beta-status", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId, status: newStatus }),
+      });
 
-      const { error } = await (supabase.from("beta_access") as any).upsert(
-        {
-          user_id: userId,
-          status: newStatus,
-          approved_by: newStatus === "approved" ? currentAdmin?.id : null,
-          approved_at: newStatus === "approved" ? new Date().toISOString() : null,
-          updated_at: new Date().toISOString(),
-        },
-        { onConflict: "user_id" }
-      );
+      if (!res.ok) {
+        // Fallback directly to client-side Supabase upsert
+        const {
+          data: { user: currentAdmin },
+        } = await supabase.auth.getUser();
 
-      if (error) throw error;
+        const { error } = await (supabase.from("beta_access") as any).upsert(
+          {
+            user_id: userId,
+            status: newStatus,
+            approved_by: newStatus === "approved" ? currentAdmin?.id : null,
+            approved_at: newStatus === "approved" ? new Date().toISOString() : null,
+            updated_at: new Date().toISOString(),
+          },
+          { onConflict: "user_id" }
+        );
+
+        if (error) throw error;
+      }
 
       setUsers((prev) =>
         prev.map((u) =>
@@ -1010,6 +1020,30 @@ export default function AdminModerationPage() {
                                     </div>
                                   )}
                                 </div>
+                              ) : user.status === "approved" && user.role !== "admin" ? (
+                                <div className="space-y-1">
+                                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/40 text-emerald-700 dark:text-emerald-400 font-mono text-[11px] font-bold shadow-xs">
+                                    <Check className="h-3 w-3 text-emerald-500" />
+                                    <span>Course Approved</span>
+                                  </span>
+                                  {onlineInfo.isOnline ? (
+                                    <div className="text-[10px] font-mono text-emerald-600/80 dark:text-emerald-400/80 flex items-center gap-1">
+                                      <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                                      <span>Online Now</span>
+                                    </div>
+                                  ) : (
+                                    <div className="text-[10px] font-mono text-muted-foreground">
+                                      {onlineInfo.isRecent ? onlineInfo.label : `Seen ${onlineInfo.label}`}
+                                    </div>
+                                  )}
+                                </div>
+                              ) : user.status === "suspended" ? (
+                                <div className="space-y-1">
+                                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-destructive/15 border border-destructive/40 text-destructive font-mono text-[11px] font-bold shadow-xs">
+                                    <ShieldAlert className="h-3.5 w-3.5 text-destructive" />
+                                    <span>Suspended</span>
+                                  </span>
+                                </div>
                               ) : onlineInfo.isOnline ? (
                                 <div className="space-y-1">
                                   <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/40 text-emerald-700 dark:text-emerald-400 font-mono text-[11px] font-bold shadow-xs">
@@ -1064,7 +1098,7 @@ export default function AdminModerationPage() {
                             {/* Moderation & Activity Inspection Actions */}
                             <td className="p-3.5 text-right font-sans">
                               <div className="flex items-center justify-end gap-1.5 flex-wrap">
-                                {/* Approve Course Access Button if Pending */}
+                                {/* Approve / Reject if Pending */}
                                 {user.status === "pending" && (
                                   <>
                                     <button
@@ -1089,6 +1123,35 @@ export default function AdminModerationPage() {
                                       Reject
                                     </button>
                                   </>
+                                )}
+
+                                {/* Grant Course Access Quick Action if Not Requested or Rejected */}
+                                {(user.status === "not_requested" || user.status === "rejected") && user.role === "student" && (
+                                  <button
+                                    onClick={() => handleUpdateStatus(user.id, "approved")}
+                                    disabled={actionLoadingId === user.id}
+                                    className="inline-flex items-center gap-1 px-2 py-1 rounded border border-emerald-500/40 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-semibold text-xs transition-colors disabled:opacity-50 cursor-pointer"
+                                    title="Manually grant course materials access to student"
+                                  >
+                                    {actionLoadingId === user.id ? (
+                                      <Loader2 className="h-3 w-3 animate-spin" />
+                                    ) : (
+                                      <Check className="h-3 w-3" />
+                                    )}
+                                    <span>Grant Access</span>
+                                  </button>
+                                )}
+
+                                {/* Revoke Course Access if Approved (non-admin) */}
+                                {user.status === "approved" && user.role === "student" && (
+                                  <button
+                                    onClick={() => handleUpdateStatus(user.id, "rejected")}
+                                    disabled={actionLoadingId === user.id}
+                                    className="px-2 py-1 rounded border border-border bg-card text-muted-foreground hover:text-destructive hover:border-destructive/40 text-xs transition-colors disabled:opacity-50 cursor-pointer"
+                                    title="Revoke course materials access"
+                                  >
+                                    Revoke
+                                  </button>
                                 )}
 
                                 {/* Inspect Telemetry / Activity History Button */}
@@ -1123,7 +1186,7 @@ export default function AdminModerationPage() {
                                   >
                                     Unsuspend
                                   </button>
-                                ) : user.status !== "pending" ? (
+                                ) : (
                                   <button
                                     onClick={() => handleUpdateStatus(user.id, "suspended")}
                                     disabled={actionLoadingId === user.id || user.role === "admin"}
@@ -1132,7 +1195,7 @@ export default function AdminModerationPage() {
                                   >
                                     Suspend
                                   </button>
-                                ) : null}
+                                )}
                               </div>
                             </td>
                           </tr>
