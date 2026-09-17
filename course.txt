@@ -8,10 +8,11 @@ You are working on the existing **AlgoHub** project. Your task is to process new
 ## 🎯 Core Objectives & Strict Principles
 
 1. **Self-Contained Content Generation**: Read and understand the attached screenshot(s)/text with high academic rigor and accuracy. Generate formal algorithm specifications, step-by-step traces, proofs, and comprehensive worked solutions.
-2. **Pedagogical Bengali Explanations (`BanglaNote` / সহজ বাংলা ব্যাখ্যা)**: Every topic and problem must include an engaging, easy-to-understand Bengali teaching explanation (`বাংলায় সহজ ব্যাখ্যা`) that breaks down abstract concepts, intuition, edge cases, and step-by-step logic for students.
-3. **Interactive Visualizer Engines (Simulation Labs)**: When a topic or problem involves step-by-step execution, pointer manipulation, memory arrays, stack operations, or complexity comparisons, provide or connect an interactive React simulation studio in `src/components/course-material/`.
-4. **Flawless Light & Dark Mode UI Consistency**: Every component, visualizer, code block, math formula card, and table must look stunning and highly readable in BOTH Light Mode and Dark Mode. Never hardcode dark-only background colors (`bg-slate-900`, `bg-black`, `#14100D`) without proper light mode styling (`bg-card`, `bg-muted`, `dark:bg-...`).
-5. **Preserve Existing Codebase**: Do NOT rewrite or break existing sorting algorithms, authentication flows, database schemas, or unrelated views. Only update or extend the Course Material data and component layers.
+2. **Deep, Exam-Focused Pedagogical Bengali Explanations (`bangla_explanation`)**: Every single topic, algorithm, and problem MUST include a comprehensive, deep, and structured Bengali guide specially crafted for students to score **Full Marks (100%)** in semester/university exams. Avoid scattered text, one-liners, or superficial summaries.
+3. **Mandatory Exam Q&A & Model Answers**: Every `bangla_explanation` must include a dedicated **"🎯 পরীক্ষায় কেমন প্রশ্ন আসতে পারে?" (Probable Exam Questions)** section and a **"✍️ পরীক্ষার জন্য প্রস্তুতকৃত আদর্শ উত্তর" (Exam-Ready Model Answers)** section with point-by-point, full-marks-scoring responses.
+4. **Interactive Visualizer Engines (Simulation Labs)**: When a topic or problem involves step-by-step execution, pointer manipulation, memory arrays, stack operations, or complexity comparisons, provide or connect an interactive React simulation studio in `src/components/course-material/`.
+5. **Flawless Light & Dark Mode UI Consistency**: Every component, visualizer, code block, math formula card, and table must look stunning and highly readable in BOTH Light Mode and Dark Mode. Never hardcode dark-only background colors (`bg-slate-900`, `bg-black`, `#14100D`) without proper light mode styling (`bg-card`, `bg-muted`, `dark:bg-...`).
+6. **Preserve Existing Codebase**: Do NOT rewrite or break existing sorting algorithms, authentication flows, database schemas, or unrelated views. Only update or extend the Course Material data and component layers.
 
 ---
 
@@ -20,40 +21,87 @@ You are working on the existing **AlgoHub** project. Your task is to process new
 Course materials are stored in `src/data/defaultCourseMaterials.ts` (and synced to Supabase `course_materials` table):
 
 ```typescript
+export type CourseMaterialContentType = "topic" | "problem" | "algorithm";
+export type CourseMaterialDifficulty = "easy" | "medium" | "hard";
+
 export interface CourseMaterial {
-  id: string;
-  title: string;
-  book_reference?: string;         // e.g. "Chapter 4: Linear Arrays, Section 4.3, Page 98"
-  topic_tag?: string;              // e.g. "Arrays", "Linked Lists", "Stacks", "Complexity"
-  content_type: 'topic' | 'problem';
-  problem_statement?: string;      // Verbatim transcribed problem statement (for 'problem')
+  id: string;                      // e.g. "cm-algo-5-5", "cm-topic-5-7", "cm-problem-5-14"
+  title: string;                   // e.g. "Algorithm 5.5: Inserting a Node After a Given Location (INSLOC)"
+  book_reference: string | null;   // e.g. "Lipschutz & Seymour, Data Structures, Revised 4th Ed., Chapter 5: Linked Lists, Page 155"
+  topic_tag: string | null;        // e.g. "Linked Lists", "Arrays", "Stacks", "Complexity Analysis"
+  content_type: CourseMaterialContentType; // "topic" | "problem" | "algorithm"
+  problem_statement: string | null;// Verbatim transcribed problem statement (for 'problem')
   explanation_or_solution: string; // Formal textbook specification, analysis, and solution in Markdown
-  bangla_explanation?: string;     // In-depth Bengali pedagogical walkthrough (markdown supported)
-  difficulty?: 'easy' | 'medium' | 'hard';
-  assigned_date?: string;          // ISO date or null
-  visualizer_id?: string;          // Key mapping to visualizer registry (e.g. "linear-search-studio")
+  bangla_explanation?: string | null; // Deep, structured Bengali pedagogical walkthrough + Exam Q&A (Markdown)
+  difficulty: CourseMaterialDifficulty | null; // "easy" | "medium" | "hard"
+  assigned_date: string | null;    // ISO date or null
+  created_by: string | null;
+  created_at: string;
+  updated_at: string;
 }
 ```
 
 ---
 
-## 2. Content Generation Standards
+## 2. Standard 5-Part Structure for Every `bangla_explanation`
 
-### 2.1 For Topic Entries (`content_type = 'topic'`)
-- **Formal Specification**: Transcribe and format textbook algorithms (e.g., `Algorithm 4.3: Deleting from a Linear Array`) with 1-based textbook pseudocode, clear variable definitions, and edge cases.
-- **Complexity Analysis**: Show Best Case $\mathcal{O}(1)$, Worst Case $\mathcal{O}(n)$, and Average Case $\mathcal{O}(n)$ with formal mathematical justification.
-- **C++ Reference Implementation**: Clean, idiomatic modern C++ snippet illustrating the concept.
-- **Bengali Intuition**: Add a comprehensive `bangla_explanation` explaining *why* the data structure/algorithm is used, how pointers or indices move, and real-life analogies.
+Whenever creating or updating any entry (Topic, Algorithm, or Problem), the `bangla_explanation` Markdown string MUST strictly contain the following 5 structured sections:
 
-### 2.2 For Problem Entries (`content_type = 'problem'`)
-- **Exact Transcription**: Transcribe the problem statement verbatim from the screenshot (exact arrays, target values, stack operations, or permutations).
-- **Step-by-Step Simulation**: Work out the complete trace step-by-step (e.g., intermediate stack contents, low/mid/high binary search comparisons, memory array `INFO` & `LINK` pointer rewiring).
-- **Collapsible Solution**: Solutions must be wrapped in the interactive solution reveal deck so students can try solving first.
-- **Bengali Guide**: Break down common pitfalls, why alternative answers fail, and how to verify correctness.
+```markdown
+### 🇧🇩 সহজ বাংলায় [টপিক / অ্যালগরিদম / প্রবলেম নাম ও রেফারেন্স]
+
+#### ১. সহজ ভাষায় মূল দর্শন ও কনসেপ্ট (Intuition & Core Concept):
+- প্রাঞ্জল ভাষায় মূল উদ্দেশ্য, আইডিয়া ও যৌক্তিক ভিত্তি।
+- রিয়েল-লাইফ উপমা (Real-Life Analogy): যেমন ট্রেনের বগি, লাইব্রেরির বই, ক্যাফেটেরিয়ার প্লেটের স্তূপ ইত্যাদি।
+- কেন এটি প্রয়োজন এবং এর ব্যবহারিক গুরুত্ব।
 
 ---
 
-## 3. Interactive Visualizer Engines (Simulation Labs)
+#### ২. বিস্তারিত অ্যালগরিদম ও ড্রাই-রান / মেমরি অপারেশনস (Step-by-Step Tracing & Memory Operations):
+- পয়েন্টার বা মেমরি অ্যারে রূপান্তর (\`START\`, \`AVAIL\`, \`INFO\`, \`LINK\`, \`TOP\`, \`LOC\`, \`PTR\`)।
+- বাউন্ডারি ও স্পেশাল কেস বিশ্লেষণ (\`OVERFLOW\`, \`UNDERFLOW\`, খালি লিস্ট, ১টি উপাদান, সেন্টিনেল বাউন্স)।
+- প্রতিটি ইটারেশনের পুঙ্খানুপুঙ্খ ড্রাই-রান টেবিল (Trace Table) বা মেমরি স্টেট।
+
+---
+
+#### ৩. টাইম ও স্পেস কমপ্লেক্সিটি নিখুঁত বিশ্লেষণ (Time & Space Complexity Deep Dive):
+- Best Case, Worst Case, Average Case এবং Auxiliary Space Complexity এর গাণিতিক কারণসহ স্পষ্ট ব্যাখ্যা।
+
+---
+
+#### ৪. 🎯 পরীক্ষায় কেমন প্রশ্ন আসতে পারে? (Probable Exam Questions):
+1. **সংক্ষিপ্ত প্রশ্ন (Short Questions / ২-৩ মার্কস):** সংজ্ঞা, মূল শর্ত, এজ কেস, বাউন্ডারি কন্ডিশন।
+2. **রচনামূলক প্রশ্ন (Broad / ৫-১০ মার্কস):** অ্যালগরিদম লিখন, মেমরি ট্রেস টেবিল তৈরি, কমপ্লেক্সিটি প্রমাণ, অথবা তুলনামূলক পার্থক্য।
+
+---
+
+#### ৫. ✍️ পরীক্ষার জন্য প্রস্তুতকৃত আদর্শ উত্তর (Exam-Ready Model Answers):
+- পরীক্ষায় যেভাবে লিখলে শিক্ষক সম্পূর্ণ নম্বর (Full Marks) প্রদান করবেন, সেই পয়েন্ট-বাই-পয়েন্ট কাঠামোর আদর্শ উত্তর।
+```
+
+---
+
+## 3. Specific Generation Standards by Content Type
+
+### 3.1 For Topic Entries (`content_type = 'topic'`)
+- **Formal Textbook Specification**: Formal definitions, properties, memory representations (e.g., Row-Major/Column-Major for Arrays, Singly/Doubly/Circular for Linked Lists, LIFO for Stacks).
+- **Complexity Summary**: Tabular breakdown of Time and Space complexity for all supported operations.
+- **C++ Reference Implementation**: Clean, idiomatic modern C++ snippet illustrating the concept.
+- **Deep Bengali Guide**: Rich intuition, analogies, architectural diagrams (in markdown text/tables), and full Exam Model Answers.
+
+### 3.2 For Algorithm Entries (`content_type = 'algorithm'`)
+- **Textbook Pseudocode**: Transcribe 1-indexed Lipschutz textbook pseudocode with exact variable naming (`INFO`, `LINK`, `AVAIL`, `START`, `TOP`, `LOC`).
+- **Complete Boundary Guards**: Explicit `OVERFLOW` and `UNDERFLOW` checks and pointer reassignment sequences.
+- **Deep Bengali Guide**: Step-by-step logic, pointer update diagrams, why the order of pointer assignments matters, and exact exam-ready algorithm write-up.
+
+### 3.3 For Problem Entries (`content_type = 'problem'`)
+- **Exact Transcription**: Verbatim problem statement from the textbook (exact input values, arrays, target keys, or expressions).
+- **Step-by-Step Worked Solution**: Complete math derivation, iteration table, stack trace, or tree diagrams.
+- **Deep Bengali Guide**: Plain-language walkthrough of the solution, common traps, verification checks, and model answers for semester exam questions.
+
+---
+
+## 4. Interactive Visualizer Engines (Simulation Labs)
 
 Whenever a topic or problem benefits from visual or interactive demonstration:
 1. Create or extend the corresponding visualizer in `src/components/course-material/<VisualizerName>.tsx`.
@@ -65,7 +113,7 @@ Whenever a topic or problem benefits from visual or interactive demonstration:
 
 ---
 
-## 4. UI & Theming Requirements (Strict Light & Dark Mode)
+## 5. UI & Theming Requirements (Strict Light & Dark Mode)
 
 All visualizers and markdown containers must follow AlgoHub's design system:
 
@@ -74,14 +122,14 @@ All visualizers and markdown containers must follow AlgoHub's design system:
 - **Code Blocks & Pre tags**: `bg-muted/30 dark:bg-[#14100D] border border-border dark:border-[#382E2B] text-foreground dark:text-[#E8DFD4]`
 - **Text Tokens**: `text-foreground dark:text-slate-200`, `text-muted-foreground dark:text-slate-400`
 - **Accent Badges & Math Cards**: `bg-cyan-500/10 dark:bg-cyan-950/40 text-cyan-700 dark:text-cyan-300 border-cyan-500/30`
-- **Bengali Note Cards**: Use `BanglaNote.tsx` (`bg-emerald-500/10 border-emerald-500/30 text-emerald-700 dark:text-emerald-400`).
+- **Bengali Guide Toggle Cards**: Clear collapsible cards with `FormattedMarkdown` support for formulas, tables, and alerts.
 
 ---
 
-## 5. Implementation Workflow & Quality Verification
+## 6. Implementation Workflow & Quality Verification Loop
 
-1. **Audit & Classify**: Review attached screenshots/text. Classify each distinct topic or problem.
-2. **Draft & Double-Check**: Derive solutions mathematically, verifying traces by hand before inserting.
-3. **Codebase Check**: Keep all other features, components, and backend authentication untouched.
-4. **Compile & Typecheck**: Run `npx tsc --noEmit` and ensure **0 errors**.
-5. **Summary Report**: Present created entries, verified solutions, assumptions (if any), and file changes.
+1. **Audit & Classify**: Review input material. Classify as `topic`, `algorithm`, or `problem`.
+2. **Draft Content**: Generate both English textbook specification and complete 5-part Bengali guide.
+3. **Verify Exam Q&A Completeness**: Ensure the `bangla_explanation` contains BOTH `🎯 পরীক্ষায় কেমন প্রশ্ন আসতে পারে?` AND `✍️ পরীক্ষার জন্য প্রস্তুতকৃত আদর্শ উত্তর`.
+4. **Compile & Typecheck**: Run `npm run build` or `npx tsc --noEmit` and ensure **0 errors**.
+5. **Database Sync**: If database seeding is active, sync using `npx tsx backend/scripts/seed-course-materials.ts`.

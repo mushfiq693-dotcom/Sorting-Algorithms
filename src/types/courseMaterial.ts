@@ -10,6 +10,7 @@ export interface CourseMaterial {
   problem_statement: string | null;
   explanation_or_solution: string;
   bangla_explanation?: string | null;
+  is_midterm?: boolean;
   difficulty: CourseMaterialDifficulty | null;
   assigned_date: string | null;
   created_by: string | null;

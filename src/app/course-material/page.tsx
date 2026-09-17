@@ -522,6 +522,9 @@ function getCanonicalMaterialKey(m: CourseMaterial): string {
   if (m.id === "cm-problem-2-12") return "ch2-p2.12";
 
   if (m.id === "cm-topic-3-5") return "ch3-topic";
+  if (m.id === "cm-algo-3-1") return "ch3-algo3.1";
+  if (m.id === "cm-algo-3-2") return "ch3-algo3.2";
+  if (m.id === "cm-algo-3-3") return "ch3-algo3.3";
   if (m.id === "cm-problem-3-1") return "ch3-p3.1";
   if (m.id === "cm-problem-3-2") return "ch3-p3.2";
   if (m.id === "cm-problem-3-5") return "ch3-p3.5";
@@ -531,6 +534,7 @@ function getCanonicalMaterialKey(m: CourseMaterial): string {
   if (m.id === "cm-algo-4-1") return "ch4-algo4.1";
   if (m.id === "cm-algo-4-2") return "ch4-algo4.2";
   if (m.id === "cm-algo-4-3") return "ch4-algo4.3";
+  if (m.id === "cm-algo-4-4") return "ch4-algo4.4";
   if (m.id === "cm-topic-4-7") return "ch4-topic-4.7";
   if (m.id === "cm-algo-4-5") return "ch4-algo4.5";
   if (m.id === "cm-topic-4-8") return "ch4-topic-4.8";
@@ -561,7 +565,10 @@ function getCanonicalMaterialKey(m: CourseMaterial): string {
   if (m.id === "cm-algo-5-5") return "ch5-algo5.5";
   if (m.id === "cm-topic-5-8") return "ch5-topic-5.8";
   if (m.id === "cm-algo-5-8") return "ch5-algo-5.8";
+  if (m.id === "cm-algo-5-9-findb") return "ch5-algo-5.9-findb";
+  if (m.id === "cm-algo-5-10") return "ch5-algo-5.10";
   if (m.id === "cm-topic-5-9") return "ch5-topic-5.9";
+  if (m.id === "cm-algo-5-11") return "ch5-algo-5.11";
   if (m.id === "cm-algo-5-12") return "ch5-algo-5.12";
   if (m.id === "cm-algo-5-13") return "ch5-algo-5.13";
   if (m.id === "cm-algo-5-14") return "ch5-algo-5.14";
@@ -612,12 +619,15 @@ function getCanonicalMaterialKey(m: CourseMaterial): string {
   // Chapter 5: Linked Lists
   if (text.includes("prereq") || text.includes("before you start")) return "ch5-prereq";
   if (text.includes("5.20") || text.includes("polynomial")) return "ch5-p5.20";
-  if (text.includes("5.10") || text.includes("two-way") || text.includes("doubly")) return "ch5-topic-5.10";
+  if (text.includes("5.10") && (text.includes("two-way") || text.includes("doubly") || m.content_type === "topic")) return "ch5-topic-5.10";
+  if (text.includes("5.10") && (text.includes("delete") || text.includes("deleting")) && m.content_type === "algorithm") return "ch5-algo-5.10";
   if (text.includes("5.14") && m.content_type === "algorithm") return "ch5-algo-5.14";
   if (text.includes("5.14") && m.content_type === "problem") return "ch5-p5.14";
   if (text.includes("5.15")) return "ch5-p5.15";
   if (text.includes("5.13")) return "ch5-algo-5.13";
   if (text.includes("5.12")) return "ch5-algo-5.12";
+  if (text.includes("5.11") || text.includes("travhl") || (text.includes("circular header") && m.content_type === "algorithm")) return "ch5-algo-5.11";
+  if (text.includes("5.9") && (text.includes("findb") || text.includes("preceding node"))) return "ch5-algo-5.9-findb";
   if (text.includes("5.9")) return "ch5-topic-5.9";
   if (text.includes("5.8") && m.content_type === "algorithm") return "ch5-algo-5.8";
   if (text.includes("5.8") && m.content_type === "topic") return "ch5-topic-5.8";
@@ -647,6 +657,7 @@ function getCanonicalMaterialKey(m: CourseMaterial): string {
   if (text.includes("4.6") || (text.includes("binary search") && m.content_type === "algorithm")) return "ch4-algo4.6";
   if (text.includes("4.9") || text.includes("search 40") || text.includes("search 85")) return "ch4-p4.9";
   if (text.includes("4.10") || text.includes("limitations") || text.includes("1000000") || text.includes("1,000,000")) return "ch4-p4.10";
+  if (text.includes("4.4") || (text.includes("bubble") && m.content_type === "algorithm")) return "ch4-algo4.4";
   if (text.includes("4.1") || text.includes("traversing a linear array")) return "ch4-algo4.1";
   if (text.includes("4.2") || text.includes("inserting into a linear array")) return "ch4-algo4.2";
   if (text.includes("4.3") || text.includes("deleting from a linear array")) return "ch4-algo4.3";
@@ -654,6 +665,9 @@ function getCanonicalMaterialKey(m: CourseMaterial): string {
 
   // Chapter 3: String Processing
   if ((text.includes("chapter 3") || text.includes("ch 3") || text.includes("3.5")) && m.content_type === "topic") return "ch3-topic";
+  if (text.includes("3.1") && m.content_type === "algorithm") return "ch3-algo3.1";
+  if (text.includes("3.2") && m.content_type === "algorithm") return "ch3-algo3.2";
+  if (text.includes("3.3") || (text.includes("pattern") && text.includes("index") && m.content_type === "algorithm")) return "ch3-algo3.3";
   if (text.includes("3.1") || text.includes("substring") || text.includes("concatenation")) return "ch3-p3.1";
   if (text.includes("3.2") || text.includes("indexing") || text.includes("replacement & insertion") || text.includes("inserting into a string")) return "ch3-p3.2";
   if (text.includes("3.5") || text.includes("deletion & boundary") || text.includes("deleting from a string")) return "ch3-p3.5";
@@ -688,6 +702,9 @@ function getMaterialSortKey(m: CourseMaterial): number {
 
   // Chapter 3: String Processing
   if (key === "ch3-topic") return 300;
+  if (key === "ch3-algo3.1") return 301;
+  if (key === "ch3-algo3.2") return 302;
+  if (key === "ch3-algo3.3") return 303;
   if (key === "ch3-p3.1") return 310;
   if (key === "ch3-p3.2") return 320;
   if (key === "ch3-p3.5") return 350;
@@ -698,6 +715,7 @@ function getMaterialSortKey(m: CourseMaterial): number {
   if (key === "ch4-algo4.1") return 410;
   if (key === "ch4-algo4.2") return 420;
   if (key === "ch4-algo4.3") return 430;
+  if (key === "ch4-algo4.4") return 440;
   if (key === "ch4-topic-4.7") return 470;
   if (key === "ch4-algo4.5") return 475;
   if (key === "ch4-topic-4.8") return 480;
@@ -729,7 +747,10 @@ function getMaterialSortKey(m: CourseMaterial): number {
   if (key === "ch5-algo5.5") return 5070;
   if (key === "ch5-topic-5.8") return 5072;
   if (key === "ch5-algo-5.8") return 5075;
+  if (key === "ch5-algo-5.9-findb") return 5076;
+  if (key === "ch5-algo-5.10") return 5077;
   if (key === "ch5-topic-5.9") return 5080;
+  if (key === "ch5-algo-5.11") return 5082;
   if (key === "ch5-algo-5.12") return 5085;
   if (key === "ch5-algo-5.13") return 5087;
   if (key === "ch5-algo-5.14") return 5090;
@@ -909,6 +930,7 @@ export default function CourseMaterialPage() {
   const [selectedType, setSelectedType] = useState<string>("all");
   const [selectedTag, setSelectedTag] = useState<string>("all");
   const [selectedDifficulty, setSelectedDifficulty] = useState<string>("all");
+  const [showMidtermOnly, setShowMidtermOnly] = useState<boolean>(false);
 
   // Track expanded cards (Dropdown accordions)
   // Essential interactive cards open by default for immediate engagement
@@ -1030,20 +1052,22 @@ export default function CourseMaterialPage() {
       const matchesTag = selectedTag === "all" || m.topic_tag === selectedTag;
       const matchesType = selectedType === "all" || m.content_type === selectedType;
       const matchesDifficulty = selectedDifficulty === "all" || m.difficulty === selectedDifficulty;
+      const matchesMidterm = !showMidtermOnly || !!m.is_midterm;
 
-      return matchesSearch && matchesChapter && matchesTag && matchesType && matchesDifficulty;
+      return matchesSearch && matchesChapter && matchesTag && matchesType && matchesDifficulty && matchesMidterm;
     });
 
     // Sort numerically in ascending Chapter & Section order
     return list.sort((a, b) => getMaterialSortKey(a) - getMaterialSortKey(b));
-  }, [materials, searchQuery, selectedChapter, selectedTag, selectedType, selectedDifficulty]);
+  }, [materials, searchQuery, selectedChapter, selectedTag, selectedType, selectedDifficulty, showMidtermOnly]);
 
   const hasActiveFilters =
     searchQuery ||
     selectedChapter !== "all" ||
     selectedType !== "all" ||
     selectedTag !== "all" ||
-    selectedDifficulty !== "all";
+    selectedDifficulty !== "all" ||
+    showMidtermOnly;
 
   const resetAllFilters = () => {
     setSearchQuery("");
@@ -1051,6 +1075,7 @@ export default function CourseMaterialPage() {
     setSelectedType("all");
     setSelectedTag("all");
     setSelectedDifficulty("all");
+    setShowMidtermOnly(false);
   };
 
   const allAreExpanded =
@@ -1062,6 +1087,7 @@ export default function CourseMaterialPage() {
     const totalProblems = materials.filter((m) => m.content_type === "problem").length;
     const totalTopics = materials.filter((m) => m.content_type === "topic").length;
     const totalAlgorithms = materials.filter((m) => m.content_type === "algorithm").length;
+    const totalMidterm = materials.filter((m) => m.is_midterm).length;
     const chapters = new Set(
       materials
         .map((m) => {
@@ -1074,6 +1100,7 @@ export default function CourseMaterialPage() {
       totalProblems,
       totalTopics,
       totalAlgorithms,
+      totalMidterm,
       totalChapters: chapters.size || 3,
     };
   }, [materials]);
@@ -1302,19 +1329,29 @@ export default function CourseMaterialPage() {
                 </div>
               </div>
 
-              {/* Interactive Labs Stat */}
-              <div className="p-3 rounded-2xl border border-border/80 bg-secondary/60 flex flex-col justify-between">
+              {/* Midterm Exam Focus Stat */}
+              <button
+                onClick={() => effectiveCourseApproved && setShowMidtermOnly(!showMidtermOnly)}
+                disabled={!effectiveCourseApproved}
+                className={`p-3 rounded-2xl border text-left transition-all ${
+                  effectiveCourseApproved ? "active:scale-95 cursor-pointer" : "cursor-default"
+                } flex flex-col justify-between ${
+                  showMidtermOnly && effectiveCourseApproved
+                    ? "bg-amber-500/25 border-amber-500/60 shadow-md shadow-amber-500/15 ring-2 ring-amber-400/40"
+                    : "bg-amber-500/10 hover:bg-amber-500/15 border-amber-500/30"
+                }`}
+              >
                 <div className="flex items-center justify-between text-muted-foreground mb-1">
-                  <span className="text-[10px] font-mono font-bold uppercase tracking-wider">Labs</span>
-                  <Sparkles className="h-3.5 w-3.5 text-pink-400" />
+                  <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-amber-600 dark:text-amber-300">Midterm</span>
+                  <Flame className="h-3.5 w-3.5 text-amber-500 animate-pulse" />
                 </div>
-                <div className="text-xl font-extrabold text-foreground font-mono">
-                  5
+                <div className="text-xl font-extrabold text-amber-600 dark:text-amber-300 font-mono">
+                  {stats.totalMidterm}
                 </div>
-                <div className="text-[10px] text-pink-600 dark:text-pink-400 font-medium mt-0.5">
-                  Simulators
+                <div className="text-[10px] text-amber-700 dark:text-amber-400 font-medium mt-0.5">
+                  Exam Focus Items
                 </div>
-              </div>
+              </button>
             </div>
           </div>
         </div>
@@ -1851,6 +1888,21 @@ export default function CourseMaterialPage() {
                 badgeColor="text-amber-500"
               />
 
+              {/* Midterm Focus Filter Toggle Button */}
+              <button
+                type="button"
+                onClick={() => setShowMidtermOnly(!showMidtermOnly)}
+                className={`inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold border transition-all active:scale-95 shadow-sm cursor-pointer ${
+                  showMidtermOnly
+                    ? "bg-amber-500/20 text-amber-600 dark:text-amber-300 border-amber-500/60 shadow-amber-500/20 ring-2 ring-amber-400/30 font-black"
+                    : "bg-amber-500/10 hover:bg-amber-500/15 text-amber-700 dark:text-amber-400 border-amber-500/30"
+                }`}
+              >
+                <Flame className="h-3.5 w-3.5 text-amber-500 animate-pulse" />
+                <span>🎯 Midterm Focus ({stats.totalMidterm})</span>
+                {showMidtermOnly && <CheckCircle2 className="h-3.5 w-3.5 text-amber-500 ml-1" />}
+              </button>
+
               {hasActiveFilters && (
                 <button
                   onClick={resetAllFilters}
@@ -1871,6 +1923,11 @@ export default function CourseMaterialPage() {
                 {filteredMaterials.length}
               </span>
               <span>items in sequential chapter order</span>
+              {showMidtermOnly && (
+                <span className="px-2 py-0.5 rounded-md bg-amber-500/15 text-amber-600 dark:text-amber-300 border border-amber-500/30 font-bold">
+                  🎯 Midterm Filter Active
+                </span>
+              )}
             </div>
 
             <div className="flex items-center gap-2">
@@ -1944,7 +2001,11 @@ export default function CourseMaterialPage() {
                 <article
                   key={item.id}
                   className={`rounded-3xl border transition-all duration-300 overflow-hidden shadow-lg ${
-                    isCardOpen
+                    item.is_midterm
+                      ? isCardOpen
+                        ? "border-amber-500/60 bg-card/95 shadow-amber-500/10 ring-1 ring-amber-500/40"
+                        : "border-amber-500/40 bg-gradient-to-r from-amber-500/[0.04] via-card/80 to-card/70 hover:border-amber-500/60 hover:bg-card/95"
+                      : isCardOpen
                       ? "border-cyan-500/40 bg-card/95 shadow-cyan-500/5 ring-1 ring-cyan-500/20"
                       : "border-border/80 bg-card/70 hover:border-cyan-500/30 hover:bg-card/90"
                   }`}
@@ -1956,13 +2017,25 @@ export default function CourseMaterialPage() {
                   >
                     <div className="flex items-start sm:items-center gap-3.5 flex-1 min-w-0">
                       {/* Number Badge */}
-                      <span className="h-8 w-8 rounded-xl bg-cyan-500/15 border border-cyan-500/30 flex items-center justify-center font-mono text-xs font-black text-cyan-600 dark:text-cyan-400 shrink-0 shadow-sm shadow-cyan-500/10 group-hover:scale-105 transition-transform">
+                      <span className={`h-8 w-8 rounded-xl border flex items-center justify-center font-mono text-xs font-black shrink-0 shadow-sm group-hover:scale-105 transition-transform ${
+                        item.is_midterm
+                          ? "bg-amber-500/20 border-amber-500/40 text-amber-600 dark:text-amber-300 shadow-amber-500/10"
+                          : "bg-cyan-500/15 border-cyan-500/30 text-cyan-600 dark:text-cyan-400 shadow-cyan-500/10"
+                      }`}>
                         {index + 1}
                       </span>
 
                       {/* Main Title & Chapter Info */}
                       <div className="flex-1 min-w-0">
                         <div className="flex flex-wrap items-center gap-2 mb-1">
+                          {/* Midterm Syllabus Highlighting Badge */}
+                          {item.is_midterm && (
+                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg text-[10px] font-mono font-extrabold bg-gradient-to-r from-amber-500/25 to-orange-500/25 text-amber-700 dark:text-amber-300 border border-amber-500/50 shadow-sm shadow-amber-500/10 animate-pulse">
+                              <Flame className="h-3 w-3 text-amber-500" />
+                              <span>🎯 MIDTERM SYLLABUS</span>
+                            </span>
+                          )}
+
                           {/* Chapter Badge */}
                           {chapterText && (
                             <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg text-[10px] font-mono font-extrabold bg-cyan-500/15 text-cyan-600 dark:text-cyan-300 border border-cyan-500/30">
@@ -2014,7 +2087,11 @@ export default function CourseMaterialPage() {
                         </div>
 
                         {/* Card Title */}
-                        <h2 className="text-base sm:text-lg font-extrabold text-foreground tracking-tight group-hover:text-cyan-500 dark:group-hover:text-cyan-400 transition-colors truncate">
+                        <h2 className={`text-base sm:text-lg font-extrabold tracking-tight transition-colors truncate ${
+                          item.is_midterm
+                            ? "text-foreground group-hover:text-amber-500 dark:group-hover:text-amber-400"
+                            : "text-foreground group-hover:text-cyan-500 dark:group-hover:text-cyan-400"
+                        }`}>
                           {item.title}
                         </h2>
                       </div>
@@ -2064,6 +2141,28 @@ export default function CourseMaterialPage() {
                           📖 Lipschutz &amp; Seymour, Data Structures, Revised 4th Ed.
                         </span>
                       </div>
+
+                      {/* Midterm Exam Focus Banner */}
+                      {item.is_midterm && (
+                        <div className="rounded-2xl border border-amber-500/40 bg-gradient-to-r from-amber-500/15 via-orange-500/10 to-amber-500/5 p-4 sm:p-5 flex items-start gap-3.5 text-xs shadow-sm shadow-amber-500/5">
+                          <div className="h-8 w-8 rounded-xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center shrink-0 text-amber-500 mt-0.5">
+                            <Flame className="h-4 w-4 animate-pulse" />
+                          </div>
+                          <div className="space-y-1 flex-1">
+                            <div className="flex items-center gap-2">
+                              <span className="font-extrabold text-foreground text-xs sm:text-sm font-sans tracking-tight">
+                                🎯 মিডটার্ম পরীক্ষার নির্ধারিত টপিক
+                              </span>
+                              <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-amber-500/25 text-amber-700 dark:text-amber-300 border border-amber-500/40">
+                                Exam Focus
+                              </span>
+                            </div>
+                            <p className="text-muted-foreground leading-relaxed text-[11px] sm:text-xs">
+                              এই টপিকটি আপনার মিডটার্ম পরীক্ষার সিলেবাসের অংশ। পরীক্ষার জন্য এর অ্যালগরিদম, গাণিতিক জটিলতা এবং <strong className="text-foreground font-semibold">৫-পার্ট বাংলা মডেল উত্তরগুলো</strong> বিশেষভাবে প্রস্তুতি নিন।
+                            </p>
+                          </div>
+                        </div>
+                      )}
 
                       {/* Problem Statement Section (Always visible for Problem Type so students can see the question) */}
                       {isProblem && item.problem_statement && (
