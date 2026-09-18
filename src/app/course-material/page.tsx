@@ -1157,16 +1157,17 @@ export default function CourseMaterialPage() {
             </span>
           </div>
 
-          <div className="flex items-center gap-2 sm:gap-4">
+          <div className="flex items-center gap-1.5 sm:gap-3">
             <Link
               href="/learn"
-              className="px-3 py-1.5 rounded-xl border border-border bg-secondary/70 text-xs font-semibold hover:bg-secondary transition-colors"
+              className="px-2.5 sm:px-3 py-1.5 rounded-xl border border-border bg-secondary/70 text-xs font-semibold hover:bg-secondary transition-colors active:scale-95"
             >
-              Curriculum
+              <span className="hidden xs:inline">Curriculum</span>
+              <span className="xs:hidden">Learn</span>
             </Link>
             <Link
               href="/docs"
-              className="px-3 py-1.5 rounded-xl border border-border bg-secondary/70 text-xs font-semibold hover:bg-secondary transition-colors"
+              className="hidden sm:inline-block px-2.5 sm:px-3 py-1.5 rounded-xl border border-border bg-secondary/70 text-xs font-semibold hover:bg-secondary transition-colors active:scale-95"
             >
               Docs
             </Link>

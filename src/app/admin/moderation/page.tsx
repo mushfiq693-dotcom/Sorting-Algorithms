@@ -641,30 +641,32 @@ export default function AdminModerationPage() {
     <div className="min-h-screen bg-background text-foreground flex flex-col font-sans selection:bg-[#C9A962]/35 selection:text-[#1C1714]">
       {/* Top Header Bar */}
       <header className="sticky top-0 z-40 w-full border-b border-border bg-background/95 backdrop-blur-xl">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-3">
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
             <Link
               href="/"
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded border border-border bg-card text-xs font-semibold text-foreground hover:text-primary hover:border-primary transition-colors"
+              className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded border border-border bg-card text-xs font-semibold text-foreground hover:text-primary hover:border-primary transition-colors shrink-0 active:scale-95"
             >
               <ArrowLeft className="h-3.5 w-3.5" />
-              <span>Back to App</span>
+              <span className="hidden xs:inline">Back to App</span>
+              <span className="xs:hidden">Back</span>
             </Link>
 
-            <div className="h-4 w-px bg-border mx-1" />
+            <div className="h-4 w-px bg-border mx-0.5 sm:mx-1 shrink-0" />
 
-            <div className="flex items-center gap-2">
-              <span className="font-heading text-lg font-bold tracking-tight text-foreground">
-                AlgoHub Admin Center
+            <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
+              <span className="font-heading text-sm sm:text-lg font-bold tracking-tight text-foreground truncate">
+                Admin Center
               </span>
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-[#8B2635] text-white">
+              <span className="inline-flex items-center gap-1 px-1.5 sm:px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-[#8B2635] text-white shrink-0">
                 <ShieldAlert className="h-3 w-3" />
-                <span>ROOT ADMIN</span>
+                <span className="hidden xs:inline">ROOT ADMIN</span>
+                <span className="xs:hidden">ADMIN</span>
               </span>
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
             {/* Live Indicator Pill in Header */}
             <div className="hidden sm:inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 text-xs font-mono font-bold">
               <span className="relative flex h-2 w-2">
@@ -768,10 +770,10 @@ export default function AdminModerationPage() {
         </div>
 
         {/* Tab Switcher */}
-        <div className="flex border-b border-border gap-2 overflow-x-auto font-sans">
+        <div className="flex border-b border-border gap-2 overflow-x-auto touch-scroll no-scrollbar [scrollbar-width:none] [&::-webkit-scrollbar]:hidden font-sans pb-1">
           <button
             onClick={() => setActiveTab("users")}
-            className={`pb-3 px-4 text-xs sm:text-sm font-semibold transition-all border-b-2 flex items-center gap-2 whitespace-nowrap cursor-pointer ${
+            className={`pb-2.5 px-3 sm:px-4 text-xs sm:text-sm font-semibold transition-all border-b-2 flex items-center gap-1.5 sm:gap-2 whitespace-nowrap cursor-pointer active:scale-95 ${
               activeTab === "users"
                 ? "border-primary text-primary font-bold"
                 : "border-transparent text-muted-foreground hover:text-foreground"
@@ -781,7 +783,7 @@ export default function AdminModerationPage() {
             <span>Learners &amp; Activity ({users.length})</span>
             {pendingUsersCount > 0 && (
               <span className="px-2 py-0.5 rounded-full bg-amber-500 text-black text-[10px] font-mono font-bold animate-pulse">
-                {pendingUsersCount} Pending Course Access
+                {pendingUsersCount} Pending
               </span>
             )}
             {onlineCount > 0 && (
@@ -793,14 +795,14 @@ export default function AdminModerationPage() {
 
           <button
             onClick={() => setActiveTab("mentors")}
-            className={`pb-3 px-4 text-xs sm:text-sm font-semibold transition-all border-b-2 flex items-center gap-2 whitespace-nowrap cursor-pointer ${
+            className={`pb-2.5 px-3 sm:px-4 text-xs sm:text-sm font-semibold transition-all border-b-2 flex items-center gap-1.5 sm:gap-2 whitespace-nowrap cursor-pointer active:scale-95 ${
               activeTab === "mentors"
                 ? "border-primary text-primary font-bold"
                 : "border-transparent text-muted-foreground hover:text-foreground"
             }`}
           >
             <Award className="h-4 w-4" />
-            <span>Mentor Applications ({mentorApps.length})</span>
+            <span>Mentor Apps ({mentorApps.length})</span>
             {pendingMentorCount > 0 && (
               <span className="px-1.5 py-0.2 rounded-full bg-purple-600 text-white text-[10px] font-mono">
                 {pendingMentorCount}
@@ -810,7 +812,7 @@ export default function AdminModerationPage() {
 
           <button
             onClick={() => setActiveTab("feedback")}
-            className={`pb-3 px-4 text-xs sm:text-sm font-semibold transition-all border-b-2 flex items-center gap-2 whitespace-nowrap cursor-pointer ${
+            className={`pb-2.5 px-3 sm:px-4 text-xs sm:text-sm font-semibold transition-all border-b-2 flex items-center gap-1.5 sm:gap-2 whitespace-nowrap cursor-pointer active:scale-95 ${
               activeTab === "feedback"
                 ? "border-primary text-primary font-bold"
                 : "border-transparent text-muted-foreground hover:text-foreground"
@@ -822,7 +824,7 @@ export default function AdminModerationPage() {
 
           <button
             onClick={() => setActiveTab("bugs")}
-            className={`pb-3 px-4 text-xs sm:text-sm font-semibold transition-all border-b-2 flex items-center gap-2 whitespace-nowrap cursor-pointer ${
+            className={`pb-2.5 px-3 sm:px-4 text-xs sm:text-sm font-semibold transition-all border-b-2 flex items-center gap-1.5 sm:gap-2 whitespace-nowrap cursor-pointer active:scale-95 ${
               activeTab === "bugs"
                 ? "border-primary text-primary font-bold"
                 : "border-transparent text-muted-foreground hover:text-foreground"

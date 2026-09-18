@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Outfit, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { FeedbackWidget } from "@/components/feedback/FeedbackWidget";
@@ -21,6 +21,17 @@ const jetbrainsMono = JetBrains_Mono({
   weight: ["400", "500", "600", "700", "800"],
   display: "swap",
 });
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+  viewportFit: "cover",
+  themeColor: [
+    { media: "(prefers-color-scheme: dark)", color: "#1C1714" },
+    { media: "(prefers-color-scheme: light)", color: "#FAF6F0" },
+  ],
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL(

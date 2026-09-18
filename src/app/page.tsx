@@ -54,7 +54,7 @@ export default function Home() {
             {/* Mobile Hamburger Button */}
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="lg:hidden p-2 rounded bg-card border border-border text-foreground hover:text-primary hover:border-primary"
+              className="lg:hidden p-2.5 rounded-xl bg-card border border-border text-foreground hover:text-primary hover:border-primary active:scale-95 transition-all cursor-pointer"
               aria-label="Toggle navigation menu"
             >
               {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -92,7 +92,7 @@ export default function Home() {
                 </button>
 
                 {learnDropdownOpen && (
-                  <div className="absolute top-full left-0 mt-2 w-72 rounded-lg border-2 border-[#B08422]/50 dark:border-[#C9A962]/50 bg-[#FFFFFF] dark:bg-[#251E19] p-2.5 shadow-[0_20px_50px_rgba(0,0,0,0.5)] z-50 corner-flourish">
+                  <div className="absolute top-full left-0 mt-2 w-72 max-w-[calc(100vw-2rem)] rounded-lg border-2 border-[#B08422]/50 dark:border-[#C9A962]/50 bg-[#FFFFFF] dark:bg-[#251E19] p-2.5 shadow-[0_20px_50px_rgba(0,0,0,0.5)] z-50 corner-flourish">
                     <Link
                       href="/learn"
                       onClick={() => setLearnDropdownOpen(false)}
@@ -151,7 +151,7 @@ export default function Home() {
 
         {/* Mobile Grouped Accordion Menu */}
         {isMobileMenuOpen && (
-          <div className="lg:hidden border-b border-border bg-card p-4 space-y-3 backdrop-blur-xl animate-in slide-in-from-top-2">
+          <div className="lg:hidden border-b border-border bg-card p-4 space-y-3 backdrop-blur-xl animate-in slide-in-from-top-2 max-h-[calc(100vh-4rem)] overflow-y-auto touch-scroll">
             <div className="pb-2 border-b border-border">
               <AuthButton />
             </div>
@@ -160,7 +160,7 @@ export default function Home() {
             <Link
               href="/learn"
               onClick={() => setIsMobileMenuOpen(false)}
-              className="btn-brass flex items-center justify-between p-3.5 rounded text-xs font-display uppercase tracking-widest font-bold shadow-brass"
+              className="btn-brass flex items-center justify-between p-3.5 rounded text-xs font-display uppercase tracking-widest font-bold shadow-brass active:scale-95 transition-all"
             >
               <span className="flex items-center gap-2">
                 <GraduationCap className="h-4 w-4" />
@@ -177,7 +177,7 @@ export default function Home() {
               <Link
                 href="/learn"
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="flex items-center gap-2 p-2.5 rounded bg-background text-foreground text-xs font-display hover:text-primary transition-colors"
+                className="flex items-center gap-2 p-2.5 rounded bg-background text-foreground text-xs font-display hover:text-primary transition-colors active:scale-95"
               >
                 <GraduationCap className="h-4 w-4 text-primary" />
                 <span>Learning Path (Structured Roadmap)</span>
@@ -185,7 +185,7 @@ export default function Home() {
               <Link
                 href="/docs"
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="flex items-center gap-2 p-2.5 rounded bg-background text-foreground text-xs font-display hover:text-primary transition-colors"
+                className="flex items-center gap-2 p-2.5 rounded bg-background text-foreground text-xs font-display hover:text-primary transition-colors active:scale-95"
               >
                 <BookOpen className="h-4 w-4 text-primary" />
                 <span>Docs & Course (17 Lessons)</span>
@@ -200,7 +200,7 @@ export default function Home() {
               <Link
                 href="/visualizer"
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="flex items-center gap-2 p-2.5 rounded bg-background text-foreground text-xs font-display hover:text-primary transition-colors"
+                className="flex items-center gap-2 p-2.5 rounded bg-background text-foreground text-xs font-display hover:text-primary transition-colors active:scale-95"
               >
                 <Layers className="h-4 w-4 text-primary" />
                 <span>Interactive Visualizer Workspace</span>
@@ -208,7 +208,7 @@ export default function Home() {
               <Link
                 href="/algorithms/bubble"
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="flex items-center gap-2 p-2.5 rounded bg-background text-foreground text-xs font-display hover:text-primary transition-colors"
+                className="flex items-center gap-2 p-2.5 rounded bg-background text-foreground text-xs font-display hover:text-primary transition-colors active:scale-95"
               >
                 <Terminal className="h-4 w-4 text-destructive" />
                 <span>Debugger & Bug Hunt</span>
@@ -216,7 +216,7 @@ export default function Home() {
               <Link
                 href="/compare"
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="flex items-center gap-2 p-2.5 rounded bg-background text-foreground text-xs font-display hover:text-primary transition-colors"
+                className="flex items-center gap-2 p-2.5 rounded bg-background text-foreground text-xs font-display hover:text-primary transition-colors active:scale-95"
               >
                 <Table className="h-4 w-4 text-primary" />
                 <span>Algorithm Comparison Matrix</span>
@@ -224,7 +224,7 @@ export default function Home() {
               <Link
                 href="/course-material"
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="flex items-center gap-2 p-2.5 rounded bg-background text-foreground text-xs font-display hover:text-primary transition-colors"
+                className="flex items-center gap-2 p-2.5 rounded bg-background text-foreground text-xs font-display hover:text-primary transition-colors active:scale-95"
               >
                 <Bookmark className="h-4 w-4 text-primary" />
                 <span>Course Material (Assigned Topics & Problems)</span>
@@ -236,16 +236,16 @@ export default function Home() {
 
       <main className="flex-1">
         {/* HERO SECTION — FULL VIEWPORT FOCUSED HERO */}
-        <section className="relative overflow-hidden min-h-[calc(100vh-4rem)] flex flex-col justify-center items-center py-12 sm:py-16 border-b border-border">
+        <section className="relative overflow-hidden min-h-[calc(100vh-4rem)] flex flex-col justify-center items-center py-10 sm:py-16 border-b border-border">
           <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center flex flex-col items-center my-auto">
             {/* 1. Hero Badge — Next-Gen Data Structures & Algorithms (DSA) Learning Platform */}
-            <div className="inline-flex items-center gap-2 px-3.5 sm:px-4 py-1.5 rounded-full border border-primary/40 bg-card text-primary text-xs sm:text-sm font-sans font-semibold uppercase tracking-wider mb-4 backdrop-blur-md shadow-sm">
-              <Sparkles className="h-4 w-4 text-primary" />
-              <span>Next-Gen Data Structures & Algorithms (DSA) Learning Platform</span>
+            <div className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 rounded-full border border-primary/40 bg-card text-primary text-[11px] sm:text-xs md:text-sm font-sans font-semibold uppercase tracking-wider mb-4 backdrop-blur-md shadow-sm">
+              <Sparkles className="h-3.5 w-3.5 text-primary shrink-0" />
+              <span>Next-Gen Data Structures & Algorithms (DSA) Platform</span>
             </div>
 
             {/* 2. Main Headline */}
-            <h1 className="text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight text-foreground leading-[1.15] font-sans">
+            <h1 className="text-3xl xs:text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight text-foreground leading-[1.15] font-sans">
               Don&apos;t just memorize{" "}
               <span className="font-extrabold text-[#B08422] dark:text-[#D4B872]">
                 DSA codes.
@@ -253,8 +253,8 @@ export default function Home() {
             </h1>
 
             {/* 3. Hero Tagline / Subtitle */}
-            <div className="mt-4 sm:mt-5 text-lg sm:text-2xl md:text-3xl font-medium tracking-tight text-foreground leading-snug font-sans max-w-3xl">
-              <p className="flex flex-wrap items-center justify-center gap-x-2.5 sm:gap-x-3.5">
+            <div className="mt-3 sm:mt-5 text-base sm:text-xl md:text-2xl lg:text-3xl font-medium tracking-tight text-foreground leading-snug font-sans max-w-3xl">
+              <p className="flex flex-wrap items-center justify-center gap-x-2 sm:gap-x-3.5 gap-y-1">
                 <span className="text-[#B08422] dark:text-[#C9A962] font-semibold">See them.</span>
                 <span className="text-[#8B2635] font-semibold">Break them.</span>
                 <span className="text-amber-600 dark:text-amber-500 font-semibold">Fix them.</span>
@@ -262,12 +262,12 @@ export default function Home() {
               </p>
             </div>
 
-            {/* 4. Action Buttons — Manrope 600 + letter spacing */}
-            <div className="mt-6 sm:mt-8 flex flex-wrap justify-center items-center gap-3 sm:gap-4">
+            {/* 4. Action Buttons — Responsive Stacking */}
+            <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row justify-center items-center gap-3 sm:gap-4 w-full sm:w-auto">
               {/* PRIMARY CTA */}
               <Link
                 href="/learn"
-                className="btn-brass inline-flex items-center gap-2 rounded px-7 py-3.5 text-xs sm:text-sm font-sans font-semibold tracking-[0.08em] shadow-brass hover:scale-[1.02] active:scale-[0.98] transition-all"
+                className="btn-brass w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded px-6 sm:px-7 py-3 sm:py-3.5 text-xs sm:text-sm font-sans font-semibold tracking-[0.08em] shadow-brass hover:scale-[1.02] active:scale-[0.98] transition-all"
               >
                 <GraduationCap className="h-5 w-5" />
                 <span>Start Learning</span>
@@ -278,7 +278,7 @@ export default function Home() {
               <Link
                 id="cta-start-visualizing"
                 href="/visualizer"
-                className="btn-brass inline-flex items-center gap-2 rounded px-7 py-3.5 text-xs sm:text-sm font-sans font-semibold tracking-[0.08em] shadow-brass hover:scale-[1.02] active:scale-[0.98] transition-all"
+                className="btn-brass w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded px-6 sm:px-7 py-3 sm:py-3.5 text-xs sm:text-sm font-sans font-semibold tracking-[0.08em] shadow-brass hover:scale-[1.02] active:scale-[0.98] transition-all"
               >
                 <Layers className="h-5 w-5" />
                 <span>Explore Visualizer</span>

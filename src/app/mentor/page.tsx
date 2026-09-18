@@ -326,20 +326,21 @@ export default function MentorPortalPage() {
             </div>
           </div>
 
-          <div className="flex items-center gap-2 sm:gap-3">
+          <div className="flex items-center gap-1.5 sm:gap-3">
             <ThemeToggle />
             <button
               onClick={() => setShowNoticeModal(true)}
-              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 text-xs font-bold text-white shadow-lg shadow-purple-600/20 hover:brightness-110 active:scale-95 transition-all"
+              className="inline-flex items-center gap-1.5 px-2.5 sm:px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 text-xs font-bold text-white shadow-lg shadow-purple-600/20 hover:brightness-110 active:scale-95 transition-all cursor-pointer"
             >
               <Send className="h-3.5 w-3.5" />
-              <span>Send Notice</span>
+              <span className="hidden xs:inline">Send Notice</span>
+              <span className="xs:hidden">Notice</span>
             </button>
 
             <button
               onClick={loadMentorData}
               disabled={isLoading}
-              className="p-2 rounded-xl border border-purple-950 bg-[#12071f] text-slate-300 hover:text-white hover:border-purple-600 transition-colors"
+              className="p-2 rounded-xl border border-purple-950 bg-[#12071f] text-slate-300 hover:text-white hover:border-purple-600 transition-colors active:scale-95 cursor-pointer"
               title="Refresh Cohort Data"
             >
               <RefreshCw className={`h-4 w-4 ${isLoading ? "animate-spin" : ""}`} />

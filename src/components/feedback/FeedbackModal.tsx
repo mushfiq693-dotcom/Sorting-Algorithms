@@ -80,15 +80,16 @@ export function FeedbackModal({ isOpen, onClose }: FeedbackModalProps) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-sm animate-in fade-in">
       <div
-        className="relative w-full max-w-lg rounded-2xl border border-border bg-card p-6 sm:p-7 text-foreground shadow-2xl backdrop-blur-2xl space-y-5 animate-in zoom-in-95"
+        className="relative w-full max-w-lg max-h-[90vh] overflow-y-auto touch-scroll rounded-2xl border border-border bg-card p-5 sm:p-7 text-foreground shadow-2xl backdrop-blur-2xl space-y-5 animate-in zoom-in-95"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute right-4 top-4 p-1.5 rounded-xl bg-secondary text-muted-foreground hover:text-foreground hover:bg-secondary/80 transition-colors cursor-pointer"
+          className="absolute right-3.5 top-3.5 sm:right-4 sm:top-4 p-2 rounded-xl bg-secondary text-muted-foreground hover:text-foreground hover:bg-secondary/80 transition-colors cursor-pointer active:scale-95 z-10"
+          aria-label="Close modal"
         >
           <X className="h-4 w-4" />
         </button>

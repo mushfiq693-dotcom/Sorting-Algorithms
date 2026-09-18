@@ -85,7 +85,7 @@ export function AuthButton() {
 
         {/* Dropdown Menu — 100% Solid Opaque */}
         {isOpen && (
-          <div className="absolute top-full right-0 mt-2 w-64 rounded-lg border-2 border-[#B08422]/50 dark:border-[#C9A962]/50 bg-[#FFFFFF] dark:bg-[#251E19] p-2.5 shadow-[0_20px_50px_rgba(0,0,0,0.5)] z-50 animate-in fade-in zoom-in-95 space-y-1 corner-flourish font-sans">
+          <div className="absolute top-full right-0 mt-2 w-64 max-w-[calc(100vw-1.5rem)] rounded-lg border-2 border-[#B08422]/50 dark:border-[#C9A962]/50 bg-[#FFFFFF] dark:bg-[#251E19] p-2.5 shadow-[0_20px_50px_rgba(0,0,0,0.5)] z-50 animate-in fade-in zoom-in-95 space-y-1 corner-flourish font-sans">
             {/* User Details Header */}
             <div className="px-3 py-2.5 border-b border-border space-y-1">
               <div className="text-xs font-sans font-semibold text-foreground truncate">{displayName}</div>
@@ -115,7 +115,7 @@ export function AuthButton() {
                 <Link
                   href="/admin/moderation"
                   onClick={() => setIsOpen(false)}
-                  className="flex items-center gap-2 px-3 py-2 rounded text-foreground hover:text-primary-foreground hover:bg-primary transition-colors group"
+                  className="flex items-center gap-2 px-3 py-2 rounded text-foreground hover:text-primary-foreground hover:bg-primary transition-colors active:scale-95 group"
                 >
                   <ShieldAlert className="h-3.5 w-3.5 text-primary group-hover:text-primary-foreground" />
                   <span className="font-sans text-xs font-semibold tracking-wide">Admin Panel (Approvals)</span>
@@ -124,7 +124,7 @@ export function AuthButton() {
                 <Link
                   href="/dashboard"
                   onClick={() => setIsOpen(false)}
-                  className="flex items-center gap-2 px-3 py-2 rounded text-foreground hover:text-primary-foreground hover:bg-primary transition-colors group"
+                  className="flex items-center gap-2 px-3 py-2 rounded text-foreground hover:text-primary-foreground hover:bg-primary transition-colors active:scale-95 group"
                 >
                   <BarChart3 className="h-3.5 w-3.5 text-primary group-hover:text-primary-foreground" />
                   <span className="font-sans text-xs font-semibold tracking-wide">My Progress Dashboard</span>
@@ -136,7 +136,7 @@ export function AuthButton() {
             <div className="pt-1 border-t border-border">
               <button
                 onClick={handleSignOut}
-                className="w-full flex items-center gap-2 px-3 py-2 rounded text-xs font-sans font-semibold tracking-wide text-muted-foreground hover:text-white hover:bg-destructive transition-colors text-left cursor-pointer"
+                className="w-full flex items-center gap-2 px-3 py-2 rounded text-xs font-sans font-semibold tracking-wide text-muted-foreground hover:text-white hover:bg-destructive transition-colors text-left cursor-pointer active:scale-95"
               >
                 <LogOut className="h-3.5 w-3.5" />
                 <span>Sign Out</span>
@@ -152,10 +152,11 @@ export function AuthButton() {
   return (
     <Link
       href="/auth/login"
-      className="btn-brass inline-flex items-center gap-2 rounded px-4 py-2 text-xs font-sans font-semibold tracking-[0.08em] shadow-brass active:scale-95 transition-all"
+      className="btn-brass inline-flex items-center gap-1.5 sm:gap-2 rounded px-3 sm:px-4 py-1.5 sm:py-2 text-xs font-sans font-semibold tracking-[0.05em] sm:tracking-[0.08em] shadow-brass active:scale-95 transition-all"
     >
-      <Sparkles className="h-3.5 w-3.5" />
-      <span>Sign In / Register</span>
+      <Sparkles className="h-3.5 w-3.5 shrink-0" />
+      <span className="hidden xs:inline sm:inline">Sign In / Register</span>
+      <span className="xs:hidden sm:hidden">Sign In</span>
     </Link>
   );
 }

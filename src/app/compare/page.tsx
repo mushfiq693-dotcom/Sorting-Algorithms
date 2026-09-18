@@ -45,37 +45,39 @@ export default function ComparePage() {
             </Link>
           </div>
 
-          <div className="flex items-center gap-2 sm:gap-3">
+          <div className="flex items-center gap-1.5 sm:gap-2.5">
             <Link
               href="/dashboard"
-              className="inline-flex items-center gap-1.5 rounded-xl border border-cyan-500/30 bg-cyan-500/10 px-3 py-1.5 text-xs font-semibold text-cyan-600 dark:text-cyan-300 hover:bg-cyan-500/20 transition-all active:scale-95 shadow-sm"
+              className="inline-flex items-center gap-1.5 rounded-xl border border-cyan-500/30 bg-cyan-500/10 px-2.5 sm:px-3 py-1.5 text-xs font-semibold text-cyan-600 dark:text-cyan-300 hover:bg-cyan-500/20 transition-all active:scale-95 shadow-sm"
+              title="My Progress"
             >
               <BarChart3 className="h-3.5 w-3.5" />
-              <span>My Progress</span>
+              <span className="hidden sm:inline">My Progress</span>
             </Link>
 
             <Link
               href="/docs"
-              className="inline-flex items-center gap-1.5 rounded-xl border border-border bg-secondary/80 px-3 py-1.5 text-xs font-semibold text-foreground hover:bg-secondary hover:text-cyan-500 transition-all active:scale-95"
+              className="inline-flex items-center gap-1.5 rounded-xl border border-border bg-secondary/80 px-2.5 sm:px-3 py-1.5 text-xs font-semibold text-foreground hover:bg-secondary hover:text-cyan-500 transition-all active:scale-95"
             >
               <BookOpen className="h-3.5 w-3.5 text-cyan-500" />
-              <span>Docs & Course</span>
+              <span className="hidden sm:inline">Docs & Course</span>
+              <span className="sm:hidden">Docs</span>
             </Link>
 
             <Link
               href="/learn"
-              className="inline-flex items-center gap-1.5 rounded-xl border border-border bg-secondary/80 px-3 py-1.5 text-xs font-semibold text-foreground hover:bg-secondary hover:text-cyan-500 transition-all active:scale-95"
+              className="hidden md:inline-flex items-center gap-1.5 rounded-xl border border-border bg-secondary/80 px-3 py-1.5 text-xs font-semibold text-foreground hover:bg-secondary hover:text-cyan-500 transition-all active:scale-95"
             >
               <GraduationCap className="h-3.5 w-3.5" />
-              <span className="hidden sm:inline">Learning Path</span>
+              <span>Learning Path</span>
             </Link>
 
             <Link
               href="/visualizer"
-              className="inline-flex items-center gap-2 rounded-xl border border-border bg-secondary/80 px-3.5 py-1.5 text-xs font-semibold text-foreground hover:bg-secondary hover:text-cyan-500 transition-all active:scale-95"
+              className="inline-flex items-center gap-1.5 sm:gap-2 rounded-xl border border-border bg-secondary/80 px-2.5 sm:px-3.5 py-1.5 text-xs font-semibold text-foreground hover:bg-secondary hover:text-cyan-500 transition-all active:scale-95"
             >
-              <ArrowLeft className="h-4 w-4" />
-              <span>Visualizer</span>
+              <ArrowLeft className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+              <span className="hidden xs:inline">Visualizer</span>
             </Link>
 
             <ThemeToggle />
@@ -83,45 +85,47 @@ export default function ComparePage() {
         </div>
       </header>
 
-      <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-12">
+      <main className="flex-1 max-w-7xl mx-auto w-full px-3 sm:px-6 lg:px-8 py-8 sm:py-12">
         {/* Header Section */}
         <div className="mb-8 text-center max-w-3xl mx-auto">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-cyan-500/30 bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 text-xs font-medium mb-4 backdrop-blur-md">
             <Sparkles className="h-3.5 w-3.5" />
             <span>Comprehensive Comparison</span>
           </div>
-          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-foreground">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight text-foreground">
             {activeTab === "sorting" ? "Sorting Algorithm Comparison Matrix" : "Data Structures Operational Comparison"}
           </h1>
-          <p className="mt-3 text-sm sm:text-base text-muted-foreground leading-relaxed">
+          <p className="mt-3 text-xs sm:text-sm md:text-base text-muted-foreground leading-relaxed">
             {activeTab === "sorting"
               ? "Side-by-side complexity analysis, algorithmic properties, and practical engineering guidance to help you choose the right sorting algorithm for every scenario."
               : "Compare primary invariants, operation times (Push/Enqueue, Pop/Dequeue, Access, Search), and memory trade-offs across fundamental linear data structures."}
           </p>
+        </div>
 
-          {/* Category Tabs */}
-          <div className="mt-6 flex items-center justify-center gap-2">
+        {/* Tab Switcher */}
+        <div className="flex justify-center mb-8">
+          <div className="inline-flex p-1.5 rounded-2xl bg-secondary/60 border border-border/80 backdrop-blur-md max-w-full overflow-x-auto touch-scroll">
             <button
               onClick={() => setActiveTab("sorting")}
-              className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+              className={`inline-flex items-center gap-2 px-4 sm:px-6 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all active:scale-95 whitespace-nowrap ${
                 activeTab === "sorting"
-                  ? "bg-cyan-500 text-slate-950 shadow-md font-bold"
-                  : "border border-border bg-secondary/80 text-muted-foreground hover:text-foreground hover:bg-secondary"
+                  ? "bg-gradient-to-r from-blue-600 to-cyan-600 text-white shadow-md shadow-cyan-500/20"
+                  : "text-muted-foreground hover:text-foreground"
               }`}
             >
-              <Cpu className="h-3.5 w-3.5" />
+              <Cpu className="h-4 w-4" />
               <span>Sorting Algorithms (5)</span>
             </button>
             <button
               onClick={() => setActiveTab("data-structures")}
-              className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+              className={`inline-flex items-center gap-2 px-4 sm:px-6 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all active:scale-95 whitespace-nowrap ${
                 activeTab === "data-structures"
-                  ? "bg-blue-500 text-white shadow-md font-bold"
-                  : "border border-border bg-secondary/80 text-muted-foreground hover:text-foreground hover:bg-secondary"
+                  ? "bg-gradient-to-r from-blue-600 to-cyan-600 text-white shadow-md shadow-cyan-500/20"
+                  : "text-muted-foreground hover:text-foreground"
               }`}
             >
-              <Database className="h-3.5 w-3.5" />
-              <span>Data Structures (4 Containers)</span>
+              <Database className="h-4 w-4" />
+              <span>Data Structures (3)</span>
             </button>
           </div>
         </div>
@@ -130,17 +134,20 @@ export default function ComparePage() {
           <>
             {/* Side-by-Side Sorting Matrix Table */}
             <div className="rounded-2xl border border-border/60 bg-card/60 shadow-2xl backdrop-blur-md overflow-hidden mb-12">
-              <div className="p-4 sm:p-5 border-b border-border/60 flex items-center justify-between bg-card/80">
-                <h2 className="text-base font-semibold text-foreground flex items-center gap-2">
+              <div className="p-3.5 sm:p-5 border-b border-border/60 flex items-center justify-between bg-card/80">
+                <h2 className="text-sm sm:text-base font-semibold text-foreground flex items-center gap-2">
                   <Zap className="h-4 w-4 text-cyan-400" />
                   <span>Sorting Algorithmic Comparison</span>
                 </h2>
-                <span className="text-xs font-mono text-muted-foreground">
-                  5 Algorithms Analyzed
-                </span>
+                <div className="flex items-center gap-2">
+                  <span className="sm:hidden text-[10px] font-mono text-cyan-500 animate-pulse">Swipe →</span>
+                  <span className="text-xs font-mono text-muted-foreground">
+                    5 Algorithms
+                  </span>
+                </div>
               </div>
 
-              <div className="overflow-x-auto">
+              <div className="overflow-x-auto touch-scroll">
                 <table className="w-full text-left text-sm font-mono border-collapse min-w-[850px]">
                   <thead>
                     <tr className="border-b border-border/60 bg-background/50 text-xs text-muted-foreground uppercase tracking-wider">

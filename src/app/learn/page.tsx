@@ -107,21 +107,23 @@ export default function LearnPage() {
             </Link>
           </div>
 
-          <div className="flex items-center gap-2 sm:gap-3">
+          <div className="flex items-center gap-1.5 sm:gap-2.5">
             <Link
               href="/dashboard"
-              className="inline-flex items-center gap-1.5 rounded-xl border border-cyan-500/30 bg-cyan-500/10 px-3 py-1.5 text-xs font-semibold text-cyan-600 dark:text-cyan-300 hover:bg-cyan-500/20 transition-all active:scale-95 shadow-sm"
+              className="inline-flex items-center gap-1.5 rounded-xl border border-cyan-500/30 bg-cyan-500/10 px-2.5 sm:px-3 py-1.5 text-xs font-semibold text-cyan-600 dark:text-cyan-300 hover:bg-cyan-500/20 transition-all active:scale-95 shadow-sm"
+              title="My Progress"
             >
               <BarChart3 className="h-3.5 w-3.5" />
-              <span>My Progress</span>
+              <span className="hidden sm:inline">My Progress</span>
             </Link>
 
             <Link
               href="/docs"
-              className="inline-flex items-center gap-1.5 rounded-xl border border-border bg-secondary/80 px-3 py-1.5 text-xs font-semibold text-foreground hover:bg-secondary hover:text-cyan-500 transition-all active:scale-95"
+              className="inline-flex items-center gap-1.5 rounded-xl border border-border bg-secondary/80 px-2.5 sm:px-3 py-1.5 text-xs font-semibold text-foreground hover:bg-secondary hover:text-cyan-500 transition-all active:scale-95"
             >
               <BookOpen className="h-3.5 w-3.5 text-cyan-500" />
               <span className="hidden sm:inline">Docs & Course</span>
+              <span className="sm:hidden">Docs</span>
             </Link>
 
             <ThemeToggle />
@@ -131,15 +133,15 @@ export default function LearnPage() {
         </div>
       </header>
 
-      <main className="flex-1 max-w-5xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-12">
+      <main className="flex-1 max-w-5xl mx-auto w-full px-3 sm:px-6 lg:px-8 py-8 sm:py-12">
         {/* Header Hero */}
-        <div className="text-center max-w-3xl mx-auto mb-10">
+        <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-10">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-cyan-500/30 bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 text-xs font-medium mb-4 backdrop-blur-md">
             <Sparkles className="h-3.5 w-3.5" />
             <span>Beginner-First Structured Roadmap</span>
           </div>
 
-          <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-foreground mb-3 font-sans">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-black tracking-tight text-foreground mb-3 font-sans">
             Algorithm &amp; Data Structure{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-500 to-blue-500">
               Mastery Path
@@ -227,10 +229,10 @@ export default function LearnPage() {
           </div>
 
           {/* Category Filter Tabs */}
-          <div className="mt-6 flex flex-wrap items-center justify-center gap-2">
+          <div className="mt-6 flex items-center justify-start sm:justify-center gap-2 overflow-x-auto touch-scroll pb-2 no-scrollbar [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             <button
               onClick={() => setCategoryFilter("all")}
-              className={`px-4 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+              className={`px-3.5 sm:px-4 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer whitespace-nowrap active:scale-95 ${
                 categoryFilter === "all"
                   ? "bg-cyan-500 text-slate-950 shadow-md font-bold"
                   : "border border-border bg-secondary/80 text-muted-foreground hover:text-foreground hover:bg-secondary"
@@ -240,7 +242,7 @@ export default function LearnPage() {
             </button>
             <button
               onClick={() => setCategoryFilter("sorting")}
-              className={`px-4 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+              className={`px-3.5 sm:px-4 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer whitespace-nowrap active:scale-95 ${
                 categoryFilter === "sorting"
                   ? "bg-cyan-500 text-slate-950 shadow-md font-bold"
                   : "border border-border bg-secondary/80 text-muted-foreground hover:text-foreground hover:bg-secondary"
@@ -250,7 +252,7 @@ export default function LearnPage() {
             </button>
             <button
               onClick={() => setCategoryFilter("searching")}
-              className={`px-4 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+              className={`px-3.5 sm:px-4 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer whitespace-nowrap active:scale-95 ${
                 categoryFilter === "searching"
                   ? "bg-cyan-500 text-slate-950 shadow-md font-bold"
                   : "border border-border bg-secondary/80 text-muted-foreground hover:text-foreground hover:bg-secondary"
@@ -260,7 +262,7 @@ export default function LearnPage() {
             </button>
             <button
               onClick={() => setCategoryFilter("data-structure")}
-              className={`px-4 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+              className={`px-3.5 sm:px-4 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer whitespace-nowrap active:scale-95 ${
                 categoryFilter === "data-structure"
                   ? "bg-cyan-500 text-slate-950 shadow-md font-bold"
                   : "border border-border bg-secondary/80 text-muted-foreground hover:text-foreground hover:bg-secondary"
@@ -270,7 +272,7 @@ export default function LearnPage() {
             </button>
             <button
               onClick={() => setCategoryFilter("complexity")}
-              className={`px-4 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+              className={`px-3.5 sm:px-4 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer whitespace-nowrap active:scale-95 ${
                 categoryFilter === "complexity"
                   ? "bg-cyan-500 text-slate-950 shadow-md font-bold"
                   : "border border-border bg-secondary/80 text-muted-foreground hover:text-foreground hover:bg-secondary"

@@ -291,10 +291,10 @@ function DashboardContent() {
             </Link>
           </div>
 
-          <div className="flex items-center gap-2 sm:gap-3">
+          <div className="flex items-center gap-1.5 sm:gap-3">
             <Link
               href="/docs"
-              className="inline-flex items-center gap-1.5 rounded-xl border border-border/70 bg-card/40 px-3 py-1.5 text-xs font-semibold text-slate-300 hover:text-cyan-400 hover:bg-card/70 transition-all active:scale-95 shadow-sm"
+              className="inline-flex items-center gap-1.5 rounded-xl border border-border/70 bg-card/40 px-2.5 sm:px-3 py-1.5 text-xs font-semibold text-slate-300 hover:text-cyan-400 hover:bg-card/70 transition-all active:scale-95 shadow-sm"
             >
               <BookOpen className="h-3.5 w-3.5 text-cyan-400" />
               <span className="hidden sm:inline">Docs</span>
@@ -305,10 +305,11 @@ function DashboardContent() {
 
             <Link
               href="/learn"
-              className="inline-flex items-center gap-1.5 rounded-xl border border-cyan-500/30 bg-cyan-500/10 px-3.5 py-1.5 text-xs font-bold text-cyan-300 hover:bg-cyan-500/20 transition-all active:scale-95 shadow-md shadow-cyan-500/15"
+              className="inline-flex items-center gap-1.5 rounded-xl border border-cyan-500/30 bg-cyan-500/10 px-2.5 sm:px-3.5 py-1.5 text-xs font-bold text-cyan-300 hover:bg-cyan-500/20 transition-all active:scale-95 shadow-md shadow-cyan-500/15"
             >
               <GraduationCap className="h-3.5 w-3.5" />
-              <span>Continue Learning</span>
+              <span className="hidden xs:inline">Continue Learning</span>
+              <span className="xs:hidden">Learn</span>
             </Link>
           </div>
         </div>

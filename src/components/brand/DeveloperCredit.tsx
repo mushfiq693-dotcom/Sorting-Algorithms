@@ -35,11 +35,11 @@ export function DeveloperCredit() {
     <div ref={modalRef} className="fixed bottom-20 right-3 sm:right-5 z-50 font-sans select-none">
       {/* Floating Popup Card */}
       {isOpen && (
-        <div className="absolute bottom-14 right-0 w-[calc(100vw-2rem)] sm:w-80 max-w-[320px] rounded-2xl border border-primary/30 bg-card/95 backdrop-blur-2xl p-4 sm:p-5 shadow-2xl text-foreground corner-flourish animate-in fade-in zoom-in-95 duration-200">
+        <div className="absolute bottom-14 right-0 w-[calc(100vw-1.5rem)] sm:w-80 max-w-[320px] max-h-[80vh] overflow-y-auto touch-scroll rounded-2xl border border-primary/30 bg-card/95 backdrop-blur-2xl p-4 sm:p-5 shadow-2xl text-foreground corner-flourish animate-in fade-in zoom-in-95 duration-200">
           {/* Close Button Top-Right */}
           <button
             onClick={() => setIsOpen(false)}
-            className="absolute top-3.5 right-3.5 p-1.5 rounded-lg bg-secondary/80 text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors z-10 cursor-pointer"
+            className="absolute top-3.5 right-3.5 p-2 rounded-lg bg-secondary/80 text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors z-10 cursor-pointer active:scale-95"
             aria-label="Close developer card"
           >
             <X className="h-4 w-4" />

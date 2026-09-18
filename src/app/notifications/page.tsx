@@ -176,16 +176,17 @@ export default function NotificationsPage() {
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-2">
             <ThemeToggle />
             {unreadCount > 0 && (
               <button
                 onClick={handleMarkAllAsRead}
                 disabled={markingAll}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-cyan-500/30 bg-cyan-500/10 text-xs font-semibold text-cyan-300 hover:bg-cyan-500/20 transition-all active:scale-95 disabled:opacity-50"
+                className="inline-flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl border border-cyan-500/30 bg-cyan-500/10 text-xs font-semibold text-cyan-300 hover:bg-cyan-500/20 transition-all active:scale-95 disabled:opacity-50 cursor-pointer"
               >
                 <CheckCheck className="h-3.5 w-3.5" />
-                <span>Mark All as Read</span>
+                <span className="hidden xs:inline">Mark All as Read</span>
+                <span className="xs:hidden">Mark Read</span>
               </button>
             )}
           </div>

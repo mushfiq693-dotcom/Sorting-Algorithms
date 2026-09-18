@@ -227,12 +227,13 @@ export default function AlgorithmDetailPage() {
             <div className="relative" ref={dropdownRef}>
               <button
                 onClick={() => setTopicDropdownOpen(!topicDropdownOpen)}
-                className="inline-flex items-center gap-1.5 rounded-xl border border-cyan-500/30 bg-cyan-500/10 px-3 py-1.5 text-xs font-semibold text-cyan-600 dark:text-cyan-300 hover:bg-cyan-500/20 transition-all active:scale-95 shadow-sm cursor-pointer"
+                className="inline-flex items-center gap-1.5 rounded-xl border border-cyan-500/30 bg-cyan-500/10 px-2.5 sm:px-3 py-1.5 text-xs font-semibold text-cyan-600 dark:text-cyan-300 hover:bg-cyan-500/20 transition-all active:scale-95 shadow-sm cursor-pointer"
                 aria-expanded={topicDropdownOpen}
                 aria-label="All Topics"
               >
                 <Layers className="h-3.5 w-3.5 text-cyan-500" />
-                <span>All Topics</span>
+                <span className="hidden xs:inline">All Topics</span>
+                <span className="xs:hidden">Topics</span>
                 <ChevronDown
                   className={`h-3.5 w-3.5 transition-transform duration-200 ${
                     topicDropdownOpen ? "rotate-180 text-cyan-500" : ""
@@ -241,7 +242,7 @@ export default function AlgorithmDetailPage() {
               </button>
 
               {topicDropdownOpen && (
-                <div className="absolute top-full right-0 mt-2 w-72 sm:w-80 rounded-2xl border border-border bg-card/95 p-3 shadow-2xl backdrop-blur-2xl animate-in fade-in slide-in-from-top-2 z-50 space-y-3">
+                <div className="absolute top-full right-0 mt-2 w-72 max-w-[calc(100vw-1.5rem)] max-h-[80vh] overflow-y-auto touch-scroll sm:w-80 rounded-2xl border border-border bg-card/95 p-3 shadow-2xl backdrop-blur-2xl animate-in fade-in slide-in-from-top-2 z-50 space-y-3">
                   {/* Section 1: Sorting Algorithms */}
                   <div>
                     <div className="text-[10px] font-mono font-bold uppercase tracking-wider text-muted-foreground px-2 py-1 flex items-center justify-between">
@@ -262,7 +263,7 @@ export default function AlgorithmDetailPage() {
                             key={id}
                             href={`/algorithms/${id}`}
                             onClick={() => setTopicDropdownOpen(false)}
-                            className={`flex items-center justify-between p-2 rounded-xl text-xs transition-colors ${
+                            className={`flex items-center justify-between p-2 rounded-xl text-xs transition-colors active:scale-95 ${
                               isActive
                                 ? "bg-cyan-500/15 text-cyan-600 dark:text-cyan-300 font-bold border border-cyan-500/30"
                                 : "hover:bg-secondary/80 text-muted-foreground hover:text-foreground"
@@ -282,7 +283,7 @@ export default function AlgorithmDetailPage() {
                   </div>
 
                   {/* Section 2: Data Structures */}
-                  <div className="pt-2 border-t border-border/60">
+                  <div>
                     <div className="text-[10px] font-mono font-bold uppercase tracking-wider text-muted-foreground px-2 py-1 flex items-center justify-between">
                       <span className="flex items-center gap-1.5 text-blue-500">
                         <Database className="h-3 w-3" />
