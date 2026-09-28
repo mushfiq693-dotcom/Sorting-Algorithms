@@ -78,7 +78,7 @@ export function VisualizerControls({
   };
 
   return (
-    <div className="flex flex-col gap-2.5 rounded bg-[#251E19] border border-[#4A3F35] p-3 sm:p-3.5 backdrop-blur-xl shadow-2xl corner-flourish">
+    <div className="flex flex-col gap-2.5 rounded bg-card dark:bg-[#251E19] border border-border dark:border-[#4A3F35] p-3 sm:p-3.5 backdrop-blur-xl shadow-2xl corner-flourish">
       {/* Action Buttons & Sliders Row */}
       <div className="flex flex-wrap items-center justify-between gap-2">
         {/* Left: Execution Controls */}
@@ -91,7 +91,7 @@ export function VisualizerControls({
               aria-label="Start sorting execution"
               className={`btn-brass inline-flex items-center gap-1.5 rounded px-3.5 py-1.5 text-xs font-display uppercase tracking-wider font-bold shadow-brass focus-visible:outline-none transition-all active:scale-95 cursor-pointer ${
                 isFinished
-                  ? "bg-[#1C1714] text-[#9C8B7A] cursor-not-allowed opacity-50 border border-[#4A3F35]"
+                  ? "bg-background dark:bg-[#1C1714] text-muted-foreground dark:text-[#9C8B7A] cursor-not-allowed opacity-50 border border-border dark:border-[#4A3F35]"
                   : ""
               }`}
             >
@@ -105,7 +105,7 @@ export function VisualizerControls({
               id="pause-button"
               onClick={onPause}
               aria-label="Pause sorting execution"
-              className="inline-flex items-center gap-1.5 rounded bg-[#8B2635] text-[#E8DFD4] border border-[#A62D3F]/50 px-3.5 py-1.5 text-xs font-display uppercase tracking-wider font-bold hover:bg-[#A62D3F] transition-all active:scale-95 shadow-crimson cursor-pointer"
+              className="inline-flex items-center gap-1.5 rounded bg-[#8B2635] text-white dark:text-[#E8DFD4] border border-[#A62D3F]/50 px-3.5 py-1.5 text-xs font-display uppercase tracking-wider font-bold hover:bg-[#A62D3F] transition-all active:scale-95 shadow-crimson cursor-pointer"
             >
               <Pause className="h-3.5 w-3.5" />
               <span>Pause</span>
@@ -117,7 +117,7 @@ export function VisualizerControls({
               id="resume-button"
               onClick={onResume}
               aria-label="Resume sorting execution"
-              className="inline-flex items-center gap-1.5 rounded bg-emerald-600 text-[#E8DFD4] border border-emerald-500/50 px-3.5 py-1.5 text-xs font-display uppercase tracking-wider font-bold hover:bg-emerald-500 transition-all active:scale-95 shadow-md cursor-pointer"
+              className="inline-flex items-center gap-1.5 rounded bg-emerald-600 text-white dark:text-[#E8DFD4] border border-emerald-500/50 px-3.5 py-1.5 text-xs font-display uppercase tracking-wider font-bold hover:bg-emerald-500 transition-all active:scale-95 shadow-md cursor-pointer"
             >
               <Play className="h-3.5 w-3.5 fill-current" />
               <span>Resume</span>
@@ -130,9 +130,9 @@ export function VisualizerControls({
             disabled={!canStep || isPlaying}
             aria-label="Execute one single step forward"
             title="Step forward"
-            className="inline-flex items-center gap-1 rounded border border-[#4A3F35] bg-[#1C1714] px-2.5 py-1.5 text-xs font-display uppercase tracking-wider font-semibold text-[#E8DFD4] hover:bg-[#251E19] hover:text-[#C9A962] hover:border-[#C9A962]/50 transition-all disabled:opacity-40 disabled:cursor-not-allowed active:scale-95 cursor-pointer"
+            className="inline-flex items-center gap-1 rounded border border-border dark:border-[#4A3F35] bg-background dark:bg-[#1C1714] px-2.5 py-1.5 text-xs font-display uppercase tracking-wider font-semibold text-foreground dark:text-[#E8DFD4] hover:bg-secondary dark:hover:bg-[#251E19] hover:text-primary dark:hover:text-[#C9A962] hover:border-primary/50 dark:hover:border-[#C9A962]/50 transition-all disabled:opacity-40 disabled:cursor-not-allowed active:scale-95 cursor-pointer"
           >
-            <StepForward className="h-3.5 w-3.5 text-[#C9A962]" />
+            <StepForward className="h-3.5 w-3.5 text-primary dark:text-[#C9A962]" />
             <span>Step</span>
           </button>
 
@@ -140,9 +140,9 @@ export function VisualizerControls({
             id="reset-button"
             onClick={onReset}
             aria-label="Reset array to initial state"
-            className="inline-flex items-center gap-1 rounded border border-[#4A3F35] bg-[#1C1714] px-2.5 py-1.5 text-xs font-display uppercase tracking-wider font-semibold text-[#E8DFD4] hover:bg-[#251E19] hover:text-[#C9A962] hover:border-[#C9A962]/50 transition-all active:scale-95 cursor-pointer"
+            className="inline-flex items-center gap-1 rounded border border-border dark:border-[#4A3F35] bg-background dark:bg-[#1C1714] px-2.5 py-1.5 text-xs font-display uppercase tracking-wider font-semibold text-foreground dark:text-[#E8DFD4] hover:bg-secondary dark:hover:bg-[#251E19] hover:text-primary dark:hover:text-[#C9A962] hover:border-primary/50 dark:hover:border-[#C9A962]/50 transition-all active:scale-95 cursor-pointer"
           >
-            <RotateCcw className="h-3.5 w-3.5 text-[#C9A962]" />
+            <RotateCcw className="h-3.5 w-3.5 text-primary dark:text-[#C9A962]" />
             <span>Reset</span>
           </button>
 
@@ -151,9 +151,9 @@ export function VisualizerControls({
             onClick={onGenerateRandom}
             disabled={isPlaying}
             aria-label="Generate random array"
-            className="inline-flex items-center gap-1 rounded border border-[#C9A962]/30 bg-[#1C1714] px-2.5 py-1.5 text-xs font-display uppercase tracking-wider font-semibold text-[#C9A962] hover:bg-[#251E19] hover:border-[#C9A962] transition-all disabled:opacity-40 disabled:cursor-not-allowed active:scale-95 cursor-pointer"
+            className="inline-flex items-center gap-1 rounded border border-primary/30 dark:border-[#C9A962]/30 bg-background dark:bg-[#1C1714] px-2.5 py-1.5 text-xs font-display uppercase tracking-wider font-semibold text-primary dark:text-[#C9A962] hover:bg-secondary dark:hover:bg-[#251E19] hover:border-primary dark:hover:border-[#C9A962] transition-all disabled:opacity-40 disabled:cursor-not-allowed active:scale-95 cursor-pointer"
           >
-            <Shuffle className="h-3.5 w-3.5 text-[#C9A962]" />
+            <Shuffle className="h-3.5 w-3.5 text-primary dark:text-[#C9A962]" />
             <span className="hidden sm:inline">Random</span>
           </button>
         </div>
@@ -162,22 +162,22 @@ export function VisualizerControls({
         <button
           type="button"
           onClick={() => setShowCustomDrawer(!showCustomDrawer)}
-          className="inline-flex items-center gap-1.5 text-[11px] font-display uppercase tracking-wider px-2.5 py-1.5 rounded border border-[#4A3F35] bg-[#1C1714] hover:bg-[#251E19] text-[#9C8B7A] hover:text-[#C9A962] transition-colors cursor-pointer"
+          className="inline-flex items-center gap-1.5 text-[11px] font-display uppercase tracking-wider px-2.5 py-1.5 rounded border border-border dark:border-[#4A3F35] bg-background dark:bg-[#1C1714] hover:bg-secondary dark:hover:bg-[#251E19] text-muted-foreground dark:text-[#9C8B7A] hover:text-primary dark:hover:text-[#C9A962] transition-colors cursor-pointer"
         >
-          <Sparkles className="h-3 w-3 text-[#C9A962]" />
+          <Sparkles className="h-3 w-3 text-primary dark:text-[#C9A962]" />
           <span>Custom Input</span>
-          <ChevronDown className={`h-3 w-3 transition-transform duration-200 ${showCustomDrawer ? "rotate-180 text-[#C9A962]" : ""}`} />
+          <ChevronDown className={`h-3 w-3 transition-transform duration-200 ${showCustomDrawer ? "rotate-180 text-primary dark:text-[#C9A962]" : ""}`} />
         </button>
       </div>
 
       {/* Sliders Row (Instrument Panel) */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-[#4A3F35]">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-border dark:border-[#4A3F35]">
         {/* Speed Slider */}
         <div className="flex items-center gap-2.5">
-          <label htmlFor="speed-slider" className="flex items-center gap-1 text-[11px] font-display uppercase tracking-wider text-[#9C8B7A] shrink-0 w-24">
-            <Gauge className="h-3 w-3 text-[#C9A962]" />
+          <label htmlFor="speed-slider" className="flex items-center gap-1 text-[11px] font-display uppercase tracking-wider text-muted-foreground dark:text-[#9C8B7A] shrink-0 w-24">
+            <Gauge className="h-3 w-3 text-primary dark:text-[#C9A962]" />
             <span>Delay:</span>
-            <strong className="text-[#C9A962] font-mono font-bold">{speed}ms</strong>
+            <strong className="text-primary dark:text-[#C9A962] font-mono font-bold">{speed}ms</strong>
           </label>
           <input
             id="speed-slider"
@@ -188,16 +188,16 @@ export function VisualizerControls({
             value={speed}
             aria-label="Adjust execution delay in milliseconds"
             onChange={(e) => onSpeedChange(Number(e.target.value))}
-            className="h-1.5 flex-1 cursor-pointer appearance-none rounded bg-[#1C1714] accent-[#C9A962] transition-colors"
+            className="h-1.5 flex-1 cursor-pointer appearance-none rounded bg-background dark:bg-[#1C1714] accent-primary dark:accent-[#C9A962] transition-colors"
           />
         </div>
 
         {/* Array Size Slider */}
         <div className="flex items-center gap-2.5">
-          <label htmlFor="size-slider" className="flex items-center gap-1 text-[11px] font-display uppercase tracking-wider text-[#9C8B7A] shrink-0 w-24">
-            <Sliders className="h-3 w-3 text-[#D4B872]" />
+          <label htmlFor="size-slider" className="flex items-center gap-1 text-[11px] font-display uppercase tracking-wider text-muted-foreground dark:text-[#9C8B7A] shrink-0 w-24">
+            <Sliders className="h-3 w-3 text-primary dark:text-[#D4B872]" />
             <span>Size:</span>
-            <strong className="text-[#D4B872] font-mono font-bold">{arraySize}</strong>
+            <strong className="text-primary dark:text-[#D4B872] font-mono font-bold">{arraySize}</strong>
           </label>
           <input
             id="size-slider"
@@ -209,14 +209,14 @@ export function VisualizerControls({
             disabled={isPlaying}
             aria-label="Adjust array bar count"
             onChange={(e) => onArraySizeChange(Number(e.target.value))}
-            className="h-1.5 flex-1 cursor-pointer appearance-none rounded bg-[#1C1714] accent-[#D4B872] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+            className="h-1.5 flex-1 cursor-pointer appearance-none rounded bg-background dark:bg-[#1C1714] accent-primary dark:accent-[#D4B872] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
           />
         </div>
       </div>
 
       {/* Collapsible Custom Array Drawer */}
       {showCustomDrawer && (
-        <form onSubmit={handleCustomSubmit} className="pt-2 border-t border-[#4A3F35] animate-in fade-in slide-in-from-top-1 duration-150">
+        <form onSubmit={handleCustomSubmit} className="pt-2 border-t border-border dark:border-[#4A3F35] animate-in fade-in slide-in-from-top-1 duration-150">
           <div className="flex gap-2">
             <input
               id="custom-array-input"
@@ -229,7 +229,7 @@ export function VisualizerControls({
                 setCustomInput(e.target.value);
                 if (inputError) setInputError(null);
               }}
-              className="flex-1 rounded border border-[#4A3F35] bg-[#1C1714] px-3 py-1.5 text-xs text-[#E8DFD4] placeholder:text-[#9C8B7A]/60 focus:border-[#C9A962] font-mono transition-colors"
+              className="flex-1 rounded border border-border dark:border-[#4A3F35] bg-background dark:bg-[#1C1714] px-3 py-1.5 text-xs text-foreground dark:text-[#E8DFD4] placeholder:text-muted-foreground/60 dark:placeholder:text-[#9C8B7A]/60 focus:border-primary dark:focus:border-[#C9A962] font-mono transition-colors"
             />
             <button
               id="apply-custom-array-btn"

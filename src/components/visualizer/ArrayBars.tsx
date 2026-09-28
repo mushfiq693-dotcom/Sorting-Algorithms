@@ -207,7 +207,7 @@ export const ArrayBars = memo(function ArrayBars({
     <div
       role="region"
       aria-label="Sorting Array Bars Visualization"
-      className={`relative flex ${containerHeight} w-full items-end justify-center gap-1 sm:gap-1.5 rounded bg-[#251E19] border border-[#4A3F35] pt-10 pb-3 px-3 sm:pt-11 sm:pb-4 sm:px-4 shadow-2xl backdrop-blur-xl overflow-hidden corner-flourish ${className}`}
+      className={`relative flex ${containerHeight} w-full items-end justify-center gap-1 sm:gap-1.5 rounded bg-card dark:bg-[#251E19] border border-border dark:border-[#4A3F35] pt-10 pb-3 px-3 sm:pt-11 sm:pb-4 sm:px-4 shadow-2xl backdrop-blur-xl overflow-hidden corner-flourish ${className}`}
     >
       {/* Classical Background Grid Lines */}
       <div className="absolute inset-0 pointer-events-none bg-[linear-gradient(to_right,#c9a96208_1px,transparent_1px),linear-gradient(to_bottom,#c9a96208_1px,transparent_1px)] bg-[size:1.5rem_1.5rem]" />
