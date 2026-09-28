@@ -24,7 +24,7 @@ const contentSecurityPolicy = `
   style-src 'self' 'unsafe-inline';
   img-src 'self' blob: data:;
   font-src 'self' data:;
-  connect-src 'self' https://*.supabase.co wss://*.supabase.co;
+  connect-src 'self' https://*.supabase.co wss://*.supabase.co https://us.i.posthog.com https://eu.i.posthog.com;
   worker-src 'self' blob:;
   frame-ancestors 'none';
   object-src 'none';
