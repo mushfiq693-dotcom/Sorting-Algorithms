@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Outfit, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
+import { CSPostHogProvider } from "./providers";
 import { FeedbackWidget } from "@/components/feedback/FeedbackWidget";
 import { DeveloperCredit } from "@/components/brand/DeveloperCredit";
 import { AtmosphericOverlay } from "@/components/ui/AtmosphericOverlay";
@@ -112,11 +113,13 @@ export default function RootLayout({
       <body
         className={`${outfit.variable} ${jetbrainsMono.variable} font-sans font-normal bg-background text-foreground min-h-screen flex flex-col antialiased selection:bg-[#C9A962]/35 selection:text-[#1C1714]`}
       >
-        <AtmosphericOverlay />
-        <UserPresenceTracker />
-        {children}
-        <DeveloperCredit />
-        <FeedbackWidget />
+        <CSPostHogProvider>
+          <AtmosphericOverlay />
+          <UserPresenceTracker />
+          {children}
+          <DeveloperCredit />
+          <FeedbackWidget />
+        </CSPostHogProvider>
       </body>
     </html>
   );
