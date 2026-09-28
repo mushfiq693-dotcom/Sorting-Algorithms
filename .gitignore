@@ -41,3 +41,4 @@ autocannon-*.json
 lh-*.json
 lighthouse-*.json
 
+.env*
