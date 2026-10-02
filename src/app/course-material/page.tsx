@@ -476,7 +476,7 @@ function CustomDropdown({
       </button>
 
       {isOpen && (
-        <div className="absolute top-full left-0 mt-1.5 w-56 p-1.5 rounded-2xl border border-border bg-card/95 backdrop-blur-xl shadow-2xl z-50 animate-in fade-in zoom-in-95 duration-150">
+        <div className="absolute top-full left-0 mt-1.5 w-56 p-1.5 rounded-2xl border border-border bg-card shadow-2xl z-[100] animate-in fade-in zoom-in-95 duration-150">
           <div className="space-y-0.5">
             {options.map((opt) => {
               const OptIcon = opt.icon || Icon;
@@ -1839,7 +1839,7 @@ export default function CourseMaterialPage() {
              FULL UNLOCKED INTERACTIVE TOPIC & PROBLEM DIRECTORY (Approved / Admin)
              ======================================================================== */
           <>
-            <div className="rounded-2xl border border-border/80 bg-card/80 p-4 mb-6 backdrop-blur-md shadow-sm space-y-3">
+            <div className="relative z-50 rounded-2xl border border-border/80 bg-card/80 p-4 mb-6 backdrop-blur-md shadow-sm space-y-3">
               <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3">
                 {/* Search Input */}
                 <div className="relative flex-1">
