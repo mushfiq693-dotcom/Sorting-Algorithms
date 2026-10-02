@@ -11,6 +11,7 @@ export interface CourseMaterial {
   explanation_or_solution: string;
   bangla_explanation?: string | null;
   is_midterm?: boolean;
+  importance_rank?: number;
   difficulty: CourseMaterialDifficulty | null;
   assigned_date: string | null;
   created_by: string | null;

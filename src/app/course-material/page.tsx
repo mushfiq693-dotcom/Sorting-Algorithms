@@ -2033,7 +2033,7 @@ export default function CourseMaterialPage() {
                           {item.is_midterm && (
                             <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg text-[10px] font-mono font-extrabold bg-gradient-to-r from-amber-500/25 to-orange-500/25 text-amber-700 dark:text-amber-300 border border-amber-500/50 shadow-sm shadow-amber-500/10 animate-pulse">
                               <Flame className="h-3 w-3 text-amber-500" />
-                              <span>🎯 MIDTERM SYLLABUS</span>
+                              <span>🎯 MIDTERM SYLLABUS {item.importance_rank ? `| RANK: ${item.importance_rank}` : ""}</span>
                             </span>
                           )}
 
@@ -2157,6 +2157,11 @@ export default function CourseMaterialPage() {
                               <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-amber-500/25 text-amber-700 dark:text-amber-300 border border-amber-500/40">
                                 Exam Focus
                               </span>
+                              {item.importance_rank && (
+                                <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-blue-500/25 text-blue-700 dark:text-blue-300 border border-blue-500/40">
+                                  Rank: {item.importance_rank}
+                                </span>
+                              )}
                             </div>
                             <p className="text-muted-foreground leading-relaxed text-[11px] sm:text-xs">
                               এই টপিকটি আপনার মিডটার্ম পরীক্ষার সিলেবাসের অংশ। পরীক্ষার জন্য এর অ্যালগরিদম, গাণিতিক জটিলতা এবং <strong className="text-foreground font-semibold">৫-পার্ট বাংলা মডেল উত্তরগুলো</strong> বিশেষভাবে প্রস্তুতি নিন।
