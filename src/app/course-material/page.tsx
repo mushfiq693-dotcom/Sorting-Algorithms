@@ -931,6 +931,7 @@ export default function CourseMaterialPage() {
   const [selectedTag, setSelectedTag] = useState<string>("all");
   const [selectedDifficulty, setSelectedDifficulty] = useState<string>("all");
   const [showMidtermOnly, setShowMidtermOnly] = useState<boolean>(false);
+  const [sortByRank, setSortByRank] = useState<boolean>(false);
 
   // Track expanded cards (Dropdown accordions)
   // Essential interactive cards open by default for immediate engagement
@@ -1058,8 +1059,15 @@ export default function CourseMaterialPage() {
     });
 
     // Sort numerically in ascending Chapter & Section order
-    return list.sort((a, b) => getMaterialSortKey(a) - getMaterialSortKey(b));
-  }, [materials, searchQuery, selectedChapter, selectedTag, selectedType, selectedDifficulty, showMidtermOnly]);
+    return list.sort((a, b) => {
+      if (sortByRank && a.is_midterm && b.is_midterm) {
+        const rankA = a.importance_rank ?? 9999;
+        const rankB = b.importance_rank ?? 9999;
+        if (rankA !== rankB) return rankA - rankB;
+      }
+      return getMaterialSortKey(a) - getMaterialSortKey(b);
+    });
+  }, [materials, searchQuery, selectedChapter, selectedTag, selectedType, selectedDifficulty, showMidtermOnly, sortByRank]);
 
   const hasActiveFilters =
     searchQuery ||
@@ -1067,7 +1075,8 @@ export default function CourseMaterialPage() {
     selectedType !== "all" ||
     selectedTag !== "all" ||
     selectedDifficulty !== "all" ||
-    showMidtermOnly;
+    showMidtermOnly ||
+    sortByRank;
 
   const resetAllFilters = () => {
     setSearchQuery("");
@@ -1076,6 +1085,7 @@ export default function CourseMaterialPage() {
     setSelectedTag("all");
     setSelectedDifficulty("all");
     setShowMidtermOnly(false);
+    setSortByRank(false);
   };
 
   const allAreExpanded =
@@ -1902,6 +1912,21 @@ export default function CourseMaterialPage() {
                 <Flame className="h-3.5 w-3.5 text-amber-500 animate-pulse" />
                 <span>🎯 Midterm Focus ({stats.totalMidterm})</span>
                 {showMidtermOnly && <CheckCircle2 className="h-3.5 w-3.5 text-amber-500 ml-1" />}
+              </button>
+
+              {/* Sort by Rank Toggle Button */}
+              <button
+                type="button"
+                onClick={() => setSortByRank(!sortByRank)}
+                className={`inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold border transition-all active:scale-95 shadow-sm cursor-pointer ${
+                  sortByRank
+                    ? "bg-blue-500/20 text-blue-600 dark:text-blue-300 border-blue-500/60 shadow-blue-500/20 ring-2 ring-blue-400/30 font-black"
+                    : "bg-blue-500/10 hover:bg-blue-500/15 text-blue-700 dark:text-blue-400 border-blue-500/30"
+                }`}
+              >
+                <Layers className="h-3.5 w-3.5 text-blue-500" />
+                <span>Sort by Rank</span>
+                {sortByRank && <CheckCircle2 className="h-3.5 w-3.5 text-blue-500 ml-1" />}
               </button>
 
               {hasActiveFilters && (
