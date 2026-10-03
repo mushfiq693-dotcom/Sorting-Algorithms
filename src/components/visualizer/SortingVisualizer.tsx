@@ -381,27 +381,7 @@ export function SortingVisualizer({
   if (!isSorting) {
     return (
       <div className="flex flex-col gap-6 w-full max-w-7xl mx-auto">
-        {/* Active Specialized Topic Header Bar */}
-        <div className="flex flex-wrap items-center justify-between gap-3 p-3 sm:p-3.5 rounded-lg border border-border bg-card/90 shadow-sm corner-flourish">
-          <div className="flex items-center gap-2.5">
-            <span className="text-xs font-mono font-semibold text-muted-foreground uppercase tracking-wider">
-              Active Workspace:
-            </span>
-            <span className="px-3 py-1 rounded border border-primary/40 bg-primary/10 text-primary text-xs sm:text-sm font-sans font-bold tracking-tight flex items-center gap-1.5 shadow-xs">
-              <Sparkles className="h-3.5 w-3.5 text-primary" />
-              <span>{currentMeta.name}</span>
-            </span>
-          </div>
 
-          <button
-            type="button"
-            onClick={() => handleSelectAlgorithm("bubble")}
-            className="inline-flex items-center gap-1.5 text-xs font-sans font-semibold rounded border border-border bg-secondary/80 hover:bg-secondary hover:border-primary/50 text-foreground hover:text-primary transition-all px-3 py-1.5 cursor-pointer active:scale-95 shadow-sm"
-          >
-            <ArrowLeft className="h-3.5 w-3.5" />
-            <span>Switch to Sorting Algorithms</span>
-          </button>
-        </div>
 
         {/* Dedicated Specialized Visualizer Stage */}
         <div className="w-full">

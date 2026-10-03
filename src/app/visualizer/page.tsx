@@ -82,9 +82,11 @@ function VisualizerWorkspace() {
               <Sparkles className="h-3 w-3" />
               <span>Live Execution Engine</span>
             </div>
-            <h1 className="font-heading text-xl sm:text-2xl font-bold tracking-tight text-foreground flex items-center gap-2">
+            <h1 className="font-heading text-xl sm:text-2xl font-bold tracking-tight text-foreground flex items-center gap-2 flex-wrap">
               <Layers className="h-5 w-5 text-primary" />
               <span>Interactive Visualizer Workspace</span>
+              <span className="text-muted-foreground font-normal mx-1 hidden sm:inline">/</span>
+              <span className="text-primary">{activeMeta.name}</span>
             </h1>
           </div>
 
