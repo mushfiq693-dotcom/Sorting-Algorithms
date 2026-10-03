@@ -50,17 +50,19 @@ function VisualizerWorkspace() {
     <div className="flex flex-col min-h-screen bg-background text-foreground selection:bg-[#C9A962]/35 selection:text-[#1C1714] transition-colors duration-200 font-body">
       {/* Top Navbar */}
       <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur-xl transition-colors">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-3">
-          <div className="flex items-center gap-3 sm:gap-4 shrink-0">
-            <Link href="/" className="flex items-center gap-2.5 group">
-              <span className="font-heading text-xl sm:text-2xl font-bold tracking-tight text-foreground group-hover:text-primary transition-colors">
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-1.5 sm:gap-3">
+          <div className="flex items-center gap-2 sm:gap-4 shrink-0 min-w-0">
+            <Link href="/" className="flex items-center gap-1.5 sm:gap-2.5 group">
+              <span className="font-heading text-lg sm:text-2xl font-bold tracking-tight text-foreground group-hover:text-primary transition-colors truncate">
                 AlgoHub
               </span>
-              <AmbientSortLogo />
+              <div className="shrink-0">
+                <AmbientSortLogo />
+              </div>
             </Link>
           </div>
 
-          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+          <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
             {/* Topic Categories Dropdown next to Light/Dark Mode */}
             <TopicNavbarDropdown
               selectedTopic={selectedAlgorithm}

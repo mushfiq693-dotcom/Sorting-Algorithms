@@ -82,7 +82,7 @@ export function VisualizerControls({
       {/* Action Buttons & Sliders Row */}
       <div className="flex flex-wrap items-center justify-between gap-2">
         {/* Left: Execution Controls */}
-        <div className="flex items-center gap-1.5">
+        <div className="flex flex-wrap items-center gap-1.5">
           {!isPlaying && !isPaused && (
             <button
               id="start-button"

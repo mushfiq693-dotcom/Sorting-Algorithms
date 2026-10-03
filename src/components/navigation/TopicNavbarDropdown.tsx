@@ -156,8 +156,8 @@ export function TopicNavbarDropdown({
         }`}
       >
         <Layers className="h-4 w-4 text-cyan-400 shrink-0" />
-        <span className="font-medium tracking-wide hidden xs:inline sm:inline">All Topics</span>
-        <span className="font-medium tracking-wide xs:hidden sm:hidden">Topics</span>
+        <span className="font-medium tracking-wide hidden sm:inline">All Topics</span>
+        <span className="font-medium tracking-wide sm:hidden">Topics</span>
         {isOpen ? (
           <ChevronUp className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-cyan-400 shrink-0" />
         ) : (
@@ -167,7 +167,7 @@ export function TopicNavbarDropdown({
 
       {/* Floating Dropdown Popover */}
       {isOpen && (
-        <div className="absolute right-0 top-full mt-2.5 w-[calc(100vw-1.5rem)] sm:w-[350px] max-w-[360px] max-h-[80vh] overflow-y-auto touch-scroll no-scrollbar [scrollbar-width:none] [&::-webkit-scrollbar]:hidden rounded-2xl border border-[#2b2724] bg-[#121110]/95 backdrop-blur-xl p-3 sm:p-4 shadow-[0_25px_60px_rgba(0,0,0,0.8)] z-50 animate-in fade-in zoom-in-95 duration-150">
+        <div className="fixed left-3 right-3 top-[4rem] sm:absolute sm:left-auto sm:right-0 sm:top-full sm:mt-2.5 sm:w-[350px] max-w-full sm:max-w-[360px] max-h-[calc(100vh-5rem)] sm:max-h-[80vh] overflow-y-auto touch-scroll no-scrollbar [scrollbar-width:none] [&::-webkit-scrollbar]:hidden rounded-2xl border border-[#2b2724] bg-[#121110]/95 backdrop-blur-xl p-3 sm:p-4 shadow-[0_25px_60px_rgba(0,0,0,0.8)] z-50 animate-in fade-in zoom-in-95 duration-150">
           {CATEGORIES.map((cat, catIdx) => {
             const CatIcon = cat.icon;
             return (
