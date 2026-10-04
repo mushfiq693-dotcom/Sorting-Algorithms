@@ -696,7 +696,7 @@ export default function AdminModerationPage() {
             Admin <span className="italic font-semibold text-primary dark:text-[#D4B872]">Control Center</span>
           </h1>
           <p className="text-xs sm:text-sm text-muted-foreground font-sans">
-            Monitor real-time learner presence, inspect algorithm activity telemetry, manage permissions, and approve course materials access.
+            Monitor real-time presence, telemetry, permissions, and course access.
           </p>
         </div>
 
@@ -711,7 +711,6 @@ export default function AdminModerationPage() {
             <div className="text-2xl sm:text-3xl font-extrabold text-foreground font-mono">
               {users.length}
             </div>
-            <p className="text-[11px] text-muted-foreground font-sans">Registered developers</p>
           </div>
 
           {/* Card 2: 🟢 Online Right Now */}
@@ -729,7 +728,6 @@ export default function AdminModerationPage() {
             <div className="text-2xl sm:text-3xl font-extrabold text-emerald-600 dark:text-emerald-400 font-mono">
               {onlineCount}
             </div>
-            <p className="text-[11px] text-muted-foreground font-sans">Active in product right now</p>
           </div>
 
           {/* Card 3: Active Today */}
@@ -741,7 +739,6 @@ export default function AdminModerationPage() {
             <div className="text-2xl sm:text-3xl font-extrabold text-foreground font-mono">
               {activeTodayCount}
             </div>
-            <p className="text-[11px] text-muted-foreground font-sans">Active in past 24 hours</p>
           </div>
 
           {/* Card 4: Total Steps Completed */}
@@ -753,7 +750,6 @@ export default function AdminModerationPage() {
             <div className="text-2xl sm:text-3xl font-extrabold text-foreground font-mono">
               {totalStepsCompleted}
             </div>
-            <p className="text-[11px] text-muted-foreground font-sans">Total algorithm milestones</p>
           </div>
 
           {/* Card 5: Pending Course Access & Feedback */}
@@ -765,7 +761,6 @@ export default function AdminModerationPage() {
             <div className="text-2xl sm:text-3xl font-extrabold text-amber-600 dark:text-amber-400 font-mono">
               {pendingUsersCount} <span className="text-xs text-muted-foreground font-normal">pending</span>
             </div>
-            <p className="text-[11px] text-muted-foreground font-sans">Awaiting admin approval</p>
           </div>
         </div>
 
@@ -780,7 +775,7 @@ export default function AdminModerationPage() {
             }`}
           >
             <Users className="h-4 w-4" />
-            <span>Learners &amp; Activity ({users.length})</span>
+            <span>Learners ({users.length})</span>
             {pendingUsersCount > 0 && (
               <span className="px-2 py-0.5 rounded-full bg-amber-500 text-black text-[10px] font-mono font-bold animate-pulse">
                 {pendingUsersCount} Pending
@@ -846,7 +841,7 @@ export default function AdminModerationPage() {
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search by name, email, student ID, department..."
+                  placeholder="Search learners..."
                   className="w-full rounded border border-border bg-background pl-9 pr-4 py-2 text-xs text-foreground placeholder:text-muted-foreground/60 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none font-sans"
                 />
               </div>
@@ -933,7 +928,6 @@ export default function AdminModerationPage() {
                     <tr>
                       <th className="p-3.5">Learner Profile</th>
                       <th className="p-3.5">Live Presence & Status</th>
-                      <th className="p-3.5">Learning Telemetry</th>
                       <th className="p-3.5">Institution & ID</th>
                       <th className="p-3.5 text-right">Activity & Controls</th>
                     </tr>
@@ -941,7 +935,7 @@ export default function AdminModerationPage() {
                   <tbody className="divide-y divide-border text-foreground">
                     {filteredUsers.length === 0 ? (
                       <tr>
-                        <td colSpan={5} className="p-10 text-center text-muted-foreground font-sans">
+                        <td colSpan={4} className="p-10 text-center text-muted-foreground font-sans">
                           No matching learners or users found for the selected filter.
                         </td>
                       </tr>
@@ -1071,24 +1065,6 @@ export default function AdminModerationPage() {
                                   <span>Last seen: {onlineInfo.label}</span>
                                 </div>
                               )}
-                            </td>
-
-                            {/* Learning Telemetry Column */}
-                            <td className="p-3.5 font-mono text-[11px]">
-                              <div className="space-y-1">
-                                <div className="flex items-center gap-1.5">
-                                  <span className="px-1.5 py-0.5 rounded bg-primary/10 border border-primary/20 text-primary font-bold">
-                                    {user.completed_steps.length} Steps
-                                  </span>
-                                  <span className="text-muted-foreground">•</span>
-                                  <span className="text-foreground">
-                                    {Object.keys(user.quiz_scores).length} Quizzes
-                                  </span>
-                                </div>
-                                <div className="text-[10px] text-muted-foreground">
-                                  {user.completed_docs.length} Docs read
-                                </div>
-                              </div>
                             </td>
 
                             {/* Institution & Roll ID Column */}
