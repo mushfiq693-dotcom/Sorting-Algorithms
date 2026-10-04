@@ -43,9 +43,9 @@ export interface CourseMaterial {
 
 ---
 
-## 2. Standard 5-Part Structure for Every `bangla_explanation`
+## 2. Standard 6-Part Structure for Every `bangla_explanation`
 
-Whenever creating or updating any entry (Topic, Algorithm, or Problem), the `bangla_explanation` Markdown string MUST strictly contain the following 5 structured sections:
+Whenever creating or updating any entry (Topic, Algorithm, or Problem), the `bangla_explanation` Markdown string MUST strictly contain the following 6 structured sections:
 
 ```markdown
 ### 🇧🇩 সহজ বাংলায় [টপিক / অ্যালগরিদম / প্রবলেম নাম ও রেফারেন্স]
@@ -77,6 +77,13 @@ Whenever creating or updating any entry (Topic, Algorithm, or Problem), the `ban
 
 #### ৫. ✍️ পরীক্ষার জন্য প্রস্তুতকৃত আদর্শ উত্তর (Exam-Ready Model Answers):
 - পরীক্ষায় যেভাবে লিখলে শিক্ষক সম্পূর্ণ নম্বর (Full Marks) প্রদান করবেন, সেই পয়েন্ট-বাই-পয়েন্ট কাঠামোর আদর্শ উত্তর।
+
+---
+
+#### ৬. অ্যালগরিদমের লাইন-বাই-লাইন ব্যাখ্যা (Line-by-Line Explanation):
+- অ্যালগরিদমের প্রতিটি লাইনের সহজ সাবলীল বাংলা অনুবাদ এবং তার সাথে সংশ্লিষ্ট কাজ (যেমন: লুপ চালানো, ভ্যালু সেট করা, পয়েন্টার আপডেট করা)।
+- প্রতিটি লাইনের পাশে ব্র্যাকেটে `[Initialize counter]` বা `[End of loop]` এর মতো মূল ইংরেজি সিউডোকোডের কমেন্টগুলো রাখা।
+- এটি বিশেষভাবে অ্যালগরিদম টাইপ (`content_type = 'algorithm'`) কন্টেন্টের জন্য প্রযোজ্য।
 ```
 
 ---
@@ -129,7 +136,7 @@ All visualizers and markdown containers must follow AlgoHub's design system:
 ## 6. Implementation Workflow & Quality Verification Loop
 
 1. **Audit & Classify**: Review input material. Classify as `topic`, `algorithm`, or `problem`.
-2. **Draft Content**: Generate both English textbook specification and complete 5-part Bengali guide.
+2. **Draft Content**: Generate both English textbook specification and complete 6-part Bengali guide.
 3. **Verify Exam Q&A Completeness**: Ensure the `bangla_explanation` contains BOTH `🎯 পরীক্ষায় কেমন প্রশ্ন আসতে পারে?` AND `✍️ পরীক্ষার জন্য প্রস্তুতকৃত আদর্শ উত্তর`.
 4. **Compile & Typecheck**: Run `npm run build` or `npx tsc --noEmit` and ensure **0 errors**.
 5. **Database Sync**: If database seeding is active, sync using `npx tsx backend/scripts/seed-course-materials.ts`.

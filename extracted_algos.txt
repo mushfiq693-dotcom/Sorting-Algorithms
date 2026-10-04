@@ -1,0 +1,244 @@
+=== Algorithm 3.1: Deleting Every Occurrence of Pattern P in Text T (DELETE_ALL_P) ===
+Algorithm 3.1: (Deleting Every Occurrence of Pattern P in Text T)
+1. Set K := INDEX(T, P). [Finds starting location of first occurrence of P.]
+2. Repeat while K != 0:
+      (a) Set T := DELETE(T, K, LENGTH(P)). [Deletes pattern P from T.]
+      (b) Set K := INDEX(T, P). [Searches for next occurrence.]
+   [End of Step 2 loop.]
+3. Write: T.
+4. Exit.
+=== Algorithm 3.2: Replacing Every Occurrence of Pattern P with Pattern Q (REPLACE_ALL_P) ===
+Algorithm 3.2: (Replacing Every Occurrence of Pattern P by Q in Text T)
+1. Set K := INDEX(T, P). [Finds starting location of first occurrence of P.]
+2. Repeat while K != 0:
+      (a) Set T := REPLACE(T, P, Q). [Replaces first occurrence of P by Q.]
+      (b) Set K := INDEX(T, P). [Searches for next occurrence of P.]
+   [End of Step 2 loop.]
+3. Write: T.
+4. Exit.
+=== Algorithm 3.3: First-Pattern Matching / Finding INDEX of P in T (PATTERN) ===
+Algorithm 3.3: (Pattern Matching) PATTERN(T, P)
+1. [Initialize] Set K := 1 and MAX := N - M + 1.
+2. Repeat Steps 3 to 5 while K <= MAX:
+3.    Repeat for L = 1 to M: [Tests each character of P.]
+         If P[L] != T[K + L - 1], then:
+            Go to Step 5.
+      [End of inner loop.]
+4.    [Success] Set INDEX := K, and Exit.
+5.    Set K := K + 1.
+   [End of Step 2 outer loop.]
+6. [Failure] Set INDEX := 0.
+7. Exit.
+=== Algorithm 4.1: Traversing a Linear Array (TRAVLA) ===
+1. [Initialize counter] Set K := LB.
+2. Repeat Steps 3 and 4 while K <= UB:
+3.    Apply PROCESS to LA[K].
+4.    Set K := K + 1. [Increase counter]
+   [End of Step 2 loop.]
+5. Exit.
+=== Algorithm 4.2: Inserting into a Linear Array (INSERTLA) ===
+1. [Initialize counter] Set J := N.
+2. Repeat Steps 3 and 4 while J >= K:
+3.    Set LA[J + 1] := LA[J]. [Move downward/rightward]
+4.    Set J := J - 1. [Decrease counter]
+   [End of Step 2 loop.]
+5. [Insert element] Set LA[K] := ITEM.
+6. [Reset N] Set N := N + 1.
+7. Exit.
+=== Algorithm 4.3: Deleting from a Linear Array (DELETELA) ===
+1. Set ITEM := LA[K]. [Save deleted element]
+2. Repeat for J = K to N - 1:
+3.    Set LA[J] := LA[J + 1]. [Move upward/leftward]
+   [End of loop.]
+4. [Reset N] Set N := N - 1.
+5. Exit.
+=== Algorithm 4.4: Bubble Sort (BUBBLE) ===
+Algorithm 4.4: (Bubble Sort) BUBBLE(DATA, N)
+1. Repeat Steps 2 and 3 for K = 1 to N - 1.
+2.    Set PTR := 1. [Initializes pass pointer PTR.]
+3.    Repeat while PTR <= N - K: [Executes pass.]
+         (a) If DATA[PTR] > DATA[PTR + 1], then:
+                Interchange DATA[PTR] and DATA[PTR + 1].
+             [End of If structure.]
+         (b) Set PTR := PTR + 1.
+      [End of inner loop.]
+   [End of Step 1 outer loop.]
+4. Exit.
+=== Algorithm 4.5: Linear Search with Sentinel Optimization (LINEAR) ===
+1. [Insert ITEM at end of DATA] Set DATA[n + 1] := ITEM.
+2. [Initialize counter] Set LOC := 1.
+3. [Search for ITEM] Repeat while DATA[LOC] != ITEM:
+      Set LOC := LOC + 1.
+   [End of loop.]
+4. [Successful?] If LOC = n + 1, then:
+      Set LOC := 0.  /* Item not in original array */
+   Else:
+      Write: LOC.
+5. Exit.
+=== Algorithm 4.6: Binary Search (BINARY) ===
+1. [Initialize segment variables]
+   Set BEG := 1, END := n, and MID := INT((BEG + END)/2).
+2. Repeat Steps 3 and 4 while BEG <= END and DATA[MID] != ITEM:
+3.    If ITEM < DATA[MID], then:
+         Set END := MID - 1.
+      Else:
+         Set BEG := MID + 1.
+      [End of If structure.]
+4.    Set MID := INT((BEG + END)/2).
+   [End of Step 2 loop.]
+5. If DATA[MID] = ITEM, then:
+      Set LOC := MID.
+   Else:
+      Set LOC := NULL.
+6. Exit.
+=== Algorithm P4.7: Binary Search and Insertion (BINSRCHINS) ===
+Steps 1 through 4. Same as in Algorithm 4.6.
+5. If ITEM < DATA[MID], then:
+      Set LOC := MID.
+   Else:
+      Set LOC := MID + 1.
+   [End of If structure.]
+6. Insert ITEM into DATA[LOC] using Algorithm 4.2.
+7. Exit.
+=== Algorithm 5.1: Traversing a Linked List (TRAVLL) ===
+1. Set PTR := START. [Initializes pointer PTR]
+2. Repeat Steps 3 and 4 while PTR != NULL:
+3.    Apply PROCESS to INFO[PTR].
+4.    Set PTR := LINK[PTR]. [PTR now points to next node]
+   [End of Step 2 loop.]
+5. Exit.
+=== Algorithm 5.2: Searching an Unsorted Linked List (SEARCH) ===
+1. Set PTR := START.
+2. Repeat Step 3 while PTR != NULL:
+3.    If ITEM = INFO[PTR], then:
+         Set LOC := PTR, and Exit.
+      Else:
+         Set PTR := LINK[PTR].
+      [End of If structure.]
+   [End of Step 2 loop.]
+4. [Search unsuccessful] Set LOC := NULL.
+5. Exit.
+=== Algorithm 5.3: Searching a Sorted Linked List (SRCHSL) ===
+1. Set PTR := START.
+2. Repeat Step 3 while PTR != NULL:
+3.    If ITEM < INFO[PTR], then:
+         Set PTR := LINK[PTR].
+      Else if ITEM = INFO[PTR], then:
+         Set LOC := PTR, and Exit.
+      Else:
+         Set LOC := NULL, and Exit.  /* Early termination */
+      [End of If structure.]
+   [End of Step 2 loop.]
+4. Set LOC := NULL.
+5. Exit.
+=== Algorithm 5.4: Inserting at the Beginning of a Linked List (INSFIRST) ===
+1. [OVERFLOW?] If AVAIL = NULL, then: Write: OVERFLOW, and Exit.
+2. [Remove first node from AVAIL list.]
+   Set NEW := AVAIL and AVAIL := LINK[AVAIL].
+3. Set INFO[NEW] := ITEM. [Copies new data into new node]
+4. Set LINK[NEW] := START. [New node now points to original first node.]
+5. Set START := NEW. [Changes START so it points to the new node.]
+6. Exit.
+=== Algorithm 5.7: Inserting into a Sorted Linked List (INSERT) ===
+1. [Use Procedure 5.6 to find the location of the node preceding ITEM.]
+   Call FINDA(INFO, LINK, START, ITEM, LOC).
+2. [Use Algorithm 5.5 to insert ITEM after the node with location LOC.]
+   Call INSLOC(INFO, LINK, START, AVAIL, LOC, ITEM).
+3. Exit.
+=== Algorithm 5.5: Inserting a Node After a Given Location (INSLOC) ===
+1. [OVERFLOW?] If AVAIL = NULL, then: Write: OVERFLOW, and Exit.
+2. [Remove first node from AVAIL list]
+   Set NEW := AVAIL and AVAIL := LINK[AVAIL].
+3. [Copy new data into new node]
+   Set INFO[NEW] := ITEM.
+4. If LOC = NULL, then: [Insert as first node]
+      Set LINK[NEW] := START and START := NEW.
+   Else: [Insert after node with location LOC]
+      Set LINK[NEW] := LINK[LOC] and LINK[LOC] := NEW.
+   [End of If structure.]
+5. Exit.
+=== Algorithm 5.8: Deleting the Node Following a Given Node (DEL) ===
+1. If LOCP = NULL, then:
+      Set START := LINK[START]. [Deletes first node.]
+   Else:
+      Set LINK[LOCP] := LINK[LOC]. [Deletes node N.]
+   [End of If structure.]
+2. [Return deleted node to the AVAIL list.]
+   Set LINK[LOC] := AVAIL and AVAIL := LOC.
+3. Exit.
+=== Algorithm 5.10: Deleting a Node with Given ITEM from Linked List (DELETE) ===
+Algorithm 5.10: DELETE(INFO, LINK, START, AVAIL, ITEM)
+1. [Use Procedure 5.9 to find the location of N and its preceding node.]
+   Call FINDB(INFO, LINK, START, ITEM, LOC, LOCP).
+2. If LOC = NULL, then:
+      Write: \"ITEM not in list\".
+      Exit.
+   [End of If structure.]
+3. [Delete node.]
+   If LOCP = NULL, then:
+      Set START := LINK[START]. [Deletes first node.]
+   Else:
+      Set LINK[LOCP] := LINK[LOC]. [Bypasses node LOC.]
+   [End of If structure.]
+4. [Return deleted node to the AVAIL list.]
+   Set LINK[LOC] := AVAIL and Set AVAIL := LOC.
+5. Exit.
+=== Algorithm 5.11: Traversing a Circular Header List (TRAVHL) ===
+Algorithm 5.11: (Traversing a Circular Header List)
+1. Set PTR := LINK[START]. [Initializes the pointer PTR to first data node.]
+2. Repeat Steps 3 and 4 while PTR != START:
+3.    Apply PROCESS to INFO[PTR].
+4.    Set PTR := LINK[PTR]. [PTR now points to the next node.]
+   [End of Step 2 loop.]
+5. Exit.
+=== Algorithm 5.12: Searching a Circular Header List (SRCHHL) ===
+1. Set PTR := LINK[START].
+2. Repeat while INFO[PTR] != ITEM and PTR != START:
+      Set PTR := LINK[PTR]. [PTR now points to the next node.]
+   [End of loop.]
+3. If INFO[PTR] = ITEM, then:
+      Set LOC := PTR.
+   Else:
+      Set LOC := NULL.
+   [End of If structure.]
+4. Exit.
+=== Algorithm 5.14: Deleting a Node by Value from a Circular Header List (DELLOCHL) ===
+1. [Use Procedure 5.13 to find location of N and its preceding node.]
+   Call FINDBHL(INFO, LINK, START, ITEM, LOC, LOCP).
+2. If LOC = NULL, then: Write: ITEM not in list, and Exit.
+3. Set LINK[LOCP] := LINK[LOC]. [Deletes node.]
+4. [Return deleted node to the AVAIL list.]
+   Set LINK[LOC] := AVAIL and AVAIL := LOC.
+5. Exit.
+=== Algorithm 6.5: Evaluation of a Postfix Expression Using Stack ===
+1. Add a right parenthesis \")\" at the end of P. [This acts as a sentinel.]
+2. Scan P from left to right and repeat Steps 3 and 4 for each element of P
+   until the sentinel \")\" is encountered.
+3. If an operand is encountered, put it on STACK.
+4. If an operator (x) is encountered, then:
+   (a) Remove the two top elements of STACK, where A is the top element
+       and B is the next-to-top element.
+   (b) Evaluate B (x) A.
+   (c) Place the result of (b) back on STACK.
+   [End of If structure.]
+   [End of Step 2 loop.]
+5. Set VALUE equal to the top element on STACK.
+6. Exit.
+=== Algorithm 6.6: POLISH(Q, P) — Transforming Infix to Postfix Expression ===
+1. Push \"(\" onto STACK, and add \")\" to the end of Q.
+2. Scan Q from left to right and repeat Steps 3 to 6 for each element of Q
+   until the STACK is empty:
+3. If an operand is encountered, add it to P.
+4. If a left parenthesis \"(\" is encountered, push it onto STACK.
+5. If an operator (x) is encountered, then:
+   (a) Repeatedly pop from STACK and add to P each operator (on the top of STACK)
+       which has the same precedence as or higher precedence than (x).
+   (b) Add (x) to STACK.
+   [End of If structure.]
+6. If a right parenthesis \")\" is encountered, then:
+   (a) Repeatedly pop from STACK and add to P each operator (on the top of STACK)
+       until a left parenthesis is encountered.
+   (b) Remove the left parenthesis. [Do not add the left parenthesis to P.]
+   [End of If structure.]
+   [End of Step 2 loop.]
+7. Exit.
