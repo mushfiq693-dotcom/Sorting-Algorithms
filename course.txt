@@ -34,6 +34,8 @@ export interface CourseMaterial {
   explanation_or_solution: string; // Formal textbook specification, analysis, and solution in Markdown
   bangla_explanation?: string | null; // Deep, structured Bengali pedagogical walkthrough + Exam Q&A (Markdown)
   difficulty: CourseMaterialDifficulty | null; // "easy" | "medium" | "hard"
+  is_midterm?: boolean;            // true if the topic is part of midterm syllabus
+  importance_rank?: number | null; // e.g. 1 to 10 scale of importance
   assigned_date: string | null;    // ISO date or null
   created_by: string | null;
   created_at: string;

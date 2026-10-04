@@ -53,8 +53,9 @@ async function seedCourseMaterials() {
     await client.query(
       `INSERT INTO public.course_materials (
         title, book_reference, topic_tag, content_type, problem_statement,
-        explanation_or_solution, difficulty, assigned_date, created_by
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
+        explanation_or_solution, bangla_explanation, is_midterm, importance_rank,
+        difficulty, assigned_date, created_by
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)`,
       [
         item.title,
         item.book_reference,
@@ -62,6 +63,9 @@ async function seedCourseMaterials() {
         item.content_type,
         item.problem_statement,
         item.explanation_or_solution,
+        item.bangla_explanation || null,
+        item.is_midterm || false,
+        item.importance_rank || 0,
         item.difficulty,
         item.assigned_date,
         adminId,
