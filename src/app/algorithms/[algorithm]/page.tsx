@@ -11,7 +11,6 @@ import dynamic from "next/dynamic";
 import { SortingVisualizer } from "@/components/visualizer/SortingVisualizer";
 import { BanglaNote } from "@/components/docs/BanglaNote";
 import { ComplexityCard } from "@/components/algorithms/ComplexityCard";
-import { CodeViewer } from "@/components/code/CodeViewer";
 import { AmbientSortLogo } from "@/components/brand/AmbientSortLogo";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { getAdaptiveGuidance } from "@/lib/scoring";
@@ -25,6 +24,10 @@ const TabLoading = () => (
   </div>
 );
 
+const ArrayVisualizer = dynamic(
+  () => import("@/components/visualizer/ArrayVisualizer").then((mod) => mod.ArrayVisualizer),
+  { ssr: false, loading: () => <TabLoading /> }
+);
 const StackVisualizer = dynamic(
   () => import("@/components/visualizer/StackVisualizer").then((mod) => mod.StackVisualizer),
   { ssr: false, loading: () => <TabLoading /> }
@@ -51,10 +54,6 @@ const TimeComplexityVisualizer = dynamic(
 );
 const SpaceComplexityVisualizer = dynamic(
   () => import("@/components/visualizer/SpaceComplexityVisualizer").then((mod) => mod.SpaceComplexityVisualizer),
-  { ssr: false, loading: () => <TabLoading /> }
-);
-const AlgorithmDiagram = dynamic(
-  () => import("@/components/diagrams/AlgorithmDiagram").then((mod) => mod.AlgorithmDiagram),
   { ssr: false, loading: () => <TabLoading /> }
 );
 const CodeDebugger = dynamic(
@@ -89,13 +88,16 @@ const MathDerivation = dynamic(
   () => import("@/components/complexity/MathDerivation").then((mod) => mod.MathDerivation),
   { ssr: false, loading: () => <TabLoading /> }
 );
+const AlgorithmDiagram = dynamic(
+  () => import("@/components/diagrams/AlgorithmDiagram").then((mod) => mod.AlgorithmDiagram),
+  { ssr: false, loading: () => <TabLoading /> }
+);
+import { FormattedMarkdown } from "@/components/docs/FormattedMarkdown";
 import {
   ArrowLeft,
   ArrowRight,
   Lightbulb,
   Eye,
-  ImageIcon,
-  Code2,
   Zap,
   Terminal,
   Bug,
@@ -136,14 +138,6 @@ export default function AlgorithmDetailPage() {
   const isComplexity = meta.category === "complexity";
   const isSearching = meta.category === "searching";
   const isSpecialTopic = isDataStructure || isComplexity || isSearching;
-
-  const topicDocsUrl = isDataStructure
-    ? (algorithmId === "linked-list" ? "/docs/linked-list-fundamentals" : `/docs/${algorithmId}-data-structure`)
-    : isComplexity
-    ? `/docs/${algorithmId}`
-    : isSearching
-    ? `/docs/${algorithmId}`
-    : `/docs/${algorithmId}-sort`;
 
   const [activeStep, setActiveStep] = useState<number>(1);
   const [activePracticeTab, setActivePracticeTab] = useState<
@@ -196,11 +190,10 @@ export default function AlgorithmDetailPage() {
 
   const stepsList = [
     { num: 1, label: "The Idea", icon: Lightbulb },
-    { num: 2, label: "Watch It Work", icon: Eye },
-    { num: 3, label: "The Full Picture", icon: ImageIcon },
-    { num: 4, label: "Read the Code", icon: Code2 },
-    { num: 5, label: "Why It's Fast/Slow", icon: Zap },
-    { num: 6, label: "Try It (Practice)", icon: Terminal },
+    { num: 2, label: "In-Depth Theory", icon: BookOpen },
+    { num: 3, label: "Watch It Work", icon: Eye },
+    { num: 4, label: "Why It's Fast/Slow", icon: Zap },
+    { num: 5, label: "Try It (Practice)", icon: Terminal },
   ];
 
   return (
@@ -289,7 +282,7 @@ export default function AlgorithmDetailPage() {
                         <Database className="h-3 w-3" />
                         <span>Data Structures</span>
                       </span>
-                      <span className="text-[10px] text-muted-foreground font-mono">2 Topics</span>
+                      <span className="text-[10px] text-muted-foreground font-mono">{DATA_STRUCTURES.length} Topics</span>
                     </div>
                     <div className="space-y-0.5 mt-1">
                       {DATA_STRUCTURES.map((id) => {
@@ -313,7 +306,7 @@ export default function AlgorithmDetailPage() {
                               <span>{topicMeta.name}</span>
                             </div>
                             <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-secondary text-muted-foreground border border-border/50">
-                              {id === "stack" ? "LIFO O(1)" : "FIFO O(1)"}
+                              {id === "array" ? "Access O(1)" : id === "stack" ? "LIFO O(1)" : id === "queue" ? "FIFO O(1)" : "Nodes O(1)"}
                             </span>
                           </Link>
                         );
@@ -431,8 +424,8 @@ export default function AlgorithmDetailPage() {
           </div>
         )}
 
-        {/* 6-Step Stepper Tabs */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 mb-8">
+        {/* 5-Step Stepper Tabs */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 mb-8">
           {stepsList.map((step) => {
             const Icon = step.icon;
             const isActive = activeStep === step.num;
@@ -471,52 +464,80 @@ export default function AlgorithmDetailPage() {
           {/* STEP 1: The Idea */}
           {activeStep === 1 && (
             <div className="rounded-2xl border border-border bg-card p-6 sm:p-8 backdrop-blur-md shadow-sm dark:shadow-xl space-y-6 animate-in fade-in">
-              <div className="flex items-center gap-2 text-cyan-600 dark:text-cyan-400 font-mono text-xs uppercase tracking-wider font-semibold">
-                <Lightbulb className="h-4 w-4" />
-                <span>Step 1: Conceptual Intuition</span>
+              {/* Top Tag & Time */}
+              <div className="flex items-center justify-between border-b border-border pb-3">
+                <div className="flex items-center gap-2 text-cyan-600 dark:text-cyan-400 font-mono text-xs uppercase tracking-wider font-semibold">
+                  <Lightbulb className="h-4 w-4" />
+                  <span>Step 1: Conceptual Intuition</span>
+                </div>
+                <div className="flex items-center gap-1.5 text-xs font-mono text-muted-foreground">
+                  <span className="h-2 w-2 rounded-full bg-cyan-500 animate-pulse" />
+                  <span>Core Intuition &amp; Mental Model</span>
+                </div>
               </div>
 
-              <div>
-                <h2 className="text-xl font-bold text-foreground mb-3">
-                  How {meta.name} Works in Plain English
-                </h2>
-                <p className="text-sm sm:text-base text-foreground leading-relaxed font-sans">
+              {/* 1. THE CURIOSITY HOOK / MIND CATCHER */}
+              <div className="relative overflow-hidden rounded-2xl border border-cyan-500/30 bg-gradient-to-br from-cyan-500/15 via-blue-500/10 to-transparent p-5 sm:p-6 shadow-sm">
+                <div className="flex items-start gap-3.5">
+                  <div className="h-9 w-9 rounded-xl bg-cyan-500/20 border border-cyan-400/40 flex items-center justify-center text-cyan-500 shrink-0 mt-0.5">
+                    <Sparkles className="h-5 w-5" />
+                  </div>
+                  <div className="space-y-1.5">
+                    <span className="text-[10px] font-mono font-bold tracking-widest uppercase text-cyan-600 dark:text-cyan-400">
+                      The Big Question • Why This Matters
+                    </span>
+                    <h2 className="text-base sm:text-lg font-bold text-foreground leading-snug">
+                      "{stepData.hook || stepData.reason}"
+                    </h2>
+                  </div>
+                </div>
+              </div>
+
+              {/* 2. THREE MENTAL MODEL POWER BADGES */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div className="p-3.5 rounded-xl border border-emerald-500/30 bg-emerald-500/10 space-y-1">
+                  <div className="flex items-center gap-1.5 text-[10px] font-mono font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
+                    <Zap className="h-3.5 w-3.5" />
+                    <span>Core Superpower</span>
+                  </div>
+                  <p className="text-xs font-semibold text-foreground leading-snug">
+                    {stepData.superpower || "High-efficiency execution"}
+                  </p>
+                </div>
+
+                <div className="p-3.5 rounded-xl border border-amber-500/30 bg-amber-500/10 space-y-1">
+                  <div className="flex items-center gap-1.5 text-[10px] font-mono font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400">
+                    <Clock className="h-3.5 w-3.5" />
+                    <span>Crucial Tradeoff</span>
+                  </div>
+                  <p className="text-xs font-semibold text-foreground leading-snug">
+                    {stepData.tradeoff || "Algorithmic resource tradeoff"}
+                  </p>
+                </div>
+
+                <div className="p-3.5 rounded-xl border border-purple-500/30 bg-purple-500/10 space-y-1">
+                  <div className="flex items-center gap-1.5 text-[10px] font-mono font-bold uppercase tracking-wider text-purple-600 dark:text-purple-400">
+                    <Compass className="h-3.5 w-3.5" />
+                    <span>Mental Model Anchor</span>
+                  </div>
+                  <p className="text-xs font-semibold text-foreground leading-snug">
+                    {stepData.mentalModel || stepData.name}
+                  </p>
+                </div>
+              </div>
+
+              {/* 3. CORE EXPLANATION (HIGH READABILITY) */}
+              <div className="space-y-3">
+                <h3 className="text-sm font-mono font-bold uppercase tracking-wider text-foreground flex items-center gap-2">
+                  <Lightbulb className="h-4 w-4 text-cyan-500" />
+                  <span>How {meta.name} Operates in Plain English</span>
+                </h3>
+                <p className="text-sm sm:text-base text-foreground/90 leading-relaxed font-sans bg-secondary/30 p-4 rounded-xl border border-border/60">
                   {stepData.idea}
                 </p>
               </div>
 
-              {/* Analogy Callout Card */}
-              <div className="rounded-2xl border border-amber-500/40 bg-amber-500/10 p-5 leading-relaxed">
-                <h3 className="text-xs font-bold font-mono text-amber-300 uppercase tracking-wider mb-2 flex items-center gap-2">
-                  <Sparkles className="h-4 w-4" /> Real-World Analogy
-                </h3>
-                <p className="text-xs sm:text-sm text-amber-200/90 leading-relaxed">
-                  {stepData.analogy}
-                </p>
-              </div>
-
-              {/* Dedicated In-Depth Theory & Docs Callout Card */}
-              <div className="rounded-2xl border border-cyan-500/30 bg-gradient-to-r from-cyan-500/10 via-blue-500/10 to-transparent p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2 text-xs font-mono font-bold text-cyan-600 dark:text-cyan-400 uppercase tracking-wider">
-                    <BookOpen className="h-4 w-4" />
-                    <span>In-Depth Theory & Lecture Notes</span>
-                  </div>
-                  <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
-                    Read the comprehensive theoretical breakdown, mathematical proofs, and detailed lecture notes for {meta.name}.
-                  </p>
-                </div>
-
-                <Link
-                  href={topicDocsUrl}
-                  className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-cyan-500/40 bg-cyan-500/15 hover:bg-cyan-500/25 text-cyan-700 dark:text-cyan-300 text-xs font-semibold transition-all active:scale-95 shadow-sm shrink-0"
-                >
-                  <BookOpen className="h-4 w-4 text-cyan-500" />
-                  <span>Learn More ({meta.name} Docs) →</span>
-                </Link>
-              </div>
-
-              {/* Collapsible Bangla Note if available */}
+              {/* 4. BANGLA EXPLANATION NOTE */}
               {docsArticle?.banglaNote && (
                 <BanglaNote
                   topic={docsArticle.banglaNote.topic}
@@ -524,39 +545,112 @@ export default function AlgorithmDetailPage() {
                 />
               )}
 
-              <div className="pt-4 border-t border-border/40 flex flex-wrap items-center justify-between gap-3">
-                <Link
-                  href={topicDocsUrl}
-                  className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-border bg-secondary/70 hover:bg-secondary text-xs font-semibold text-foreground hover:text-cyan-500 transition-all active:scale-95"
-                >
-                  <BookOpen className="h-4 w-4 text-cyan-500" />
-                  <span>Learn More (Full Docs & Theory) →</span>
-                </Link>
+              {/* 5. IN-APP IN-DEPTH THEORY GATEWAY (NO EXTERNAL REDIRECTS) */}
+              <div className="rounded-2xl border border-cyan-500/30 bg-gradient-to-r from-cyan-500/10 via-blue-500/10 to-transparent p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2 text-xs font-mono font-bold text-cyan-600 dark:text-cyan-400 uppercase tracking-wider">
+                    <BookOpen className="h-4 w-4" />
+                    <span>In-Depth Theoretical Deep Dive</span>
+                  </div>
+                  <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+                    Ready for comprehensive hardware memory layouts, mathematical proofs, and advanced edge cases?
+                  </p>
+                </div>
 
                 <button
                   onClick={() => setActiveStep(2)}
-                  className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 px-5 py-2.5 text-xs font-semibold text-white hover:from-blue-500 transition-all active:scale-95 shadow-md shadow-cyan-500/20"
+                  className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-cyan-500/40 bg-cyan-500/15 hover:bg-cyan-500/25 text-cyan-700 dark:text-cyan-300 text-xs font-semibold transition-all active:scale-95 shadow-sm shrink-0 cursor-pointer"
                 >
-                  <span>Next: Watch It Work →</span>
+                  <BookOpen className="h-4 w-4 text-cyan-500" />
+                  <span>Explore In-Depth Theory (Step 2) →</span>
+                </button>
+              </div>
+
+              {/* FOOTER */}
+              <div className="pt-4 border-t border-border/40 flex justify-end">
+                <button
+                  onClick={() => setActiveStep(2)}
+                  className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 px-5 py-2.5 text-xs font-semibold text-white hover:from-blue-500 transition-all active:scale-95 shadow-md shadow-cyan-500/20 cursor-pointer"
+                >
+                  <span>Next: In-Depth Theory →</span>
                 </button>
               </div>
             </div>
           )}
 
-          {/* STEP 2: Watch It Work */}
+          {/* STEP 2: In-Depth Theory & Architectural Mastery */}
           {activeStep === 2 && (
+            <div className="space-y-6 animate-in fade-in">
+              <div className="rounded-2xl border border-border bg-card p-6 sm:p-8 backdrop-blur-md shadow-sm dark:shadow-xl space-y-6">
+                <div className="flex items-center justify-between border-b border-border pb-3">
+                  <div className="flex items-center gap-2 text-cyan-600 dark:text-cyan-400 font-mono text-xs uppercase tracking-wider font-semibold">
+                    <BookOpen className="h-4 w-4" />
+                    <span>Step 2: In-Depth Architectural &amp; Theoretical Mastery</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-xs font-mono text-muted-foreground">
+                    <span className="flex items-center gap-1 bg-secondary/80 px-2.5 py-1 rounded-lg">
+                      <Clock className="h-3 w-3 text-amber-500" />
+                      <span>{docsArticle?.estimatedReadTime || "~10 min"} in-depth read</span>
+                    </span>
+                  </div>
+                </div>
+
+                {/* Article Header Banner */}
+                <div className="p-5 rounded-2xl border border-cyan-500/20 bg-cyan-500/5 space-y-2">
+                  <h2 className="text-xl sm:text-2xl font-extrabold text-foreground tracking-tight">
+                    {docsArticle?.title || `${meta.name} Comprehensive Deep Dive`}
+                  </h2>
+                  <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+                    {docsArticle?.subtitle || meta.description}
+                  </p>
+                </div>
+
+                {/* Full In-Depth Formatted Markdown Article (Theory First) */}
+                {docsArticle && (
+                  <div className="p-4 sm:p-6 rounded-2xl border border-border/80 bg-background/50">
+                    <FormattedMarkdown content={docsArticle.content} />
+                  </div>
+                )}
+
+                {/* Signature Architecture Diagram for this topic (Full Picture at Bottom) */}
+                <div className="rounded-2xl border border-border bg-secondary/20 p-4">
+                  <AlgorithmDiagram algorithmId={algorithmId} />
+                </div>
+
+                <div className="pt-4 border-t border-border flex justify-between">
+                  <button
+                    onClick={() => setActiveStep(1)}
+                    className="text-xs font-medium text-muted-foreground hover:text-foreground cursor-pointer"
+                  >
+                    ← Back to The Idea
+                  </button>
+                  <button
+                    onClick={() => setActiveStep(3)}
+                    className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 px-5 py-2.5 text-xs font-semibold text-white hover:from-blue-500 transition-all active:scale-95 shadow-md shadow-cyan-500/20 cursor-pointer"
+                  >
+                    <span>Next: Watch It Work →</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* STEP 3: Watch It Work */}
+          {activeStep === 3 && (
             <div className="rounded-2xl border border-border bg-card p-4 sm:p-6 backdrop-blur-md shadow-sm dark:shadow-xl space-y-6 animate-in fade-in">
               <div className="flex items-center justify-between border-b border-border pb-3">
                 <div className="flex items-center gap-2 text-cyan-600 dark:text-cyan-400 font-mono text-xs uppercase tracking-wider font-semibold">
                   <Eye className="h-4 w-4" />
-                  <span>Step 2: Interactive Demonstration</span>
+                  <span>Step 3: Interactive Demonstration</span>
                 </div>
                 <span className="text-xs font-mono text-muted-foreground">
                   {isDataStructure ? "Interactive Operation Playground" : "Small ~8 element sample array"}
                 </span>
               </div>
 
-              {algorithmId === "stack" ? (
+              {algorithmId === "array" ? (
+                <ArrayVisualizer />
+              ) : algorithmId === "stack" ? (
                 <StackVisualizer />
               ) : algorithmId === "queue" ? (
                 <QueueVisualizer />
@@ -576,96 +670,13 @@ export default function AlgorithmDetailPage() {
 
               <div className="pt-4 border-t border-border flex justify-between">
                 <button
-                  onClick={() => setActiveStep(1)}
-                  className="text-xs font-medium text-muted-foreground hover:text-foreground cursor-pointer"
-                >
-                  ← Back to The Idea
-                </button>
-                <button
-                  onClick={() => setActiveStep(3)}
-                  className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 px-5 py-2.5 text-xs font-semibold text-white hover:from-blue-500 transition-all active:scale-95 shadow-md shadow-cyan-500/20 cursor-pointer"
-                >
-                  <span>Next: The Full Picture (Diagram) →</span>
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* STEP 3: The Full Picture (Signature Static Diagram) */}
-          {activeStep === 3 && (
-            <div className="space-y-6 animate-in fade-in">
-              <AlgorithmDiagram algorithmId={algorithmId} />
-
-              <div className="pt-4 border-t border-border flex justify-between">
-                <button
                   onClick={() => setActiveStep(2)}
                   className="text-xs font-medium text-muted-foreground hover:text-foreground cursor-pointer"
                 >
-                  ← Back to Watch It Work
+                  ← Back to In-Depth Theory
                 </button>
                 <button
                   onClick={() => setActiveStep(4)}
-                  className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 px-5 py-2.5 text-xs font-semibold text-white hover:from-blue-500 transition-all active:scale-95 shadow-md shadow-cyan-500/20 cursor-pointer"
-                >
-                  <span>Next: Read the Code →</span>
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* STEP 4: Read the Code */}
-          {activeStep === 4 && (
-            <div className="rounded-2xl border border-border bg-card p-6 sm:p-8 backdrop-blur-md shadow-sm dark:shadow-xl space-y-6 animate-in fade-in">
-              <div className="flex items-center gap-2 text-cyan-600 dark:text-cyan-400 font-mono text-xs uppercase tracking-wider font-semibold">
-                <Code2 className="h-4 w-4" />
-                <span>Step 4: Annotated C++ Code Walkthrough</span>
-              </div>
-
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div className="h-[380px]">
-                  <CodeViewer
-                    code={meta.cppCode}
-                    activeLineNumber={null}
-                    algorithmName={algorithmId}
-                  />
-                </div>
-
-                <div className="flex flex-col gap-3 justify-center">
-                  <h3 className="text-sm font-bold text-foreground font-mono uppercase tracking-wider">
-                    Key Logical Building Blocks
-                  </h3>
-                  <div className="space-y-2.5">
-                    {stepData.codeBlocks.map((block, idx) => (
-                      <div
-                        key={idx}
-                        className="p-3 rounded-xl border border-border bg-secondary/60 space-y-1"
-                      >
-                        <div className="flex items-center justify-between text-xs">
-                          <span className="font-bold text-cyan-600 dark:text-cyan-400 font-mono">
-                            {block.title}
-                          </span>
-                        </div>
-                        <pre className="text-[10px] font-mono text-foreground bg-background/80 p-1.5 rounded border border-border/50 overflow-x-auto">
-                          <code>{block.lines}</code>
-                        </pre>
-                        <p className="text-xs text-muted-foreground leading-relaxed">
-                          {block.explanation}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              <div className="pt-4 border-t border-border flex justify-between">
-                <button
-                  onClick={() => setActiveStep(3)}
-                  className="text-xs font-medium text-muted-foreground hover:text-foreground cursor-pointer"
-                >
-                  ← Back to The Full Picture
-                </button>
-                <button
-                  onClick={() => setActiveStep(5)}
                   className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 px-5 py-2.5 text-xs font-semibold text-white hover:from-blue-500 transition-all active:scale-95 shadow-md shadow-cyan-500/20 cursor-pointer"
                 >
                   <span>Next: Why It's Fast/Slow →</span>
@@ -674,14 +685,14 @@ export default function AlgorithmDetailPage() {
             </div>
           )}
 
-          {/* STEP 5: Why It's Fast/Slow */}
-          {activeStep === 5 && (
+          {/* STEP 4: Why It's Fast/Slow */}
+          {activeStep === 4 && (
             <div className="space-y-6 animate-in fade-in">
               {/* Top Overview Grid */}
               <div className="rounded-2xl border border-border bg-card p-6 sm:p-8 backdrop-blur-md shadow-sm dark:shadow-xl space-y-6">
                 <div className="flex items-center gap-2 text-cyan-600 dark:text-cyan-400 font-mono text-xs uppercase tracking-wider font-semibold">
                   <Zap className="h-4 w-4" />
-                  <span>Step 5: Algorithmic Efficiency & Complexity Deep Dive</span>
+                  <span>Step 4: Algorithmic Efficiency &amp; Complexity Deep Dive</span>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
@@ -769,13 +780,13 @@ export default function AlgorithmDetailPage() {
 
               <div className="pt-4 border-t border-border flex justify-between">
                 <button
-                  onClick={() => setActiveStep(4)}
+                  onClick={() => setActiveStep(3)}
                   className="text-xs font-medium text-muted-foreground hover:text-foreground cursor-pointer"
                 >
-                  ← Back to Read the Code
+                  ← Back to Watch It Work
                 </button>
                 <button
-                  onClick={() => setActiveStep(6)}
+                  onClick={() => setActiveStep(5)}
                   className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 px-5 py-2.5 text-xs font-semibold text-white hover:from-blue-500 transition-all active:scale-95 shadow-md shadow-cyan-500/20 cursor-pointer"
                 >
                   <span>Next: Practice Suite →</span>
@@ -784,8 +795,8 @@ export default function AlgorithmDetailPage() {
             </div>
           )}
 
-          {/* STEP 6: Try It (Practice Suite) */}
-          {activeStep === 6 && (
+          {/* STEP 5: Try It (Practice Suite) */}
+          {activeStep === 5 && (
             <div className="space-y-6 animate-in fade-in">
               {/* Practice Mode Navigation Tabs */}
               <div className="flex flex-wrap items-center gap-2 p-1.5 rounded-2xl border border-border bg-card backdrop-blur-md shadow-sm">
@@ -826,7 +837,7 @@ export default function AlgorithmDetailPage() {
                   }`}
                 >
                   <Sparkles className="h-3.5 w-3.5" />
-                  <span>{isSpecialTopic ? "1. Knowledge Quiz" : "4. Knowledge Quiz"}</span>
+                  <span>{isSpecialTopic ? "1. Knowledge Quiz" : "3. Knowledge Quiz"}</span>
                 </button>
 
                 <button
@@ -838,7 +849,7 @@ export default function AlgorithmDetailPage() {
                   }`}
                 >
                   <Bug className="h-3.5 w-3.5" />
-                  <span>{isSpecialTopic ? "2. Bug-Hunt" : "3. Bug-Hunt"}</span>
+                  <span>{isSpecialTopic ? "2. Bug-Hunt" : "4. Bug-Hunt"}</span>
                 </button>
 
                 <button
@@ -877,8 +888,8 @@ export default function AlgorithmDetailPage() {
 
               <div className="pt-4 border-t border-border/40 flex justify-between">
                 <button
-                  onClick={() => setActiveStep(5)}
-                  className="text-xs font-medium text-muted-foreground hover:text-foreground"
+                  onClick={() => setActiveStep(4)}
+                  className="text-xs font-medium text-muted-foreground hover:text-foreground cursor-pointer"
                 >
                   ← Back to Why It's Fast/Slow
                 </button>

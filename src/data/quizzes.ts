@@ -506,6 +506,77 @@ export const QUIZZES: Record<string, QuizTopic> = {
       }
     ]
   },
+  array: {
+    id: "array",
+    title: "Array Data Structure Quiz",
+    description: "Test your mastery of contiguous memory layout, index arithmetic formulas, shifting costs, amortized doubling, and spatial cache locality.",
+    questions: [
+      {
+        id: "arr1",
+        question: "How does a computer achieve strict O(1) constant-time random access for arr[i] in an array?",
+        options: [
+          "By performing a binary search on the memory pointers",
+          "By calculating the exact RAM address in a single step using the formula: BaseAddress + (i * elementSize)",
+          "By traversing pointers from the head of the array to index i",
+          "By caching all array elements in the GPU registers"
+        ],
+        correctIndex: 1,
+        explanation: "Because elements are stored contiguously in memory and each item has the exact same byte size, the CPU computes the target hardware address via simple arithmetic in a single clock cycle."
+      },
+      {
+        id: "arr2",
+        question: "Inserting a new element at index 0 (the front) of an array containing n elements requires shifting how many elements?",
+        options: ["0 elements", "1 element", "n / 2 elements", "All n elements"],
+        correctIndex: 3,
+        explanation: "To open up slot 0, every existing element from index 0 to n-1 must shift one position to the right, requiring O(n) total copy operations."
+      },
+      {
+        id: "arr3",
+        question: "Why do dynamic arrays (e.g. std::vector, ArrayList) double their capacity (2x) when full rather than incrementing capacity by +1?",
+        options: [
+          "Geometric doubling guarantees amortized O(1) append time, whereas +1 expansion would cause O(n²) total copying overhead",
+          "Operating systems forbid allocating odd-numbered memory sizes",
+          "To prevent the array from ever using more than 16 bytes of RAM",
+          "Because memory can only be allocated in powers of two on 64-bit systems"
+        ],
+        correctIndex: 0,
+        explanation: "Doubling the capacity ensures that expensive reallocations happen exponentially less frequently. The total cost of copying across n insertions sums to 1 + 2 + 4 + ... + n < 2n = O(n), giving an amortized cost of O(1) per push."
+      },
+      {
+        id: "arr4",
+        question: "What is the primary hardware reason sequential array iteration is dramatically faster than linked list traversal?",
+        options: [
+          "Arrays use less electricity in CPU registers",
+          "Contiguous array storage maximizes CPU cache line spatial locality (64 bytes pre-fetched at once into L1 cache)",
+          "Arrays do not execute machine code instructions",
+          "Linked lists cannot store 32-bit integers"
+        ],
+        correctIndex: 1,
+        explanation: "When arr[0] is accessed, modern CPU hardware automatically loads the surrounding 64-byte memory cache line into L1 cache, meaning the next 15 integer accesses are already waiting in high-speed cache with near-zero latency."
+      },
+      {
+        id: "arr5",
+        question: "If an array of 32-bit integers (4 bytes each) has a base memory address of 0x1000, what is the physical byte address of arr[4]?",
+        options: ["0x1004", "0x1008", "0x1010", "0x1016"],
+        correctIndex: 2,
+        explanation: "Address = 0x1000 + (4 * 4 bytes) = 0x1000 + 16 bytes (decimal 16 is 0x10 in hexadecimal). Thus, Address = 0x1010."
+      },
+      {
+        id: "arr6",
+        question: "For an array with n = 8 valid elements, what is the valid range of numerical indices in zero-based indexing languages?",
+        options: ["1 to 8", "0 to 7", "0 to 8", "-1 to 7"],
+        correctIndex: 1,
+        explanation: "In zero-based indexing, an array of size n has valid indices from 0 to n - 1 (here 0 through 7). Accessing arr[8] is an out-of-bounds error."
+      },
+      {
+        id: "arr7",
+        question: "What is the worst-case time complexity of searching for an arbitrary value in an unsorted array of size n?",
+        options: ["O(1)", "O(log n)", "O(n)", "O(n²)"],
+        correctIndex: 2,
+        explanation: "In an unsorted array, the target element may be at the very last index or entirely absent, requiring a linear scan checking all n elements in O(n) time."
+      }
+    ]
+  },
   stack: {
     id: "stack",
     title: "Stack Data Structure Quiz",

@@ -121,6 +121,22 @@ export const DIAGRAM_CONFIGS: Record<AlgorithmId, DiagramData> = {
 }`,
     highlightedLine: 7,
   },
+  array: {
+    algorithmId: "array",
+    title: "Array — Contiguous Physical Memory Layout & Index Arithmetic",
+    subtitle: "Elements reside in an unbroken sequential block of physical RAM addresses, enabling single-instruction O(1) random access.",
+    caption: "Hardware calculates address directly via Base + (index × elementSize) without searching through previous nodes.",
+    fixedArray: [14, 28, 42, 56, 70],
+    complexityFormula: "Address(arr[i]) = BaseAddress + (i × sizeof(T)) → O(1) Access",
+    complexityExplanation: "Direct arithmetic computation delivers O(1) access and peak hardware CPU cache line spatial locality.",
+    codeSnippet: `// Direct O(1) Indexing Calculation
+// BaseAddress = 0x7FFF00, sizeof(int) = 4 Bytes
+int getElement(int* arr, int index) {
+    // Hardware generates: *(arr + index)
+    return arr[index]; // 0x7FFF00 + (index * 4) -> O(1)
+}`,
+    highlightedLine: 5,
+  },
   stack: {
     algorithmId: "stack",
     title: "Stack — LIFO Push, Pop & Call Stack Anatomy",

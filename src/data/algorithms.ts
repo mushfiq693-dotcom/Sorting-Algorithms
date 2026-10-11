@@ -663,6 +663,113 @@ public:
     }
 };`,
   },
+  array: {
+    id: "array",
+    name: "Array (Static & Dynamic)",
+    category: "data-structure",
+    shortDescription: "Contiguous block of memory offering O(1) random access via index arithmetic.",
+    description:
+      "An Array stores elements in contiguous memory locations. Because memory addresses are contiguous, accessing any element by its numerical index takes strict O(1) constant time via base-offset arithmetic: Address = Base + index * sizeof(Type). Inserting or deleting elements from the middle requires shifting subsequent elements across memory in O(n) time. Dynamic arrays (like std::vector or ArrayList) double their capacity geometrically when full, guaranteeing amortized O(1) append operations.",
+    complexity: {
+      best: "O(1)",
+      average: "O(1) Access / O(n) Insert",
+      worst: "O(n) Insert/Delete",
+      space: "O(n)",
+      stable: true,
+      inPlace: true,
+      operations: [
+        {
+          name: "Direct Access arr[i]",
+          time: "O(1)",
+          space: "O(1)",
+          description: "Instantaneous memory address computation: Base + i * 4 bytes.",
+        },
+        {
+          name: "Update arr[i] = v",
+          time: "O(1)",
+          space: "O(1)",
+          description: "Overwrites value in-place in constant time.",
+        },
+        {
+          name: "Append / Push Back",
+          time: "O(1) Amortized",
+          space: "O(1)",
+          description: "Appends at end of buffer; doubles capacity geometrically when full.",
+        },
+        {
+          name: "Insert at Index",
+          time: "O(n)",
+          space: "O(1)",
+          description: "Shifts all elements from index to size-1 one position right.",
+        },
+        {
+          name: "Delete at Index",
+          time: "O(n)",
+          space: "O(1)",
+          description: "Shifts all subsequent elements one position left to fill gap.",
+        },
+        {
+          name: "Linear Search",
+          time: "O(n)",
+          space: "O(1)",
+          description: "Sequential scan checking each slot from index 0 to n-1.",
+        },
+      ],
+    },
+    cppCode: `template <typename T>
+class DynamicArray {
+private:
+    T* data;
+    int size;
+    int capacity;
+
+    void resize(int newCapacity) {
+        T* newData = new T[newCapacity];
+        for (int i = 0; i < size; i++) {
+            newData[i] = data[i]; // Copy elements
+        }
+        delete[] data;
+        data = newData;
+        capacity = newCapacity;
+    }
+
+public:
+    DynamicArray(int initialCap = 4) : size(0), capacity(initialCap) {
+        data = new T[capacity];
+    }
+
+    ~DynamicArray() { delete[] data; }
+
+    // O(1) Time: Direct arithmetic access
+    T& operator[](int index) {
+        return data[index];
+    }
+
+    // O(1) Amortized Time: Push to tail
+    void push_back(T val) {
+        if (size == capacity) resize(capacity * 2);
+        data[size++] = val;
+    }
+
+    // O(n) Time: Insert at index with right shift
+    void insert(int index, T val) {
+        if (size == capacity) resize(capacity * 2);
+        for (int i = size - 1; i >= index; i--) {
+            data[i + 1] = data[i]; // Shift right
+        }
+        data[index] = val;
+        size++;
+    }
+
+    // O(n) Time: Delete at index with left shift
+    void erase(int index) {
+        for (int i = index; i < size - 1; i++) {
+            data[i] = data[i + 1]; // Shift left
+        }
+        size--;
+    }
+};`,
+  },
 };
 
 // All 5 Sorting Algorithms
@@ -682,6 +789,7 @@ export const SEARCHING_ALGORITHMS: AlgorithmId[] = [
 
 // All Data Structures
 export const DATA_STRUCTURES: AlgorithmId[] = [
+  "array",
   "stack",
   "queue",
   "linked-list",

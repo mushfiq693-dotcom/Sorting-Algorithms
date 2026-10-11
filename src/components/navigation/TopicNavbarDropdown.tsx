@@ -54,9 +54,10 @@ const CATEGORIES: CategoryGroup[] = [
     icon: Database,
     colorClass: "text-blue-400",
     items: [
-      { id: "stack", num: "06", name: "Stack", badge: "LIFO O(1)" },
-      { id: "queue", num: "07", name: "Queue", badge: "FIFO O(1)" },
-      { id: "linked-list", num: "08", name: "Linked List", badge: "FIFO O(1)" },
+      { id: "array", num: "06", name: "Array", badge: "Access O(1)" },
+      { id: "stack", num: "07", name: "Stack", badge: "LIFO O(1)" },
+      { id: "queue", num: "08", name: "Queue", badge: "FIFO O(1)" },
+      { id: "linked-list", num: "09", name: "Linked List", badge: "Nodes O(1)" },
     ],
   },
   {
@@ -65,8 +66,8 @@ const CATEGORIES: CategoryGroup[] = [
     icon: Search,
     colorClass: "text-emerald-400",
     items: [
-      { id: "linear-search", num: "09", name: "Linear Search", badge: "O(n)" },
-      { id: "binary-search", num: "010", name: "Binary Search", badge: "O(log n)" },
+      { id: "linear-search", num: "10", name: "Linear Search", badge: "O(n)" },
+      { id: "binary-search", num: "11", name: "Binary Search", badge: "O(log n)" },
     ],
   },
   {
@@ -75,8 +76,8 @@ const CATEGORIES: CategoryGroup[] = [
     icon: TrendingUp,
     colorClass: "text-purple-400",
     items: [
-      { id: "time-complexity", num: "011", name: "Time Complexity", badge: "Big-O" },
-      { id: "space-complexity", num: "012", name: "Space Complexity", badge: "Aux Space" },
+      { id: "time-complexity", num: "12", name: "Time Complexity", badge: "Big-O" },
+      { id: "space-complexity", num: "13", name: "Space Complexity", badge: "Aux Space" },
     ],
   },
 ];

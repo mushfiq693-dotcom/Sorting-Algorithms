@@ -10,6 +10,7 @@ import { VisualizerControls } from "./VisualizerControls";
 import { OperationIndicator } from "./OperationIndicator";
 import { CodeViewer } from "@/components/code/CodeViewer";
 import { LiveComplexityTracker } from "@/components/complexity/LiveComplexityTracker";
+import { ArrayVisualizer } from "./ArrayVisualizer";
 import { StackVisualizer } from "./StackVisualizer";
 import { QueueVisualizer } from "./QueueVisualizer";
 import { LinkedListVisualizer } from "./LinkedListVisualizer";
@@ -385,6 +386,7 @@ export function SortingVisualizer({
 
         {/* Dedicated Specialized Visualizer Stage */}
         <div className="w-full">
+          {selectedAlgorithm === "array" && <ArrayVisualizer />}
           {selectedAlgorithm === "stack" && <StackVisualizer />}
           {selectedAlgorithm === "queue" && <QueueVisualizer />}
           {selectedAlgorithm === "linked-list" && <LinkedListVisualizer />}
@@ -393,19 +395,6 @@ export function SortingVisualizer({
           {selectedAlgorithm === "time-complexity" && <TimeComplexityVisualizer />}
           {selectedAlgorithm === "space-complexity" && <SpaceComplexityVisualizer />}
         </div>
-
-        {/* Synchronized Reference Code */}
-        {currentMeta.cppCode && (
-          <div className="w-full pt-2">
-            <div className="h-[400px] sm:h-[450px]">
-              <CodeViewer
-                code={currentMeta.cppCode}
-                activeLineNumber={null}
-                algorithmName={currentMeta.name}
-              />
-            </div>
-          </div>
-        )}
       </div>
     );
   }

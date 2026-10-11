@@ -966,10 +966,160 @@ When designing a system, use this decision framework to select the optimal sorti
   // LEVEL 5: FUNDAMENTAL DATA STRUCTURES
   // ==========================================
   {
-    slug: "stack-data-structure",
+    slug: "array-data-structure",
     level: 5,
     levelTitle: "Level 5: Fundamental Data Structures",
     order: 1,
+    title: "Array: Contiguous Memory & Dynamic Vectors",
+    subtitle: "Understanding contiguous RAM allocation, O(1) random access arithmetic, element shifting costs, and amortized geometric doubling.",
+    estimatedReadTime: "9 min",
+    category: "Data Structures",
+    banglaNote: {
+      topic: "Array ও Memory Contiguity (সহজ বাংলায় ধারণা)",
+      englishContext: "An array stores items consecutively in RAM, so calculating any index's address takes a single calculation step O(1). But inserting in the middle forces all subsequent items to shift O(n).",
+      banglaText: `অ্যারে (Array) হলো মেমরির একনাগাড়ে পাশাপাশি সাজানো বক্সের মতো। 
+
+যেহেতু প্রতিটি আইটেম সমান সাইজের (যেমন ৪ বাইট পূর্ণসংখ্যা), তাই কম্পিউটার কোনো লুপ ছাড়াই সরাসরি ফর্মুলা দিয়ে যেকোনো ইনডেক্স খুঁজে পায়: 
+**Address = BaseAddress + (Index × 4)**। 
+
+কিন্তু এর একটা অসুবিধা আছে — যদি আপনি ৩য় পজিশনে নতুন একটা সংখ্যা ঢোকাতে চান, তবে বাকি সব সংখ্যাকে এক ঘর করে ডানপাশে সরাতে (Shift) হয়, যাতে O(n) সময় লাগে। আর C++ vector যখন পূর্ণ হয়ে যায়, তখন সে মেমরিতে দ্বিগুণ (2x) সাইজের নতুন জায়গা নিয়ে সব কপি করে, যাকে Amortized O(1) বলা হয়।`
+    },
+    visualizerLink: {
+      label: "Open Interactive Array Studio",
+      algorithmId: "array",
+      path: "/visualizer?algo=array"
+    },
+    quizTopicId: "array",
+    content: `
+### What Is an Array?
+
+An **Array** is a collection of elements stored at **contiguous physical memory locations**. Each element occupies a fixed number of bytes, and items are referenced sequentially by a zero-based integer index $i \\in [0, n - 1]$.
+
+Because elements reside back-to-back with zero gaps in physical RAM, finding the memory address of any element does **not** require scanning through preceding items. Instead, the CPU computes the target hardware address in a single clock cycle using basic offset arithmetic:
+
+$$\\text{Address}(arr[i]) = \\text{BaseAddress} + (i \\times \\text{sizeof}(T))$$
+
+---
+
+### Core Operations & Complexity Breakdown
+
+| Operation | Time Complexity | Auxiliary Space | Why This Complexity? |
+| :--- | :--- | :--- | :--- |
+| **Random Access** $arr[i]$ | $O(1)$ Constant | $O(1)$ | Direct hardware arithmetic calculation: $\\text{Base} + i \\times 4\\text{B}$. |
+| **In-Place Update** $arr[i] = v$ | $O(1)$ Constant | $O(1)$ | Direct write to computed physical memory slot. |
+| **Tail Append (Push Back)** | $O(1)$ Amortized | $O(1)$ | Inserts at $arr[\\text{size}]$; doubles buffer capacity when full. |
+| **Tail Pop (Pop Back)** | $O(1)$ Constant | $O(1)$ | Decrements size pointer with zero element movement. |
+| **Head/Middle Insert** | $O(n)$ Linear | $O(1)$ | Must shift all elements from index to $\\text{size}-1$ one slot right. |
+| **Head/Middle Delete** | $O(n)$ Linear | $O(1)$ | Must shift all elements from index $+ 1$ to $\\text{size}-1$ one slot left. |
+| **Linear Search** | $O(n)$ Linear | $O(1)$ | Must sequentially examine up to $n$ slots in unsorted data. |
+
+---
+
+### Why Dynamic Arrays Double Capacity (Amortized Analysis)
+
+When a dynamic array (such as \`std::vector\` in C++ or \`ArrayList\` in Java) exceeds its current allocated capacity, it cannot simply expand in place because adjacent RAM addresses may already be claimed by other variables.
+
+Instead, the runtime performs **Geometric Resizing**:
+1. Allocates a new contiguous memory block of **$2\\times$ the capacity**.
+2. Copies all $n$ existing elements from the old buffer to the new buffer.
+3. Deallocates the old buffer from heap memory.
+4. Appends the new incoming element.
+
+#### The Mathematical Proof of Amortized $O(1)$
+If we expand by $+1$ each time, copying costs $1 + 2 + 3 + \\dots + n = \\frac{n(n+1)}{2} = O(n^2)$ total work across $n$ insertions ($O(n)$ per push).
+
+However, with $2\\times$ geometric doubling, reallocations occur only at powers of two ($1, 2, 4, 8, 16, \\dots$). Over $n$ push operations, the total number of copied items is:
+
+$$\\sum_{k=0}^{\\log_2 n} 2^k = 1 + 2 + 4 + 8 + \\dots + n < 2n$$
+
+Dividing the total copying work ($2n$) by the number of insertions ($n$) gives:
+
+$$\\text{Amortized Cost per Push} = \\frac{2n}{n} = O(1)$$
+
+---
+
+### Hardware Cache Lines & Spatial Locality
+
+Modern CPUs do not fetch single bytes from RAM; they fetch memory in **64-byte Cache Lines**.
+
+- For an array of 32-bit (4-byte) integers, fetching $arr[0]$ automatically pulls $arr[0]$ through $arr[15]$ directly into the **L1 Data Cache**.
+- Subsequent reads to $arr[1..15]$ result in instantaneous **L1 Cache Hits** (1-2 CPU cycles) instead of slow RAM reads (100-200 cycles).
+- Linked Lists, by contrast, allocate nodes discontinuously across the heap, causing frequent **Cache Misses** and pointer stalls.
+
+---
+
+### Complete Production C++ Dynamic Array Implementation
+
+\`\`\`cpp
+#include <iostream>
+#include <stdexcept>
+
+template <typename T>
+class Vector {
+private:
+    T* data;
+    size_t length;
+    size_t cap;
+
+    void resize(size_t newCap) {
+        T* next = new T[newCap];
+        for (size_t i = 0; i < length; i++) {
+            next[i] = std::move(data[i]);
+        }
+        delete[] data;
+        data = next;
+        cap = newCap;
+    }
+
+public:
+    Vector(size_t initialCap = 4) : data(new T[initialCap]), length(0), cap(initialCap) {}
+
+    ~Vector() { delete[] data; }
+
+    // O(1) Random Access
+    T& operator[](size_t index) {
+        if (index >= length) throw std::out_of_range("Index out of bounds");
+        return data[index];
+    }
+
+    // O(1) Amortized Append
+    void push_back(const T& val) {
+        if (length == cap) resize(cap * 2);
+        data[length++] = val;
+    }
+
+    // O(n) Insertion with Right Shifting
+    void insert(size_t index, const T& val) {
+        if (index > length) throw std::out_of_range("Index out of bounds");
+        if (length == cap) resize(cap * 2);
+        for (size_t i = length; i > index; i--) {
+            data[i] = std::move(data[i - 1]);
+        }
+        data[index] = val;
+        length++;
+    }
+
+    // O(n) Deletion with Left Shifting
+    void erase(size_t index) {
+        if (index >= length) throw std::out_of_range("Index out of bounds");
+        for (size_t i = index; i < length - 1; i++) {
+            data[i] = std::move(data[i + 1]);
+        }
+        length--;
+    }
+
+    size_t size() const { return length; }
+    size_t capacity() const { return cap; }
+    bool empty() const { return length == 0; }
+};
+\`\`\`
+    `
+  },
+  {
+    slug: "stack-data-structure",
+    level: 5,
+    levelTitle: "Level 5: Fundamental Data Structures",
+    order: 2,
     title: "Stack: LIFO Mechanism & Applications",
     subtitle: "Understanding Last-In First-Out mechanics, array vs linked-list implementations, call stacks, and expression parsing.",
     estimatedReadTime: "8 min",

@@ -9,6 +9,11 @@ export interface LearningStep {
   estimatedTime: string;
   difficulty: "Beginner" | "Intermediate" | "Advanced";
   reason: string;
+  hook: string;
+  superpower: string;
+  tradeoff: string;
+  mentalModel: string;
+  keyPrinciples: string[];
   analogy: string;
   idea: string;
   sampleArray: number[];
@@ -34,6 +39,16 @@ export const LEARNING_PATH: LearningStep[] = [
     estimatedTime: "~10 min",
     difficulty: "Beginner",
     reason: "Start here. Simplest possible mechanism: compare neighbors, swap if wrong order.",
+    hook: "What is the absolute simplest way to sort a messy list if you are only ever allowed to compare two neighboring items at a time?",
+    superpower: "O(n) Adaptive Best Case on Already Sorted Lists",
+    tradeoff: "O(n²) Slow Nested Comparisons on Inverted Data",
+    mentalModel: "Bubbles Rising to the Surface of Carbonated Water",
+    keyPrinciples: [
+      "Scan from left to right, comparing adjacent neighbors (arr[j], arr[j+1]).",
+      "If the left item is strictly greater than the right item, swap them immediately.",
+      "After each full pass, the largest remaining unsorted item is permanently settled at the far right.",
+      "Early-Exit Optimization: If a full pass finishes with 0 swaps, terminate immediately in O(n) time."
+    ],
     analogy: "Think of air bubbles rising to the surface of water — in every pass, the heaviest (largest) unsorted element bubbles up to the very end.",
     idea: "Bubble Sort walks through the list from left to right, comparing pairs of adjacent elements. If an element is greater than the one immediately after it, they trade places. After each full pass, the biggest remaining number is guaranteed to be in its correct final spot.",
     sampleArray: [29, 10, 14, 37, 13, 22, 45, 8],
@@ -69,6 +84,16 @@ export const LEARNING_PATH: LearningStep[] = [
     estimatedTime: "~15 min",
     difficulty: "Beginner",
     reason: "Same difficulty tier, different strategy: find-the-minimum instead of swap-as-you-go.",
+    hook: "If moving physical objects in memory is expensive, how do you sort an entire collection with the absolute minimum number of total swaps?",
+    superpower: "Strictly O(n) Swaps (At Most 1 Single Swap per Pass)",
+    tradeoff: "Always O(n²) Comparisons Regardless of Input Order",
+    mentalModel: "Scanning a Shelf to Find the Absolute Shortest Book",
+    keyPrinciples: [
+      "Divide the array into two zones: a sorted prefix on the left, and an unsorted pool on the right.",
+      "Scan the entire unsorted pool to locate the index of the absolute minimum item.",
+      "Execute exactly ONE swap to place that minimum into its correct position at the boundary.",
+      "Repeat until the unsorted pool is empty. Never benefits from partially sorted data."
+    ],
     analogy: "Like browsing a shelf of books: you scan all of them from left to right to find the shortest one, then place it in the first position.",
     idea: "Selection Sort splits the array into a sorted portion on the left and an unsorted portion on the right. In each round, it scans the entire unsorted portion to find the absolute minimum value, and makes exactly one swap to place it at the beginning.",
     sampleArray: [35, 12, 48, 19, 7, 60, 24, 15],
@@ -104,6 +129,16 @@ export const LEARNING_PATH: LearningStep[] = [
     estimatedTime: "~15 min",
     difficulty: "Beginner",
     reason: "Most practical O(n²) algorithm. Very fast on nearly-sorted data and small arrays.",
+    hook: "Watch how card players sort a hand as cards are dealt one by one: they slide each card into its exact slot. Why is this nearly instant on almost-sorted data?",
+    superpower: "Blazing Near O(n) Speed on Almost-Sorted Real-World Data",
+    tradeoff: "O(n²) Worst Case with Heavy Shifting on Inverted Arrays",
+    mentalModel: "Slotting Playing Cards into Your Left Hand",
+    keyPrinciples: [
+      "Assume the first item is already sorted.",
+      "Pick the next item (the 'key') and inspect the sorted items to its left.",
+      "Shift all items greater than the key one slot to the right to open a vacancy.",
+      "Drop the key into the open slot. Extremely fast and cache-friendly for small collections."
+    ],
     analogy: "Think of picking up playing cards one by one from a table and slotting each new card into its proper position among the cards already in your left hand.",
     idea: "Insertion Sort takes elements one at a time and slides them leftward into their correct position in the already-sorted prefix of the array.",
     sampleArray: [22, 11, 35, 18, 9, 44, 2],
@@ -139,6 +174,16 @@ export const LEARNING_PATH: LearningStep[] = [
     estimatedTime: "~20 min",
     difficulty: "Intermediate",
     reason: "Your first O(n log n) algorithm. The foundation of divide-and-conquer thinking.",
+    hook: "Can you sort a list of 1,000,000 numbers in under a second by repeatedly breaking it in half? The mathematical triumph of divide-and-conquer.",
+    superpower: "Guaranteed O(n log n) Rock-Solid Worst-Case Predictability",
+    tradeoff: "Requires O(n) Auxiliary RAM Buffer for Merging",
+    mentalModel: "Zipping Two Sorted Decks of Cards Together",
+    keyPrinciples: [
+      "Divide: Recursively split the array in half until single-item subarrays remain.",
+      "Base Case: An array of 1 element is inherently sorted.",
+      "Conquer: Merge two sorted subarrays by comparing heads with a two-pointer pass.",
+      "Guaranteed O(n log n) performance regardless of whether data is random, sorted, or reversed."
+    ],
     analogy: "Like splitting a huge pile of exam papers into two equal halves, giving each half to a teaching assistant to sort, and then zipping the two sorted stacks together.",
     idea: "Merge Sort recursively splits the array into two halves until singletons remain, then merges sorted subarrays back together in linear time using a two-pointer technique.",
     sampleArray: [38, 27, 43, 3, 9, 82, 10],
@@ -174,6 +219,16 @@ export const LEARNING_PATH: LearningStep[] = [
     estimatedTime: "~25 min",
     difficulty: "Advanced",
     reason: "Industry standard for in-place general sorting. Fast cache performance, but tricky edge cases.",
+    hook: "Why does nearly every programming language standard library (C++, Java, Rust) default to Quicksort over every other sorting algorithm?",
+    superpower: "Blazing Real-World Cache Locality & In-Place Speed",
+    tradeoff: "O(n²) Worst Case if an Unbalanced Pivot is Selected",
+    mentalModel: "Height Partitioning Around a Center Reference Student",
+    keyPrinciples: [
+      "Pick a reference element called the pivot.",
+      "Partition the array: move all smaller elements left, and all larger elements right.",
+      "The pivot lands in its permanent, mathematically settled spot.",
+      "Recursively repeat partitioning on the left and right sides without needing temporary arrays."
+    ],
     analogy: "Like organizing students by height: pick one student as a reference (pivot), send everyone shorter to the left and everyone taller to the right, then repeat on each group.",
     idea: "Quick Sort selects a pivot, partitions the array so smaller elements move left and larger move right, and recursively sorts the sub-partitions.",
     sampleArray: [33, 10, 55, 71, 29, 14, 42],
@@ -201,14 +256,73 @@ export const LEARNING_PATH: LearningStep[] = [
     },
   },
   {
-    id: "stack",
+    id: "array",
     order: 6,
+    name: "Array (Static & Dynamic)",
+    category: "data-structure",
+    badge: "Contiguous Memory",
+    estimatedTime: "~15 min",
+    difficulty: "Beginner",
+    reason: "The foundation of all computer memory storage. Learn how contiguous RAM allocation enables instantaneous O(1) random access by index.",
+    hook: "How does your CPU access the 10,000,000th item in memory in a single clock cycle without scanning through the first 9,999,999?",
+    superpower: "Instantaneous O(1) Random Access via Hardware Math",
+    tradeoff: "Expensive O(n) Element Shifting on Middle Insertions & Deletions",
+    mentalModel: "A Numbered Row of School Hallway Lockers",
+    keyPrinciples: [
+      "Elements sit back-to-back in an unbroken contiguous strip of physical RAM.",
+      "Address arithmetic: Address = BaseAddress + (index × elementSize) executes in 1 CPU cycle.",
+      "Inserting or deleting in the middle forces all subsequent items to slide left or right O(n).",
+      "Dynamic arrays (std::vector, ArrayList) double capacity (2×) to achieve amortized O(1) appends."
+    ],
+    analogy: "A row of numbered locker boxes in a school hallway: knowing locker #42 allows you to walk directly to it in one step O(1). But squeezing a new locker into the middle forces you to slide all subsequent lockers down the hall O(n).",
+    idea: "An Array stores elements consecutively in contiguous physical memory addresses. Because every element has an identical size in bytes, calculating any index's address requires only a single addition and multiplication: BaseAddress + (i × elementSize). Inserting or deleting in the middle requires shifting subsequent elements in O(n) time. Dynamic arrays double capacity when full to achieve amortized O(1) push operations.",
+    sampleArray: [14, 28, 42, 56, 70],
+    codeBlocks: [
+      {
+        title: "O(1) Direct Indexing Operator",
+        lines: "T& operator[](int index) {\n    return data[index]; // BaseAddress + index * sizeof(T)\n}",
+        explanation: "Hardware calculates RAM location in a single clock cycle without scanning through prior elements.",
+      },
+      {
+        title: "Amortized O(1) Push Back & Geometric Doubling",
+        lines: "void push_back(T val) {\n    if (size == capacity) resize(capacity * 2);\n    data[size++] = val;\n}",
+        explanation: "Doubling capacity when full ensures the cost of reallocating and copying elements across memory is amortized to O(1) per push.",
+      },
+      {
+        title: "O(n) Middle Insertion with Right Shift",
+        lines: "void insert(int index, T val) {\n    if (size == capacity) resize(capacity * 2);\n    for (int i = size - 1; i >= index; i--) {\n        data[i + 1] = data[i]; // Shift right\n    }\n    data[index] = val;\n    size++;\n}",
+        explanation: "Opens a slot at index by shifting all existing elements from index to size-1 one position to the right.",
+      },
+      {
+        title: "O(n) Element Deletion with Left Shift",
+        lines: "void erase(int index) {\n    for (int i = index; i < size - 1; i++) {\n        data[i] = data[i + 1]; // Shift left\n    }\n    size--;\n}",
+        explanation: "Fills the vacancy left by the deleted item by shifting all subsequent elements one position to the left.",
+      },
+    ],
+    complexityWhy: {
+      time: "Direct access and in-place updates are O(1). Inserting or deleting from the middle requires O(n) element shifts. Appending to dynamic array is amortized O(1).",
+      space: "Contiguous O(n) storage with zero pointer overhead per element. L1/L2 cache prefetching provides peak spatial locality.",
+    },
+  },
+  {
+    id: "stack",
+    order: 7,
     name: "Stack",
     category: "data-structure",
     badge: "LIFO Container",
     estimatedTime: "~15 min",
     difficulty: "Beginner",
     reason: "The foundational LIFO (Last-In, First-Out) data structure. Direct insight into function calls, recursion call stacks, and undo buffers.",
+    hook: "How do text editor 'Undo (Ctrl+Z)', browser 'Back', and function call recursion never lose track of where you came from?",
+    superpower: "Strict O(1) Push, Pop & Top Operations with Zero Ambiguity",
+    tradeoff: "Zero Random Index Access (Only the Top is Visible)",
+    mentalModel: "A Spring-Loaded Cafeteria Tray Dispenser",
+    keyPrinciples: [
+      "Strict LIFO (Last-In, First-Out) discipline: only the most recently added item can be removed.",
+      "Push adds a new element to the top in O(1) time.",
+      "Pop removes the current top element in O(1) time.",
+      "Crucial in syntax parsing (matching parentheses), expression evaluation, and call-stack unwinding."
+    ],
     analogy: "A stack of plates in a cafeteria: you add new clean plates to the very top, and you take plates off from the top. The last plate placed is the first one removed.",
     idea: "A Stack restricts all insertions and deletions to a single endpoint called the top. It provides strict O(1) Push (insert), Pop (remove), and Top/Peek (read) operations.",
     sampleArray: [10, 20, 30, 40],
@@ -236,13 +350,23 @@ export const LEARNING_PATH: LearningStep[] = [
   },
   {
     id: "queue",
-    order: 7,
+    order: 8,
     name: "Queue",
     category: "data-structure",
     badge: "FIFO Container",
     estimatedTime: "~15 min",
     difficulty: "Beginner",
     reason: "The foundational FIFO (First-In, First-Out) data structure. Essential for breadth-first traversal (BFS), task scheduling, and buffering.",
+    hook: "How do Spotify stream buffers, printer spoolers, and hospital emergency triage lines guarantee fairness without starving anyone?",
+    superpower: "Strict O(1) FIFO Enqueue & Dequeue via Circular Pointers",
+    tradeoff: "Only Front and Rear are Accessible; Middle Inspection is Forbidden",
+    mentalModel: "An Airport Security Line (First Arrived, First Cleared)",
+    keyPrinciples: [
+      "Strict FIFO (First-In, First-Out) discipline: elements exit in the exact order they entered.",
+      "Enqueue adds new arrivals to the rear in O(1) time.",
+      "Dequeue removes the oldest waiting element from the front in O(1) time.",
+      "Circular array implementations use modulo arithmetic (rear + 1) % capacity to prevent memory drift."
+    ],
     analogy: "A ticket line at a cinema: the first person who arrives in line is the first person served and allowed into the theater. New arrivals enter at the back.",
     idea: "A Queue allows elements to enter at the rear (enqueue) and exit from the front (dequeue). In circular array implementations, modulo arithmetic (rear + 1) % capacity avoids shifting elements.",
     sampleArray: [5, 15, 25, 35],
@@ -270,13 +394,23 @@ export const LEARNING_PATH: LearningStep[] = [
   },
   {
     id: "linked-list",
-    order: 8,
+    order: 9,
     name: "Linked List",
     category: "data-structure",
     badge: "Nodes & Forward Pointers",
     estimatedTime: "~15 min",
     difficulty: "Intermediate",
     reason: "The quintessential pointer-based linear structure. Master how dynamic nodes eliminate element shifting at the cost of direct indexing.",
+    hook: "What if your computer's RAM is heavily fragmented and cannot find an unbroken contiguous block of memory? Enter dynamic node pointers.",
+    superpower: "Instant O(1) Node Insertion at Head Without Shifting Elements",
+    tradeoff: "O(n) Sequential Traversal (No O(1) Random Index Access)",
+    mentalModel: "A Scavenger Hunt Where Each Clue Points to the Next",
+    keyPrinciples: [
+      "Nodes live scattered anywhere in heap memory, connected solely by forward next pointers.",
+      "Inserting at the head is strictly O(1) — allocate a node and redirect a single pointer.",
+      "To find index k, you must walk through k pointers starting from the head (O(k) traversal).",
+      "No wasted pre-allocated capacity, but incurs extra memory overhead for storing pointer addresses."
+    ],
     analogy: "A treasure hunt with clues: each clue box has a treasure item and a slip of paper telling you the exact GPS address of the next clue box.",
     idea: "A Singly Linked List consists of independently allocated nodes in heap memory, each holding data and a next pointer. Unlike contiguous arrays, inserting at the head is strictly O(1) because no other elements move.",
     sampleArray: [10, 20, 30, 40],
@@ -304,13 +438,23 @@ export const LEARNING_PATH: LearningStep[] = [
   },
   {
     id: "linear-search",
-    order: 9,
+    order: 10,
     name: "Linear Search",
     category: "searching",
     badge: "Sequential Scan",
     estimatedTime: "~10 min",
     difficulty: "Beginner",
     reason: "The simplest search algorithm. Works on any collection without requiring sorting or extra preprocessing.",
+    hook: "When you have a completely unsorted pile of papers or an unsorted list, what is the honest, unavoidable mathematical reality?",
+    superpower: "Zero Preconditions: Works on Any Unsorted, Raw Collection",
+    tradeoff: "O(n) Linear Scalability (Must Check Every Item in Worst Case)",
+    mentalModel: "Checking Pockets One by One to Find Your Car Keys",
+    keyPrinciples: [
+      "Begin at index 0 and inspect every element sequentially until target is found or end is reached.",
+      "Requires absolutely no sorting, no indexing trees, and no extra memory overhead.",
+      "Best Case: O(1) if target happens to be the very first item.",
+      "Worst Case: O(n) if target is at the final position or completely absent."
+    ],
     analogy: "Looking for your lost keys in a row of jacket pockets: you check the first pocket, then the second, then the third, until you find them or check every pocket.",
     idea: "Linear Search checks every element of an array one by one from left to right. When it finds the target, it stops and returns the index. If it reaches the end without a match, it returns -1.",
     sampleArray: [42, 17, 89, 23, 56, 12, 78],
@@ -328,13 +472,23 @@ export const LEARNING_PATH: LearningStep[] = [
   },
   {
     id: "binary-search",
-    order: 10,
+    order: 11,
     name: "Binary Search",
     category: "searching",
     badge: "Logarithmic Halving",
     estimatedTime: "~15 min",
     difficulty: "Intermediate",
     reason: "Requires sorted input. Dramatically accelerates search time from O(n) to O(log n) by repeatedly halving the remaining candidates.",
+    hook: "Pick a secret number between 1 and 1,000,000. In 20 questions or fewer, a computer will guess it correctly every single time. Here is the math.",
+    superpower: "Exponential Halving: Cuts 1,000,000 Possibilities Down in ~20 Checks",
+    tradeoff: "Strict Precondition: The Collection MUST Be Sorted",
+    mentalModel: "Opening a Thick Printed Dictionary Directly to the Middle",
+    keyPrinciples: [
+      "Crucial Precondition: The array must be sorted in non-decreasing order.",
+      "Calculate mid = low + (high - low) / 2 to prevent 32-bit integer overflow.",
+      "Compare arr[mid] with target: if equal, done! If target is smaller, search left; if larger, search right.",
+      "Each comparison cuts the search space exactly in half, achieving astonishing O(log n) speed."
+    ],
     analogy: "Looking up a word in a printed dictionary: you open the book to the exact middle. If the target word comes before, you discard the entire second half and repeat in the first half.",
     idea: "PRECONDITION: Array must be sorted. Compare target with middle element arr[mid]. If equal, return mid. If target is smaller, search left half; if larger, search right half. Each step cuts the search space in half.",
     sampleArray: [12, 24, 32, 45, 57, 68, 81, 99],
@@ -357,13 +511,23 @@ export const LEARNING_PATH: LearningStep[] = [
   },
   {
     id: "time-complexity",
-    order: 11,
+    order: 12,
     name: "Time Complexity",
     category: "complexity",
     badge: "Big-O & Growth Rates",
     estimatedTime: "~15 min",
     difficulty: "Beginner",
     reason: "The foundation of all algorithmic evaluation. Understand how instruction count and loops scale as input size n grows.",
+    hook: "Why does an algorithm that runs in 1 millisecond on 100 users suddenly freeze and crash a million-dollar cloud server when user traffic doubles?",
+    superpower: "Hardware-Independent Asymptotic Growth Modeling",
+    tradeoff: "Ignores Constant Multipliers and CPU Cache Physics on Small Inputs",
+    mentalModel: "Cooking Time: Boiling 10 Eggs in One Pot vs Peeling 10 Eggs Individually",
+    keyPrinciples: [
+      "Time complexity measures how instruction count scales as input size n approaches infinity.",
+      "O(1) Constant < O(log n) Logarithmic < O(n) Linear < O(n log n) Log-Linear < O(n²) Quadratic.",
+      "Focuses on asymptotic worst-case bounds, discarding hardware constants and clock frequencies.",
+      "Distinguishes between algorithms that survive production traffic and those that crash servers."
+    ],
     analogy: "Cooking breakfast: Boiling 1 egg vs boiling 10 eggs takes the same 10 minutes in one pot O(1). But peeling 10 eggs individually takes 10 times longer O(n).",
     idea: "Time Complexity mathematically models the number of basic operations executed by an algorithm as a function of the input size n. Using Big-O asymptotic notation, it categorizes algorithms into growth tiers: O(1) constant, O(log n) logarithmic, O(n) linear, O(n log n) log-linear, and O(n²) quadratic.",
     sampleArray: [1, 2, 4, 8, 16, 32, 64, 128],
@@ -391,13 +555,23 @@ export const LEARNING_PATH: LearningStep[] = [
   },
   {
     id: "space-complexity",
-    order: 12,
+    order: 13,
     name: "Space Complexity",
     category: "complexity",
     badge: "Auxiliary Memory & Stack",
     estimatedTime: "~15 min",
     difficulty: "Beginner",
     reason: "Memory is a finite physical resource. Master the distinction between input storage, auxiliary working buffers, and call stack overhead.",
+    hook: "Speed means nothing if your program runs out of physical memory and crashes with an Out-of-Memory exception. How do we measure RAM cost?",
+    superpower: "Tracks Auxiliary Heap Allocations & Call Stack Recursion Overhead",
+    tradeoff: "Time-Space Tradeoff: Faster Algorithms Often Demand Extra Memory Buffers",
+    mentalModel: "Suitcase Packing: Clothes (Input) vs Packing Organizers (Auxiliary Space)",
+    keyPrinciples: [
+      "Space complexity measures total extra (auxiliary) memory required by the algorithm to run.",
+      "Auxiliary Space excludes the input data itself and measures working arrays and buffers.",
+      "Recursion Depth: Every recursive call allocates a stack frame; depth d consumes O(d) memory.",
+      "In-place algorithms modify memory directly using O(1) auxiliary space (e.g., Quick Sort, Heap Sort)."
+    ],
     analogy: "Packing a travel suitcase: the clothes you bring are the input space O(n). The folding table or organizers you temporarily use while packing are the auxiliary space O(1) or O(n).",
     idea: "Space Complexity measures the total extra memory (auxiliary space) required by an algorithm to execute to completion. This includes dynamic heap allocations (temporary arrays, hash tables) and the call stack frames allocated during recursive function execution.",
     sampleArray: [10, 20, 30, 40, 50],
@@ -419,8 +593,8 @@ export const LEARNING_PATH: LearningStep[] = [
       },
     ],
     complexityWhy: {
-      time: "Memory management operations take time, but space complexity isolates physical byte footprint.",
-      space: "Auxiliary space measures extra working memory beyond the input array itself.",
+      time: "Tracks whether memory allocations happen inside inner loops (O(n) per pass) or statically upfront.",
+      space: "Differentiates between Total Space (input + working memory) and Auxiliary Space (strictly extra memory).",
     },
   },
 ];

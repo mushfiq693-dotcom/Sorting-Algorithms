@@ -2,7 +2,7 @@
 
 import React from "react";
 import { AlgorithmMetadata } from "@/types/sorting";
-import { Clock, HardDrive, ShieldCheck, Zap, Info, AlertCircle } from "lucide-react";
+import { Clock, HardDrive, ShieldCheck, Zap, AlertCircle } from "lucide-react";
 
 interface ComplexityCardProps {
   metadata: AlgorithmMetadata;
@@ -102,12 +102,6 @@ export function ComplexityCard({ metadata }: ComplexityCardProps) {
           <p>{complexity.spaceNote}</p>
         </div>
       )}
-
-      {/* Description Summary */}
-      <div className="rounded-xl border border-border bg-secondary/30 p-3 text-xs text-muted-foreground leading-relaxed flex items-start gap-2.5">
-        <Info className="h-4 w-4 text-cyan-500 shrink-0 mt-0.5" />
-        <p>{description}</p>
-      </div>
     </div>
   );
 }

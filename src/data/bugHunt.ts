@@ -358,4 +358,29 @@ public:
       { type: "compare", indices: [0], description: "Memory leak: Previous head reference wiped out before linkage" },
     ],
   },
+
+  array: {
+    algorithmId: "array",
+    title: "Array Insertion: Forward Loop Overwrite Bug",
+    description:
+      "This array insertion function shifts elements from left-to-right (`i = index; i < size; i++`) instead of backwards, causing the first shifted element to overwrite every single subsequent slot!",
+    buggyCode: `void insert(vector<int>& arr, int index, int val) {
+    arr.push_back(0); // expand size
+    for (int i = index; i < (int)arr.size() - 1; i++) {
+        arr[i + 1] = arr[i]; // Bug: Forward shift propagates same value
+    }
+    arr[index] = val;
+}`,
+    buggyLineNumber: 3,
+    hint: "If you shift from index forward, arr[index+1] gets arr[index]. What happens when the next loop iteration reads arr[index+1]?",
+    explanation:
+      "Line 3 iterated forward from `index` to `size - 1`. Shifting forward overwrote arr[index+1] with arr[index], so the next iteration copied that same value to arr[index+2], destroying all existing data. To insert into an array, you must shift backwards starting from `size - 1` down to `index`: `for (int i = (int)arr.size() - 2; i >= index; i--)`.",
+    validateFix: (line: string) => {
+      const trimmed = line.replace(/\s+/g, "");
+      return trimmed.includes("i>=index") && (trimmed.includes("i--") || trimmed.includes("--i"));
+    },
+    flawedRunner: () => [
+      { type: "overwrite", index: 1, value: 14, description: "Forward shift duplicated element across all subsequent slots" },
+    ],
+  },
 };
