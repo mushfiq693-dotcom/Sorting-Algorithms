@@ -22,44 +22,75 @@ export function formatMathString(raw: string): string {
     str = str.slice(1, -1).trim();
   }
 
+  // Strip LaTeX font and style wrappers (e.g. \mathcal{O} -> O, \mathbf{X} -> X, mathcal{O} -> O)
+  str = str.replace(/\\?mathcal\{([^}]+)\}/g, "$1");
+  str = str.replace(/\\?mathbf\{([^}]+)\}/g, "$1");
+  str = str.replace(/\\?mathit\{([^}]+)\}/g, "$1");
+  str = str.replace(/\\?mathrm\{([^}]+)\}/g, "$1");
+  str = str.replace(/\\?mathbb\{([^}]+)\}/g, "$1");
+  str = str.replace(/\\?mathsf\{([^}]+)\}/g, "$1");
+  str = str.replace(/\\?mathtt\{([^}]+)\}/g, "$1");
+  str = str.replace(/\\?mathcal\s+([A-Za-z])/g, "$1");
+  str = str.replace(/\\?mathbf\s+([A-Za-z0-9])/g, "$1");
+
   // Concatenation & Complex LaTeX symbols
   str = str.replace(/\\mathbin\{\/\\mkern-3mu\/\}/g, " // ");
+  str = str.replace(/\\mathbin\{\\Vert\}/g, " // ");
   str = str.replace(/\\mathbin\{([^}]+)\}/g, " $1 ");
   str = str.replace(/\\mkern[^;]*;?/g, "");
-  str = str.replace(/\\text\{([^}]+)\}/g, "$1");
+  str = str.replace(/\\?text\{([^}]+)\}/g, "$1");
 
   // Common LaTeX Greek and Math Operators
-  str = str.replace(/\\Theta/g, "Θ");
-  str = str.replace(/\\Omega/g, "Ω");
-  str = str.replace(/\\Sigma/g, "Σ");
-  str = str.replace(/\\sum_\{([^}]+)\}\^\{([^}]+)\}/g, "∑($1 to $2)");
-  str = str.replace(/\\sum_\{([^}]+)\}\^(\S+)/g, "∑($1 to $2)");
-  str = str.replace(/\\sum\b/g, "∑");
-  str = str.replace(/\\dots/g, "…");
-  str = str.replace(/\\cdots/g, "⋯");
-  str = str.replace(/\\le\b/g, "≤");
-  str = str.replace(/\\ge\b/g, "≥");
-  str = str.replace(/\\ne\b/g, "≠");
-  str = str.replace(/\\forall\b/g, "∀");
-  str = str.replace(/\\in\b/g, "∈");
-  str = str.replace(/\\blacksquare\b/g, "■");
-  str = str.replace(/\\approx\b/g, "≈");
-  str = str.replace(/\\cdot\b/g, "·");
-  str = str.replace(/\\times\b/g, "×");
-  str = str.replace(/\\implies\b/g, " ⟹ ");
-  str = str.replace(/\\quad\b/g, "   ");
-  str = str.replace(/\\qquad\b/g, "      ");
-  str = str.replace(/\\left\(/g, "(");
-  str = str.replace(/\\right\)/g, ")");
-  str = str.replace(/\\lfloor\b/g, "⌊");
-  str = str.replace(/\\rfloor\b/g, "⌋");
-  str = str.replace(/\\lceil\b/g, "⌈");
-  str = str.replace(/\\rceil\b/g, "⌉");
-  str = str.replace(/\\log_2\s*n/g, "log₂ n");
-  str = str.replace(/\\log_2\s*([a-zA-Z0-9]+)/g, "log₂ $1");
-  str = str.replace(/\\log_b\s*([a-zA-Z0-9]+)/g, "log_b $1");
-  str = str.replace(/\\log_B\s*([a-zA-Z0-9]+)/g, "log_B $1");
-  str = str.replace(/\\log\b/g, "log");
+  str = str.replace(/\\?Theta/g, "Θ");
+  str = str.replace(/\\?Omega/g, "Ω");
+  str = str.replace(/\\?Sigma/g, "Σ");
+  str = str.replace(/\\?sum_\{([^}]+)\}\^\{([^}]+)\}/g, "∑($1 to $2)");
+  str = str.replace(/\\?sum_\{([^}]+)\}\^(\S+)/g, "∑($1 to $2)");
+  str = str.replace(/\\?sum\b/g, "∑");
+  str = str.replace(/\\?dots/g, "…");
+  str = str.replace(/\\?cdots/g, "⋯");
+  str = str.replace(/\\?le\b/g, "≤");
+  str = str.replace(/\\?ge\b/g, "≥");
+  str = str.replace(/\\?ne\b/g, "≠");
+  str = str.replace(/\\?forall\b/g, "∀");
+  str = str.replace(/\\?exists\b/g, "∃");
+  str = str.replace(/\\?iff\b/g, " ⟺ ");
+  str = str.replace(/\\?implies\b/g, " ⟹ ");
+  str = str.replace(/\\?in\b/g, "∈");
+  str = str.replace(/\\?notin\b/g, "∉");
+  str = str.replace(/\\?blacksquare\b/g, "■");
+  str = str.replace(/\\?approx\b/g, "≈");
+  str = str.replace(/\\?sim\b/g, "~");
+  str = str.replace(/\\?cdot\b/g, "·");
+  str = str.replace(/\\?times\b/g, "×");
+  str = str.replace(/\\?div\b/g, "÷");
+  str = str.replace(/\\?pm\b/g, "±");
+  str = str.replace(/\\?mp\b/g, "∓");
+  str = str.replace(/\\?infty\b/g, "∞");
+  str = str.replace(/\\?sqrt\{([^}]+)\}/g, "√($1)");
+  str = str.replace(/\\?sqrt\b/g, "√");
+  str = str.replace(/\\?quad\b/g, "   ");
+  str = str.replace(/\\?qquad\b/g, "      ");
+  str = str.replace(/\\?left\(/g, "(");
+  str = str.replace(/\\?right\)/g, ")");
+  str = str.replace(/\\?langle\b/g, "⟨");
+  str = str.replace(/\\?rangle\b/g, "⟩");
+  str = str.replace(/\\?Vert\b/g, "‖");
+  str = str.replace(/\\?vert\b/g, "|");
+  str = str.replace(/\\?to\b/g, "→");
+  str = str.replace(/\\?rightarrow\b/g, "→");
+  str = str.replace(/\\?leftarrow\b/g, "←");
+  str = str.replace(/\\?lfloor\b/g, "⌊");
+  str = str.replace(/\\?rfloor\b/g, "⌋");
+  str = str.replace(/\\?lceil\b/g, "⌈");
+  str = str.replace(/\\?rceil\b/g, "⌉");
+  str = str.replace(/\\?pmod\{([^}]+)\}/g, " (mod $1)");
+  str = str.replace(/\\?bmod\b/g, " mod ");
+  str = str.replace(/\\?log_2\s*n/g, "log₂ n");
+  str = str.replace(/\\?log_2\s*([a-zA-Z0-9]+)/g, "log₂ $1");
+  str = str.replace(/\\?log_b\s*([a-zA-Z0-9]+)/g, "log_b $1");
+  str = str.replace(/\\?log_B\s*([a-zA-Z0-9]+)/g, "log_B $1");
+  str = str.replace(/\\?log\b/g, "log");
 
   // Specific Fractions
   str = str.replace(/\\frac\{1\}\{2\}/g, "½");
@@ -282,7 +313,17 @@ export const FormattedMarkdown = memo(function FormattedMarkdown({
   content,
   className = "",
 }: FormattedMarkdownProps) {
-  const lines = content.trim().split("\n");
+  // Pre-clean LaTeX font commands and artifacts so they never leak as plain words
+  const sanitizedContent = (content || "")
+    .replace(/\\?mathcal\{([^}]+)\}/g, "$1")
+    .replace(/\\?mathbf\{([^}]+)\}/g, "$1")
+    .replace(/\\?mathit\{([^}]+)\}/g, "$1")
+    .replace(/\\?mathrm\{([^}]+)\}/g, "$1")
+    .replace(/\\?mathbb\{([^}]+)\}/g, "$1")
+    .replace(/\\?mathsf\{([^}]+)\}/g, "$1")
+    .replace(/\\?mathtt\{([^}]+)\}/g, "$1");
+
+  const lines = sanitizedContent.trim().split("\n");
   const elements: React.ReactNode[] = [];
   let keyIndex = 0;
 

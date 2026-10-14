@@ -12,7 +12,7 @@ import {
   CheckCircle2,
   ArrowRight,
   Sparkles,
-  BookOpen,
+
   Circle,
   Lightbulb,
   Zap,
@@ -21,7 +21,10 @@ import {
   Target,
   Flame,
   Trophy,
+  Share2,
 } from "lucide-react";
+import { RoadmapTopicAnimation } from "@/components/learn/RoadmapTopicAnimation";
+import { TopicCategoryHub, CategoryKey } from "@/components/explore/TopicCategoryHub";
 
 import { useProgressSync } from "@/hooks/useProgressSync";
 import { AuthButton } from "@/components/auth/AuthButton";
@@ -31,9 +34,7 @@ import { ThemeToggle } from "@/components/theme/ThemeToggle";
 export default function LearnPage() {
   const [completedSteps, setCompletedSteps] = useState<string[]>([]);
   const [user, setUser] = useState<any | null>(null);
-  const [categoryFilter, setCategoryFilter] = useState<
-    "all" | "sorting" | "searching" | "data-structure" | "complexity"
-  >("all");
+  const [categoryFilter, setCategoryFilter] = useState<CategoryKey | "all">("all");
   const { syncStep } = useProgressSync();
   const supabase = createClient();
 
@@ -85,9 +86,10 @@ export default function LearnPage() {
     });
   };
 
-  const filteredSteps = LEARNING_PATH.filter((s) =>
-    categoryFilter === "all" ? true : s.category === categoryFilter
-  );
+  const filteredSteps =
+    categoryFilter === "all"
+      ? LEARNING_PATH
+      : LEARNING_PATH.filter((s) => s.category === categoryFilter);
 
   const progressPercent = Math.round(
     (completedSteps.length / LEARNING_PATH.length) * 100
@@ -117,14 +119,6 @@ export default function LearnPage() {
               <span className="hidden sm:inline">My Progress</span>
             </Link>
 
-            <Link
-              href="/docs"
-              className="inline-flex items-center gap-1.5 rounded-xl border border-border bg-secondary/80 px-2.5 sm:px-3 py-1.5 text-xs font-semibold text-foreground hover:bg-secondary hover:text-cyan-500 transition-all active:scale-95"
-            >
-              <BookOpen className="h-3.5 w-3.5 text-cyan-500" />
-              <span className="hidden sm:inline">Docs & Course</span>
-              <span className="sm:hidden">Docs</span>
-            </Link>
 
             <ThemeToggle />
             <NotificationBell />
@@ -134,23 +128,18 @@ export default function LearnPage() {
       </header>
 
       <main className="flex-1 max-w-5xl mx-auto w-full px-3 sm:px-6 lg:px-8 py-8 sm:py-12">
-        {/* Header Hero */}
+        {/* Header Hero — Redesigned for Instant Beginner Friendliness */}
         <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-10">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-cyan-500/30 bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 text-xs font-medium mb-4 backdrop-blur-md">
-            <Sparkles className="h-3.5 w-3.5" />
-            <span>Beginner-First Structured Roadmap</span>
-          </div>
-
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-black tracking-tight text-foreground mb-3 font-sans">
-            Algorithm &amp; Data Structure{" "}
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-foreground mb-3.5 font-sans leading-tight">
+            DSA{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-500 to-blue-500">
-              Mastery Path
+              Beginner-first Roadmap
             </span>
           </h1>
           <p className="text-sm sm:text-base text-muted-foreground leading-relaxed max-w-2xl mx-auto">
-            A step-by-step roadmap from brute-force paradigms to optimal
-            algorithms, linear data structures, searching strategies, and asymptotic complexity analysis.
+            Zero prior knowledge required. We start with the absolute fundamentals—contiguous memory layouts and simple sequential searches—and guide you step-by-step with interactive visualizers.
           </p>
+
 
           {/* Motivational Cloud Sync & Progress Tracking Banner for Guests (Compact & Sleek) */}
           {!user && (
@@ -228,58 +217,14 @@ export default function LearnPage() {
             </div>
           </div>
 
-          {/* Category Filter Tabs */}
-          <div className="mt-6 flex items-center justify-start sm:justify-center gap-2 overflow-x-auto touch-scroll pb-2 no-scrollbar [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-            <button
-              onClick={() => setCategoryFilter("all")}
-              className={`px-3.5 sm:px-4 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer whitespace-nowrap active:scale-95 ${
-                categoryFilter === "all"
-                  ? "bg-cyan-500 text-slate-950 shadow-md font-bold"
-                  : "border border-border bg-secondary/80 text-muted-foreground hover:text-foreground hover:bg-secondary"
-              }`}
-            >
-              All Topics ({LEARNING_PATH.length})
-            </button>
-            <button
-              onClick={() => setCategoryFilter("sorting")}
-              className={`px-3.5 sm:px-4 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer whitespace-nowrap active:scale-95 ${
-                categoryFilter === "sorting"
-                  ? "bg-cyan-500 text-slate-950 shadow-md font-bold"
-                  : "border border-border bg-secondary/80 text-muted-foreground hover:text-foreground hover:bg-secondary"
-              }`}
-            >
-              Sorting ({LEARNING_PATH.filter((s) => s.category === "sorting").length})
-            </button>
-            <button
-              onClick={() => setCategoryFilter("searching")}
-              className={`px-3.5 sm:px-4 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer whitespace-nowrap active:scale-95 ${
-                categoryFilter === "searching"
-                  ? "bg-cyan-500 text-slate-950 shadow-md font-bold"
-                  : "border border-border bg-secondary/80 text-muted-foreground hover:text-foreground hover:bg-secondary"
-              }`}
-            >
-              Searching ({LEARNING_PATH.filter((s) => s.category === "searching").length})
-            </button>
-            <button
-              onClick={() => setCategoryFilter("data-structure")}
-              className={`px-3.5 sm:px-4 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer whitespace-nowrap active:scale-95 ${
-                categoryFilter === "data-structure"
-                  ? "bg-cyan-500 text-slate-950 shadow-md font-bold"
-                  : "border border-border bg-secondary/80 text-muted-foreground hover:text-foreground hover:bg-secondary"
-              }`}
-            >
-              Data Structures ({LEARNING_PATH.filter((s) => s.category === "data-structure").length})
-            </button>
-            <button
-              onClick={() => setCategoryFilter("complexity")}
-              className={`px-3.5 sm:px-4 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer whitespace-nowrap active:scale-95 ${
-                categoryFilter === "complexity"
-                  ? "bg-cyan-500 text-slate-950 shadow-md font-bold"
-                  : "border border-border bg-secondary/80 text-muted-foreground hover:text-foreground hover:bg-secondary"
-              }`}
-            >
-              Complexity ({LEARNING_PATH.filter((s) => s.category === "complexity").length})
-            </button>
+          {/* Topic Category Hub (Exact Screenshot Match) */}
+          <div className="mt-8 mb-4">
+            <TopicCategoryHub
+              mode="learn"
+              selectedCategory={categoryFilter === "all" ? null : categoryFilter}
+              onSelectCategory={(cat) => setCategoryFilter(cat || "all")}
+              showSubtitle={false}
+            />
           </div>
         </div>
 
@@ -322,7 +267,7 @@ export default function LearnPage() {
                 >
                   <div className="flex flex-wrap items-center justify-between gap-2 mb-2.5">
                     <div className="flex items-center gap-2.5">
-                      <h2 className="text-lg font-bold text-foreground group-hover:text-cyan-500 transition-colors flex items-center gap-2">
+                      <h2 className="text-lg sm:text-xl font-bold text-foreground group-hover:text-cyan-500 transition-colors flex items-center gap-2 font-sans tracking-tight">
                         <span>{step.name}</span>
                       </h2>
                       <span className="text-[10px] font-mono font-semibold px-2 py-0.5 rounded-md bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-500/20">
@@ -340,18 +285,14 @@ export default function LearnPage() {
                     </div>
                   </div>
 
-                  {/* Why this order explanation */}
-                  <p className="text-xs sm:text-sm text-foreground/90 font-medium leading-relaxed mb-3">
+                  {/* Topic Description & Intuition (Enlarged for Readability) */}
+                  <p className="text-sm sm:text-[15px] text-foreground/90 font-normal leading-relaxed mb-3.5">
                     {step.reason}
                   </p>
 
-                  {/* Analogy Preview */}
-                  <div className="rounded-xl border border-border/50 bg-background/50 p-3 text-xs text-muted-foreground leading-relaxed flex items-start gap-2 mb-4">
-                    <Lightbulb className="h-4 w-4 text-amber-400 shrink-0 mt-0.5" />
-                    <span>
-                      <strong className="text-foreground/90 font-semibold">Analogy: </strong>
-                      {step.analogy}
-                    </span>
+                  {/* Topic Relevant Micro-Animation Preview (Replaces Analogy) */}
+                  <div className="mb-4">
+                    <RoadmapTopicAnimation topicId={step.id} />
                   </div>
 
                   {/* Action Link & Checkbox Button */}
@@ -393,8 +334,7 @@ export default function LearnPage() {
         <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p>© 2026 AlgoHub. Interactive Algorithm Learning Platform.</p>
           <div className="flex items-center gap-4 text-xs">
-            <Link href="/docs" className="hover:text-foreground">Docs & Course</Link>
-            <span>•</span>
+
             <Link href="/visualizer" className="hover:text-foreground">Visualizer</Link>
             <span>•</span>
             <Link href="/compare" className="hover:text-foreground">Comparison Matrix</Link>

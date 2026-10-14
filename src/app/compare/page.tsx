@@ -15,7 +15,7 @@ import {
   ShieldCheck,
   HardDrive,
   Compass,
-  BookOpen,
+
   GraduationCap,
   BarChart3,
   Database,
@@ -55,14 +55,6 @@ export default function ComparePage() {
               <span className="hidden sm:inline">My Progress</span>
             </Link>
 
-            <Link
-              href="/docs"
-              className="inline-flex items-center gap-1.5 rounded-xl border border-border bg-secondary/80 px-2.5 sm:px-3 py-1.5 text-xs font-semibold text-foreground hover:bg-secondary hover:text-cyan-500 transition-all active:scale-95"
-            >
-              <BookOpen className="h-3.5 w-3.5 text-cyan-500" />
-              <span className="hidden sm:inline">Docs & Course</span>
-              <span className="sm:hidden">Docs</span>
-            </Link>
 
             <Link
               href="/learn"
@@ -409,8 +401,7 @@ export default function ComparePage() {
         <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p>© 2026 AlgoHub. Multi-Category Algorithmic Comparison Matrix.</p>
           <div className="flex items-center gap-4 text-xs">
-            <Link href="/docs" className="hover:text-foreground">Docs & Course</Link>
-            <span>•</span>
+
             <Link href="/visualizer" className="hover:text-foreground">Visualizer</Link>
             <span>•</span>
             <Link href="/learn" className="hover:text-foreground">Learning Path</Link>

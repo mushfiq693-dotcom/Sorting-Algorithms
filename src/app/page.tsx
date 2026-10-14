@@ -1,9 +1,8 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { HeroAnimation } from "@/components/landing/HeroAnimation";
-import { CoveredTopicsHub } from "@/components/landing/CoveredTopicsHub";
 import { LearningJourney } from "@/components/landing/LearningJourney";
 import { WhyChooseAlgoHub } from "@/components/landing/WhyChooseAlgoHub";
 import { BetaBanner } from "@/components/landing/BetaBanner";
@@ -17,7 +16,6 @@ import {
   Layers,
   Table,
   GraduationCap,
-  BookOpen,
   Terminal,
   Menu,
   X,
@@ -29,21 +27,7 @@ import {
 export default function Home() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
 
-  // Dropdown states
-  const [learnDropdownOpen, setLearnDropdownOpen] = useState<boolean>(false);
 
-  const learnRef = useRef<HTMLDivElement>(null);
-
-  // Close dropdowns on outside click
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (learnRef.current && !learnRef.current.contains(event.target as Node)) {
-        setLearnDropdownOpen(false);
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
 
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground selection:bg-[#C9A962]/35 selection:text-[#1C1714] transition-colors duration-200 font-sans font-normal">
@@ -71,66 +55,14 @@ export default function Home() {
           {/* Desktop Nav Links — Grouped Structure (Manrope 600) */}
           <div className="flex items-center gap-2 sm:gap-3">
             <div className="hidden lg:flex items-center gap-1.5 sm:gap-2 font-sans text-xs font-semibold tracking-wide">
-              {/* 1. Learn Dropdown */}
-              <div className="relative" ref={learnRef}>
-                <button
-                  onClick={() => setLearnDropdownOpen(!learnDropdownOpen)}
-                  className={`inline-flex items-center gap-1.5 rounded border px-3 py-1.5 font-semibold transition-all active:scale-95 shadow-sm ${
-                    learnDropdownOpen
-                      ? "border-primary bg-card text-primary shadow-brass"
-                      : "border-border bg-card/80 text-foreground hover:text-primary hover:border-primary/50 hover:bg-card"
-                  }`}
-                  aria-expanded={learnDropdownOpen}
-                >
-                  <BookOpen className="h-3.5 w-3.5 text-primary" />
-                  <span>Learn</span>
-                  <ChevronDown
-                    className={`h-3 w-3 text-muted-foreground transition-transform duration-200 ${
-                      learnDropdownOpen ? "rotate-180 text-primary" : ""
-                    }`}
-                  />
-                </button>
-
-                {learnDropdownOpen && (
-                  <div className="absolute top-full left-0 mt-2 w-72 max-w-[calc(100vw-2rem)] rounded-lg border-2 border-[#B08422]/50 dark:border-[#C9A962]/50 bg-[#FFFFFF] dark:bg-[#251E19] p-2.5 shadow-[0_20px_50px_rgba(0,0,0,0.5)] z-50 corner-flourish">
-                    <Link
-                      href="/learn"
-                      onClick={() => setLearnDropdownOpen(false)}
-                      className="flex items-start gap-3 p-2.5 rounded-md hover:bg-[#F5EFEB] dark:hover:bg-[#1C1714] transition-colors group"
-                    >
-                      <div className="p-2 rounded border border-[#D8CBB8] dark:border-[#4A3F35] bg-[#FAF6F0] dark:bg-[#1C1714] text-[#B08422] dark:text-[#C9A962] shrink-0 mt-0.5 group-hover:border-primary group-hover:bg-[#8B2635] group-hover:text-white transition-colors">
-                        <GraduationCap className="h-4 w-4" />
-                      </div>
-                      <div>
-                        <div className="font-sans text-xs font-semibold text-[#1C1714] dark:text-[#E8DFD4] group-hover:text-primary tracking-wide transition-colors">
-                          Learning Path
-                        </div>
-                        <div className="font-sans text-xs text-[#5C4D42] dark:text-[#9C8B7A] leading-relaxed mt-0.5 normal-case font-normal">
-                          Guided step-by-step roadmap from Bubble to Quick Sort
-                        </div>
-                      </div>
-                    </Link>
-
-                    <Link
-                      href="/docs"
-                      onClick={() => setLearnDropdownOpen(false)}
-                      className="flex items-start gap-3 p-2.5 rounded-md hover:bg-[#F5EFEB] dark:hover:bg-[#1C1714] transition-colors group"
-                    >
-                      <div className="p-2 rounded border border-[#D8CBB8] dark:border-[#4A3F35] bg-[#FAF6F0] dark:bg-[#1C1714] text-[#B08422] dark:text-[#C9A962] shrink-0 mt-0.5 group-hover:border-primary group-hover:bg-[#8B2635] group-hover:text-white transition-colors">
-                        <BookOpen className="h-4 w-4" />
-                      </div>
-                      <div>
-                        <div className="font-sans text-xs font-semibold text-[#1C1714] dark:text-[#E8DFD4] group-hover:text-primary tracking-wide transition-colors">
-                          Docs & Course
-                        </div>
-                        <div className="font-sans text-xs text-[#5C4D42] dark:text-[#9C8B7A] leading-relaxed mt-0.5 normal-case font-normal">
-                          17 deep-dive lessons with C++ code & theory
-                        </div>
-                      </div>
-                    </Link>
-                  </div>
-                )}
-              </div>
+              {/* 1. Learning Path */}
+              <Link
+                href="/learn"
+                className="inline-flex items-center gap-1.5 rounded border border-border bg-card/80 px-3 py-1.5 font-semibold text-foreground hover:border-primary hover:text-primary hover:bg-card transition-all active:scale-95 shadow-sm"
+              >
+                <GraduationCap className="h-3.5 w-3.5 text-primary" />
+                <span>Learning Path</span>
+              </Link>
 
               {/* 2. Course Material */}
               <Link
@@ -182,14 +114,7 @@ export default function Home() {
                 <GraduationCap className="h-4 w-4 text-primary" />
                 <span>Learning Path (Structured Roadmap)</span>
               </Link>
-              <Link
-                href="/docs"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="flex items-center gap-2 p-2.5 rounded bg-background text-foreground text-xs font-display hover:text-primary transition-colors active:scale-95"
-              >
-                <BookOpen className="h-4 w-4 text-primary" />
-                <span>Docs & Course (17 Lessons)</span>
-              </Link>
+
             </div>
 
             {/* Group 2: Practice & Tools */}
@@ -305,13 +230,10 @@ export default function Home() {
         {/* 1. PRIMARY NARRATIVE: 4-STAGE LEARNING JOURNEY */}
         <LearningJourney />
 
-        {/* 2. COVERED TOPICS & VISUALIZER HUB (COMPREHENSIVE DSA CURRICULUM FOR GOOGLE SEO) */}
-        <CoveredTopicsHub />
-
-        {/* 3. WHY CHOOSE ALGOHUB SECTION — UNIQUENESS & DIFFERENTIATION */}
+        {/* 2. WHY CHOOSE ALGOHUB SECTION — UNIQUENESS & DIFFERENTIATION */}
         <WhyChooseAlgoHub />
 
-        {/* 4. COMMUNITY & FEEDBACK BANNER */}
+        {/* 3. COMMUNITY & FEEDBACK SECTION */}
         <BetaBanner />
       </main>
 
@@ -332,8 +254,7 @@ export default function Home() {
 
           <div className="flex flex-wrap items-center justify-center gap-4 font-sans text-xs font-semibold tracking-wide">
             <Link href="/learn" className="hover:text-primary transition-colors text-primary">Learning Path</Link>
-            <span className="text-border">·</span>
-            <Link href="/docs" className="hover:text-primary transition-colors text-foreground">Docs & Course</Link>
+
             <span className="text-border">·</span>
             <Link href="/compare" className="hover:text-primary transition-colors text-foreground">Compare</Link>
             <span className="text-border">·</span>

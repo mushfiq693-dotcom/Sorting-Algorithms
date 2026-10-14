@@ -2,6 +2,8 @@
 
 import React, { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import confetti from "canvas-confetti";
+import { CodeViewer } from "@/components/code/CodeViewer";
+import { ALGORITHMS } from "@/data/algorithms";
 import {
   Play,
   Pause,
@@ -211,271 +213,317 @@ export function BinarySearchVisualizer({
   const maxVal = Math.max(...array, 100);
   const maxPossibleSteps = Math.ceil(Math.log2(array.length));
 
+  const activeLineNumber = useMemo(() => {
+    if (foundIndex !== null) return 9;
+    if (isFinished && foundIndex === null) return 16;
+    if (mid !== null) {
+      if (stepPhase === "evaluate-mid") return 8;
+      if (array[mid] < target) return 11;
+      return 13;
+    }
+    if (isPlaying) return 6;
+    return null;
+  }, [foundIndex, isFinished, mid, stepPhase, array, target, isPlaying]);
+
   return (
-    <div className="flex flex-col gap-5 rounded-2xl border border-border bg-card/80 p-5 sm:p-7 backdrop-blur-xl shadow-xl">
-      {/* Visualizer Header Bar */}
-      <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-border/80">
-        <div className="flex items-center gap-3">
-          <div className="h-9 w-9 rounded-xl bg-cyan-500/15 border border-cyan-500/30 flex items-center justify-center text-cyan-600 dark:text-cyan-400 shadow-sm">
-            <Zap className="h-5 w-5" />
-          </div>
-          <div>
-            <h3 className="text-base sm:text-lg font-bold text-foreground font-sans flex items-center gap-2">
-              <span>Binary Search Studio</span>
-              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-500/20 font-semibold">
-                Divide &amp; Conquer O(log n)
-              </span>
-            </h3>
-            <p className="text-xs text-muted-foreground">
-              Requires sorted input. Cuts search range in half on every comparison.
-            </p>
-          </div>
-        </div>
+    <div className="flex flex-col gap-4 w-full max-w-7xl mx-auto">
+      {/* Unified Studio Grid: Left Visual Stage (7 cols), Right Code Execution (5 cols) */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
+        {/* Left Column: Visual Canvas + Live Telemetry + Controls */}
+        <div className="lg:col-span-7 flex flex-col gap-3">
+          {/* Main Array Bars Stage with Active Interval & Discarded Halves */}
+          <div className="h-56 sm:h-64 rounded-2xl border border-border/80 bg-card/60 p-4 flex items-end justify-center gap-2 sm:gap-3 relative overflow-hidden shadow-inner">
+            {array.map((val, idx) => {
+              const heightPercent = Math.max(18, Math.round((val / maxVal) * 85));
+              const isMid = mid === idx;
+              const isFound = foundIndex === idx;
+              const isLow = low === idx && !isFinished;
+              const isHigh = high === idx && !isFinished;
+              const inActiveRange = idx >= low && idx <= high && !isFinished;
+              const isDiscarded = discardedIndices.includes(idx) || idx < low || idx > high;
 
-        {/* Telemetry Metrics */}
-        <div className="flex items-center gap-2 font-mono text-xs">
-          <div className="px-3 py-1.5 rounded-xl border border-border bg-secondary/80 flex items-center gap-2">
-            <span className="text-muted-foreground">Comparisons:</span>
-            <span className="font-bold text-foreground">{comparisons} / ≤{maxPossibleSteps}</span>
-          </div>
-          <div className="px-3 py-1.5 rounded-xl border border-border bg-secondary/80 flex items-center gap-2">
-            <span className="text-muted-foreground">Range [low..high]:</span>
-            <span className="font-bold text-cyan-500">[{low}..{high}]</span>
-          </div>
-          <div className="px-3 py-1.5 rounded-xl border border-border bg-secondary/80 flex items-center gap-2">
-            <span className="text-muted-foreground">Status:</span>
-            <span className={`font-bold ${foundIndex !== null ? "text-emerald-500" : isFinished ? "text-rose-400" : isPlaying ? "text-cyan-400" : "text-muted-foreground"}`}>
-              {foundIndex !== null ? `FOUND (mid: ${foundIndex})` : isFinished ? "NOT FOUND (-1)" : isPlaying ? "HALVING..." : "IDLE"}
-            </span>
-          </div>
-        </div>
-      </div>
+              let barColor = "bg-secondary border-border text-foreground";
+              if (isFound) {
+                barColor = "bg-emerald-500 border-emerald-400 text-slate-950 ring-4 ring-emerald-500/30 animate-bounce";
+              } else if (isMid) {
+                barColor = "bg-amber-500 border-amber-400 text-slate-950 ring-4 ring-amber-400/40";
+              } else if (inActiveRange) {
+                barColor = "bg-cyan-500/20 border-cyan-500/50 text-cyan-300";
+              } else if (isDiscarded) {
+                barColor = "bg-secondary/30 border-border/30 text-muted-foreground opacity-30 grayscale";
+              }
 
-      {/* Precondition Verification Warning Banner (if unsorted) */}
-      {!isSorted && (
-        <div className="p-3.5 rounded-xl border border-amber-500/40 bg-amber-500/10 text-amber-900 dark:text-amber-200 text-xs font-mono flex items-center justify-between gap-3 animate-in fade-in">
-          <div className="flex items-center gap-2">
-            <AlertTriangle className="h-4 w-4 text-amber-500 shrink-0" />
-            <span>
-              <strong>PRECONDITION VIOLATED:</strong> Binary Search produces undefined/incorrect results on unsorted data!
-            </span>
-          </div>
-          <button
-            onClick={handleSortArray}
-            className="px-3 py-1 rounded-lg bg-amber-500 text-slate-950 font-bold text-[11px] hover:bg-amber-400 transition-colors shrink-0 cursor-pointer"
-          >
-            Sort Array Now
-          </button>
-        </div>
-      )}
+              return (
+                <div key={idx} className="flex-1 max-w-[55px] flex flex-col items-center gap-1.5 h-full justify-end">
+                  {/* Top Pointer Tags (MID / LOW / HIGH) */}
+                  <div className="h-6 flex flex-col items-center justify-end font-mono text-[9px]">
+                    {isFound ? (
+                      <span className="px-1.5 py-0.2 rounded bg-emerald-500 text-slate-950 font-black">
+                        MATCH!
+                      </span>
+                    ) : isMid ? (
+                      <span className="px-1.5 py-0.2 rounded bg-amber-500 text-slate-950 font-black flex items-center gap-0.5">
+                        MID
+                      </span>
+                    ) : isLow && isHigh ? (
+                      <span className="px-1 py-0.2 rounded bg-cyan-500 text-slate-950 font-bold text-[8px]">
+                        L=H
+                      </span>
+                    ) : isLow ? (
+                      <span className="px-1 py-0.2 rounded bg-cyan-500/30 text-cyan-300 font-bold text-[8px] border border-cyan-500/40">
+                        LOW
+                      </span>
+                    ) : isHigh ? (
+                      <span className="px-1 py-0.2 rounded bg-cyan-500/30 text-cyan-300 font-bold text-[8px] border border-cyan-500/40">
+                        HIGH
+                      </span>
+                    ) : isDiscarded ? (
+                      <span className="text-muted-foreground text-[8px] line-through">OUT</span>
+                    ) : null}
+                  </div>
 
-      {/* Target Configuration & Presets Toolbar */}
-      <div className="flex flex-wrap items-center justify-between gap-3 p-3.5 rounded-xl border border-border/60 bg-secondary/40 text-xs">
-        <div className="flex items-center gap-2">
-          <span className="font-mono font-semibold text-foreground">Target Value:</span>
-          <div className="flex items-center gap-1.5">
-            <input
-              type="number"
-              value={targetInput}
-              onChange={(e) => setTargetInput(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  const val = parseInt(targetInput, 10);
-                  if (!isNaN(val)) handleSetTarget(val);
-                }
-              }}
-              className="w-20 px-2.5 py-1 rounded-lg border border-border bg-card font-mono text-xs font-bold text-foreground text-center focus:outline-none focus:ring-1 focus:ring-cyan-500"
-            />
-            <button
-              onClick={() => {
-                const val = parseInt(targetInput, 10);
-                if (!isNaN(val)) handleSetTarget(val);
-              }}
-              className="px-2.5 py-1 rounded-lg bg-cyan-500 text-slate-950 font-bold hover:bg-cyan-400 transition-colors cursor-pointer"
-            >
-              Set
-            </button>
-          </div>
-        </div>
+                  {/* The Bar */}
+                  <div
+                    style={{ height: `${heightPercent}%` }}
+                    className={`w-full rounded-xl border flex flex-col justify-between items-center py-2 transition-all duration-300 shadow-md ${barColor}`}
+                  >
+                    <span className="font-mono text-xs font-extrabold">{val}</span>
+                  </div>
 
-        {/* Preset Target Quick-Buttons */}
-        <div className="flex flex-wrap items-center gap-1.5 font-mono text-[11px]">
-          <span className="text-muted-foreground text-[10px] uppercase">Presets:</span>
-          <button
-            onClick={() => handleSetTarget(array[Math.floor(array.length / 2)])}
-            className="px-2 py-0.5 rounded-md border border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-300 hover:bg-emerald-500/20 transition-colors cursor-pointer"
-            title="Exact middle element: 1-step O(1) best case"
-          >
-            Best (Mid): {array[Math.floor(array.length / 2)]}
-          </button>
-          <button
-            onClick={() => handleSetTarget(array[0])}
-            className="px-2 py-0.5 rounded-md border border-cyan-500/30 bg-cyan-500/10 text-cyan-600 dark:text-cyan-300 hover:bg-cyan-500/20 transition-colors cursor-pointer"
-            title="Leftmost element: O(log n) steps"
-          >
-            Left: {array[0]}
-          </button>
-          <button
-            onClick={() => handleSetTarget(array[array.length - 1])}
-            className="px-2 py-0.5 rounded-md border border-indigo-500/30 bg-indigo-500/10 text-indigo-600 dark:text-indigo-300 hover:bg-indigo-500/20 transition-colors cursor-pointer"
-            title="Rightmost element: O(log n) steps"
-          >
-            Right: {array[array.length - 1]}
-          </button>
-          <button
-            onClick={() => handleSetTarget(array[Math.floor(array.length / 4)])}
-            className="px-2 py-0.5 rounded-md border border-purple-500/30 bg-purple-500/10 text-purple-600 dark:text-purple-300 hover:bg-purple-500/20 transition-colors cursor-pointer"
-          >
-            Quarter: {array[Math.floor(array.length / 4)]}
-          </button>
-          <button
-            onClick={() => handleSetTarget(999)}
-            className="px-2 py-0.5 rounded-md border border-rose-500/30 bg-rose-500/10 text-rose-600 dark:text-rose-300 hover:bg-rose-500/20 transition-colors cursor-pointer"
-            title="Absent element: Exhausts search interval"
-          >
-            Absent: 999
-          </button>
-        </div>
-      </div>
-
-      {/* Main Array Bars Stage with Active Interval & Discarded Halves */}
-      <div className="h-60 sm:h-68 rounded-2xl border border-border/80 bg-card/60 p-4 flex items-end justify-center gap-2 sm:gap-3 relative overflow-hidden shadow-inner">
-        {array.map((val, idx) => {
-          const heightPercent = Math.max(18, Math.round((val / maxVal) * 85));
-          const isMid = mid === idx;
-          const isFound = foundIndex === idx;
-          const isLow = low === idx && !isFinished;
-          const isHigh = high === idx && !isFinished;
-          const inActiveRange = idx >= low && idx <= high && !isFinished;
-          const isDiscarded = discardedIndices.includes(idx) || idx < low || idx > high;
-
-          let barColor = "bg-secondary border-border text-foreground";
-          if (isFound) {
-            barColor = "bg-emerald-500 border-emerald-400 text-slate-950 ring-4 ring-emerald-500/30 animate-bounce";
-          } else if (isMid) {
-            barColor = "bg-amber-500 border-amber-400 text-slate-950 ring-4 ring-amber-400/40";
-          } else if (inActiveRange) {
-            barColor = "bg-cyan-500/20 border-cyan-500/50 text-cyan-300";
-          } else if (isDiscarded) {
-            barColor = "bg-secondary/30 border-border/30 text-muted-foreground opacity-30 grayscale";
-          }
-
-          return (
-            <div key={idx} className="flex-1 max-w-[55px] flex flex-col items-center gap-1.5 h-full justify-end">
-              {/* Top Pointer Tags (MID / LOW / HIGH) */}
-              <div className="h-6 flex flex-col items-center justify-end font-mono text-[9px]">
-                {isFound ? (
-                  <span className="px-1.5 py-0.2 rounded bg-emerald-500 text-slate-950 font-black">
-                    MATCH!
+                  {/* Index Subscript */}
+                  <span className="font-mono text-[10px] text-muted-foreground">
+                    [{idx}]
                   </span>
-                ) : isMid ? (
-                  <span className="px-1.5 py-0.2 rounded bg-amber-500 text-slate-950 font-black flex items-center gap-0.5">
-                    MID
-                  </span>
-                ) : isLow && isHigh ? (
-                  <span className="px-1 py-0.2 rounded bg-cyan-500 text-slate-950 font-bold text-[8px]">
-                    L=H
-                  </span>
-                ) : isLow ? (
-                  <span className="px-1 py-0.2 rounded bg-cyan-500/30 text-cyan-300 font-bold text-[8px] border border-cyan-500/40">
-                    LOW
-                  </span>
-                ) : isHigh ? (
-                  <span className="px-1 py-0.2 rounded bg-cyan-500/30 text-cyan-300 font-bold text-[8px] border border-cyan-500/40">
-                    HIGH
-                  </span>
-                ) : isDiscarded ? (
-                  <span className="text-muted-foreground text-[8px] line-through">OUT</span>
-                ) : null}
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Operation Status & Live Execution Telemetry */}
+          <div className="flex flex-col gap-2 rounded-2xl border border-border bg-card p-2.5 sm:p-3 backdrop-blur-xl shadow-sm">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                <span className="relative flex h-2.5 w-2.5">
+                  <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${
+                    foundIndex !== null ? "bg-emerald-400" : isPlaying ? "bg-cyan-400" : "bg-muted-foreground"
+                  }`} />
+                  <span className={`relative inline-flex rounded-full h-2.5 w-2.5 ${
+                    foundIndex !== null ? "bg-emerald-500" : isPlaying ? "bg-cyan-500" : "bg-muted-foreground"
+                  }`} />
+                </span>
+                <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-foreground">
+                  Execution Telemetry
+                </span>
               </div>
 
-              {/* The Bar */}
-              <div
-                style={{ height: `${heightPercent}%` }}
-                className={`w-full rounded-xl border flex flex-col justify-between items-center py-2 transition-all duration-300 shadow-md ${barColor}`}
-              >
-                <span className="font-mono text-xs font-extrabold">{val}</span>
-              </div>
+              <div className="flex items-center gap-1.5 text-[11px] font-mono">
+                <div className="flex items-center gap-1 rounded-lg bg-amber-500/10 border border-amber-500/30 px-2 py-0.5 text-amber-600 dark:text-amber-300">
+                  <span className="text-[10px] text-muted-foreground">Comp:</span>
+                  <strong className="font-bold">{comparisons} / ≤{maxPossibleSteps}</strong>
+                </div>
 
-              {/* Index Subscript */}
-              <span className="font-mono text-[10px] text-muted-foreground">
-                [{idx}]
-              </span>
+                <div className="flex items-center gap-1 rounded-lg bg-cyan-500/10 border border-cyan-500/30 px-2 py-0.5 text-cyan-600 dark:text-cyan-300">
+                  <span className="text-[10px] text-muted-foreground">Range:</span>
+                  <strong className="font-bold">[{low}..{high}]</strong>
+                </div>
+
+                <div className="flex items-center gap-1 rounded-lg bg-secondary border border-border px-2 py-0.5 text-foreground">
+                  <span className="text-[10px] text-muted-foreground">Status:</span>
+                  <strong className={`font-bold ${foundIndex !== null ? "text-emerald-500" : isFinished ? "text-rose-400" : isPlaying ? "text-cyan-400" : "text-muted-foreground"}`}>
+                    {foundIndex !== null ? `FOUND [${foundIndex}]` : isFinished ? "NOT FOUND" : isPlaying ? "HALVING" : "IDLE"}
+                  </strong>
+                </div>
+              </div>
             </div>
-          );
-        })}
-      </div>
 
-      {/* Step Explanation Banner */}
-      <div className="p-3.5 rounded-xl border border-cyan-500/30 bg-cyan-500/10 text-cyan-800 dark:text-cyan-200 text-xs font-mono flex items-center gap-2">
-        <Sparkles className="h-4 w-4 text-cyan-500 shrink-0" />
-        <span className="leading-relaxed">{explanation}</span>
-      </div>
+            {/* Dynamic Explanation Text Box */}
+            <div className={`rounded-xl border px-3 py-1.5 min-h-[36px] flex items-center shadow-inner ${
+              foundIndex !== null
+                ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-300"
+                : isFinished
+                ? "border-rose-500/30 bg-rose-500/10 text-rose-600 dark:text-rose-300"
+                : "border-border/80 bg-secondary/60 text-foreground"
+            }`}>
+              <p className="text-xs font-medium font-mono flex items-center gap-2 truncate">
+                {foundIndex !== null ? (
+                  <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500 shrink-0" />
+                ) : (
+                  <Sparkles className="h-3.5 w-3.5 text-cyan-500 shrink-0 animate-pulse" />
+                )}
+                <span className="truncate">{explanation}</span>
+              </p>
+            </div>
+          </div>
 
-      {/* Interactive Controls Bar */}
-      <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-border/80">
-        <div className="flex items-center gap-2">
-          {!isPlaying ? (
-            <button
-              onClick={() => {
-                if (isFinished) handleReset();
-                setIsPlaying(true);
-              }}
-              disabled={!isSorted}
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 text-slate-950 font-bold text-xs hover:from-cyan-400 hover:to-blue-500 disabled:opacity-40 transition-all active:scale-95 shadow-md shadow-cyan-500/20 cursor-pointer"
-            >
-              <Play className="h-3.5 w-3.5 fill-current" />
-              <span>{isFinished ? "Restart Search" : "Start Search"}</span>
-            </button>
-          ) : (
-            <button
-              onClick={() => setIsPlaying(false)}
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-amber-500 text-slate-950 font-bold text-xs hover:bg-amber-400 transition-all active:scale-95 shadow-md cursor-pointer"
-            >
-              <Pause className="h-3.5 w-3.5 fill-current" />
-              <span>Pause</span>
-            </button>
+          {/* Precondition Verification Warning Banner (if unsorted) */}
+          {!isSorted && (
+            <div className="p-3 rounded-xl border border-amber-500/40 bg-amber-500/10 text-amber-900 dark:text-amber-200 text-xs font-mono flex items-center justify-between gap-2 animate-in fade-in">
+              <div className="flex items-center gap-2">
+                <AlertTriangle className="h-4 w-4 text-amber-500 shrink-0" />
+                <span>
+                  <strong>PRECONDITION VIOLATED:</strong> Binary Search requires sorted data!
+                </span>
+              </div>
+              <button
+                onClick={handleSortArray}
+                className="px-2.5 py-1 rounded-lg bg-amber-500 text-slate-950 font-bold text-[10px] hover:bg-amber-400 transition-colors shrink-0 cursor-pointer"
+              >
+                Sort Array Now
+              </button>
+            </div>
           )}
 
-          <button
-            onClick={stepForward}
-            disabled={isPlaying || isFinished || !isSorted}
-            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-border bg-secondary/80 text-foreground font-semibold text-xs hover:bg-secondary disabled:opacity-40 transition-all active:scale-95 cursor-pointer"
-          >
-            <StepForward className="h-3.5 w-3.5" />
-            <span>Step</span>
-          </button>
+          {/* Target Configuration & Controls Bar */}
+          <div className="p-3.5 rounded-2xl border border-border bg-card/90 shadow-sm backdrop-blur-xl space-y-2.5">
+            {/* Target Value Input & Presets */}
+            <div className="flex flex-wrap items-center justify-between gap-2.5 pb-2 border-b border-border/70 text-xs">
+              <div className="flex items-center gap-2">
+                <span className="font-mono font-semibold text-foreground">Target:</span>
+                <div className="flex items-center gap-1.5">
+                  <input
+                    type="number"
+                    value={targetInput}
+                    onChange={(e) => setTargetInput(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        const val = parseInt(targetInput, 10);
+                        if (!isNaN(val)) handleSetTarget(val);
+                      }
+                    }}
+                    className="w-16 px-2 py-0.5 rounded-lg border border-border bg-card font-mono text-xs font-bold text-foreground text-center"
+                  />
+                  <button
+                    onClick={() => {
+                      const val = parseInt(targetInput, 10);
+                      if (!isNaN(val)) handleSetTarget(val);
+                    }}
+                    className="px-2 py-0.5 rounded-lg bg-cyan-500 text-slate-950 font-bold hover:bg-cyan-400 transition-colors cursor-pointer text-[11px]"
+                  >
+                    Set
+                  </button>
+                </div>
+              </div>
 
-          <button
-            onClick={handleReset}
-            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-border bg-secondary/80 text-foreground font-semibold text-xs hover:bg-secondary transition-all active:scale-95 cursor-pointer"
-          >
-            <RotateCcw className="h-3.5 w-3.5" />
-            <span>Reset</span>
-          </button>
+              {/* Preset Buttons */}
+              <div className="flex flex-wrap items-center gap-1 font-mono text-[10px]">
+                <span className="text-muted-foreground uppercase mr-1">Presets:</span>
+                <button
+                  onClick={() => handleSetTarget(array[Math.floor(array.length / 2)])}
+                  className="px-1.5 py-0.5 rounded border border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-300 cursor-pointer"
+                  title="Exact middle element: 1-step O(1) best case"
+                >
+                  Best (Mid): {array[Math.floor(array.length / 2)]}
+                </button>
+                <button
+                  onClick={() => handleSetTarget(array[0])}
+                  className="px-1.5 py-0.5 rounded border border-cyan-500/30 bg-cyan-500/10 text-cyan-600 dark:text-cyan-300 cursor-pointer"
+                >
+                  Left: {array[0]}
+                </button>
+                <button
+                  onClick={() => handleSetTarget(array[array.length - 1])}
+                  className="px-1.5 py-0.5 rounded border border-indigo-500/30 bg-indigo-500/10 text-indigo-600 dark:text-indigo-300 cursor-pointer"
+                >
+                  Right: {array[array.length - 1]}
+                </button>
+                <button
+                  onClick={() => handleSetTarget(999)}
+                  className="px-1.5 py-0.5 rounded border border-rose-500/30 bg-rose-500/10 text-rose-600 dark:text-rose-300 cursor-pointer"
+                >
+                  Absent: 999
+                </button>
+              </div>
+            </div>
 
-          <button
-            onClick={handleGenerateSortedArray}
-            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-border bg-secondary/80 text-foreground font-semibold text-xs hover:bg-secondary transition-all active:scale-95 cursor-pointer"
-          >
-            <Shuffle className="h-3.5 w-3.5" />
-            <span>Random Sorted</span>
-          </button>
+            {/* Playback Controls & Speed */}
+            <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
+              <div className="flex items-center gap-1.5">
+                {!isPlaying ? (
+                  <button
+                    onClick={() => {
+                      if (isFinished) handleReset();
+                      setIsPlaying(true);
+                    }}
+                    disabled={!isSorted}
+                    className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 text-slate-950 font-bold text-xs hover:from-cyan-400 hover:to-blue-500 transition-all active:scale-95 shadow-sm disabled:opacity-50 cursor-pointer"
+                  >
+                    <Play className="h-3 w-3 fill-current" />
+                    <span>{isFinished ? "Restart" : "Start Search"}</span>
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => setIsPlaying(false)}
+                    className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-amber-500 text-slate-950 font-bold text-xs hover:bg-amber-400 transition-all active:scale-95 shadow-sm cursor-pointer"
+                  >
+                    <Pause className="h-3 w-3 fill-current" />
+                    <span>Pause</span>
+                  </button>
+                )}
+
+                <button
+                  onClick={stepForward}
+                  disabled={isPlaying || isFinished || !isSorted}
+                  className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl border border-border bg-secondary/80 text-foreground font-semibold text-xs hover:bg-secondary disabled:opacity-40 transition-all active:scale-95 cursor-pointer"
+                >
+                  <StepForward className="h-3 w-3" />
+                  <span>Step</span>
+                </button>
+
+                <button
+                  onClick={handleReset}
+                  className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl border border-border bg-secondary/80 text-foreground font-semibold text-xs hover:bg-secondary transition-all active:scale-95 cursor-pointer"
+                >
+                  <RotateCcw className="h-3 w-3" />
+                  <span>Reset</span>
+                </button>
+
+                <button
+                  onClick={handleGenerateSortedArray}
+                  className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl border border-border bg-secondary/80 text-foreground font-semibold text-xs hover:bg-secondary transition-all active:scale-95 cursor-pointer"
+                >
+                  <Shuffle className="h-3 w-3" />
+                  <span>Random Sorted</span>
+                </button>
+              </div>
+
+              {/* Speed Slider */}
+              <div className="flex items-center gap-1.5 text-[11px] font-mono text-muted-foreground">
+                <Sliders className="h-3 w-3 text-cyan-500" />
+                <span>Delay:</span>
+                <input
+                  type="range"
+                  min="200"
+                  max="1400"
+                  step="50"
+                  value={1600 - speed}
+                  onChange={(e) => setSpeed(1600 - Number(e.target.value))}
+                  className="w-20 accent-cyan-500 cursor-pointer h-1"
+                />
+              </div>
+            </div>
+          </div>
         </div>
 
-        {/* Speed Slider */}
-        <div className="flex items-center gap-2 text-xs font-mono text-muted-foreground">
-          <Sliders className="h-3.5 w-3.5 text-cyan-500" />
-          <span>Speed:</span>
-          <input
-            type="range"
-            min="200"
-            max="1400"
-            step="50"
-            value={1600 - speed}
-            onChange={(e) => setSpeed(1600 - Number(e.target.value))}
-            className="w-24 accent-cyan-500 cursor-pointer"
-          />
+        {/* Right Column: Synchronized C++ Code Viewer */}
+        <div className="lg:col-span-5 flex flex-col gap-3 lg:sticky lg:top-20">
+          <div className="h-[270px] sm:h-[290px] lg:h-[310px]">
+            <CodeViewer
+              code={ALGORITHMS["binary-search"].cppCode}
+              activeLineNumber={activeLineNumber}
+              algorithmName="BinarySearch"
+            />
+          </div>
+
+          {/* Halving Invariant Card */}
+          <div className="p-4 rounded-2xl border border-border bg-card/70 backdrop-blur-xl">
+            <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-muted-foreground mb-2 flex items-center gap-1.5">
+              <Sparkles className="h-3.5 w-3.5 text-cyan-500" />
+              <span>Logarithmic Elimination Invariant</span>
+            </h3>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              Because the array is sorted, comparing target with <code>arr[mid]</code> proves monotonically that either [low..mid-1] or [mid+1..high] cannot contain the target. The search domain strictly halves on each iteration: N → N/2 → N/4 ... → 1.
+            </p>
+          </div>
         </div>
       </div>
     </div>

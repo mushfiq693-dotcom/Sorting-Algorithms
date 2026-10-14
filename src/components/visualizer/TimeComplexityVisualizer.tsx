@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { CodeViewer } from "@/components/code/CodeViewer";
 import {
   Play,
   Pause,
@@ -9,7 +10,6 @@ import {
   StepForward,
   Zap,
   Clock,
-  Activity,
   Layers,
   Sparkles,
   Sliders,
@@ -263,261 +263,230 @@ export function TimeComplexityVisualizer() {
   };
 
   return (
-    <div className="flex flex-col gap-6 rounded-2xl border border-border bg-card/80 p-5 sm:p-7 backdrop-blur-xl shadow-xl">
-      {/* Top Header & Complexity Class Switcher */}
-      <div className="flex flex-col gap-4 border-b border-border pb-5">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div>
-            <div className="flex items-center gap-2 mb-1">
-              <span className="text-xs font-mono font-bold uppercase tracking-wider text-cyan-500 flex items-center gap-1.5">
+    <div className="flex flex-col gap-4 w-full max-w-7xl mx-auto" suppressHydrationWarning>
+      {/* Unified Studio Grid: Left Visual Stage (7 cols), Right Code Execution (5 cols) */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
+        {/* Left Column: Visual Canvas + Live Telemetry + Controls */}
+        <div className="lg:col-span-7 flex flex-col gap-3">
+          {/* Main Execution Canvas Stage */}
+          <div className="p-4 sm:p-5 rounded-2xl border border-border bg-card/60 backdrop-blur-xl flex flex-col min-h-[360px] relative overflow-hidden shadow-xs">
+            {/* Header Indicators */}
+            <div className="flex items-center justify-between border-b border-border/80 pb-2.5 mb-3 text-xs font-mono">
+              <div className="flex items-center gap-2 text-cyan-600 dark:text-cyan-400 font-bold">
                 <Zap className="h-4 w-4" />
-                <span>Live Big-O Growth Engine</span>
-              </span>
-              <span className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded ${profile.badgeBg} ${profile.badgeText} border ${profile.badgeBorder}`}>
-                {profile.category}
-              </span>
+                <span>CPU Execution Stream ({profile.name})</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] text-muted-foreground font-mono">Formula:</span>
+                <span className="text-xs font-mono font-bold text-cyan-600 dark:text-cyan-400 bg-secondary/80 px-2 py-0.5 rounded border border-border">
+                  {profile.formulaStr}
+                </span>
+              </div>
             </div>
-            <h3 className="text-xl font-extrabold text-foreground tracking-tight">
-              {profile.name} — <span className="font-mono text-cyan-400">{profile.id}</span>
-            </h3>
-            <p className="text-xs sm:text-sm text-muted-foreground mt-1 leading-relaxed max-w-2xl">
-              {profile.description}
-            </p>
-          </div>
 
-          <div className="flex items-center gap-2 p-1.5 rounded-xl border border-border bg-secondary/40 shrink-0">
-            <span className="text-[11px] font-mono font-bold text-muted-foreground px-2">Formula:</span>
-            <span className="text-xs font-mono font-bold text-cyan-400 bg-background/80 px-2.5 py-1 rounded-lg border border-border">
-              {profile.formulaStr}
-            </span>
-          </div>
-        </div>
+            {/* Visualized Operation Cells Grid */}
+            <div className="flex-1 flex flex-col justify-center space-y-3 py-2">
+              <div className="flex items-center justify-between text-[11px] font-mono text-muted-foreground">
+                <span className="flex items-center gap-1.5 font-bold text-foreground">
+                  <Cpu className="h-3.5 w-3.5 text-cyan-500" />
+                  <span>Instruction Pipeline ({operationTokens.length} active slots)</span>
+                </span>
+                {totalOps > 120 && (
+                  <span>Showing 120 of {totalOps} ops</span>
+                )}
+              </div>
 
-        {/* Complexity Classes Selector Tabs */}
-        <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
-          {(Object.keys(COMPLEXITY_PROFILES) as ComplexityClass[]).map((cls) => {
-            const p = COMPLEXITY_PROFILES[cls];
-            const isSelected = selectedClass === cls;
+              {/* Operation Slots */}
+              <div className="grid grid-cols-8 sm:grid-cols-12 md:grid-cols-16 lg:grid-cols-20 gap-1.5 max-h-48 overflow-y-auto p-1 bg-secondary/20 rounded-xl border border-border/60">
+                {operationTokens.map((op) => (
+                  <motion.div
+                    key={op.id}
+                    initial={{ scale: 0.8 }}
+                    animate={{
+                      scale: op.isCurrent ? 1.15 : 1,
+                      backgroundColor: op.isCurrent
+                        ? "#06b6d4"
+                        : op.executed
+                        ? "rgba(6, 182, 212, 0.25)"
+                        : "rgba(100, 116, 139, 0.15)",
+                      borderColor: op.isCurrent
+                        ? "#22d3ee"
+                        : op.executed
+                        ? "rgba(6, 182, 212, 0.5)"
+                        : "rgba(100, 116, 139, 0.2)",
+                    }}
+                    transition={{ duration: 0.15 }}
+                    className={`h-7 rounded-lg border flex items-center justify-center font-mono text-[10px] font-bold ${
+                      op.isCurrent
+                        ? "text-slate-950 shadow-md shadow-cyan-500/50 z-10"
+                        : op.executed
+                        ? "text-cyan-600 dark:text-cyan-300"
+                        : "text-muted-foreground/50"
+                    }`}
+                    title={`Operation #${op.id}`}
+                  >
+                    {op.id}
+                  </motion.div>
+                ))}
+              </div>
 
-            return (
-              <button
-                key={cls}
-                onClick={() => setSelectedClass(cls)}
-                className={`flex flex-col items-center justify-center p-2.5 rounded-xl border text-center transition-all cursor-pointer ${
-                  isSelected
-                    ? "bg-cyan-500/15 border-cyan-500/80 text-foreground font-bold shadow-md shadow-cyan-500/10 scale-[1.02]"
-                    : "border-border bg-secondary/30 text-muted-foreground hover:bg-secondary/70 hover:text-foreground"
-                }`}
-              >
-                <span className="font-mono text-xs font-bold text-foreground">{cls}</span>
-                <span className="text-[9px] font-sans text-muted-foreground mt-0.5 truncate">{p.name}</span>
-              </button>
-            );
-          })}
-        </div>
-      </div>
+              {/* Progress Bar */}
+              <div className="w-full bg-secondary h-2 rounded-full overflow-hidden border border-border/50">
+                <motion.div
+                  className="h-full bg-gradient-to-r from-blue-500 to-cyan-400"
+                  style={{ width: `${progressPercent}%` }}
+                  transition={{ ease: "easeOut", duration: 0.1 }}
+                />
+              </div>
 
-      {/* Control Sliders & Interactive Playback */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 rounded-2xl border border-border bg-secondary/30">
-        {/* Input Size N Slider */}
-        <div className="space-y-2">
-          <div className="flex items-center justify-between text-xs">
-            <span className="font-mono font-semibold text-foreground flex items-center gap-1.5">
-              <Sliders className="h-3.5 w-3.5 text-cyan-500" />
-              <span>Input Size (n)</span>
-            </span>
-            <span className="font-mono font-bold text-cyan-400 bg-background px-2 py-0.5 rounded border border-border text-xs">
-              n = {n}
-            </span>
-          </div>
-          <input
-            type="range"
-            min={1}
-            max={profile.maxN}
-            value={n}
-            onChange={(e) => setN(parseInt(e.target.value, 10))}
-            className="w-full h-1.5 bg-secondary rounded-lg appearance-none cursor-pointer accent-cyan-500"
-          />
-          <div className="flex justify-between text-[10px] font-mono text-muted-foreground">
-            <span>n = 1</span>
-            <span>Max for {profile.id}: n = {profile.maxN}</span>
-          </div>
-        </div>
-
-        {/* Playback Controls & Speed */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
-          <div className="flex items-center gap-2 w-full sm:w-auto">
-            <button
-              onClick={handlePlayToggle}
-              className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 px-4 py-2 text-xs font-bold text-white hover:from-blue-500 transition-all active:scale-95 shadow-md shadow-cyan-500/20 cursor-pointer"
-            >
-              {isPlaying ? <Pause className="h-3.5 w-3.5" /> : <Play className="h-3.5 w-3.5 fill-current" />}
-              <span>{isPlaying ? "Pause" : currentStep >= totalOps ? "Restart" : "Simulate"}</span>
-            </button>
-
-            <button
-              onClick={handleStepForward}
-              disabled={isPlaying || currentStep >= totalOps}
-              className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-border bg-card px-3 py-2 text-xs font-semibold text-foreground hover:bg-secondary disabled:opacity-40 disabled:cursor-not-allowed transition-all active:scale-95 cursor-pointer"
-              title="Single step forward"
-            >
-              <StepForward className="h-3.5 w-3.5 text-cyan-500" />
-              <span>Step</span>
-            </button>
-
-            <button
-              onClick={handleReset}
-              className="p-2 rounded-xl border border-border bg-card text-muted-foreground hover:text-foreground hover:bg-secondary transition-all active:scale-95 cursor-pointer"
-              title="Reset"
-            >
-              <RotateCcw className="h-3.5 w-3.5" />
-            </button>
-          </div>
-
-          <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
-            <span className="text-[10px] font-mono text-muted-foreground">Speed:</span>
-            <input
-              type="range"
-              min={50}
-              max={600}
-              step={50}
-              value={700 - speed}
-              onChange={(e) => setSpeed(700 - parseInt(e.target.value, 10))}
-              className="w-20 h-1.5 bg-secondary rounded-lg appearance-none cursor-pointer accent-cyan-500"
-            />
-          </div>
-        </div>
-      </div>
-
-      {/* Main Execution Canvas: Operations Grid & Live Counters */}
-      <div className="space-y-4">
-        {/* Real-Time Telemetry Cards */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <div className="p-3 rounded-xl border border-border bg-card space-y-1">
-            <span className="text-[10px] font-mono font-semibold text-muted-foreground uppercase tracking-wider block">
-              Executed Steps
-            </span>
-            <div className="text-base sm:text-lg font-mono font-bold text-cyan-400 flex items-center gap-1.5">
-              <Activity className="h-4 w-4 text-cyan-500" />
-              <span>{currentStep} / {totalOps}</span>
+              {/* Micro-Metrics Row */}
+              <div className="flex flex-wrap items-center justify-between gap-2 text-[11px] font-mono pt-1 text-muted-foreground">
+                <div className="flex items-center gap-1.5">
+                  <TrendingUp className="h-3.5 w-3.5 text-purple-400" />
+                  <span>Growth Multiplier: <strong className="text-foreground">{(totalOps / Math.max(1, n)).toFixed(1)}× per item</strong></span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <Clock className="h-3.5 w-3.5 text-amber-400" />
+                  <span>CPU Estimate: <strong className="text-foreground">{formatModernTime(totalOps)}</strong></span>
+                </div>
+              </div>
             </div>
           </div>
 
-          <div className="p-3 rounded-xl border border-border bg-card space-y-1">
-            <span className="text-[10px] font-mono font-semibold text-muted-foreground uppercase tracking-wider block">
-              Completion Rate
-            </span>
-            <div className="text-base sm:text-lg font-mono font-bold text-emerald-400 flex items-center gap-1.5">
-              <CheckCircle2 className="h-4 w-4 text-emerald-500" />
-              <span>{progressPercent}%</span>
+          {/* Operation Status & Live Execution Telemetry */}
+          <div className="flex flex-col gap-2 rounded-2xl border border-border bg-card p-2.5 sm:p-3 backdrop-blur-xl shadow-xs">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                <span className="relative flex h-2.5 w-2.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 bg-cyan-400" />
+                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-cyan-500" />
+                </span>
+                <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-foreground">
+                  Execution Telemetry
+                </span>
+              </div>
+              <div className="flex items-center gap-1.5 text-[11px] font-mono">
+                <div className="flex items-center gap-1 rounded-lg bg-cyan-500/10 border border-cyan-500/30 px-2 py-0.5 text-cyan-600 dark:text-cyan-300">
+                  <span className="text-[10px] text-muted-foreground">Class:</span>
+                  <strong className="font-bold">{profile.id}</strong>
+                </div>
+                <div className="flex items-center gap-1 rounded-lg bg-amber-500/10 border border-amber-500/30 px-2 py-0.5 text-amber-600 dark:text-amber-300">
+                  <span className="text-[10px] text-muted-foreground">n:</span>
+                  <strong className="font-bold">{n}</strong>
+                </div>
+                <div className="flex items-center gap-1 rounded-lg bg-emerald-500/10 border border-emerald-500/30 px-2 py-0.5 text-emerald-600 dark:text-emerald-300">
+                  <span className="text-[10px] text-muted-foreground">Ops:</span>
+                  <strong className="font-bold">{currentStep}/{totalOps}</strong>
+                </div>
+              </div>
             </div>
-          </div>
 
-          <div className="p-3 rounded-xl border border-border bg-card space-y-1">
-            <span className="text-[10px] font-mono font-semibold text-muted-foreground uppercase tracking-wider block">
-              Scale Multiplier
-            </span>
-            <div className="text-base sm:text-lg font-mono font-bold text-purple-400 flex items-center gap-1.5">
-              <TrendingUp className="h-4 w-4 text-purple-500" />
-              <span>{(totalOps / Math.max(1, n)).toFixed(1)}× per item</span>
-            </div>
-          </div>
-
-          <div className="p-3 rounded-xl border border-border bg-card space-y-1">
-            <span className="text-[10px] font-mono font-semibold text-muted-foreground uppercase tracking-wider block">
-              CPU Clock Estimate
-            </span>
-            <div className="text-base sm:text-lg font-mono font-bold text-amber-400 flex items-center gap-1.5">
-              <Clock className="h-4 w-4 text-amber-500" />
-              <span className="truncate text-xs sm:text-sm">{formatModernTime(totalOps)}</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Visualized Operation Cells Grid */}
-        <div className="rounded-2xl border border-border bg-card/60 p-5 space-y-3">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-mono font-bold text-foreground flex items-center gap-1.5">
-              <Cpu className="h-3.5 w-3.5 text-cyan-500" />
-              <span>CPU Execution Stream ({operationTokens.length} visible slots)</span>
-            </span>
-            {totalOps > 120 && (
-              <span className="text-[10px] font-mono text-muted-foreground">
-                Showing first 120 of {totalOps} ops
-              </span>
-            )}
-          </div>
-
-          {/* Operation Slots */}
-          <div className="grid grid-cols-8 sm:grid-cols-12 md:grid-cols-16 lg:grid-cols-20 gap-1.5 max-h-48 overflow-y-auto p-1">
-            {operationTokens.map((op) => (
-              <motion.div
-                key={op.id}
-                initial={{ scale: 0.8 }}
-                animate={{
-                  scale: op.isCurrent ? 1.15 : 1,
-                  backgroundColor: op.isCurrent
-                    ? "#06b6d4" // Bright cyan
-                    : op.executed
-                    ? "rgba(6, 182, 212, 0.25)"
-                    : "rgba(100, 116, 139, 0.15)",
-                  borderColor: op.isCurrent
-                    ? "#22d3ee"
-                    : op.executed
-                    ? "rgba(6, 182, 212, 0.5)"
-                    : "rgba(100, 116, 139, 0.2)",
-                }}
-                transition={{ duration: 0.15 }}
-                className={`h-7 rounded-lg border flex items-center justify-center font-mono text-[10px] font-bold ${
-                  op.isCurrent
-                    ? "text-slate-950 shadow-md shadow-cyan-500/50 z-10"
-                    : op.executed
-                    ? "text-cyan-300"
-                    : "text-muted-foreground/50"
-                }`}
-                title={`Operation #${op.id}`}
-              >
-                {op.id}
-              </motion.div>
-            ))}
-          </div>
-
-          {/* Progress Bar */}
-          <div className="w-full bg-secondary h-2 rounded-full overflow-hidden border border-border/50">
-            <motion.div
-              className="h-full bg-gradient-to-r from-blue-500 to-cyan-400"
-              style={{ width: `${progressPercent}%` }}
-              transition={{ ease: "easeOut", duration: 0.1 }}
-            />
-          </div>
-        </div>
-
-        {/* Code Snippet & Live Mathematical Scale */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          {/* Synchronized C++ Implementation Snippet */}
-          <div className="rounded-2xl border border-border bg-card p-4 space-y-2">
-            <span className="text-xs font-mono font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
-              <Zap className="h-3.5 w-3.5 text-cyan-500" />
-              <span>C++ Algorithmic Mechanism</span>
-            </span>
-            <pre className="text-xs font-mono text-foreground bg-background/90 p-3.5 rounded-xl border border-border overflow-x-auto leading-relaxed">
-              <code>{profile.codeSnippet}</code>
-            </pre>
-          </div>
-
-          {/* Side-by-side growth for input size N */}
-          <div className="rounded-2xl border border-border bg-card p-4 space-y-2.5 flex flex-col justify-between">
-            <div>
-              <span className="text-xs font-mono font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
-                <BarChart3 className="h-3.5 w-3.5 text-cyan-500" />
-                <span>Growth Comparison at n = {n}</span>
-              </span>
-              <p className="text-[11px] text-muted-foreground mt-1">
-                Notice how quadratic and exponential curves explode while logarithmic curves barely move.
+            {/* Dynamic Explanation Text Box */}
+            <div className="rounded-xl border border-border/80 bg-secondary/60 px-3 py-1.5 min-h-[36px] flex items-center shadow-inner text-foreground">
+              <p className="text-xs font-medium font-mono flex items-center gap-2 truncate">
+                <span className="h-1.5 w-1.5 rounded-full bg-cyan-500 shrink-0 animate-pulse" />
+                <span className="truncate">{profile.description}</span>
               </p>
             </div>
 
-            <div className="space-y-1.5">
+          </div>
+
+          {/* Studio Control Bar */}
+          <div className="p-3.5 rounded-2xl border border-border bg-card/90 shadow-xs backdrop-blur-xl space-y-2.5">
+            {/* Complexity Classes Selector Tabs */}
+            <div className="grid grid-cols-3 sm:grid-cols-6 gap-1.5 pb-2 border-b border-border/70">
+              {(Object.keys(COMPLEXITY_PROFILES) as ComplexityClass[]).map((cls) => {
+                const p = COMPLEXITY_PROFILES[cls];
+                const isSelected = selectedClass === cls;
+
+                return (
+                  <button
+                    key={cls}
+                    onClick={() => setSelectedClass(cls)}
+                    className={`flex flex-col items-center justify-center p-1.5 rounded-lg border text-center transition-all cursor-pointer ${
+                      isSelected
+                        ? "bg-cyan-500/15 border-cyan-500/80 text-cyan-600 dark:text-cyan-400 font-bold shadow-xs"
+                        : "border-border bg-secondary/30 text-muted-foreground hover:bg-secondary/70 hover:text-foreground"
+                    }`}
+                  >
+                    <span className="font-mono text-xs font-bold">{cls}</span>
+                    <span className="text-[8px] font-sans text-muted-foreground truncate max-w-full">{p.category}</span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Input Size & Stepper Controls Row */}
+            <div className="flex flex-wrap items-center justify-between gap-3 pt-1">
+              {/* Size Slider */}
+              <div className="flex items-center gap-2 flex-1 min-w-[200px]">
+                <span className="text-xs font-mono text-muted-foreground font-semibold flex items-center gap-1">
+                  <Sliders className="h-3 w-3 text-cyan-500" />
+                  <span>Size (n):</span>
+                </span>
+                <input
+                  type="range"
+                  min={1}
+                  max={profile.maxN}
+                  value={n}
+                  onChange={(e) => setN(parseInt(e.target.value, 10))}
+                  className="flex-1 h-1.5 bg-secondary rounded-lg appearance-none cursor-pointer accent-cyan-500"
+                />
+                <span className="text-xs font-mono font-bold text-cyan-600 dark:text-cyan-400 bg-secondary px-2 py-0.5 rounded border border-border">
+                  {n}
+                </span>
+              </div>
+
+              {/* Playback Buttons */}
+              <div className="flex items-center gap-1.5">
+                <button
+                  onClick={handlePlayToggle}
+                  className="inline-flex items-center gap-1 rounded-lg bg-gradient-to-r from-cyan-500 to-blue-600 px-3 py-1.5 text-xs font-bold text-white hover:opacity-95 transition-all cursor-pointer shadow-xs"
+                >
+                  {isPlaying ? <Pause className="h-3 w-3" /> : <Play className="h-3 w-3 fill-current" />}
+                  <span>{isPlaying ? "Pause" : currentStep >= totalOps ? "Restart" : "Simulate"}</span>
+                </button>
+
+                <button
+                  onClick={handleStepForward}
+                  disabled={isPlaying || currentStep >= totalOps}
+                  className="inline-flex items-center gap-1 rounded-lg border border-border bg-secondary px-2.5 py-1.5 text-xs font-semibold text-foreground hover:bg-secondary/80 disabled:opacity-40 cursor-pointer"
+                >
+                  <StepForward className="h-3 w-3 text-cyan-500" />
+                  <span>Step</span>
+                </button>
+
+                <button
+                  onClick={handleReset}
+                  className="p-1.5 rounded-lg border border-border bg-secondary text-muted-foreground hover:text-foreground cursor-pointer"
+                  title="Reset"
+                >
+                  <RotateCcw className="h-3.5 w-3.5" />
+                </button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        {/* Right Column: Sticky C++ Code Studio & Inspector */}
+        <div className="lg:col-span-5 flex flex-col gap-3 lg:sticky lg:top-20">
+          <div className="h-[270px] sm:h-[290px] lg:h-[310px]">
+            <CodeViewer
+              code={profile.codeSnippet}
+              algorithmName={`TimeComplexity_${selectedClass.replace(/[^a-zA-Z0-9]/g, "")}`}
+              activeLineNumber={isPlaying ? 3 : null}
+            />
+          </div>
+
+          {/* Growth Comparison at n Table */}
+          <div className="p-4 rounded-2xl border border-border bg-card/70 backdrop-blur-xl shadow-xs">
+            <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-muted-foreground mb-2.5 flex items-center gap-1.5">
+              <BarChart3 className="h-3.5 w-3.5 text-cyan-500" />
+              <span>Growth Comparison at n = {n}</span>
+            </h3>
+
+            <div className="space-y-1 font-mono text-xs">
               {(Object.keys(COMPLEXITY_PROFILES) as ComplexityClass[]).map((cls) => {
                 const p = COMPLEXITY_PROFILES[cls];
                 const ops = p.formulaFn(n);
@@ -528,8 +497,8 @@ export function TimeComplexityVisualizer() {
                     key={cls}
                     className={`flex items-center justify-between p-2 rounded-xl text-xs font-mono transition-all ${
                       isCurrent
-                        ? "bg-cyan-500/15 border border-cyan-500/40 text-cyan-400 font-bold"
-                        : "bg-secondary/40 text-muted-foreground"
+                        ? "bg-cyan-500/10 border border-cyan-500/30 text-cyan-600 dark:text-cyan-300 font-bold"
+                        : "bg-secondary/40 text-muted-foreground hover:bg-secondary/60"
                     }`}
                   >
                     <div className="flex items-center gap-2">
@@ -543,6 +512,17 @@ export function TimeComplexityVisualizer() {
                 );
               })}
             </div>
+          </div>
+
+          {/* Asymptotic Invariant card */}
+          <div className="p-3.5 rounded-2xl border border-border bg-card/70 backdrop-blur-xl">
+            <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-muted-foreground mb-1.5 flex items-center gap-1.5">
+              <Zap className="h-3.5 w-3.5 text-cyan-500" />
+              <span>Hardware-Agnostic Asymptotic Invariant</span>
+            </h3>
+            <p className="text-[11px] text-muted-foreground leading-relaxed font-mono">
+              Big-O analysis strips away hardware clock frequency, CPU architecture, and compiler optimizations. It measures the pure mathematical rate of instruction growth as <code className="text-cyan-500 font-bold">n → ∞</code>.
+            </p>
           </div>
         </div>
       </div>

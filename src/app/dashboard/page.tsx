@@ -292,14 +292,6 @@ function DashboardContent() {
           </div>
 
           <div className="flex items-center gap-1.5 sm:gap-3">
-            <Link
-              href="/docs"
-              className="inline-flex items-center gap-1.5 rounded-xl border border-border/70 bg-card/40 px-2.5 sm:px-3 py-1.5 text-xs font-semibold text-slate-300 hover:text-cyan-400 hover:bg-card/70 transition-all active:scale-95 shadow-sm"
-            >
-              <BookOpen className="h-3.5 w-3.5 text-cyan-400" />
-              <span className="hidden sm:inline">Docs</span>
-            </Link>
-
             <ThemeToggle />
             <NotificationBell />
 

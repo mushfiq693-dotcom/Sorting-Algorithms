@@ -37,7 +37,6 @@ import {
   Clock,
   Zap,
   Cpu,
-  Code2,
   Eye,
   Info,
   ChevronDown,
@@ -318,7 +317,6 @@ export function LinkedListVisualizer() {
     : "Singly Linked List initialized. Select an operation above to simulate pointer mutations step-by-step.";
   const codeSnippetKey = currentStep ? currentStep.codeSnippetKey : "insertAtHead";
   const codeLine = currentStep ? currentStep.codeLine : null;
-  const searchStats = currentStep?.stats || null;
 
   // Active complexity info
   const complexityInfo = OPERATION_COMPLEXITY_INFO[activeOperation] || OPERATION_COMPLEXITY_INFO["init"];
@@ -515,530 +513,434 @@ export function LinkedListVisualizer() {
   const stagedAddress = stagedNode ? `${stagedNode.address} (val: ${stagedNode.val})` : "-";
 
   return (
-    <div className="flex flex-col gap-5 rounded-2xl border border-[#4A3F35] bg-[#14100D] p-4 sm:p-7 text-[#E8DFD4] shadow-2xl backdrop-blur-xl corner-flourish">
-      {/* 1. Header Bar with Mode Toggle */}
-      <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-[#4A3F35]">
-        <div className="flex items-center gap-3">
-          <div className="h-10 w-10 rounded-xl bg-[#C9A962]/15 border border-[#C9A962]/30 flex items-center justify-center text-[#C9A962] shadow-sm">
-            <Database className="h-5 w-5" />
-          </div>
-          <div>
-            <h3 className="text-base sm:text-lg font-bold text-[#E8DFD4] font-serif flex items-center gap-2">
-              <span>Linked List Studio</span>
-              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#C9A962]/15 text-[#C9A962] border border-[#C9A962]/30 font-semibold uppercase tracking-wider">
-                Interactive Simulator
-              </span>
-            </h3>
-            <p className="text-xs text-muted-foreground">
-              Explore dynamic heap nodes, persistent memory addresses, and pointer rewirings in real time.
-            </p>
-          </div>
-        </div>
-
-        {/* View Mode Toggle: [ Logical View ] [ Memory View ] */}
-        <div className="flex items-center gap-2">
-          <div className="inline-flex rounded-xl p-1 bg-[#1C1714] border border-[#4A3F35] shadow-inner text-xs font-mono">
-            <button
-              onClick={() => setViewMode("logical")}
-              className={`px-3 py-1.5 rounded-lg font-semibold transition-all flex items-center gap-1.5 cursor-pointer ${
-                viewMode === "logical"
-                  ? "bg-[#C9A962] text-[#14100D] shadow-sm font-bold"
-                  : "text-muted-foreground hover:text-[#E8DFD4]"
-              }`}
-            >
-              <Layers className="h-3.5 w-3.5" />
-              <span>Logical View</span>
-            </button>
-            <button
-              onClick={() => setViewMode("memory")}
-              className={`px-3 py-1.5 rounded-lg font-semibold transition-all flex items-center gap-1.5 cursor-pointer ${
-                viewMode === "memory"
-                  ? "bg-[#C9A962] text-[#14100D] shadow-sm font-bold"
-                  : "text-muted-foreground hover:text-[#E8DFD4]"
-              }`}
-            >
-              <Cpu className="h-3.5 w-3.5" />
-              <span>Memory View</span>
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* 2. Controls & Value Input Toolbar */}
-      <div className="flex flex-wrap items-center justify-between gap-3 p-3.5 rounded-xl border border-[#4A3F35] bg-[#1C1714]/80 text-xs">
-        {/* Node Value & Position Inputs */}
-        <div className="flex flex-wrap items-center gap-3">
-          <div className="flex items-center gap-2">
-            <span className="font-mono font-semibold text-foreground">Value:</span>
-            <input
-              type="number"
-              value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
-              disabled={isPlaying}
-              className="w-16 px-2 py-1 rounded-lg border border-[#4A3F35] bg-[#14100D] font-mono text-xs font-bold text-foreground text-center focus:outline-none focus:ring-1 focus:ring-[#C9A962]"
-            />
-          </div>
-
-          <div className="flex items-center gap-2">
-            <span className="font-mono font-semibold text-foreground">Pos (0..{orderedNodes.length}):</span>
-            <input
-              type="number"
-              value={inputPosition}
-              onChange={(e) => {
-                setInputPosition(e.target.value);
-                if (positionError) setPositionError(null);
-              }}
-              disabled={isPlaying}
-              className="w-14 px-2 py-1 rounded-lg border border-[#4A3F35] bg-[#14100D] font-mono text-xs font-bold text-foreground text-center focus:outline-none focus:ring-1 focus:ring-[#C9A962]"
-              min={0}
-              max={orderedNodes.length}
-            />
-          </div>
-        </div>
-
-        {/* Operation Action Buttons */}
-        <div className="flex flex-wrap items-center gap-2">
-          <button
-            onClick={handleInsertAtHead}
-            disabled={isPlaying}
-            className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-emerald-500 text-slate-950 font-bold text-xs hover:bg-emerald-400 disabled:opacity-40 transition-all active:scale-95 shadow-sm cursor-pointer"
-            title="Prepend new node before HEAD: strictly O(1) time"
-          >
-            <PlusCircle className="h-3.5 w-3.5" />
-            <span>Insert at Head (O(1))</span>
-          </button>
-
-          <button
-            onClick={handleInsertAtPosition}
-            disabled={isPlaying}
-            className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border border-[#C9A962]/50 bg-[#C9A962]/15 text-[#C9A962] font-bold text-xs hover:bg-[#C9A962]/25 disabled:opacity-40 transition-all active:scale-95 cursor-pointer"
-            title="Two-pointer insertion at chosen position (0-indexed)"
-          >
-            <Layers className="h-3.5 w-3.5" />
-            <span>Insert at Pos</span>
-          </button>
-
-          <button
-            onClick={handleInsertAtTail}
-            disabled={isPlaying}
-            className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border border-[#4A3F35] bg-[#251E19] text-[#E8DFD4] font-semibold text-xs hover:border-[#C9A962] hover:text-[#C9A962] disabled:opacity-40 transition-all active:scale-95 cursor-pointer"
-            title="Traverse pointer chain to append: O(n) time"
-          >
-            <ArrowRight className="h-3.5 w-3.5 text-cyan-400" />
-            <span>Insert at Tail (O(n))</span>
-          </button>
-
-          <button
-            onClick={handleDelete}
-            disabled={isPlaying || orderedNodes.length === 0}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-rose-500/30 bg-rose-500/10 text-rose-300 font-semibold text-xs hover:bg-rose-500/20 disabled:opacity-40 transition-all active:scale-95 cursor-pointer"
-            title="Find and splice out target node: O(n) time"
-          >
-            <Trash2 className="h-3.5 w-3.5" />
-            <span>Delete Value</span>
-          </button>
-
-          <button
-            onClick={handleSearch}
-            disabled={isPlaying || orderedNodes.length === 0}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-cyan-500/30 bg-cyan-500/10 text-cyan-300 font-semibold text-xs hover:bg-cyan-500/20 disabled:opacity-40 transition-all active:scale-95 cursor-pointer"
-            title="Sequential pointer traversal from head: O(n) time"
-          >
-            <Search className="h-3.5 w-3.5" />
-            <span>Search</span>
-          </button>
-
-          {/* Reset All to 4 Default Nodes */}
-          <button
-            onClick={handleGlobalReset}
-            disabled={isPlaying}
-            className="p-1.5 rounded-xl border border-[#4A3F35] bg-[#14100D] text-muted-foreground hover:text-[#C9A962] hover:border-[#C9A962] disabled:opacity-40 transition-colors cursor-pointer"
-            title="Reset to 4 default nodes"
-          >
-            <RotateCcw className="h-3.5 w-3.5" />
-          </button>
-        </div>
-      </div>
-
-      {/* Inline Position Validation Error Banner */}
-      {positionError && (
-        <div className="flex items-center justify-between px-3.5 py-2.5 rounded-xl border border-rose-500/40 bg-rose-500/10 text-rose-300 font-mono text-xs animate-in fade-in">
-          <div className="flex items-center gap-2">
-            <XCircle className="h-4 w-4 text-rose-400 shrink-0" />
-            <span>{positionError}</span>
-          </div>
-          <button
-            onClick={() => setPositionError(null)}
-            className="text-muted-foreground hover:text-rose-200 text-[10px] uppercase font-bold underline cursor-pointer"
-          >
-            Dismiss
-          </button>
-        </div>
-      )}
-
-      {/* 3. Step Playback Control Bar (Play, Pause, Step Forward, Step Backward, Reset) */}
-      {isOperationActive && (
-        <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-2.5 rounded-xl border border-[#C9A962]/40 bg-[#1C1714] text-xs animate-in fade-in">
-          {/* Status Text / Step Index */}
-          <div className="flex items-center gap-3">
-            <span className="px-2.5 py-1 rounded-lg bg-[#C9A962]/20 border border-[#C9A962]/40 text-[#C9A962] font-mono font-bold text-xs">
-              Step {currentStepIndex + 1} of {steps.length}
-            </span>
-            <span className="font-mono text-xs text-[#E8DFD4] font-semibold truncate max-w-xs sm:max-w-md">
-              {subStepLabel}
-            </span>
-          </div>
-
-          {/* Playback Buttons */}
-          <div className="flex items-center gap-2 font-mono">
-            {/* Step Backward */}
-            <button
-              onClick={handleStepBackward}
-              disabled={currentStepIndex === 0}
-              className="p-1.5 rounded-lg border border-[#4A3F35] bg-[#14100D] text-[#E8DFD4] hover:border-[#C9A962] disabled:opacity-40 transition-all cursor-pointer"
-              title="Previous Step"
-            >
-              <SkipBack className="h-3.5 w-3.5" />
-            </button>
-
-            {/* Play / Pause Toggle */}
-            {isPlaying ? (
-              <button
-                onClick={handlePause}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-500 text-slate-950 font-bold text-xs hover:bg-amber-400 transition-all active:scale-95 cursor-pointer shadow-xs"
-              >
-                <Pause className="h-3.5 w-3.5" />
-                <span>Pause</span>
-              </button>
-            ) : (
-              <button
-                onClick={handlePlay}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#C9A962] text-[#14100D] font-bold text-xs hover:bg-[#D4B872] transition-all active:scale-95 cursor-pointer shadow-xs"
-              >
-                <Play className="h-3.5 w-3.5" />
-                <span>{currentStepIndex >= steps.length - 1 ? "Replay" : "Play"}</span>
-              </button>
-            )}
-
-            {/* Step Forward */}
-            <button
-              onClick={handleStepForward}
-              disabled={currentStepIndex >= steps.length - 1}
-              className="p-1.5 rounded-lg border border-[#4A3F35] bg-[#14100D] text-[#E8DFD4] hover:border-[#C9A962] disabled:opacity-40 transition-all cursor-pointer"
-              title="Next Step Forward"
-            >
-              <SkipForward className="h-3.5 w-3.5" />
-            </button>
-
-            {/* Reset Operation State */}
-            <button
-              onClick={handleResetOperation}
-              className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-[#4A3F35] bg-[#14100D] text-muted-foreground hover:text-foreground hover:border-[#C9A962] transition-all cursor-pointer"
-              title="Reset to state before operation started"
-            >
-              <RotateCcw className="h-3 w-3" />
-              <span>Reset Op</span>
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* 4. Live Pointer State Panel (Section 7) */}
-      <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 p-3 rounded-xl border border-[#4A3F35] bg-[#1C1714]/60 font-mono text-[11px]">
-        {/* HEAD */}
-        <div className="flex flex-col items-center justify-center p-2 rounded-lg bg-[#14100D] border border-[#4A3F35]/40">
-          <span className="text-muted-foreground text-[10px] uppercase">HEAD</span>
-          <span className="font-bold text-cyan-400 truncate max-w-full">{headAddress}</span>
-        </div>
-
-        {/* CURRENT */}
-        <div className="flex flex-col items-center justify-center p-2 rounded-lg bg-[#14100D] border border-[#4A3F35]/40">
-          <span className="text-muted-foreground text-[10px] uppercase">CURRENT</span>
-          <span className={`font-bold truncate max-w-full ${currentAddress !== "-" ? "text-[#C9A962]" : "text-muted-foreground"}`}>
-            {currentAddress}
-          </span>
-        </div>
-
-        {/* NEXT */}
-        <div className="flex flex-col items-center justify-center p-2 rounded-lg bg-[#14100D] border border-[#4A3F35]/40">
-          <span className="text-muted-foreground text-[10px] uppercase">NEXT</span>
-          <span className={`font-bold truncate max-w-full ${nextAddress !== "-" ? "text-cyan-400" : "text-muted-foreground"}`}>
-            {nextAddress}
-          </span>
-        </div>
-
-        {/* NEW_NODE */}
-        <div className="flex flex-col items-center justify-center p-2 rounded-lg bg-[#14100D] border border-[#4A3F35]/40">
-          <span className="text-muted-foreground text-[10px] uppercase">NEW_NODE</span>
-          <span className={`font-bold truncate max-w-full ${stagedAddress !== "-" ? "text-emerald-400" : "text-muted-foreground"}`}>
-            {stagedAddress}
-          </span>
-        </div>
-
-        {/* PREV */}
-        <div className="col-span-2 sm:col-span-1 flex flex-col items-center justify-center p-2 rounded-lg bg-[#14100D] border border-[#4A3F35]/40">
-          <span className="text-muted-foreground text-[10px] uppercase">PREV</span>
-          <span className={`font-bold truncate max-w-full ${prevAddress !== "-" ? "text-amber-400" : "text-muted-foreground"}`}>
-            {prevAddress}
-          </span>
-        </div>
-      </div>
-
-      {/* 5. Main Visualization Stage: [ Logical View ] or [ Memory View ] */}
-      <div className="min-h-[220px] rounded-2xl border border-[#4A3F35] bg-[#14100D]/90 p-5 flex flex-col justify-center overflow-x-auto shadow-inner select-none space-y-4">
-        {/* Staged New Node (if currently allocating before linking) */}
-        {stagedNode && (
-          <div className="flex items-center gap-3 p-3 rounded-xl border border-dashed border-[#C9A962] bg-[#251E19]/80 w-fit animate-in fade-in">
-            <span className="px-2 py-1 rounded bg-[#C9A962]/20 border border-[#C9A962]/40 text-[#C9A962] font-mono text-[10px] font-bold">
-              ALLOCATING NEW NODE
-            </span>
-            <div className="flex items-center gap-2 font-mono text-xs">
-              <span className="text-muted-foreground">Address:</span>
-              <span className="text-cyan-400 font-bold">{stagedNode.address}</span>
-              <span className="text-muted-foreground pl-2">DATA:</span>
-              <span className="font-bold text-foreground">{stagedNode.val}</span>
-              <span className="text-muted-foreground pl-2">NEXT:</span>
-              <span className="text-amber-400 font-bold">
-                {stagedNode.nextId ? displayedState.nodes[stagedNode.nextId]?.address || "head" : "nullptr"}
-              </span>
-            </div>
-            {modifiedPointer === "staged.next" && (
-              <span className="text-[#C9A962] font-mono text-xs font-bold animate-pulse">
-                ──► Linking to HEAD ({pointerTargetAddress})
-              </span>
-            )}
-          </div>
-        )}
-
-        {/* Empty List Fallback */}
-        {orderedNodes.length === 0 ? (
-          <div className="w-full flex flex-col items-center justify-center text-muted-foreground text-xs font-mono py-10 space-y-2">
-            <span className="text-cyan-400 font-bold text-sm">HEAD == nullptr</span>
-            <span>The linked list is currently empty. Use &quot;Insert at Head&quot; or &quot;Insert at Tail&quot; above to allocate nodes.</span>
-          </div>
-        ) : viewMode === "logical" ? (
-          /* ==================== LOGICAL VIEW ==================== */
-          <div className="flex items-center gap-3 sm:gap-4 shrink-0 py-2">
-            {/* Persistent HEAD Pointer Label */}
-            <div className="flex flex-col items-center gap-1 shrink-0">
-              <span className="px-2.5 py-1 rounded-xl bg-[#C9A962]/20 border border-[#C9A962]/40 text-[#C9A962] font-mono text-[11px] font-extrabold tracking-wider shadow-sm">
-                HEAD
-              </span>
-              <span className="text-cyan-400 text-xs font-mono font-bold truncate max-w-[65px]">
-                {headAddress}
-              </span>
-              <span className="text-[#C9A962] text-base font-mono font-bold">↓</span>
+    <div className="flex flex-col gap-4 w-full max-w-7xl mx-auto" suppressHydrationWarning>
+      {/* Unified Studio Grid: Left Visual Stage (7 cols), Right Code Execution (5 cols) */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
+        {/* Left Column: Visual Canvas + Live Telemetry + Controls */}
+        <div className="lg:col-span-7 flex flex-col gap-3">
+          {/* Main Visualization Stage Canvas */}
+          <div className="p-4 sm:p-5 rounded-2xl border border-border bg-card/60 backdrop-blur-xl flex flex-col min-h-[360px] relative overflow-hidden shadow-xs">
+            {/* Header Indicators */}
+            <div className="flex items-center justify-between border-b border-border/80 pb-2.5 mb-3 text-xs font-mono">
+              <div className="flex items-center gap-2 text-cyan-600 dark:text-cyan-400 font-bold">
+                <Database className="h-4 w-4" />
+                <span>Dynamic Heap Pointer Studio ({viewMode === "logical" ? "Logical View" : "Memory View"})</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="inline-flex rounded-xl p-0.5 bg-secondary border border-border text-[11px] font-mono">
+                  <button
+                    onClick={() => setViewMode("logical")}
+                    className={`px-2 py-0.5 rounded-lg font-medium transition-all cursor-pointer ${
+                      viewMode === "logical"
+                        ? "bg-card text-foreground shadow-xs font-bold"
+                        : "text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    Logical
+                  </button>
+                  <button
+                    onClick={() => setViewMode("memory")}
+                    className={`px-2 py-0.5 rounded-lg font-medium transition-all cursor-pointer ${
+                      viewMode === "memory"
+                        ? "bg-card text-foreground shadow-xs font-bold"
+                        : "text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    Memory
+                  </button>
+                </div>
+              </div>
             </div>
 
-            {/* Render Horizontal Node Chain */}
-            {orderedNodes.map((node, index) => {
-              const isHead = index === 0;
-              const isActive = activeNodeId === node.id;
-              const isTarget = targetNodeId === node.id;
-              const isPredecessor = predecessorNodeId === node.id;
-              const isBypassed = bypassedNodeId === node.id;
-              const isPointerModified = modifiedPointer === "next" && pointerSourceAddress === node.address;
+            {/* Canvas Stage Viewport */}
+            <div className="flex-1 flex flex-col justify-center overflow-x-auto py-2">
+              {/* Staged New Node (if currently allocating before linking) */}
+              {stagedNode && (
+                <div className="mb-3 flex items-center gap-2.5 p-2 rounded-xl border border-dashed border-cyan-500/50 bg-cyan-500/10 w-fit animate-in fade-in text-xs font-mono">
+                  <span className="px-1.5 py-0.5 rounded bg-cyan-500/20 text-cyan-600 dark:text-cyan-300 font-bold text-[10px]">
+                    ALLOCATING
+                  </span>
+                  <span className="text-muted-foreground">Addr:</span>
+                  <span className="text-cyan-600 dark:text-cyan-400 font-bold">{stagedNode.address}</span>
+                  <span className="text-muted-foreground pl-1">DATA:</span>
+                  <span className="font-bold text-foreground">{stagedNode.val}</span>
+                  <span className="text-muted-foreground pl-1">NEXT:</span>
+                  <span className="text-amber-500 font-bold">
+                    {stagedNode.nextId ? displayedState.nodes[stagedNode.nextId]?.address || "head" : "nullptr"}
+                  </span>
+                  {modifiedPointer === "staged.next" && (
+                    <span className="text-cyan-500 font-bold animate-pulse pl-1">
+                      ──► Linking to HEAD ({pointerTargetAddress})
+                    </span>
+                  )}
+                </div>
+              )}
 
-              return (
-                <LogicalNode
-                  key={node.id}
-                  node={node}
-                  index={index}
-                  isHead={isHead}
-                  isActive={isActive}
-                  isTarget={isTarget}
-                  isPredecessor={isPredecessor}
-                  isBypassed={isBypassed}
-                  isPointerModified={isPointerModified}
-                  targetAddress={pointerTargetAddress}
-                  prefersReducedMotion={prefersReducedMotion}
-                />
-              );
-            })}
+              {/* Empty List Fallback */}
+              {orderedNodes.length === 0 ? (
+                <div className="w-full flex flex-col items-center justify-center text-muted-foreground text-xs font-mono py-12 space-y-1">
+                  <span className="text-cyan-500 font-bold text-sm">HEAD == nullptr</span>
+                  <span>The linked list is currently empty. Use &quot;Insert at Head&quot; or &quot;Insert at Tail&quot; below.</span>
+                </div>
+              ) : viewMode === "logical" ? (
+                /* ==================== LOGICAL VIEW ==================== */
+                <div className="flex items-center gap-2.5 sm:gap-3 shrink-0 py-2">
+                  {/* Persistent HEAD Pointer Label */}
+                  <div className="flex flex-col items-center gap-0.5 shrink-0">
+                    <span className="px-2 py-0.5 rounded-lg bg-cyan-500/15 border border-cyan-500/30 text-cyan-600 dark:text-cyan-400 font-mono text-[10px] font-extrabold tracking-wider">
+                      HEAD
+                    </span>
+                    <span className="text-cyan-600 dark:text-cyan-400 text-[10px] font-mono font-bold truncate max-w-[55px]">
+                      {headAddress}
+                    </span>
+                    <span className="text-cyan-500 text-xs font-mono font-bold">↓</span>
+                  </div>
 
-            {/* Terminal nullptr Box */}
-            <div className="flex items-center justify-center px-3.5 py-2.5 rounded-xl border border-[#4A3F35] bg-[#1C1714] text-muted-foreground font-mono text-xs font-bold shadow-xs shrink-0">
-              nullptr
+                  {/* Render Horizontal Node Chain */}
+                  {orderedNodes.map((node, index) => {
+                    const isHead = index === 0;
+                    const isActive = activeNodeId === node.id;
+                    const isTarget = targetNodeId === node.id;
+                    const isPredecessor = predecessorNodeId === node.id;
+                    const isBypassed = bypassedNodeId === node.id;
+                    const isPointerModified = modifiedPointer === "next" && pointerSourceAddress === node.address;
+
+                    return (
+                      <LogicalNode
+                        key={node.id}
+                        node={node}
+                        index={index}
+                        isHead={isHead}
+                        isActive={isActive}
+                        isTarget={isTarget}
+                        isPredecessor={isPredecessor}
+                        isBypassed={isBypassed}
+                        isPointerModified={isPointerModified}
+                        targetAddress={pointerTargetAddress}
+                        prefersReducedMotion={prefersReducedMotion}
+                      />
+                    );
+                  })}
+
+                  {/* Terminal nullptr Box */}
+                  <div className="flex items-center justify-center px-3 py-2 rounded-xl border border-border bg-secondary text-muted-foreground font-mono text-xs font-bold shadow-xs shrink-0">
+                    nullptr
+                  </div>
+                </div>
+              ) : (
+                /* ==================== MEMORY VIEW ==================== */
+                <div className="flex items-start gap-4 sm:gap-5 shrink-0 py-2">
+                  {/* HEAD Pointer Anchor */}
+                  <div className="flex flex-col items-center gap-1 shrink-0 pt-1">
+                    <span className="px-2 py-0.5 rounded-lg bg-cyan-500/15 border border-cyan-500/30 text-cyan-600 dark:text-cyan-400 font-mono text-[10px] font-bold">
+                      HEAD
+                    </span>
+                    <span className="text-cyan-600 dark:text-cyan-400 font-mono text-[10px] font-bold">{headAddress}</span>
+                    <span className="text-cyan-500 font-mono text-sm font-bold">──►</span>
+                  </div>
+
+                  {/* Render Heap Objects */}
+                  {orderedNodes.map((node, index) => {
+                    const isHead = index === 0;
+                    const isActive = activeNodeId === node.id;
+                    const isTarget = targetNodeId === node.id;
+                    const isPredecessor = predecessorNodeId === node.id;
+                    const isBypassed = bypassedNodeId === node.id;
+                    const isPointerModified = modifiedPointer === "next" && pointerSourceAddress === node.address;
+                    const nextNodeAddress = node.nextId ? displayedState.nodes[node.nextId]?.address : null;
+
+                    return (
+                      <MemoryNode
+                        key={node.id}
+                        node={node}
+                        index={index}
+                        isHead={isHead}
+                        isActive={isActive}
+                        isTarget={isTarget}
+                        isPredecessor={isPredecessor}
+                        isBypassed={isBypassed}
+                        isPointerModified={isPointerModified}
+                        targetAddress={pointerTargetAddress}
+                        nextNodeAddress={nextNodeAddress}
+                        prefersReducedMotion={prefersReducedMotion}
+                      />
+                    );
+                  })}
+
+                  {/* Terminal NULL in Heap */}
+                  <div className="flex flex-col items-center justify-center p-2.5 rounded-xl border border-dashed border-border bg-secondary/30 text-muted-foreground font-mono text-xs shrink-0 self-center">
+                    <span className="text-cyan-500 font-bold">0x0000</span>
+                    <span className="text-[9px]">NULL</span>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
-        ) : (
-          /* ==================== MEMORY VIEW ==================== */
-          <div className="flex items-start gap-5 sm:gap-7 shrink-0 py-3">
-            {/* HEAD Pointer Anchor */}
-            <div className="flex flex-col items-center gap-1.5 shrink-0 pt-2">
-              <span className="px-2.5 py-1 rounded-xl bg-[#C9A962]/20 border border-[#C9A962]/40 text-[#C9A962] font-mono text-xs font-bold">
-                HEAD ptr
-              </span>
-              <span className="text-cyan-400 font-mono text-xs font-bold">{headAddress}</span>
-              <span className="text-[#C9A962] font-mono text-base font-bold">──►</span>
+
+          {/* Operation Status & Live Execution Telemetry */}
+          <div className="flex flex-col gap-2 rounded-2xl border border-border bg-card p-2.5 sm:p-3 backdrop-blur-xl shadow-xs">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                <span className="relative flex h-2.5 w-2.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 bg-cyan-400" />
+                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-cyan-500" />
+                </span>
+                <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-foreground">
+                  Execution Telemetry
+                </span>
+              </div>
+              <div className="flex items-center gap-1.5 text-[11px] font-mono">
+                <div className="flex items-center gap-1 rounded-lg bg-cyan-500/10 border border-cyan-500/30 px-2 py-0.5 text-cyan-600 dark:text-cyan-300">
+                  <span className="text-[10px] text-muted-foreground">Nodes:</span>
+                  <strong className="font-bold">{orderedNodes.length}</strong>
+                </div>
+                <div className="flex items-center gap-1 rounded-lg bg-amber-500/10 border border-amber-500/30 px-2 py-0.5 text-amber-600 dark:text-amber-300">
+                  <span className="text-[10px] text-muted-foreground">Op:</span>
+                  <strong className="font-bold">{complexityInfo.name}</strong>
+                </div>
+                {isOperationActive && (
+                  <div className="flex items-center gap-1 rounded-lg bg-emerald-500/10 border border-emerald-500/30 px-2 py-0.5 text-emerald-600 dark:text-emerald-300">
+                    <span className="text-[10px] text-muted-foreground">Step:</span>
+                    <strong className="font-bold">{currentStepIndex + 1}/{steps.length}</strong>
+                  </div>
+                )}
+              </div>
             </div>
 
-            {/* Render Heap Objects */}
-            {orderedNodes.map((node, index) => {
-              const isHead = index === 0;
-              const isActive = activeNodeId === node.id;
-              const isTarget = targetNodeId === node.id;
-              const isPredecessor = predecessorNodeId === node.id;
-              const isBypassed = bypassedNodeId === node.id;
-              const isPointerModified = modifiedPointer === "next" && pointerSourceAddress === node.address;
-              const nextNodeAddress = node.nextId ? displayedState.nodes[node.nextId]?.address : null;
-
-              return (
-                <MemoryNode
-                  key={node.id}
-                  node={node}
-                  index={index}
-                  isHead={isHead}
-                  isActive={isActive}
-                  isTarget={isTarget}
-                  isPredecessor={isPredecessor}
-                  isBypassed={isBypassed}
-                  isPointerModified={isPointerModified}
-                  targetAddress={pointerTargetAddress}
-                  nextNodeAddress={nextNodeAddress}
-                  prefersReducedMotion={prefersReducedMotion}
-                />
-              );
-            })}
-
-            {/* Terminal NULL in Heap */}
-            <div className="flex flex-col items-center justify-center p-3 rounded-2xl border border-dashed border-[#4A3F35] bg-[#14100D] text-muted-foreground font-mono text-xs shrink-0 self-center">
-              <span className="text-cyan-400 font-bold">0x0000</span>
-              <span className="text-[10px]">NULL / nullptr</span>
+            {/* Dynamic Explanation Text Box */}
+            <div className={`rounded-xl border px-3 py-1.5 min-h-[36px] flex items-center shadow-inner ${
+              isOperationComplete
+                ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-300"
+                : "border-border/80 bg-secondary/60 text-foreground"
+            }`}>
+              <p className="text-xs font-medium font-mono flex items-center gap-2 truncate">
+                {isOperationComplete ? (
+                  <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500 shrink-0" />
+                ) : (
+                  <span className="h-1.5 w-1.5 rounded-full bg-cyan-500 shrink-0 animate-pulse" />
+                )}
+                <span className="truncate">{description}</span>
+              </p>
             </div>
           </div>
-        )}
-      </div>
 
-      {/* 6. Step Narrative Banner & Search Metrics (Section 5) */}
-      <div className="p-4 rounded-xl border border-[#C9A962]/30 bg-[#251E19]/90 text-xs font-mono space-y-2 shadow-sm">
-        <div className="flex items-center justify-between border-b border-[#4A3F35]/60 pb-2">
-          <div className="flex items-center gap-2 text-[#C9A962] font-bold">
-            <Sparkles className="h-4 w-4 shrink-0" />
-            <span>{isOperationActive ? `Operation Status: ${complexityInfo.name}` : "Simulator Idle"}</span>
-          </div>
+          {/* Stepper Playback Toolbar (Visible while operation is active) */}
+          {isOperationActive && (
+            <div className="flex flex-wrap items-center justify-between gap-2 p-2.5 rounded-2xl border border-cyan-500/30 bg-card/90 text-xs font-mono shadow-xs">
+              <div className="flex items-center gap-2">
+                <span className="px-2 py-0.5 rounded-md bg-cyan-500/15 text-cyan-600 dark:text-cyan-400 font-bold text-[11px]">
+                  Step {currentStepIndex + 1}/{steps.length}
+                </span>
+                <span className="text-muted-foreground truncate max-w-xs">{subStepLabel}</span>
+              </div>
 
-          {isOperationComplete && (
-            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/40 text-emerald-400 font-bold text-[10px]">
-              <CheckCircle2 className="h-3 w-3" /> Operation Complete ✓
-            </span>
+              <div className="flex items-center gap-1.5">
+                <button
+                  onClick={handleStepBackward}
+                  disabled={currentStepIndex === 0}
+                  className="p-1 rounded-lg border border-border bg-secondary text-foreground hover:bg-secondary/80 disabled:opacity-40 cursor-pointer"
+                  title="Previous Step"
+                >
+                  <SkipBack className="h-3 w-3" />
+                </button>
+
+                {isPlaying ? (
+                  <button
+                    onClick={handlePause}
+                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-amber-500 text-slate-950 font-bold text-xs hover:bg-amber-400 cursor-pointer shadow-xs"
+                  >
+                    <Pause className="h-3 w-3" />
+                    <span>Pause</span>
+                  </button>
+                ) : (
+                  <button
+                    onClick={handlePlay}
+                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-bold text-xs hover:opacity-95 cursor-pointer shadow-xs"
+                  >
+                    <Play className="h-3 w-3" />
+                    <span>{currentStepIndex >= steps.length - 1 ? "Replay" : "Play"}</span>
+                  </button>
+                )}
+
+                <button
+                  onClick={handleStepForward}
+                  disabled={currentStepIndex >= steps.length - 1}
+                  className="p-1 rounded-lg border border-border bg-secondary text-foreground hover:bg-secondary/80 disabled:opacity-40 cursor-pointer"
+                  title="Next Step"
+                >
+                  <SkipForward className="h-3 w-3" />
+                </button>
+
+                <button
+                  onClick={handleResetOperation}
+                  className="p-1 rounded-lg border border-border bg-secondary text-muted-foreground hover:text-foreground cursor-pointer"
+                  title="Reset Op"
+                >
+                  <RotateCcw className="h-3 w-3" />
+                </button>
+              </div>
+            </div>
           )}
-        </div>
 
-        {/* Narrative Description */}
-        <p className="text-foreground leading-relaxed">{description}</p>
-
-        {/* Accurate Search Metrics Reporting (Section 5) */}
-        {searchStats && (
-          <div className="mt-2 pt-2 border-t border-[#4A3F35]/50 flex flex-wrap items-center gap-4 text-xs font-mono">
-            <div>
-              <span className="text-muted-foreground">Result: </span>
-              <span className={`font-bold ${searchStats.found ? "text-emerald-400" : "text-rose-400"}`}>
-                {searchStats.found ? `✓ Found at Position #${searchStats.position}` : "✕ Value Not Found"}
-              </span>
-            </div>
-
-            <div>
-              <span className="text-muted-foreground">Nodes Checked: </span>
-              <span className="font-bold text-foreground">{searchStats.nodesChecked}</span>
-            </div>
-
-            <div>
-              <span className="text-muted-foreground">Time Complexity (This Search): </span>
-              <span className="font-bold text-[#C9A962]">{searchStats.actualComplexity}</span>
-            </div>
-
-            <div>
-              <span className="text-muted-foreground">General Worst-Case: </span>
-              <span className="font-bold text-cyan-400">{searchStats.worstCaseComplexity}</span>
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* 7. Dynamic Contextual Complexity Education (Section 6) */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
-        {/* Time Complexity Card */}
-        <div className="p-3.5 rounded-xl border border-[#4A3F35] bg-[#1C1714] space-y-1">
-          <div className="flex items-center gap-1.5 text-xs font-mono font-bold text-cyan-400">
-            <Clock className="h-3.5 w-3.5" />
-            <span>Time Complexity</span>
-          </div>
-          <p className="font-mono text-sm font-black text-foreground">
-            {complexityInfo.timeComplexity}
-          </p>
-          <span className="text-[10px] text-muted-foreground block font-mono">
-            {activeOperation === "search"
-              ? "Actual search checks 1 to n nodes"
-              : activeOperation === "insert-head"
-              ? "Prepend executes in strictly constant time"
-              : activeOperation === "insert-position"
-              ? "Position 0 is O(1); otherwise O(position) traversal"
-              : "Linear sequential pointer hops"}
-          </span>
-        </div>
-
-        {/* Space Complexity Card */}
-        <div className="p-3.5 rounded-xl border border-[#4A3F35] bg-[#1C1714] space-y-1">
-          <div className="flex items-center gap-1.5 text-xs font-mono font-bold text-emerald-400">
-            <Database className="h-3.5 w-3.5" />
-            <span>Space Complexity</span>
-          </div>
-          <p className="font-mono text-sm font-black text-foreground">
-            {complexityInfo.spaceComplexity}
-          </p>
-          <span className="text-[10px] text-muted-foreground block font-mono">
-            Auxiliary memory per operation (in-place pointer rewiring)
-          </span>
-        </div>
-
-        {/* "Why?" Explanation Card */}
-        <div className="p-3.5 rounded-xl border border-[#C9A962]/30 bg-[#251E19]/70 space-y-1">
-          <div className="flex items-center gap-1.5 text-xs font-mono font-bold text-[#C9A962]">
-            <Zap className="h-3.5 w-3.5" />
-            <span>Why {complexityInfo.timeComplexity}?</span>
-          </div>
-          <p className="text-muted-foreground text-[11px] leading-relaxed">
-            {complexityInfo.whyExplanation}
-          </p>
-        </div>
-      </div>
-
-      {/* 8. Synchronized C++ Code Walkthrough (Section 11) */}
-      <div className="rounded-xl border border-[#4A3F35] bg-[#1C1714] overflow-hidden">
-        <button
-          onClick={() => setShowCodeSnippet((prev) => !prev)}
-          className="w-full flex items-center justify-between px-4 py-3 bg-[#14100D] text-xs font-mono font-bold text-[#E8DFD4] hover:text-[#C9A962] transition-colors cursor-pointer"
-        >
-          <div className="flex items-center gap-2">
-            <Code2 className="h-4 w-4 text-[#C9A962]" />
-            <span>Synchronized C++ Implementation: {complexityInfo.name}</span>
-            {codeLine && (
-              <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#C9A962]/20 text-[#C9A962] border border-[#C9A962]/40">
-                Active Line #{codeLine}
-              </span>
+          {/* Operation Toolbar & Inputs */}
+          <div className="p-3.5 rounded-2xl border border-border bg-card/90 shadow-xs backdrop-blur-xl space-y-2.5">
+            {/* Position Validation Warning */}
+            {positionError && (
+              <div className="flex items-center justify-between px-3 py-1.5 rounded-xl border border-rose-500/40 bg-rose-500/10 text-rose-400 font-mono text-xs">
+                <span>{positionError}</span>
+                <button
+                  onClick={() => setPositionError(null)}
+                  className="text-xs uppercase font-bold underline cursor-pointer"
+                >
+                  Dismiss
+                </button>
+              </div>
             )}
-          </div>
-          {showCodeSnippet ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-        </button>
 
-        {showCodeSnippet && (
-          <div className="p-3 sm:p-4 bg-[#14100D] border-t border-[#4A3F35]">
+            <div className="flex flex-wrap items-center justify-between gap-2 pb-2 border-b border-border/70">
+              <div className="flex flex-wrap items-center gap-2 text-xs font-mono">
+                <div className="flex items-center gap-1.5">
+                  <span className="text-muted-foreground font-semibold">Value:</span>
+                  <input
+                    type="number"
+                    value={inputValue}
+                    onChange={(e) => setInputValue(e.target.value)}
+                    disabled={isPlaying}
+                    className="w-14 px-2 py-1 rounded-lg border border-border bg-secondary text-foreground text-center font-bold focus:outline-hidden focus:ring-1 focus:ring-cyan-500/50"
+                  />
+                </div>
+
+                <div className="flex items-center gap-1.5">
+                  <span className="text-muted-foreground font-semibold">Pos (0..{orderedNodes.length}):</span>
+                  <input
+                    type="number"
+                    value={inputPosition}
+                    onChange={(e) => {
+                      setInputPosition(e.target.value);
+                      if (positionError) setPositionError(null);
+                    }}
+                    disabled={isPlaying}
+                    className="w-12 px-2 py-1 rounded-lg border border-border bg-secondary text-foreground text-center font-bold focus:outline-hidden focus:ring-1 focus:ring-cyan-500/50"
+                    min={0}
+                    max={orderedNodes.length}
+                  />
+                </div>
+              </div>
+
+              <button
+                onClick={handleGlobalReset}
+                disabled={isPlaying}
+                className="p-1.5 rounded-lg border border-border bg-secondary text-muted-foreground hover:text-foreground transition-all cursor-pointer"
+                title="Reset to 4 default nodes"
+              >
+                <RotateCcw className="h-3.5 w-3.5" />
+              </button>
+            </div>
+
+            {/* Action Buttons Row */}
+            <div className="flex flex-wrap items-center gap-1.5 text-xs">
+              <button
+                onClick={handleInsertAtHead}
+                disabled={isPlaying}
+                className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-emerald-500 text-slate-950 font-bold hover:bg-emerald-400 disabled:opacity-40 transition-all cursor-pointer shadow-xs"
+                title="Prepend new node before HEAD: strictly O(1) time"
+              >
+                <PlusCircle className="h-3 w-3" />
+                <span>Insert Head (O(1))</span>
+              </button>
+
+              <button
+                onClick={handleInsertAtPosition}
+                disabled={isPlaying}
+                className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-cyan-500/40 bg-cyan-500/10 text-cyan-600 dark:text-cyan-300 font-bold hover:bg-cyan-500/20 disabled:opacity-40 transition-all cursor-pointer"
+                title="Two-pointer insertion at chosen position"
+              >
+                <Layers className="h-3 w-3" />
+                <span>Insert at Pos</span>
+              </button>
+
+              <button
+                onClick={handleInsertAtTail}
+                disabled={isPlaying}
+                className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-border bg-secondary text-foreground font-semibold hover:bg-secondary/80 disabled:opacity-40 transition-all cursor-pointer"
+                title="Traverse pointer chain to append: O(n) time"
+              >
+                <ArrowRight className="h-3 w-3 text-cyan-500" />
+                <span>Insert Tail (O(n))</span>
+              </button>
+
+              <button
+                onClick={handleDelete}
+                disabled={isPlaying || orderedNodes.length === 0}
+                className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-rose-500/30 bg-rose-500/10 text-rose-500 font-semibold hover:bg-rose-500/20 disabled:opacity-40 transition-all cursor-pointer"
+                title="Find and splice out target node"
+              >
+                <Trash2 className="h-3 w-3" />
+                <span>Delete Value</span>
+              </button>
+
+              <button
+                onClick={handleSearch}
+                disabled={isPlaying || orderedNodes.length === 0}
+                className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-cyan-500/30 bg-cyan-500/10 text-cyan-600 dark:text-cyan-300 font-semibold hover:bg-cyan-500/20 disabled:opacity-40 transition-all cursor-pointer"
+                title="Sequential pointer traversal"
+              >
+                <Search className="h-3 w-3" />
+                <span>Search</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Right Column: Sticky C++ Code Studio & Inspector */}
+        <div className="lg:col-span-5 flex flex-col gap-3 lg:sticky lg:top-20">
+          <div className="h-[270px] sm:h-[290px] lg:h-[310px]">
             <CodeViewer
               code={OPERATION_CODE_SNIPPETS[codeSnippetKey]}
-              activeLineNumber={codeLine}
               algorithmName={`LinkedList::${codeSnippetKey}`}
+              activeLineNumber={codeLine}
             />
           </div>
-        )}
-      </div>
 
-      {/* 9. Educational UX Takeaway Note (Section 10) */}
-      <div className="p-3.5 rounded-xl border border-cyan-500/30 bg-cyan-950/20 text-muted-foreground text-xs flex items-start gap-2.5">
-        <Info className="h-4 w-4 text-cyan-400 shrink-0 mt-0.5" />
-        <p className="leading-relaxed">
-          <strong>Core Architectural Insight:</strong> Unlike arrays, linked-list nodes do not need to be stored next to each other in memory. Each node stores the address/reference of the next node. This enables <span className="text-emerald-400 font-semibold">O(1) prepends</span> and <span className="text-emerald-400 font-semibold">O(1) splices</span> without shifting, but eliminates <span className="text-rose-400 font-semibold">O(1) random index access</span>.
-        </p>
+          {/* Pointer Register Inspector */}
+          <div className="p-4 rounded-2xl border border-border bg-card/70 backdrop-blur-xl shadow-xs">
+            <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-muted-foreground mb-2.5 flex items-center gap-1.5">
+              <Cpu className="h-3.5 w-3.5 text-cyan-500" />
+              <span>Pointer Register Table</span>
+            </h3>
+
+            <div className="grid grid-cols-2 gap-2 font-mono text-xs">
+              <div className="p-2 rounded-lg bg-secondary/50 border border-border flex flex-col">
+                <span className="text-[10px] text-muted-foreground uppercase">HEAD PTR</span>
+                <span className="font-bold text-cyan-600 dark:text-cyan-400 truncate">{headAddress}</span>
+              </div>
+              <div className="p-2 rounded-lg bg-secondary/50 border border-border flex flex-col">
+                <span className="text-[10px] text-muted-foreground uppercase">CURRENT PTR</span>
+                <span className={`font-bold truncate ${currentAddress !== "-" ? "text-amber-500" : "text-muted-foreground"}`}>
+                  {currentAddress}
+                </span>
+              </div>
+              <div className="p-2 rounded-lg bg-secondary/50 border border-border flex flex-col">
+                <span className="text-[10px] text-muted-foreground uppercase">NEXT PTR</span>
+                <span className={`font-bold truncate ${nextAddress !== "-" ? "text-cyan-500" : "text-muted-foreground"}`}>
+                  {nextAddress}
+                </span>
+              </div>
+              <div className="p-2 rounded-lg bg-secondary/50 border border-border flex flex-col">
+                <span className="text-[10px] text-muted-foreground uppercase">PREV PTR</span>
+                <span className={`font-bold truncate ${prevAddress !== "-" ? "text-purple-400" : "text-muted-foreground"}`}>
+                  {prevAddress}
+                </span>
+              </div>
+              <div className="col-span-2 p-2 rounded-lg bg-secondary/50 border border-border flex items-center justify-between">
+                <span className="text-[10px] text-muted-foreground uppercase">STAGED NODE</span>
+                <span className={`font-bold truncate ${stagedAddress !== "-" ? "text-emerald-500" : "text-muted-foreground"}`}>
+                  {stagedAddress}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

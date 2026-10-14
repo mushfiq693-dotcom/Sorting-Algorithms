@@ -1175,12 +1175,7 @@ export default function CourseMaterialPage() {
               <span className="hidden xs:inline">Curriculum</span>
               <span className="xs:hidden">Learn</span>
             </Link>
-            <Link
-              href="/docs"
-              className="hidden sm:inline-block px-2.5 sm:px-3 py-1.5 rounded-xl border border-border bg-secondary/70 text-xs font-semibold hover:bg-secondary transition-colors active:scale-95"
-            >
-              Docs
-            </Link>
+
             <ThemeToggle />
             <AuthButton />
           </div>

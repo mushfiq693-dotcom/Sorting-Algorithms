@@ -29,241 +29,62 @@ export interface LearningStep {
   };
 }
 
+/**
+ * ============================================================================
+ * PEDAGOGICAL TIER ARCHITECTURE — BEGINNER-FIRST ROADMAP STANDARDS
+ * ============================================================================
+ * Every topic in AlgoHub follows a strict beginner-first cognitive progression.
+ * When adding future topics, they MUST be inserted according to their tier:
+ *
+ * TIER 1: FOUNDATIONS & CONTIGUOUS MEMORY (Order 1..)
+ *   - Direct memory addressing, 0-indexed contiguous layout.
+ *   - Examples: Array (Static & Dynamic), Vector, Matrix.
+ *
+ * TIER 2: ELEMENTARY LINEAR SEARCHING (Order 2..)
+ *   - Single-pass linear iteration, zero preconditions.
+ *   - Examples: Linear Search.
+ *
+ * TIER 3: ASYMPTOTIC COMPLEXITY ANALYSIS (Order 3..)
+ *   - Big-O mathematical foundations, growth rates, auxiliary space, recursion depth.
+ *   - Examples: Time Complexity, Space Complexity.
+ *
+ * TIER 4: SUB-LINEAR / DIVIDE-AND-CONQUER SEARCHING (Order 5..)
+ *   - Logarithmic intervals, precondition of sorted data.
+ *   - Examples: Binary Search, Jump Search.
+ *
+ * TIER 5: ELEMENTARY ABSTRACT DATA STRUCTURES (Order 6..)
+ *   - LIFO / FIFO linear discipline.
+ *   - Examples: Stack, Queue, Deque.
+ *
+ * TIER 6: NON-CONTIGUOUS POINTER-LINKED STRUCTURES (Order 8..)
+ *   - Heap allocation, pointer chains, dynamic node splicing.
+ *   - Examples: Singly Linked List, Doubly Linked List, Circular Linked List.
+ *
+ * TIER 7: ELEMENTARY QUADRATIC SORTING (Order 9..)
+ *   - Adjacent swaps, minimum selection, incremental card insertion.
+ *   - Examples: Bubble Sort, Selection Sort, Insertion Sort.
+ *
+ * TIER 8: ADVANCED DIVIDE-AND-CONQUER SORTING (Order 12..)
+ *   - Subarray recursion, pivot partitioning, guaranteed O(n log n).
+ *   - Examples: Merge Sort, Quick Sort, Heap Sort.
+ *
+ * TIER 9+: HIERARCHICAL & NON-LINEAR STRUCTURES (Future Topics)
+ *   - Trees, Graphs, Heaps, Hash Tables, Dynamic Programming.
+ * ============================================================================
+ */
 export const LEARNING_PATH: LearningStep[] = [
-  {
-    id: "bubble",
-    order: 1,
-    name: "Bubble Sort",
-    category: "sorting",
-    badge: "Start Here",
-    estimatedTime: "~10 min",
-    difficulty: "Beginner",
-    reason: "Start here. Simplest possible mechanism: compare neighbors, swap if wrong order.",
-    hook: "What is the absolute simplest way to sort a messy list if you are only ever allowed to compare two neighboring items at a time?",
-    superpower: "O(n) Adaptive Best Case on Already Sorted Lists",
-    tradeoff: "O(n²) Slow Nested Comparisons on Inverted Data",
-    mentalModel: "Bubbles Rising to the Surface of Carbonated Water",
-    keyPrinciples: [
-      "Scan from left to right, comparing adjacent neighbors (arr[j], arr[j+1]).",
-      "If the left item is strictly greater than the right item, swap them immediately.",
-      "After each full pass, the largest remaining unsorted item is permanently settled at the far right.",
-      "Early-Exit Optimization: If a full pass finishes with 0 swaps, terminate immediately in O(n) time."
-    ],
-    analogy: "Think of air bubbles rising to the surface of water — in every pass, the heaviest (largest) unsorted element bubbles up to the very end.",
-    idea: "Bubble Sort walks through the list from left to right, comparing pairs of adjacent elements. If an element is greater than the one immediately after it, they trade places. After each full pass, the biggest remaining number is guaranteed to be in its correct final spot.",
-    sampleArray: [29, 10, 14, 37, 13, 22, 45, 8],
-    codeBlocks: [
-      {
-        title: "Outer Loop & Early Exit Flag",
-        lines: "for (int i = 0; i < n - 1; i++) {\n    bool swapped = false;",
-        explanation: "Runs up to n - 1 times. If an entire pass completes without making a single swap, the list is already sorted and we can stop immediately.",
-      },
-      {
-        title: "Inner Adjacent Comparisons",
-        lines: "for (int j = 0; j < n - i - 1; j++) {\n    if (arr[j] > arr[j + 1]) {",
-        explanation: "Compares adjacent neighbors. The `- i` skips the elements at the end that are already in their final sorted positions.",
-      },
-      {
-        title: "Swapping Elements",
-        lines: "    swap(arr[j], arr[j + 1]);\n    swapped = true;\n}",
-        explanation: "Swaps the two elements if the left one is bigger, and marks swapped = true so the loop knows work was done.",
-      },
-    ],
-    complexityWhy: {
-      time: "Two nested loops, each running up to n times, result in roughly n × n = O(n²) comparisons in the worst case. If already sorted, it finishes in O(n) thanks to the swapped flag.",
-      space: "It modifies the array directly without allocating additional memory arrays, making space complexity O(1) (In-place).",
-      stability: "Stable because it only swaps when arr[j] is strictly strictly greater than arr[j + 1], preserving original order of duplicate values.",
-    },
-  },
-  {
-    id: "selection",
-    order: 2,
-    name: "Selection Sort",
-    category: "sorting",
-    badge: "Find the Minimum",
-    estimatedTime: "~15 min",
-    difficulty: "Beginner",
-    reason: "Same difficulty tier, different strategy: find-the-minimum instead of swap-as-you-go.",
-    hook: "If moving physical objects in memory is expensive, how do you sort an entire collection with the absolute minimum number of total swaps?",
-    superpower: "Strictly O(n) Swaps (At Most 1 Single Swap per Pass)",
-    tradeoff: "Always O(n²) Comparisons Regardless of Input Order",
-    mentalModel: "Scanning a Shelf to Find the Absolute Shortest Book",
-    keyPrinciples: [
-      "Divide the array into two zones: a sorted prefix on the left, and an unsorted pool on the right.",
-      "Scan the entire unsorted pool to locate the index of the absolute minimum item.",
-      "Execute exactly ONE swap to place that minimum into its correct position at the boundary.",
-      "Repeat until the unsorted pool is empty. Never benefits from partially sorted data."
-    ],
-    analogy: "Like browsing a shelf of books: you scan all of them from left to right to find the shortest one, then place it in the first position.",
-    idea: "Selection Sort splits the array into a sorted portion on the left and an unsorted portion on the right. In each round, it scans the entire unsorted portion to find the absolute minimum value, and makes exactly one swap to place it at the beginning.",
-    sampleArray: [35, 12, 48, 19, 7, 60, 24, 15],
-    codeBlocks: [
-      {
-        title: "Outer Partition Loop",
-        lines: "for (int i = 0; i < n - 1; i++) {\n    int minIdx = i;",
-        explanation: "Index i marks the start of the unsorted portion. We assume arr[i] is the smallest until we scan the rest.",
-      },
-      {
-        title: "Finding the Smallest Element",
-        lines: "for (int j = i + 1; j < n; j++) {\n    if (arr[j] < arr[minIdx]) minIdx = j;\n}",
-        explanation: "Scans every remaining element to the right. Whenever a smaller value is found, its index is remembered in minIdx.",
-      },
-      {
-        title: "Single Swap per Pass",
-        lines: "swap(arr[i], arr[minIdx]);",
-        explanation: "After finding the true minimum for this pass, performs exactly one swap to put it into slot i.",
-      },
-    ],
-    complexityWhy: {
-      time: "Always scans the entire remaining list regardless of initial array order. (n-1) + (n-2) + ... + 1 = n(n-1)/2 comparisons, resulting in strictly O(n²) time.",
-      space: "O(1) auxiliary space because it sorts completely in-place.",
-      stability: "Not stable in default implementation because swapping across long distances can jump past identical items.",
-    },
-  },
-  {
-    id: "insertion",
-    order: 3,
-    name: "Insertion Sort",
-    category: "sorting",
-    badge: "Hand-Sorting Cards",
-    estimatedTime: "~15 min",
-    difficulty: "Beginner",
-    reason: "Most practical O(n²) algorithm. Very fast on nearly-sorted data and small arrays.",
-    hook: "Watch how card players sort a hand as cards are dealt one by one: they slide each card into its exact slot. Why is this nearly instant on almost-sorted data?",
-    superpower: "Blazing Near O(n) Speed on Almost-Sorted Real-World Data",
-    tradeoff: "O(n²) Worst Case with Heavy Shifting on Inverted Arrays",
-    mentalModel: "Slotting Playing Cards into Your Left Hand",
-    keyPrinciples: [
-      "Assume the first item is already sorted.",
-      "Pick the next item (the 'key') and inspect the sorted items to its left.",
-      "Shift all items greater than the key one slot to the right to open a vacancy.",
-      "Drop the key into the open slot. Extremely fast and cache-friendly for small collections."
-    ],
-    analogy: "Think of picking up playing cards one by one from a table and slotting each new card into its proper position among the cards already in your left hand.",
-    idea: "Insertion Sort takes elements one at a time and slides them leftward into their correct position in the already-sorted prefix of the array.",
-    sampleArray: [22, 11, 35, 18, 9, 44, 2],
-    codeBlocks: [
-      {
-        title: "Extracting the Key",
-        lines: "for (int i = 1; i < n; i++) {\n    int key = arr[i];\n    int j = i - 1;",
-        explanation: "Picks arr[i] as the 'key' to be inserted into the sorted subarray arr[0..i-1].",
-      },
-      {
-        title: "Shifting Greater Elements Right",
-        lines: "while (j >= 0 && arr[j] > key) {\n    arr[j + 1] = arr[j];\n    j--;\n}",
-        explanation: "Shifts elements greater than the key one position to the right to open up a vacant slot.",
-      },
-      {
-        title: "Inserting into the Slot",
-        lines: "arr[j + 1] = key;",
-        explanation: "Drops the key directly into the vacated position.",
-      },
-    ],
-    complexityWhy: {
-      time: "O(n) best-case when array is already sorted (while-loop never runs). O(n²) worst-case on reverse sorted input where every item shifts full distance.",
-      space: "O(1) in-place auxiliary space.",
-      stability: "Strictly stable because equal keys are never shifted past each other.",
-    },
-  },
-  {
-    id: "merge",
-    order: 4,
-    name: "Merge Sort",
-    category: "sorting",
-    badge: "Divide & Conquer",
-    estimatedTime: "~20 min",
-    difficulty: "Intermediate",
-    reason: "Your first O(n log n) algorithm. The foundation of divide-and-conquer thinking.",
-    hook: "Can you sort a list of 1,000,000 numbers in under a second by repeatedly breaking it in half? The mathematical triumph of divide-and-conquer.",
-    superpower: "Guaranteed O(n log n) Rock-Solid Worst-Case Predictability",
-    tradeoff: "Requires O(n) Auxiliary RAM Buffer for Merging",
-    mentalModel: "Zipping Two Sorted Decks of Cards Together",
-    keyPrinciples: [
-      "Divide: Recursively split the array in half until single-item subarrays remain.",
-      "Base Case: An array of 1 element is inherently sorted.",
-      "Conquer: Merge two sorted subarrays by comparing heads with a two-pointer pass.",
-      "Guaranteed O(n log n) performance regardless of whether data is random, sorted, or reversed."
-    ],
-    analogy: "Like splitting a huge pile of exam papers into two equal halves, giving each half to a teaching assistant to sort, and then zipping the two sorted stacks together.",
-    idea: "Merge Sort recursively splits the array into two halves until singletons remain, then merges sorted subarrays back together in linear time using a two-pointer technique.",
-    sampleArray: [38, 27, 43, 3, 9, 82, 10],
-    codeBlocks: [
-      {
-        title: "Recursive Divide Step",
-        lines: "int mid = left + (right - left) / 2;\nmergeSort(arr, left, mid);\nmergeSort(arr, mid + 1, right);",
-        explanation: "Divides the array into two equal halves and recursively sorts each half.",
-      },
-      {
-        title: "Two-Pointer Linear Merge",
-        lines: "while (i <= mid && j <= right) {\n    if (arr[i] <= arr[j]) temp.push_back(arr[i++]);\n    else temp.push_back(arr[j++]);\n}",
-        explanation: "Compares the heads of both sorted halves and appends the smaller element to temporary buffer.",
-      },
-      {
-        title: "Copy Back to Original Array",
-        lines: "for (int k = left; k <= right; k++) arr[k] = temp[k - left];",
-        explanation: "Copies the merged sorted slice back into the original array.",
-      },
-    ],
-    complexityWhy: {
-      time: "Guaranteed O(n log n) in all cases (best, average, worst). Tree depth is log₂ n and work per level is O(n).",
-      space: "O(n) auxiliary space due to the temporary array buffer required during merge.",
-      stability: "Stable because <= comparator prioritizes the left subarray on equal keys.",
-    },
-  },
-  {
-    id: "quick",
-    order: 5,
-    name: "Quick Sort",
-    category: "sorting",
-    badge: "In-Place Speed Champion",
-    estimatedTime: "~25 min",
-    difficulty: "Advanced",
-    reason: "Industry standard for in-place general sorting. Fast cache performance, but tricky edge cases.",
-    hook: "Why does nearly every programming language standard library (C++, Java, Rust) default to Quicksort over every other sorting algorithm?",
-    superpower: "Blazing Real-World Cache Locality & In-Place Speed",
-    tradeoff: "O(n²) Worst Case if an Unbalanced Pivot is Selected",
-    mentalModel: "Height Partitioning Around a Center Reference Student",
-    keyPrinciples: [
-      "Pick a reference element called the pivot.",
-      "Partition the array: move all smaller elements left, and all larger elements right.",
-      "The pivot lands in its permanent, mathematically settled spot.",
-      "Recursively repeat partitioning on the left and right sides without needing temporary arrays."
-    ],
-    analogy: "Like organizing students by height: pick one student as a reference (pivot), send everyone shorter to the left and everyone taller to the right, then repeat on each group.",
-    idea: "Quick Sort selects a pivot, partitions the array so smaller elements move left and larger move right, and recursively sorts the sub-partitions.",
-    sampleArray: [33, 10, 55, 71, 29, 14, 42],
-    codeBlocks: [
-      {
-        title: "Pivot Selection (Lomuto)",
-        lines: "int pivot = arr[high];\nint i = low - 1;",
-        explanation: "Chooses the rightmost element as the pivot and maintains partition boundary index i.",
-      },
-      {
-        title: "Partitioning Scan",
-        lines: "for (int j = low; j < high; j++) {\n    if (arr[j] < pivot) {\n        i++;\n        swap(arr[i], arr[j]);\n    }\n}",
-        explanation: "Moves all elements smaller than pivot into the left zone [low..i].",
-      },
-      {
-        title: "Settling the Pivot",
-        lines: "swap(arr[i + 1], arr[high]);\nreturn i + 1;",
-        explanation: "Places the pivot into its final settled spot between the two partitions.",
-      },
-    ],
-    complexityWhy: {
-      time: "Average case is O(n log n) with balanced partitions. Worst case is O(n²) if an unbalanced pivot is picked on already-sorted input (tree depth becomes n).",
-      space: "O(log n) average recursion call stack space (can degrade to O(n) in worst case), but 0 extra array memory required (In-place).",
-      stability: "Not stable because partitioning swaps elements across wide distances over the pivot.",
-    },
-  },
+  // ==========================================
+  // TIER 1: FOUNDATIONS & CONTIGUOUS MEMORY
+  // ==========================================
   {
     id: "array",
-    order: 6,
+    order: 1,
     name: "Array (Static & Dynamic)",
     category: "data-structure",
-    badge: "Contiguous Memory",
+    badge: "Start Here",
     estimatedTime: "~15 min",
     difficulty: "Beginner",
-    reason: "The foundation of all computer memory storage. Learn how contiguous RAM allocation enables instantaneous O(1) random access by index.",
+    reason: "Start here. The fundamental building block of all computer memory: contiguous elements and instant O(1) index access.",
     hook: "How does your CPU access the 10,000,000th item in memory in a single clock cycle without scanning through the first 9,999,999?",
     superpower: "Instantaneous O(1) Random Access via Hardware Math",
     tradeoff: "Expensive O(n) Element Shifting on Middle Insertions & Deletions",
@@ -304,147 +125,19 @@ export const LEARNING_PATH: LearningStep[] = [
       space: "Contiguous O(n) storage with zero pointer overhead per element. L1/L2 cache prefetching provides peak spatial locality.",
     },
   },
-  {
-    id: "stack",
-    order: 7,
-    name: "Stack",
-    category: "data-structure",
-    badge: "LIFO Container",
-    estimatedTime: "~15 min",
-    difficulty: "Beginner",
-    reason: "The foundational LIFO (Last-In, First-Out) data structure. Direct insight into function calls, recursion call stacks, and undo buffers.",
-    hook: "How do text editor 'Undo (Ctrl+Z)', browser 'Back', and function call recursion never lose track of where you came from?",
-    superpower: "Strict O(1) Push, Pop & Top Operations with Zero Ambiguity",
-    tradeoff: "Zero Random Index Access (Only the Top is Visible)",
-    mentalModel: "A Spring-Loaded Cafeteria Tray Dispenser",
-    keyPrinciples: [
-      "Strict LIFO (Last-In, First-Out) discipline: only the most recently added item can be removed.",
-      "Push adds a new element to the top in O(1) time.",
-      "Pop removes the current top element in O(1) time.",
-      "Crucial in syntax parsing (matching parentheses), expression evaluation, and call-stack unwinding."
-    ],
-    analogy: "A stack of plates in a cafeteria: you add new clean plates to the very top, and you take plates off from the top. The last plate placed is the first one removed.",
-    idea: "A Stack restricts all insertions and deletions to a single endpoint called the top. It provides strict O(1) Push (insert), Pop (remove), and Top/Peek (read) operations.",
-    sampleArray: [10, 20, 30, 40],
-    codeBlocks: [
-      {
-        title: "Push Operation (Insert to Top)",
-        lines: "bool push(int val) {\n    if (topIndex >= MAX_SIZE - 1) return false; // Overflow\n    arr[++topIndex] = val;\n    return true;\n}",
-        explanation: "Increments the topIndex and stores the value in O(1) time without moving any existing items.",
-      },
-      {
-        title: "Pop Operation (Remove from Top)",
-        lines: "bool pop() {\n    if (isEmpty()) return false; // Underflow\n    topIndex--;\n    return true;\n}",
-        explanation: "Decrements topIndex to discard the top item in O(1) time.",
-      },
-      {
-        title: "Peek / Top Operation (Inspect)",
-        lines: "int top() const {\n    if (isEmpty()) throw runtime_error(\"Stack is empty\");\n    return arr[topIndex];\n}",
-        explanation: "Reads the current top element in O(1) time without modifying stack state.",
-      },
-    ],
-    complexityWhy: {
-      time: "All core operations (push, pop, top, empty) execute in strictly O(1) constant time because operations always target index topIndex directly.",
-      space: "O(1) auxiliary space per operation; O(n) overall storage for n elements.",
-    },
-  },
-  {
-    id: "queue",
-    order: 8,
-    name: "Queue",
-    category: "data-structure",
-    badge: "FIFO Container",
-    estimatedTime: "~15 min",
-    difficulty: "Beginner",
-    reason: "The foundational FIFO (First-In, First-Out) data structure. Essential for breadth-first traversal (BFS), task scheduling, and buffering.",
-    hook: "How do Spotify stream buffers, printer spoolers, and hospital emergency triage lines guarantee fairness without starving anyone?",
-    superpower: "Strict O(1) FIFO Enqueue & Dequeue via Circular Pointers",
-    tradeoff: "Only Front and Rear are Accessible; Middle Inspection is Forbidden",
-    mentalModel: "An Airport Security Line (First Arrived, First Cleared)",
-    keyPrinciples: [
-      "Strict FIFO (First-In, First-Out) discipline: elements exit in the exact order they entered.",
-      "Enqueue adds new arrivals to the rear in O(1) time.",
-      "Dequeue removes the oldest waiting element from the front in O(1) time.",
-      "Circular array implementations use modulo arithmetic (rear + 1) % capacity to prevent memory drift."
-    ],
-    analogy: "A ticket line at a cinema: the first person who arrives in line is the first person served and allowed into the theater. New arrivals enter at the back.",
-    idea: "A Queue allows elements to enter at the rear (enqueue) and exit from the front (dequeue). In circular array implementations, modulo arithmetic (rear + 1) % capacity avoids shifting elements.",
-    sampleArray: [5, 15, 25, 35],
-    codeBlocks: [
-      {
-        title: "Enqueue (Insert at Rear)",
-        lines: "bool enqueue(int val) {\n    if (isFull()) return false; // Overflow\n    rear = (rear + 1) % capacity;\n    arr[rear] = val;\n    count++;\n    return true;\n}",
-        explanation: "Advances the rear pointer using modulo wrapping and stores the element in O(1) time.",
-      },
-      {
-        title: "Dequeue (Remove from Front)",
-        lines: "bool dequeue() {\n    if (isEmpty()) return false; // Underflow\n    front = (front + 1) % capacity;\n    count--;\n    return true;\n}",
-        explanation: "Advances front pointer in O(1) time, avoiding expensive O(n) array element shifts.",
-      },
-      {
-        title: "Front Inspection",
-        lines: "int getFront() const {\n    if (isEmpty()) throw runtime_error(\"Queue is empty\");\n    return arr[front];\n}",
-        explanation: "Returns the front element in O(1) time without removal.",
-      },
-    ],
-    complexityWhy: {
-      time: "All core operations (enqueue, dequeue, front, empty) execute in strictly O(1) constant time with circular buffer pointer arithmetic.",
-      space: "O(1) auxiliary space per operation; O(n) overall storage for n elements.",
-    },
-  },
-  {
-    id: "linked-list",
-    order: 9,
-    name: "Linked List",
-    category: "data-structure",
-    badge: "Nodes & Forward Pointers",
-    estimatedTime: "~15 min",
-    difficulty: "Intermediate",
-    reason: "The quintessential pointer-based linear structure. Master how dynamic nodes eliminate element shifting at the cost of direct indexing.",
-    hook: "What if your computer's RAM is heavily fragmented and cannot find an unbroken contiguous block of memory? Enter dynamic node pointers.",
-    superpower: "Instant O(1) Node Insertion at Head Without Shifting Elements",
-    tradeoff: "O(n) Sequential Traversal (No O(1) Random Index Access)",
-    mentalModel: "A Scavenger Hunt Where Each Clue Points to the Next",
-    keyPrinciples: [
-      "Nodes live scattered anywhere in heap memory, connected solely by forward next pointers.",
-      "Inserting at the head is strictly O(1) — allocate a node and redirect a single pointer.",
-      "To find index k, you must walk through k pointers starting from the head (O(k) traversal).",
-      "No wasted pre-allocated capacity, but incurs extra memory overhead for storing pointer addresses."
-    ],
-    analogy: "A treasure hunt with clues: each clue box has a treasure item and a slip of paper telling you the exact GPS address of the next clue box.",
-    idea: "A Singly Linked List consists of independently allocated nodes in heap memory, each holding data and a next pointer. Unlike contiguous arrays, inserting at the head is strictly O(1) because no other elements move.",
-    sampleArray: [10, 20, 30, 40],
-    codeBlocks: [
-      {
-        title: "Node Definition & Head Prepending",
-        lines: "struct Node {\n    int val;\n    Node* next;\n    Node(int x) : val(x), next(nullptr) {}\n};\n\nvoid insertAtHead(int val) {\n    Node* newNode = new Node(val);\n    newNode->next = head;\n    head = newNode;\n}",
-        explanation: "Allocates a new node and redirects head in O(1) time without shifting elements.",
-      },
-      {
-        title: "Traversal & Search",
-        lines: "bool search(int target) {\n    Node* curr = head;\n    while (curr) {\n        if (curr->val == target) return true;\n        curr = curr->next;\n    }\n    return false;\n}",
-        explanation: "Follows pointer chains sequentially from head to tail in O(n) time.",
-      },
-      {
-        title: "Deletion by Value",
-        lines: "bool deleteValue(int val) {\n    if (!head) return false;\n    if (head->val == val) {\n        Node* temp = head;\n        head = head->next;\n        delete temp;\n        return true;\n    }\n    Node* curr = head;\n    while (curr->next && curr->next->val != val) curr = curr->next;\n    if (!curr->next) return false;\n    Node* temp = curr->next;\n    curr->next = curr->next->next;\n    delete temp;\n    return true;\n}",
-        explanation: "Splices predecessor pointer around target node in O(n) time without shifting other nodes.",
-      },
-    ],
-    complexityWhy: {
-      time: "Prepend at head is O(1). Searching, tail insertion (without tail pointer), and deleting by value require sequential traversal O(n).",
-      space: "Consumes O(n) extra memory for pointer storage (4-8 bytes per node).",
-    },
-  },
+
+  // ==========================================
+  // TIER 2: ELEMENTARY LINEAR SEARCHING
+  // ==========================================
   {
     id: "linear-search",
-    order: 10,
+    order: 2,
     name: "Linear Search",
     category: "searching",
-    badge: "Sequential Scan",
+    badge: "First Algorithm",
     estimatedTime: "~10 min",
     difficulty: "Beginner",
-    reason: "The simplest search algorithm. Works on any collection without requiring sorting or extra preprocessing.",
+    reason: "Your first algorithm. The simplest intuition: walk through the array one element at a time until you find what you need.",
     hook: "When you have a completely unsorted pile of papers or an unsorted list, what is the honest, unavoidable mathematical reality?",
     superpower: "Zero Preconditions: Works on Any Unsorted, Raw Collection",
     tradeoff: "O(n) Linear Scalability (Must Check Every Item in Worst Case)",
@@ -470,54 +163,19 @@ export const LEARNING_PATH: LearningStep[] = [
       space: "Requires strictly O(1) extra space because it uses only one loop counter variable.",
     },
   },
-  {
-    id: "binary-search",
-    order: 11,
-    name: "Binary Search",
-    category: "searching",
-    badge: "Logarithmic Halving",
-    estimatedTime: "~15 min",
-    difficulty: "Intermediate",
-    reason: "Requires sorted input. Dramatically accelerates search time from O(n) to O(log n) by repeatedly halving the remaining candidates.",
-    hook: "Pick a secret number between 1 and 1,000,000. In 20 questions or fewer, a computer will guess it correctly every single time. Here is the math.",
-    superpower: "Exponential Halving: Cuts 1,000,000 Possibilities Down in ~20 Checks",
-    tradeoff: "Strict Precondition: The Collection MUST Be Sorted",
-    mentalModel: "Opening a Thick Printed Dictionary Directly to the Middle",
-    keyPrinciples: [
-      "Crucial Precondition: The array must be sorted in non-decreasing order.",
-      "Calculate mid = low + (high - low) / 2 to prevent 32-bit integer overflow.",
-      "Compare arr[mid] with target: if equal, done! If target is smaller, search left; if larger, search right.",
-      "Each comparison cuts the search space exactly in half, achieving astonishing O(log n) speed."
-    ],
-    analogy: "Looking up a word in a printed dictionary: you open the book to the exact middle. If the target word comes before, you discard the entire second half and repeat in the first half.",
-    idea: "PRECONDITION: Array must be sorted. Compare target with middle element arr[mid]. If equal, return mid. If target is smaller, search left half; if larger, search right half. Each step cuts the search space in half.",
-    sampleArray: [12, 24, 32, 45, 57, 68, 81, 99],
-    codeBlocks: [
-      {
-        title: "Iterative Implementation (O(1) Space)",
-        lines: "int binarySearch(const vector<int>& arr, int target) {\n    int low = 0, high = (int)arr.size() - 1;\n    while (low <= high) {\n        int mid = low + (high - low) / 2;\n        if (arr[mid] == target) return mid;\n        else if (arr[mid] < target) low = mid + 1;\n        else high = mid - 1;\n    }\n    return -1;\n}",
-        explanation: "Narrows search window [low..high]. `low + (high - low) / 2` avoids 32-bit integer overflow.",
-      },
-      {
-        title: "Recursive Implementation (O(log n) Call Stack)",
-        lines: "int binarySearchRec(const vector<int>& arr, int low, int high, int target) {\n    if (low > high) return -1;\n    int mid = low + (high - low) / 2;\n    if (arr[mid] == target) return mid;\n    if (arr[mid] < target) return binarySearchRec(arr, mid + 1, high, target);\n    return binarySearchRec(arr, low, mid - 1, target);\n}",
-        explanation: "Recursive divide-and-conquer consumes log₂(n) activation frames on the call stack.",
-      },
-    ],
-    complexityWhy: {
-      time: "Halving the search space on each step guarantees at most log₂(n) comparisons in all cases O(log n).",
-      space: "Iterative version uses O(1) space. Recursive version uses O(log n) call stack space.",
-    },
-  },
+
+  // ==========================================
+  // TIER 3: ASYMPTOTIC COMPLEXITY ANALYSIS
+  // ==========================================
   {
     id: "time-complexity",
-    order: 12,
+    order: 3,
     name: "Time Complexity",
     category: "complexity",
-    badge: "Big-O & Growth Rates",
+    badge: "Big-O Foundation",
     estimatedTime: "~15 min",
     difficulty: "Beginner",
-    reason: "The foundation of all algorithmic evaluation. Understand how instruction count and loops scale as input size n grows.",
+    reason: "Understand why some code runs in milliseconds while other code freezes your browser. Big-O notation demystified with visual curves.",
     hook: "Why does an algorithm that runs in 1 millisecond on 100 users suddenly freeze and crash a million-dollar cloud server when user traffic doubles?",
     superpower: "Hardware-Independent Asymptotic Growth Modeling",
     tradeoff: "Ignores Constant Multipliers and CPU Cache Physics on Small Inputs",
@@ -555,10 +213,10 @@ export const LEARNING_PATH: LearningStep[] = [
   },
   {
     id: "space-complexity",
-    order: 13,
+    order: 4,
     name: "Space Complexity",
     category: "complexity",
-    badge: "Auxiliary Memory & Stack",
+    badge: "Memory Footprint",
     estimatedTime: "~15 min",
     difficulty: "Beginner",
     reason: "Memory is a finite physical resource. Master the distinction between input storage, auxiliary working buffers, and call stack overhead.",
@@ -595,6 +253,422 @@ export const LEARNING_PATH: LearningStep[] = [
     complexityWhy: {
       time: "Tracks whether memory allocations happen inside inner loops (O(n) per pass) or statically upfront.",
       space: "Differentiates between Total Space (input + working memory) and Auxiliary Space (strictly extra memory).",
+    },
+  },
+
+  // ==========================================
+  // TIER 4: SUB-LINEAR / DIVIDE SEARCHING
+  // ==========================================
+  {
+    id: "binary-search",
+    order: 5,
+    name: "Binary Search",
+    category: "searching",
+    badge: "Divide & Halve",
+    estimatedTime: "~15 min",
+    difficulty: "Beginner",
+    reason: "Discover the magic of sorted data: cut the search space in half with every single check to achieve blazing O(log n) speed.",
+    hook: "Pick a secret number between 1 and 1,000,000. In 20 questions or fewer, a computer will guess it correctly every single time. Here is the math.",
+    superpower: "Exponential Halving: Cuts 1,000,000 Possibilities Down in ~20 Checks",
+    tradeoff: "Strict Precondition: The Collection MUST Be Sorted",
+    mentalModel: "Opening a Thick Printed Dictionary Directly to the Middle",
+    keyPrinciples: [
+      "Crucial Precondition: The array must be sorted in non-decreasing order.",
+      "Calculate mid = low + (high - low) / 2 to prevent 32-bit integer overflow.",
+      "Compare arr[mid] with target: if equal, done! If target is smaller, search left; if larger, search right.",
+      "Each comparison cuts the search space exactly in half, achieving astonishing O(log n) speed."
+    ],
+    analogy: "Looking up a word in a printed dictionary: you open the book to the exact middle. If the target word comes before, you discard the entire second half and repeat in the first half.",
+    idea: "PRECONDITION: Array must be sorted. Compare target with middle element arr[mid]. If equal, return mid. If target is smaller, search left half; if larger, search right half. Each step cuts the search space in half.",
+    sampleArray: [12, 24, 32, 45, 57, 68, 81, 99],
+    codeBlocks: [
+      {
+        title: "Iterative Implementation (O(1) Space)",
+        lines: "int binarySearch(const vector<int>& arr, int target) {\n    int low = 0, high = (int)arr.size() - 1;\n    while (low <= high) {\n        int mid = low + (high - low) / 2;\n        if (arr[mid] == target) return mid;\n        else if (arr[mid] < target) low = mid + 1;\n        else high = mid - 1;\n    }\n    return -1;\n}",
+        explanation: "Narrows search window [low..high]. `low + (high - low) / 2` avoids 32-bit integer overflow.",
+      },
+      {
+        title: "Recursive Implementation (O(log n) Call Stack)",
+        lines: "int binarySearchRec(const vector<int>& arr, int low, int high, int target) {\n    if (low > high) return -1;\n    int mid = low + (high - low) / 2;\n    if (arr[mid] == target) return mid;\n    if (arr[mid] < target) return binarySearchRec(arr, mid + 1, high, target);\n    return binarySearchRec(arr, low, mid - 1, target);\n}",
+        explanation: "Recursive divide-and-conquer consumes log₂(n) activation frames on the call stack.",
+      },
+    ],
+    complexityWhy: {
+      time: "Halving the search space on each step guarantees at most log₂(n) comparisons in all cases O(log n).",
+      space: "Iterative version uses O(1) space. Recursive version uses O(log n) call stack space.",
+    },
+  },
+
+  // ==========================================
+  // TIER 5: ELEMENTARY ABSTRACT DATA STRUCTURES
+  // ==========================================
+  {
+    id: "stack",
+    order: 6,
+    name: "Stack",
+    category: "data-structure",
+    badge: "LIFO Container",
+    estimatedTime: "~15 min",
+    difficulty: "Beginner",
+    reason: "Last-In, First-Out (LIFO). The core mental model powering undo buttons, browser back stacks, and recursive function calls.",
+    hook: "How do text editor 'Undo (Ctrl+Z)', browser 'Back', and function call recursion never lose track of where you came from?",
+    superpower: "Strict O(1) Push, Pop & Top Operations with Zero Ambiguity",
+    tradeoff: "Zero Random Index Access (Only the Top is Visible)",
+    mentalModel: "A Spring-Loaded Cafeteria Tray Dispenser",
+    keyPrinciples: [
+      "Strict LIFO (Last-In, First-Out) discipline: only the most recently added item can be removed.",
+      "Push adds a new element to the top in O(1) time.",
+      "Pop removes the current top element in O(1) time.",
+      "Crucial in syntax parsing (matching parentheses), expression evaluation, and call-stack unwinding."
+    ],
+    analogy: "A stack of plates in a cafeteria: you add new clean plates to the very top, and you take plates off from the top. The last plate placed is the first one removed.",
+    idea: "A Stack restricts all insertions and deletions to a single endpoint called the top. It provides strict O(1) Push (insert), Pop (remove), and Top/Peek (read) operations.",
+    sampleArray: [10, 20, 30, 40],
+    codeBlocks: [
+      {
+        title: "Push Operation (Insert to Top)",
+        lines: "bool push(int val) {\n    if (topIndex >= MAX_SIZE - 1) return false; // Overflow\n    arr[++topIndex] = val;\n    return true;\n}",
+        explanation: "Increments the topIndex and stores the value in O(1) time without moving any existing items.",
+      },
+      {
+        title: "Pop Operation (Remove from Top)",
+        lines: "bool pop() {\n    if (isEmpty()) return false; // Underflow\n    topIndex--;\n    return true;\n}",
+        explanation: "Decrements topIndex to discard the top item in O(1) time.",
+      },
+      {
+        title: "Peek / Top Operation (Inspect)",
+        lines: "int top() const {\n    if (isEmpty()) throw runtime_error(\"Stack is empty\");\n    return arr[topIndex];\n}",
+        explanation: "Reads the current top element in O(1) time without modifying stack state.",
+      },
+    ],
+    complexityWhy: {
+      time: "All core operations (push, pop, top, empty) execute in strictly O(1) constant time because operations always target index topIndex directly.",
+      space: "O(1) auxiliary space per operation; O(n) overall storage for n elements.",
+    },
+  },
+  {
+    id: "queue",
+    order: 7,
+    name: "Queue",
+    category: "data-structure",
+    badge: "FIFO Container",
+    estimatedTime: "~15 min",
+    difficulty: "Beginner",
+    reason: "First-In, First-Out (FIFO). The fair line-waiting structure powering task scheduling, printer queues, and breadth-first search.",
+    hook: "How do Spotify stream buffers, printer spoolers, and hospital emergency triage lines guarantee fairness without starving anyone?",
+    superpower: "Strict O(1) FIFO Enqueue & Dequeue via Circular Pointers",
+    tradeoff: "Only Front and Rear are Accessible; Middle Inspection is Forbidden",
+    mentalModel: "An Airport Security Line (First Arrived, First Cleared)",
+    keyPrinciples: [
+      "Strict FIFO (First-In, First-Out) discipline: elements exit in the exact order they entered.",
+      "Enqueue adds new arrivals to the rear in O(1) time.",
+      "Dequeue removes the oldest waiting element from the front in O(1) time.",
+      "Circular array implementations use modulo arithmetic (rear + 1) % capacity to prevent memory drift."
+    ],
+    analogy: "A ticket line at a cinema: the first person who arrives in line is the first person served and allowed into the theater. New arrivals enter at the back.",
+    idea: "A Queue allows elements to enter at the rear (enqueue) and exit from the front (dequeue). In circular array implementations, modulo arithmetic (rear + 1) % capacity avoids shifting elements.",
+    sampleArray: [5, 15, 25, 35],
+    codeBlocks: [
+      {
+        title: "Enqueue (Insert at Rear)",
+        lines: "bool enqueue(int val) {\n    if (isFull()) return false; // Overflow\n    rear = (rear + 1) % capacity;\n    arr[rear] = val;\n    count++;\n    return true;\n}",
+        explanation: "Advances the rear pointer using modulo wrapping and stores the element in O(1) time.",
+      },
+      {
+        title: "Dequeue (Remove from Front)",
+        lines: "bool dequeue() {\n    if (isEmpty()) return false; // Underflow\n    front = (front + 1) % capacity;\n    count--;\n    return true;\n}",
+        explanation: "Advances front pointer in O(1) time, avoiding expensive O(n) array element shifts.",
+      },
+      {
+        title: "Front Inspection",
+        lines: "int getFront() const {\n    if (isEmpty()) throw runtime_error(\"Queue is empty\");\n    return arr[front];\n}",
+        explanation: "Returns the front element in O(1) time without removal.",
+      },
+    ],
+    complexityWhy: {
+      time: "All core operations (enqueue, dequeue, front, empty) execute in strictly O(1) constant time with circular buffer pointer arithmetic.",
+      space: "O(1) auxiliary space per operation; O(n) overall storage for n elements.",
+    },
+  },
+
+  // ==========================================
+  // TIER 6: NON-CONTIGUOUS POINTER-LINKED STRUCTURES
+  // ==========================================
+  {
+    id: "linked-list",
+    order: 8,
+    name: "Linked List",
+    category: "data-structure",
+    badge: "Pointer Chains",
+    estimatedTime: "~15 min",
+    difficulty: "Beginner",
+    reason: "Break free of contiguous memory! Dynamic nodes connected by pointers that enable instantaneous O(1) insertions at the head.",
+    hook: "What if your computer's RAM is heavily fragmented and cannot find an unbroken contiguous block of memory? Enter dynamic node pointers.",
+    superpower: "Instant O(1) Node Insertion at Head Without Shifting Elements",
+    tradeoff: "O(n) Sequential Traversal (No O(1) Random Index Access)",
+    mentalModel: "A Scavenger Hunt Where Each Clue Points to the Next",
+    keyPrinciples: [
+      "Nodes live scattered anywhere in heap memory, connected solely by forward next pointers.",
+      "Inserting at the head is strictly O(1) — allocate a node and redirect a single pointer.",
+      "To find index k, you must walk through k pointers starting from the head (O(k) traversal).",
+      "No wasted pre-allocated capacity, but incurs extra memory overhead for storing pointer addresses."
+    ],
+    analogy: "A treasure hunt with clues: each clue box has a treasure item and a slip of paper telling you the exact GPS address of the next clue box.",
+    idea: "A Singly Linked List consists of independently allocated nodes in heap memory, each holding data and a next pointer. Unlike contiguous arrays, inserting at the head is strictly O(1) because no other elements move.",
+    sampleArray: [10, 20, 30, 40],
+    codeBlocks: [
+      {
+        title: "Node Definition & Head Prepending",
+        lines: "struct Node {\n    int val;\n    Node* next;\n    Node(int x) : val(x), next(nullptr) {}\n};\n\nvoid insertAtHead(int val) {\n    Node* newNode = new Node(val);\n    newNode->next = head;\n    head = newNode;\n}",
+        explanation: "Allocates a new node and redirects head in O(1) time without shifting elements.",
+      },
+      {
+        title: "Traversal & Search",
+        lines: "bool search(int target) {\n    Node* curr = head;\n    while (curr) {\n        if (curr->val == target) return true;\n        curr = curr->next;\n    }\n    return false;\n}",
+        explanation: "Follows pointer chains sequentially from head to tail in O(n) time.",
+      },
+      {
+        title: "Deletion by Value",
+        lines: "bool deleteValue(int val) {\n    if (!head) return false;\n    if (head->val == val) {\n        Node* temp = head;\n        head = head->next;\n        delete temp;\n        return true;\n    }\n    Node* curr = head;\n    while (curr->next && curr->next->val != val) curr = curr->next;\n    if (!curr->next) return false;\n    Node* temp = curr->next;\n    curr->next = curr->next->next;\n    delete temp;\n    return true;\n}",
+        explanation: "Splices predecessor pointer around target node in O(n) time without shifting other nodes.",
+      },
+    ],
+    complexityWhy: {
+      time: "Prepend at head is O(1). Searching, tail insertion (without tail pointer), and deleting by value require sequential traversal O(n).",
+      space: "Consumes O(n) extra memory for pointer storage (4-8 bytes per node).",
+    },
+  },
+
+  // ==========================================
+  // TIER 7: ELEMENTARY QUADRATIC SORTING
+  // ==========================================
+  {
+    id: "bubble",
+    order: 9,
+    name: "Bubble Sort",
+    category: "sorting",
+    badge: "Adjacent Swaps",
+    estimatedTime: "~10 min",
+    difficulty: "Beginner",
+    reason: "Your first sorting algorithm: compare neighbors and swap if they are in the wrong order until all items bubble into place.",
+    hook: "What is the absolute simplest way to sort a messy list if you are only ever allowed to compare two neighboring items at a time?",
+    superpower: "O(n) Adaptive Best Case on Already Sorted Lists",
+    tradeoff: "O(n²) Slow Nested Comparisons on Inverted Data",
+    mentalModel: "Bubbles Rising to the Surface of Carbonated Water",
+    keyPrinciples: [
+      "Scan from left to right, comparing adjacent neighbors (arr[j], arr[j+1]).",
+      "If the left item is strictly greater than the right item, swap them immediately.",
+      "After each full pass, the largest remaining unsorted item is permanently settled at the far right.",
+      "Early-Exit Optimization: If a full pass finishes with 0 swaps, terminate immediately in O(n) time."
+    ],
+    analogy: "Think of air bubbles rising to the surface of water — in every pass, the heaviest (largest) unsorted element bubbles up to the very end.",
+    idea: "Bubble Sort walks through the list from left to right, comparing pairs of adjacent elements. If an element is greater than the one immediately after it, they trade places. After each full pass, the biggest remaining number is guaranteed to be in its correct final spot.",
+    sampleArray: [29, 10, 14, 37, 13, 22, 45, 8],
+    codeBlocks: [
+      {
+        title: "Outer Loop & Early Exit Flag",
+        lines: "for (int i = 0; i < n - 1; i++) {\n    bool swapped = false;",
+        explanation: "Runs up to n - 1 times. If an entire pass completes without making a single swap, the list is already sorted and we can stop immediately.",
+      },
+      {
+        title: "Inner Adjacent Comparisons",
+        lines: "for (int j = 0; j < n - i - 1; j++) {\n    if (arr[j] > arr[j + 1]) {",
+        explanation: "Compares adjacent neighbors. The `- i` skips the elements at the end that are already in their final sorted positions.",
+      },
+      {
+        title: "Swapping Elements",
+        lines: "    swap(arr[j], arr[j + 1]);\n    swapped = true;\n}",
+        explanation: "Swaps the two elements if the left one is bigger, and marks swapped = true so the loop knows work was done.",
+      },
+    ],
+    complexityWhy: {
+      time: "Two nested loops, each running up to n times, result in roughly n × n = O(n²) comparisons in the worst case. If already sorted, it finishes in O(n) thanks to the swapped flag.",
+      space: "It modifies the array directly without allocating additional memory arrays, making space complexity O(1) (In-place).",
+      stability: "Stable because it only swaps when arr[j] is strictly strictly greater than arr[j + 1], preserving original order of duplicate values.",
+    },
+  },
+  {
+    id: "selection",
+    order: 10,
+    name: "Selection Sort",
+    category: "sorting",
+    badge: "Find Minimum",
+    estimatedTime: "~15 min",
+    difficulty: "Beginner",
+    reason: "Different strategy, same simplicity: scan the unsorted pool, find the smallest item, and swap it into place once per pass.",
+    hook: "If moving physical objects in memory is expensive, how do you sort an entire collection with the absolute minimum number of total swaps?",
+    superpower: "Strictly O(n) Swaps (At Most 1 Single Swap per Pass)",
+    tradeoff: "Always O(n²) Comparisons Regardless of Input Order",
+    mentalModel: "Scanning a Shelf to Find the Absolute Shortest Book",
+    keyPrinciples: [
+      "Divide the array into two zones: a sorted prefix on the left, and an unsorted pool on the right.",
+      "Scan the entire unsorted pool to locate the index of the absolute minimum item.",
+      "Execute exactly ONE swap to place that minimum into its correct position at the boundary.",
+      "Repeat until the unsorted pool is empty. Never benefits from partially sorted data."
+    ],
+    analogy: "Like browsing a shelf of books: you scan all of them from left to right to find the shortest one, then place it in the first position.",
+    idea: "Selection Sort splits the array into a sorted portion on the left and an unsorted portion on the right. In each round, it scans the entire unsorted portion to find the absolute minimum value, and makes exactly one swap to place it at the beginning.",
+    sampleArray: [35, 12, 48, 19, 7, 60, 24, 15],
+    codeBlocks: [
+      {
+        title: "Outer Partition Loop",
+        lines: "for (int i = 0; i < n - 1; i++) {\n    int minIdx = i;",
+        explanation: "Index i marks the start of the unsorted portion. We assume arr[i] is the smallest until we scan the rest.",
+      },
+      {
+        title: "Finding the Smallest Element",
+        lines: "for (int j = i + 1; j < n; j++) {\n    if (arr[j] < arr[minIdx]) minIdx = j;\n}",
+        explanation: "Scans every remaining element to the right. Whenever a smaller value is found, its index is remembered in minIdx.",
+      },
+      {
+        title: "Single Swap per Pass",
+        lines: "swap(arr[i], arr[minIdx]);",
+        explanation: "After finding the true minimum for this pass, performs exactly one swap to put it into slot i.",
+      },
+    ],
+    complexityWhy: {
+      time: "Always scans the entire remaining list regardless of initial array order. (n-1) + (n-2) + ... + 1 = n(n-1)/2 comparisons, resulting in strictly O(n²) time.",
+      space: "O(1) auxiliary space because it sorts completely in-place.",
+      stability: "Not stable in default implementation because swapping across long distances can jump past identical items.",
+    },
+  },
+  {
+    id: "insertion",
+    order: 11,
+    name: "Insertion Sort",
+    category: "sorting",
+    badge: "Hand-Sorting Cards",
+    estimatedTime: "~15 min",
+    difficulty: "Beginner",
+    reason: "Most practical O(n²) algorithm: slide each item into its proper sorted slot just like arranging playing cards in your hand.",
+    hook: "Watch how card players sort a hand as cards are dealt one by one: they slide each card into its exact slot. Why is this nearly instant on almost-sorted data?",
+    superpower: "Blazing Near O(n) Speed on Almost-Sorted Real-World Data",
+    tradeoff: "O(n²) Worst Case with Heavy Shifting on Inverted Arrays",
+    mentalModel: "Slotting Playing Cards into Your Left Hand",
+    keyPrinciples: [
+      "Assume the first item is already sorted.",
+      "Pick the next item (the 'key') and inspect the sorted items to its left.",
+      "Shift all items greater than the key one slot to the right to open a vacancy.",
+      "Drop the key into the open slot. Extremely fast and cache-friendly for small collections."
+    ],
+    analogy: "Think of picking up playing cards one by one from a table and slotting each new card into its proper position among the cards already in your left hand.",
+    idea: "Insertion Sort takes elements one at a time and slides them leftward into their correct position in the already-sorted prefix of the array.",
+    sampleArray: [22, 11, 35, 18, 9, 44, 2],
+    codeBlocks: [
+      {
+        title: "Extracting the Key",
+        lines: "for (int i = 1; i < n; i++) {\n    int key = arr[i];\n    int j = i - 1;",
+        explanation: "Picks arr[i] as the 'key' to be inserted into the sorted subarray arr[0..i-1].",
+      },
+      {
+        title: "Shifting Greater Elements Right",
+        lines: "while (j >= 0 && arr[j] > key) {\n    arr[j + 1] = arr[j];\n    j--;\n}",
+        explanation: "Shifts elements greater than the key one position to the right to open up a vacant slot.",
+      },
+      {
+        title: "Inserting into the Slot",
+        lines: "arr[j + 1] = key;",
+        explanation: "Drops the key directly into the vacated position.",
+      },
+    ],
+    complexityWhy: {
+      time: "O(n) best-case when array is already sorted (while-loop never runs). O(n²) worst-case on reverse sorted input where every item shifts full distance.",
+      space: "O(1) in-place auxiliary space.",
+      stability: "Strictly stable because equal keys are never shifted past each other.",
+    },
+  },
+
+  // ==========================================
+  // TIER 8: ADVANCED DIVIDE-AND-CONQUER SORTING
+  // ==========================================
+  {
+    id: "merge",
+    order: 12,
+    name: "Merge Sort",
+    category: "sorting",
+    badge: "Divide & Conquer",
+    estimatedTime: "~20 min",
+    difficulty: "Intermediate",
+    reason: "Divide the problem, conquer the halves, and merge them in linear time. Guaranteed O(n log n) efficiency for massive datasets.",
+    hook: "Can you sort a list of 1,000,000 numbers in under a second by repeatedly breaking it in half? The mathematical triumph of divide-and-conquer.",
+    superpower: "Guaranteed O(n log n) Rock-Solid Worst-Case Predictability",
+    tradeoff: "Requires O(n) Auxiliary RAM Buffer for Merging",
+    mentalModel: "Zipping Two Sorted Decks of Cards Together",
+    keyPrinciples: [
+      "Divide: Recursively split the array in half until single-item subarrays remain.",
+      "Base Case: An array of 1 element is inherently sorted.",
+      "Conquer: Merge two sorted subarrays by comparing heads with a two-pointer pass.",
+      "Guaranteed O(n log n) performance regardless of whether data is random, sorted, or reversed."
+    ],
+    analogy: "Like splitting a huge pile of exam papers into two equal halves, giving each half to a teaching assistant to sort, and then zipping the two sorted stacks together.",
+    idea: "Merge Sort recursively splits the array into two halves until singletons remain, then merges sorted subarrays back together in linear time using a two-pointer technique.",
+    sampleArray: [38, 27, 43, 3, 9, 82, 10],
+    codeBlocks: [
+      {
+        title: "Recursive Divide Step",
+        lines: "int mid = left + (right - left) / 2;\nmergeSort(arr, left, mid);\nmergeSort(arr, mid + 1, right);",
+        explanation: "Divides the array into two equal halves and recursively sorts each half.",
+      },
+      {
+        title: "Two-Pointer Linear Merge",
+        lines: "while (i <= mid && j <= right) {\n    if (arr[i] <= arr[j]) temp.push_back(arr[i++]);\n    else temp.push_back(arr[j++]);\n}",
+        explanation: "Compares the heads of both sorted halves and appends the smaller element to temporary buffer.",
+      },
+      {
+        title: "Copy Back to Original Array",
+        lines: "for (int k = left; k <= right; k++) arr[k] = temp[k - left];",
+        explanation: "Copies the merged sorted slice back into the original array.",
+      },
+    ],
+    complexityWhy: {
+      time: "Guaranteed O(n log n) in all cases (best, average, worst). Tree depth is log₂ n and work per level is O(n).",
+      space: "O(n) auxiliary space due to the temporary array buffer required during merge.",
+      stability: "Stable because <= comparator prioritizes the left subarray on equal keys.",
+    },
+  },
+  {
+    id: "quick",
+    order: 13,
+    name: "Quick Sort",
+    category: "sorting",
+    badge: "Pivot Partition",
+    estimatedTime: "~25 min",
+    difficulty: "Intermediate",
+    reason: "The gold standard in-place sorting algorithm used in production runtimes: partition around a pivot for blazing average-case speed.",
+    hook: "Why does nearly every programming language standard library (C++, Java, Rust) default to Quicksort over every other sorting algorithm?",
+    superpower: "Blazing Real-World Cache Locality & In-Place Speed",
+    tradeoff: "O(n²) Worst Case if an Unbalanced Pivot is Selected",
+    mentalModel: "Height Partitioning Around a Center Reference Student",
+    keyPrinciples: [
+      "Pick a reference element called the pivot.",
+      "Partition the array: move all smaller elements left, and all larger elements right.",
+      "The pivot lands in its permanent, mathematically settled spot.",
+      "Recursively repeat partitioning on the left and right sides without needing temporary arrays."
+    ],
+    analogy: "Like organizing students by height: pick one student as a reference (pivot), send everyone shorter to the left and everyone taller to the right, then repeat on each group.",
+    idea: "Quick Sort selects a pivot, partitions the array so smaller elements move left and larger move right, and recursively sorts the sub-partitions.",
+    sampleArray: [33, 10, 55, 71, 29, 14, 42],
+    codeBlocks: [
+      {
+        title: "Pivot Selection (Lomuto)",
+        lines: "int pivot = arr[high];\nint i = low - 1;",
+        explanation: "Chooses the rightmost element as the pivot and maintains partition boundary index i.",
+      },
+      {
+        title: "Partitioning Scan",
+        lines: "for (int j = low; j < high; j++) {\n    if (arr[j] < pivot) {\n        i++;\n        swap(arr[i], arr[j]);\n    }\n}",
+        explanation: "Moves all elements smaller than pivot into the left zone [low..i].",
+      },
+      {
+        title: "Settling the Pivot",
+        lines: "swap(arr[i + 1], arr[high]);\nreturn i + 1;",
+        explanation: "Places the pivot into its final settled spot between the two partitions.",
+      },
+    ],
+    complexityWhy: {
+      time: "Average case is O(n log n) with balanced partitions. Worst case is O(n²) if an unbalanced pivot is picked on already-sorted input (tree depth becomes n).",
+      space: "O(log n) average recursion call stack space (can degrade to O(n) in worst case), but 0 extra array memory required (In-place).",
+      stability: "Not stable because partitioning swaps elements across wide distances over the pivot.",
     },
   },
 ];

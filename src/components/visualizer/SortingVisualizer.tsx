@@ -9,7 +9,6 @@ import { ArrayBars } from "./ArrayBars";
 import { VisualizerControls } from "./VisualizerControls";
 import { OperationIndicator } from "./OperationIndicator";
 import { CodeViewer } from "@/components/code/CodeViewer";
-import { LiveComplexityTracker } from "@/components/complexity/LiveComplexityTracker";
 import { ArrayVisualizer } from "./ArrayVisualizer";
 import { StackVisualizer } from "./StackVisualizer";
 import { QueueVisualizer } from "./QueueVisualizer";
@@ -403,7 +402,7 @@ export function SortingVisualizer({
     <div className="flex flex-col gap-4 w-full max-w-7xl mx-auto">
       {/* Unified Studio Grid: Left Visual Stage (7 cols), Right Code Execution (5 cols) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
-        {/* Left Column: Visual Canvas + Live Telemetry + Controls + Live Big-O */}
+        {/* Left Column: Visual Canvas + Live Telemetry + Controls */}
         <div className="lg:col-span-7 flex flex-col gap-3">
           {/* Visualizer Canvas */}
           <ArrayBars
@@ -445,21 +444,11 @@ export function SortingVisualizer({
             onSpeedChange={setSpeed}
             onArraySizeChange={handleArraySizeChange}
           />
-
-          {/* Live Big-O Bounds Strip */}
-          <LiveComplexityTracker
-            algorithmId={selectedAlgorithm}
-            arraySize={array.length}
-            comparisonsCount={comparisonsCount}
-            swapsCount={swapsCount}
-            isFinished={isFinished}
-            initialArray={originalArray}
-          />
         </div>
 
         {/* Right Column: Synchronized C++ Code Viewer */}
         <div className="lg:col-span-5 flex flex-col gap-3 lg:sticky lg:top-20">
-          <div className="h-[480px] sm:h-[540px] lg:h-[600px]">
+          <div className="h-[370px] sm:h-[400px] lg:h-[430px]">
             <CodeViewer
               code={currentMeta.cppCode}
               activeLineNumber={currentLineNumber}

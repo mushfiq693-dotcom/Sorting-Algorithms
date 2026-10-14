@@ -36,28 +36,15 @@ interface CategoryGroup {
 
 const CATEGORIES: CategoryGroup[] = [
   {
-    id: "sorting",
-    label: "SORTING ALGORITHMS",
-    icon: Cpu,
-    colorClass: "text-cyan-400",
-    items: [
-      { id: "bubble", num: "01", name: "Bubble Sort", badge: "O(n²)" },
-      { id: "selection", num: "02", name: "Selection Sort", badge: "O(n²)" },
-      { id: "insertion", num: "03", name: "Insertion Sort", badge: "O(n²)" },
-      { id: "merge", num: "04", name: "Merge Sort", badge: "O(n log n)" },
-      { id: "quick", num: "05", name: "Quick Sort", badge: "O(n log n)" },
-    ],
-  },
-  {
     id: "data-structures",
     label: "DATA STRUCTURES",
     icon: Database,
     colorClass: "text-blue-400",
     items: [
-      { id: "array", num: "06", name: "Array", badge: "Access O(1)" },
-      { id: "stack", num: "07", name: "Stack", badge: "LIFO O(1)" },
-      { id: "queue", num: "08", name: "Queue", badge: "FIFO O(1)" },
-      { id: "linked-list", num: "09", name: "Linked List", badge: "Nodes O(1)" },
+      { id: "array", num: "01", name: "Array", badge: "Access O(1)" },
+      { id: "stack", num: "06", name: "Stack", badge: "LIFO O(1)" },
+      { id: "queue", num: "07", name: "Queue", badge: "FIFO O(1)" },
+      { id: "linked-list", num: "08", name: "Linked List", badge: "Nodes O(1)" },
     ],
   },
   {
@@ -66,8 +53,8 @@ const CATEGORIES: CategoryGroup[] = [
     icon: Search,
     colorClass: "text-emerald-400",
     items: [
-      { id: "linear-search", num: "10", name: "Linear Search", badge: "O(n)" },
-      { id: "binary-search", num: "11", name: "Binary Search", badge: "O(log n)" },
+      { id: "linear-search", num: "02", name: "Linear Search", badge: "O(n)" },
+      { id: "binary-search", num: "05", name: "Binary Search", badge: "O(log n)" },
     ],
   },
   {
@@ -76,8 +63,21 @@ const CATEGORIES: CategoryGroup[] = [
     icon: TrendingUp,
     colorClass: "text-purple-400",
     items: [
-      { id: "time-complexity", num: "12", name: "Time Complexity", badge: "Big-O" },
-      { id: "space-complexity", num: "13", name: "Space Complexity", badge: "Aux Space" },
+      { id: "time-complexity", num: "03", name: "Time Complexity", badge: "Big-O" },
+      { id: "space-complexity", num: "04", name: "Space Complexity", badge: "Aux Space" },
+    ],
+  },
+  {
+    id: "sorting",
+    label: "SORTING ALGORITHMS",
+    icon: Cpu,
+    colorClass: "text-cyan-400",
+    items: [
+      { id: "bubble", num: "09", name: "Bubble Sort", badge: "O(n²)" },
+      { id: "selection", num: "10", name: "Selection Sort", badge: "O(n²)" },
+      { id: "insertion", num: "11", name: "Insertion Sort", badge: "O(n²)" },
+      { id: "merge", num: "12", name: "Merge Sort", badge: "O(n log n)" },
+      { id: "quick", num: "13", name: "Quick Sort", badge: "O(n log n)" },
     ],
   },
 ];

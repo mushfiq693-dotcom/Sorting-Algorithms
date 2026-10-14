@@ -82,35 +82,6 @@ export function OperationIndicator({
           <span className="truncate">{explanation || "Ready. Click 'Start' or 'Step' to begin."}</span>
         </p>
       </div>
-
-      {/* Compact Color Legend */}
-      <div className="flex flex-wrap items-center gap-3 text-[10px] font-mono text-muted-foreground pt-0.5 px-0.5">
-        <span className="font-bold text-foreground">Legend:</span>
-        <div className="flex items-center gap-1">
-          <span className="h-2 w-2 rounded-xs bg-cyan-400" />
-          <span>Default</span>
-        </div>
-        <div className="flex items-center gap-1">
-          <span className="h-2 w-2 rounded-xs bg-amber-400" />
-          <span>Comparing</span>
-        </div>
-        <div className="flex items-center gap-1">
-          <span className="h-2 w-2 rounded-xs bg-rose-500" />
-          <span>Swapping</span>
-        </div>
-        <div className="flex items-center gap-1">
-          <span className="h-2 w-2 rounded-xs bg-[#D97706]" />
-          <span>Write / Shift</span>
-        </div>
-        <div className="flex items-center gap-1">
-          <span className="h-2 w-2 rounded-xs bg-emerald-400" />
-          <span>Sorted</span>
-        </div>
-        <div className="flex items-center gap-1">
-          <span className="h-2 w-2 rounded-xs bg-purple-400" />
-          <span>Pivot</span>
-        </div>
-      </div>
     </div>
   );
 }

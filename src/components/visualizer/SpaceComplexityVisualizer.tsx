@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { CodeViewer } from "@/components/code/CodeViewer";
 import {
   HardDrive,
   Layers,
@@ -16,7 +17,6 @@ import {
   AlertTriangle,
   Zap,
   TrendingUp,
-  Activity,
   ArrowDown,
   Box,
 } from "lucide-react";
@@ -246,273 +246,299 @@ export function SpaceComplexityVisualizer() {
     return cells;
   }, [selectedMode, targetAuxiliarySlots, activeFrameCount]);
 
-  const peakBytes = targetAuxiliarySlots * 4; // 4 bytes per integer
-
   return (
-    <div className="flex flex-col gap-6 rounded-2xl border border-border bg-card/80 p-5 sm:p-7 backdrop-blur-xl shadow-xl">
-      {/* Top Header & Mode Switcher */}
-      <div className="flex flex-col gap-4 border-b border-border pb-5">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div>
-            <div className="flex items-center gap-2 mb-1">
-              <span className="text-xs font-mono font-bold uppercase tracking-wider text-cyan-500 flex items-center gap-1.5">
+    <div className="flex flex-col gap-4 w-full max-w-7xl mx-auto" suppressHydrationWarning>
+      {/* Unified Studio Grid: Left Visual Stage (7 cols), Right Code Execution (5 cols) */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
+        {/* Left Column: Visual Canvas + Live Telemetry + Controls */}
+        <div className="lg:col-span-7 flex flex-col gap-3">
+          {/* Main Visual Allocation Stage Canvas */}
+          <div className="p-4 sm:p-5 rounded-2xl border border-border bg-card/60 backdrop-blur-xl flex flex-col min-h-[360px] relative overflow-hidden shadow-xs">
+            {/* Header Indicators */}
+            <div className="flex items-center justify-between border-b border-border/80 pb-2.5 mb-3 text-xs font-mono">
+              <div className="flex items-center gap-2 text-cyan-600 dark:text-cyan-400 font-bold">
                 <HardDrive className="h-4 w-4" />
-                <span>Memory Footprint & Allocation Engine</span>
-              </span>
-              <span className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded ${profile.badgeBg} ${profile.badgeText} border ${profile.badgeBorder}`}>
-                {profile.complexity}
-              </span>
-            </div>
-            <h3 className="text-xl font-extrabold text-foreground tracking-tight">
-              {profile.name} — <span className="font-mono text-cyan-400">{profile.complexity}</span>
-            </h3>
-            <p className="text-xs sm:text-sm text-muted-foreground mt-1 leading-relaxed max-w-2xl">
-              {profile.description}
-            </p>
-          </div>
-
-          <div className="flex items-center gap-2 p-1.5 rounded-xl border border-border bg-secondary/40 shrink-0">
-            <span className="text-[11px] font-mono font-bold text-muted-foreground px-2">Formula:</span>
-            <span className="text-xs font-mono font-bold text-cyan-400 bg-background/80 px-2.5 py-1 rounded-lg border border-border">
-              {profile.formulaStr}
-            </span>
-          </div>
-        </div>
-
-        {/* Mode Selector Tabs */}
-        <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
-          {(Object.keys(SPACE_MODE_PROFILES) as SpaceAllocationMode[]).map((modeKey) => {
-            const p = SPACE_MODE_PROFILES[modeKey];
-            const isSelected = selectedMode === modeKey;
-
-            return (
-              <button
-                key={modeKey}
-                onClick={() => setSelectedMode(modeKey)}
-                className={`flex flex-col items-center justify-center p-2.5 rounded-xl border text-center transition-all cursor-pointer ${
-                  isSelected
-                    ? "bg-cyan-500/15 border-cyan-500/80 text-foreground font-bold shadow-md shadow-cyan-500/10 scale-[1.02]"
-                    : "border-border bg-secondary/30 text-muted-foreground hover:bg-secondary/70 hover:text-foreground"
-                }`}
-              >
-                <span className="font-mono text-xs font-bold text-foreground">{p.complexity}</span>
-                <span className="text-[9px] font-sans text-muted-foreground mt-0.5 truncate">{p.name}</span>
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* Control Sliders & Interactive Controls */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 rounded-2xl border border-border bg-secondary/30">
-        {/* Input Size N Slider */}
-        <div className="space-y-2">
-          <div className="flex items-center justify-between text-xs">
-            <span className="font-mono font-semibold text-foreground flex items-center gap-1.5">
-              <Sliders className="h-3.5 w-3.5 text-cyan-500" />
-              <span>Input Size (n)</span>
-            </span>
-            <span className="font-mono font-bold text-cyan-400 bg-background px-2 py-0.5 rounded border border-border text-xs">
-              n = {n}
-            </span>
-          </div>
-          <input
-            type="range"
-            min={1}
-            max={profile.maxN}
-            value={n}
-            onChange={(e) => setN(parseInt(e.target.value, 10))}
-            className="w-full h-1.5 bg-secondary rounded-lg appearance-none cursor-pointer accent-cyan-500"
-          />
-          <div className="flex justify-between text-[10px] font-mono text-muted-foreground">
-            <span>n = 1</span>
-            <span>Max for mode: n = {profile.maxN}</span>
-          </div>
-        </div>
-
-        {/* Playback Controls */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
-          <div className="flex items-center gap-2 w-full sm:w-auto">
-            <button
-              onClick={handlePlayToggle}
-              className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 px-4 py-2 text-xs font-bold text-white hover:from-blue-500 transition-all active:scale-95 shadow-md shadow-cyan-500/20 cursor-pointer"
-            >
-              {isPlaying ? <Pause className="h-3.5 w-3.5" /> : <Play className="h-3.5 w-3.5 fill-current" />}
-              <span>{isPlaying ? "Pause" : activeFrameCount >= targetAuxiliarySlots ? "Restart" : "Allocate Memory"}</span>
-            </button>
-
-            <button
-              onClick={handleStepForward}
-              disabled={isPlaying || activeFrameCount >= targetAuxiliarySlots}
-              className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-border bg-card px-3 py-2 text-xs font-semibold text-foreground hover:bg-secondary disabled:opacity-40 disabled:cursor-not-allowed transition-all active:scale-95 cursor-pointer"
-              title="Single step forward"
-            >
-              <StepForward className="h-3.5 w-3.5 text-cyan-500" />
-              <span>Step</span>
-            </button>
-
-            <button
-              onClick={handleReset}
-              className="p-2 rounded-xl border border-border bg-card text-muted-foreground hover:text-foreground hover:bg-secondary transition-all active:scale-95 cursor-pointer"
-              title="Reset"
-            >
-              <RotateCcw className="h-3.5 w-3.5" />
-            </button>
-          </div>
-
-          <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
-            <span className="text-[10px] font-mono text-muted-foreground">Speed:</span>
-            <input
-              type="range"
-              min={100}
-              max={800}
-              step={50}
-              value={900 - speed}
-              onChange={(e) => setSpeed(900 - parseInt(e.target.value, 10))}
-              className="w-20 h-1.5 bg-secondary rounded-lg appearance-none cursor-pointer accent-cyan-500"
-            />
-          </div>
-        </div>
-      </div>
-
-      {/* Memory Telemetry Dashboard */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <div className="p-3 rounded-xl border border-border bg-card space-y-1">
-          <span className="text-[10px] font-mono font-semibold text-muted-foreground uppercase tracking-wider block">
-            Input Array Memory
-          </span>
-          <div className="text-base sm:text-lg font-mono font-bold text-foreground flex items-center gap-1.5">
-            <Box className="h-4 w-4 text-muted-foreground" />
-            <span>{n} items ({n * 4} B)</span>
-          </div>
-        </div>
-
-        <div className="p-3 rounded-xl border border-border bg-card space-y-1">
-          <span className="text-[10px] font-mono font-semibold text-muted-foreground uppercase tracking-wider block">
-            Auxiliary Slots Used
-          </span>
-          <div className="text-base sm:text-lg font-mono font-bold text-cyan-400 flex items-center gap-1.5">
-            <Activity className="h-4 w-4 text-cyan-500" />
-            <span>{activeFrameCount} / {targetAuxiliarySlots}</span>
-          </div>
-        </div>
-
-        <div className="p-3 rounded-xl border border-border bg-card space-y-1">
-          <span className="text-[10px] font-mono font-semibold text-muted-foreground uppercase tracking-wider block">
-            Peak Extra Bytes
-          </span>
-          <div className="text-base sm:text-lg font-mono font-bold text-emerald-400 flex items-center gap-1.5">
-            <CheckCircle2 className="h-4 w-4 text-emerald-500" />
-            <span>{peakBytes} Bytes</span>
-          </div>
-        </div>
-
-        <div className="p-3 rounded-xl border border-border bg-card space-y-1">
-          <span className="text-[10px] font-mono font-semibold text-muted-foreground uppercase tracking-wider block">
-            Memory Efficiency
-          </span>
-          <div className="text-base sm:text-lg font-mono font-bold text-purple-400 flex items-center gap-1.5">
-            <TrendingUp className="h-4 w-4 text-purple-500" />
-            <span>{selectedMode === "in-place" ? "100% In-Place" : `${(targetAuxiliarySlots / n).toFixed(1)}× Extra`}</span>
-          </div>
-        </div>
-      </div>
-
-      {/* Main Memory Allocation Stage */}
-      <div className="rounded-2xl border border-border bg-card/60 p-5 space-y-4">
-        {selectedMode === "recursion-tree" || selectedMode === "linear-recursion" ? (
-          /* Stack Frame Call Stack Visualizer */
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-mono font-bold text-foreground flex items-center gap-1.5">
-                <Layers className="h-3.5 w-3.5 text-cyan-500" />
-                <span>Call Stack Activation Frames (Peak Depth = {targetAuxiliarySlots})</span>
-              </span>
-              <span className="text-[10px] font-mono text-cyan-400">
-                {activeFrameCount} Active Frames
-              </span>
+                <span>Memory Allocation Canvas ({profile.name})</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] text-muted-foreground font-mono">Formula:</span>
+                <span className="text-xs font-mono font-bold text-cyan-600 dark:text-cyan-400 bg-secondary/80 px-2 py-0.5 rounded border border-border">
+                  {profile.formulaStr}
+                </span>
+              </div>
             </div>
 
-            <div className="flex flex-col-reverse gap-2 min-h-48 p-4 rounded-xl border border-border bg-background/80 max-h-72 overflow-y-auto">
-              {stackFrames.length === 0 ? (
-                <div className="text-center py-10 text-xs font-mono text-muted-foreground">
-                  Call stack empty. Click &ldquo;Allocate Memory&rdquo; to simulate recursive function calls.
+            {/* Stage Body */}
+            <div className="flex-1 flex flex-col justify-center space-y-3 py-2">
+              {selectedMode === "recursion-tree" || selectedMode === "linear-recursion" ? (
+                /* Stack Frame Call Stack Visualizer */
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between text-[11px] font-mono">
+                    <span className="font-bold text-foreground flex items-center gap-1.5">
+                      <Layers className="h-3.5 w-3.5 text-cyan-500" />
+                      <span>Call Stack Activation Frames (Peak Depth = {targetAuxiliarySlots})</span>
+                    </span>
+                    <span className="text-cyan-600 dark:text-cyan-400 font-bold">
+                      {activeFrameCount} Active Frames
+                    </span>
+                  </div>
+
+                  <div className="flex flex-col-reverse gap-1.5 min-h-[200px] p-3 rounded-xl border border-border bg-secondary/20 max-h-56 overflow-y-auto">
+                    {stackFrames.length === 0 ? (
+                      <div className="text-center py-12 text-xs font-mono text-muted-foreground">
+                        Call stack idle. Click &ldquo;Allocate Memory&rdquo; to simulate recursive function calls.
+                      </div>
+                    ) : (
+                      stackFrames.map((frame, idx) => (
+                        <motion.div
+                          key={frame.id}
+                          initial={{ opacity: 0, y: 15 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          className={`p-2 rounded-lg border flex items-center justify-between text-xs font-mono ${
+                            idx === stackFrames.length - 1
+                              ? "bg-cyan-500/20 border-cyan-500 text-cyan-600 dark:text-cyan-300 shadow-xs font-bold"
+                              : "bg-secondary/60 border-border text-foreground"
+                          }`}
+                        >
+                          <div className="flex items-center gap-2">
+                            <span className="px-1.5 py-0.2 rounded bg-card text-[10px] border border-border">
+                              #{frame.id}
+                            </span>
+                            <span className="font-bold">{frame.fnName}</span>
+                          </div>
+                          <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
+                            <span>{frame.memAddr}</span>
+                            <span className="px-1.5 py-0.2 rounded bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 font-bold">{frame.sizeBytes}</span>
+                          </div>
+                        </motion.div>
+                      ))
+                    )}
+                  </div>
                 </div>
               ) : (
-                stackFrames.map((frame, idx) => (
-                  <motion.div
-                    key={frame.id}
-                    initial={{ opacity: 0, y: 15 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className={`p-3 rounded-xl border flex items-center justify-between text-xs font-mono ${
-                      idx === stackFrames.length - 1
-                        ? "bg-cyan-500/20 border-cyan-500 text-cyan-300 shadow-md shadow-cyan-500/20 font-bold"
-                        : "bg-secondary/60 border-border text-foreground"
+                /* Heap Dynamic Memory Buffer Cells Grid */
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between text-[11px] font-mono">
+                    <span className="font-bold text-foreground flex items-center gap-1.5">
+                      <Box className="h-3.5 w-3.5 text-cyan-500" />
+                      <span>Heap Memory Buffer ({heapCells.length} Total Slots)</span>
+                    </span>
+                    <span className="text-cyan-600 dark:text-cyan-400 font-bold">
+                      {activeFrameCount} / {targetAuxiliarySlots} Allocated
+                    </span>
+                  </div>
+
+                  <div className={`grid gap-1.5 p-3 rounded-xl border border-border bg-secondary/20 min-h-[200px] items-center ${
+                    selectedMode === "matrix-grid" ? "grid-cols-4 sm:grid-cols-6 md:grid-cols-8" : "grid-cols-4 sm:grid-cols-8 md:grid-cols-12"
+                  }`}>
+                    {heapCells.map((cell) => (
+                      <motion.div
+                        key={cell.id}
+                        initial={{ scale: 0.8 }}
+                        animate={{
+                          scale: cell.isAllocated ? 1.05 : 1,
+                          backgroundColor: cell.isAllocated ? "rgba(6, 182, 212, 0.2)" : "rgba(100, 116, 139, 0.1)",
+                          borderColor: cell.isAllocated ? "#06b6d4" : "rgba(100, 116, 139, 0.2)",
+                        }}
+                        className={`p-1.5 rounded-lg border flex flex-col items-center justify-center text-center font-mono transition-all ${
+                          cell.isAllocated ? "text-cyan-600 dark:text-cyan-300 shadow-xs" : "text-muted-foreground/40"
+                        }`}
+                      >
+                        <span className="text-[11px] font-bold">Slot #{cell.id}</span>
+                        <span className="text-[8px] text-muted-foreground">{cell.address}</span>
+                        <span className="text-[8px] font-bold text-emerald-500 mt-0.5">4B</span>
+                      </motion.div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Memory Footprint Stats Row */}
+              <div className="flex flex-wrap items-center justify-between gap-2 text-[11px] font-mono pt-1 text-muted-foreground">
+                <div className="flex items-center gap-1.5">
+                  <Box className="h-3.5 w-3.5 text-muted-foreground" />
+                  <span>Input Buffer: <strong className="text-foreground">{n} items ({n * 4} B)</strong></span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <TrendingUp className="h-3.5 w-3.5 text-purple-400" />
+                  <span>Auxiliary Efficiency: <strong className="text-foreground">{selectedMode === "in-place" ? "100% In-Place" : `${(targetAuxiliarySlots / n).toFixed(1)}× Extra`}</strong></span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Operation Status & Live Execution Telemetry */}
+          <div className="flex flex-col gap-2 rounded-2xl border border-border bg-card p-2.5 sm:p-3 backdrop-blur-xl shadow-xs">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                <span className="relative flex h-2.5 w-2.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 bg-cyan-400" />
+                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-cyan-500" />
+                </span>
+                <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-foreground">
+                  Execution Telemetry
+                </span>
+              </div>
+              <div className="flex items-center gap-1.5 text-[11px] font-mono">
+                <div className="flex items-center gap-1 rounded-lg bg-cyan-500/10 border border-cyan-500/30 px-2 py-0.5 text-cyan-600 dark:text-cyan-300">
+                  <span className="text-[10px] text-muted-foreground">Space:</span>
+                  <strong className="font-bold">{profile.complexity}</strong>
+                </div>
+                <div className="flex items-center gap-1 rounded-lg bg-amber-500/10 border border-amber-500/30 px-2 py-0.5 text-amber-600 dark:text-amber-300">
+                  <span className="text-[10px] text-muted-foreground">n:</span>
+                  <strong className="font-bold">{n}</strong>
+                </div>
+                <div className="flex items-center gap-1 rounded-lg bg-emerald-500/10 border border-emerald-500/30 px-2 py-0.5 text-emerald-600 dark:text-emerald-300">
+                  <span className="text-[10px] text-muted-foreground">Aux Slots:</span>
+                  <strong className="font-bold">{activeFrameCount}/{targetAuxiliarySlots}</strong>
+                </div>
+              </div>
+            </div>
+
+            {/* Dynamic Explanation Text Box */}
+            <div className="rounded-xl border border-border/80 bg-secondary/60 px-3 py-1.5 min-h-[36px] flex items-center shadow-inner text-foreground">
+              <p className="text-xs font-medium font-mono flex items-center gap-2 truncate">
+                <span className="h-1.5 w-1.5 rounded-full bg-cyan-500 shrink-0 animate-pulse" />
+                <span className="truncate">{profile.description}</span>
+              </p>
+            </div>
+
+          </div>
+
+          {/* Studio Control Bar */}
+          <div className="p-3.5 rounded-2xl border border-border bg-card/90 shadow-xs backdrop-blur-xl space-y-2.5">
+            {/* Mode Selector Tabs */}
+            <div className="grid grid-cols-2 sm:grid-cols-5 gap-1.5 pb-2 border-b border-border/70">
+              {(Object.keys(SPACE_MODE_PROFILES) as SpaceAllocationMode[]).map((modeKey) => {
+                const p = SPACE_MODE_PROFILES[modeKey];
+                const isSelected = selectedMode === modeKey;
+
+                return (
+                  <button
+                    key={modeKey}
+                    onClick={() => setSelectedMode(modeKey)}
+                    className={`flex flex-col items-center justify-center p-1.5 rounded-lg border text-center transition-all cursor-pointer ${
+                      isSelected
+                        ? "bg-cyan-500/15 border-cyan-500/80 text-cyan-600 dark:text-cyan-400 font-bold shadow-xs"
+                        : "border-border bg-secondary/30 text-muted-foreground hover:bg-secondary/70 hover:text-foreground"
                     }`}
                   >
-                    <div className="flex items-center gap-3">
-                      <span className="px-1.5 py-0.5 rounded bg-background text-[10px] border border-border">
-                        Frame #{frame.id}
-                      </span>
-                      <span className="font-bold">{frame.fnName}</span>
-                    </div>
-                    <div className="flex items-center gap-3 text-[11px] text-muted-foreground">
-                      <span>{frame.memAddr}</span>
-                      <span className="px-1.5 py-0.5 rounded bg-cyan-500/10 text-cyan-400">{frame.sizeBytes}</span>
-                    </div>
-                  </motion.div>
-                ))
-              )}
-            </div>
-          </div>
-        ) : (
-          /* Heap Dynamic Memory Buffer Cells Grid */
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-mono font-bold text-foreground flex items-center gap-1.5">
-                <Box className="h-3.5 w-3.5 text-cyan-500" />
-                <span>Heap Memory Slots Allocated ({heapCells.length} Total Buffer Cells)</span>
-              </span>
-              <span className="text-[10px] font-mono text-cyan-400">
-                {activeFrameCount} / {targetAuxiliarySlots} Allocated
-              </span>
+                    <span className="font-mono text-xs font-bold">{p.complexity}</span>
+                    <span className="text-[8px] font-sans text-muted-foreground truncate max-w-full">{p.name}</span>
+                  </button>
+                );
+              })}
             </div>
 
-            <div className={`grid gap-2 p-4 rounded-xl border border-border bg-background/80 min-h-48 items-center ${
-              selectedMode === "matrix-grid" ? "grid-cols-4 sm:grid-cols-6 md:grid-cols-8" : "grid-cols-4 sm:grid-cols-8 md:grid-cols-12"
-            }`}>
-              {heapCells.map((cell) => (
-                <motion.div
-                  key={cell.id}
-                  initial={{ scale: 0.8 }}
-                  animate={{
-                    scale: cell.isAllocated ? 1.05 : 1,
-                    backgroundColor: cell.isAllocated ? "rgba(6, 182, 212, 0.2)" : "rgba(100, 116, 139, 0.1)",
-                    borderColor: cell.isAllocated ? "#06b6d4" : "rgba(100, 116, 139, 0.2)",
-                  }}
-                  className={`p-2 rounded-xl border flex flex-col items-center justify-center text-center font-mono transition-all ${
-                    cell.isAllocated ? "text-cyan-300 shadow-sm" : "text-muted-foreground/40"
-                  }`}
+            {/* Input Size & Stepper Controls Row */}
+            <div className="flex flex-wrap items-center justify-between gap-3 pt-1">
+              {/* Size Slider */}
+              <div className="flex items-center gap-2 flex-1 min-w-[200px]">
+                <span className="text-xs font-mono text-muted-foreground font-semibold flex items-center gap-1">
+                  <Sliders className="h-3 w-3 text-cyan-500" />
+                  <span>Size (n):</span>
+                </span>
+                <input
+                  type="range"
+                  min={1}
+                  max={profile.maxN}
+                  value={n}
+                  onChange={(e) => setN(parseInt(e.target.value, 10))}
+                  className="flex-1 h-1.5 bg-secondary rounded-lg appearance-none cursor-pointer accent-cyan-500"
+                />
+                <span className="text-xs font-mono font-bold text-cyan-600 dark:text-cyan-400 bg-secondary px-2 py-0.5 rounded border border-border">
+                  {n}
+                </span>
+              </div>
+
+              {/* Playback Buttons */}
+              <div className="flex items-center gap-1.5">
+                <button
+                  onClick={handlePlayToggle}
+                  className="inline-flex items-center gap-1 rounded-lg bg-gradient-to-r from-cyan-500 to-blue-600 px-3 py-1.5 text-xs font-bold text-white hover:opacity-95 transition-all cursor-pointer shadow-xs"
                 >
-                  <span className="text-xs font-bold">Slot #{cell.id}</span>
-                  <span className="text-[9px] text-muted-foreground mt-0.5">{cell.address}</span>
-                  <span className="text-[8px] font-semibold text-emerald-400 mt-0.5">4B</span>
-                </motion.div>
-              ))}
+                  {isPlaying ? <Pause className="h-3 w-3" /> : <Play className="h-3 w-3 fill-current" />}
+                  <span>{isPlaying ? "Pause" : activeFrameCount >= targetAuxiliarySlots ? "Restart" : "Allocate Memory"}</span>
+                </button>
+
+                <button
+                  onClick={handleStepForward}
+                  disabled={isPlaying || activeFrameCount >= targetAuxiliarySlots}
+                  className="inline-flex items-center gap-1 rounded-lg border border-border bg-secondary px-2.5 py-1.5 text-xs font-semibold text-foreground hover:bg-secondary/80 disabled:opacity-40 cursor-pointer"
+                >
+                  <StepForward className="h-3 w-3 text-cyan-500" />
+                  <span>Step</span>
+                </button>
+
+                <button
+                  onClick={handleReset}
+                  className="p-1.5 rounded-lg border border-border bg-secondary text-muted-foreground hover:text-foreground cursor-pointer"
+                  title="Reset"
+                >
+                  <RotateCcw className="h-3.5 w-3.5" />
+                </button>
+              </div>
             </div>
           </div>
-        )}
-      </div>
 
-      {/* Synchronized C++ Memory Management Code */}
-      <div className="rounded-2xl border border-border bg-card p-4 space-y-2">
-        <span className="text-xs font-mono font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
-          <Zap className="h-3.5 w-3.5 text-cyan-500" />
-          <span>C++ Memory Allocation Pattern</span>
-        </span>
-        <pre className="text-xs font-mono text-foreground bg-background/90 p-3.5 rounded-xl border border-border overflow-x-auto leading-relaxed">
-          <code>{profile.codeSnippet}</code>
-        </pre>
+        </div>
+
+        {/* Right Column: Sticky C++ Code Studio & Inspector */}
+        <div className="lg:col-span-5 flex flex-col gap-3 lg:sticky lg:top-20">
+          <div className="h-[270px] sm:h-[290px] lg:h-[310px]">
+            <CodeViewer
+              code={profile.codeSnippet}
+              algorithmName={`SpaceComplexity_${profile.id.replace(/[^a-zA-Z0-9]/g, "")}`}
+              activeLineNumber={isPlaying ? 3 : null}
+            />
+          </div>
+
+          {/* Allocation Pattern Table */}
+          <div className="p-4 rounded-2xl border border-border bg-card/70 backdrop-blur-xl shadow-xs">
+            <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-muted-foreground mb-2.5 flex items-center gap-1.5">
+              <Cpu className="h-3.5 w-3.5 text-cyan-500" />
+              <span>Memory Pattern Breakdown (n = {n})</span>
+            </h3>
+
+            <div className="space-y-1 font-mono text-xs">
+              {(Object.keys(SPACE_MODE_PROFILES) as SpaceAllocationMode[]).map((modeKey) => {
+                const p = SPACE_MODE_PROFILES[modeKey];
+                const slots = p.auxiliaryFormula(n);
+                const isCurrent = selectedMode === modeKey;
+
+                return (
+                  <div
+                    key={modeKey}
+                    className={`flex items-center justify-between p-2 rounded-xl text-xs font-mono transition-all ${
+                      isCurrent
+                        ? "bg-cyan-500/10 border border-cyan-500/30 text-cyan-600 dark:text-cyan-300 font-bold"
+                        : "bg-secondary/40 text-muted-foreground hover:bg-secondary/60"
+                    }`}
+                  >
+                    <div className="flex items-center gap-2">
+                      <span className="w-20 font-bold">{p.complexity.split(" ")[0]}</span>
+                      <span className="text-[10px] text-muted-foreground font-sans hidden sm:inline">{p.name}</span>
+                    </div>
+                    <span className="font-bold">
+                      {slots * 4} Bytes ({slots} slots)
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Auxiliary Space Invariant card */}
+          <div className="p-3.5 rounded-2xl border border-border bg-card/70 backdrop-blur-xl">
+            <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-muted-foreground mb-1.5 flex items-center gap-1.5">
+              <Zap className="h-3.5 w-3.5 text-cyan-500" />
+              <span>Auxiliary Space vs. Total Space Invariant</span>
+            </h3>
+            <p className="text-[11px] text-muted-foreground leading-relaxed font-mono">
+              In algorithm analysis, <strong className="text-foreground">Auxiliary Space</strong> specifically isolates the <em>extra working memory</em> allocated by the algorithm itself, ignoring the input array storage.
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   );

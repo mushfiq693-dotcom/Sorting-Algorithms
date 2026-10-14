@@ -804,12 +804,21 @@ export const COMPLEXITY_TOPICS: AlgorithmId[] = [
 // Backward compatibility alias for sorting visualizer
 export const ALL_ALGORITHMS: AlgorithmId[] = SORTING_ALGORITHMS;
 
-// Global catalog of all topics across all categories
+// Global catalog of all topics across all categories (Beginner-First Progression)
 export const ALL_TOPICS: AlgorithmId[] = [
-  ...SORTING_ALGORITHMS,
-  ...SEARCHING_ALGORITHMS,
-  ...DATA_STRUCTURES,
-  ...COMPLEXITY_TOPICS,
+  "array",
+  "linear-search",
+  "time-complexity",
+  "space-complexity",
+  "binary-search",
+  "stack",
+  "queue",
+  "linked-list",
+  "bubble",
+  "selection",
+  "insertion",
+  "merge",
+  "quick",
 ];
 
 export const ALGORITHM_RUNNERS: Partial<

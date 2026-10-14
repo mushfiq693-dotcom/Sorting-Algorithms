@@ -56,16 +56,8 @@ const SpaceComplexityVisualizer = dynamic(
   () => import("@/components/visualizer/SpaceComplexityVisualizer").then((mod) => mod.SpaceComplexityVisualizer),
   { ssr: false, loading: () => <TabLoading /> }
 );
-const CodeDebugger = dynamic(
-  () => import("@/components/debugger/CodeDebugger").then((mod) => mod.CodeDebugger),
-  { ssr: false, loading: () => <TabLoading /> }
-);
 const BugHunt = dynamic(
   () => import("@/components/challenge/BugHunt").then((mod) => mod.BugHunt),
-  { ssr: false, loading: () => <TabLoading /> }
-);
-const PredictNext = dynamic(
-  () => import("@/components/practice/PredictNext").then((mod) => mod.PredictNext),
   { ssr: false, loading: () => <TabLoading /> }
 );
 const Quiz = dynamic(
@@ -108,7 +100,6 @@ import {
   Clock,
   Compass,
   FileCode,
-  HelpCircle,
   X,
   TrendingUp,
   Globe,
@@ -137,27 +128,13 @@ export default function AlgorithmDetailPage() {
   const isDataStructure = meta.category === "data-structure";
   const isComplexity = meta.category === "complexity";
   const isSearching = meta.category === "searching";
-  const isSpecialTopic = isDataStructure || isComplexity || isSearching;
 
   const [activeStep, setActiveStep] = useState<number>(1);
   const [activePracticeTab, setActivePracticeTab] = useState<
-    "debugger" | "bughunt" | "predict" | "quiz" | "problems"
-  >(isSpecialTopic ? "quiz" : "debugger");
-  const [topicDropdownOpen, setTopicDropdownOpen] = useState<boolean>(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
+    "quiz" | "bughunt" | "problems"
+  >("quiz");
   const [guidanceInfo, setGuidanceInfo] = useState<{ message: string; score: number; status: string } | null>(null);
   const [isGuidanceDismissed, setIsGuidanceDismissed] = useState<boolean>(false);
-
-  // Close dropdown on outside click
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setTopicDropdownOpen(false);
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
 
   useEffect(() => {
     try {
@@ -216,148 +193,10 @@ export default function AlgorithmDetailPage() {
 
           {/* Right: Actions with Topics Dropdown to the left of Docs & Theory */}
           <div className="flex items-center gap-2 sm:gap-3">
-            {/* Section-Wise Topic Switcher Dropdown */}
-            <div className="relative" ref={dropdownRef}>
-              <button
-                onClick={() => setTopicDropdownOpen(!topicDropdownOpen)}
-                className="inline-flex items-center gap-1.5 rounded-xl border border-cyan-500/30 bg-cyan-500/10 px-2.5 sm:px-3 py-1.5 text-xs font-semibold text-cyan-600 dark:text-cyan-300 hover:bg-cyan-500/20 transition-all active:scale-95 shadow-sm cursor-pointer"
-                aria-expanded={topicDropdownOpen}
-                aria-label="All Topics"
-              >
-                <Layers className="h-3.5 w-3.5 text-cyan-500" />
-                <span className="hidden xs:inline">All Topics</span>
-                <span className="xs:hidden">Topics</span>
-                <ChevronDown
-                  className={`h-3.5 w-3.5 transition-transform duration-200 ${
-                    topicDropdownOpen ? "rotate-180 text-cyan-500" : ""
-                  }`}
-                />
-              </button>
 
-              {topicDropdownOpen && (
-                <div className="absolute top-full right-0 mt-2 w-72 max-w-[calc(100vw-1.5rem)] max-h-[80vh] overflow-y-auto touch-scroll sm:w-80 rounded-2xl border border-border bg-card/95 p-3 shadow-2xl backdrop-blur-2xl animate-in fade-in slide-in-from-top-2 z-50 space-y-3">
-                  {/* Section 1: Sorting Algorithms */}
-                  <div>
-                    <div className="text-[10px] font-mono font-bold uppercase tracking-wider text-muted-foreground px-2 py-1 flex items-center justify-between">
-                      <span className="flex items-center gap-1.5 text-cyan-500">
-                        <Cpu className="h-3 w-3" />
-                        <span>Sorting Algorithms</span>
-                      </span>
-                      <span className="text-[10px] text-muted-foreground font-mono">5 Topics</span>
-                    </div>
-                    <div className="space-y-0.5 mt-1">
-                      {SORTING_ALGORITHMS.map((id) => {
-                        const topicMeta = ALGORITHMS[id];
-                        const step = LEARNING_PATH.find((s) => s.id === id);
-                        const isActive = id === algorithmId;
-
-                        return (
-                          <Link
-                            key={id}
-                            href={`/algorithms/${id}`}
-                            onClick={() => setTopicDropdownOpen(false)}
-                            className={`flex items-center justify-between p-2 rounded-xl text-xs transition-colors active:scale-95 ${
-                              isActive
-                                ? "bg-cyan-500/15 text-cyan-600 dark:text-cyan-300 font-bold border border-cyan-500/30"
-                                : "hover:bg-secondary/80 text-muted-foreground hover:text-foreground"
-                            }`}
-                          >
-                            <div className="flex items-center gap-2">
-                              <span className="font-mono text-[10px] text-muted-foreground">0{step?.order}</span>
-                              <span>{topicMeta.name}</span>
-                            </div>
-                            <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-secondary text-muted-foreground border border-border/50">
-                              {topicMeta.complexity.average}
-                            </span>
-                          </Link>
-                        );
-                      })}
-                    </div>
-                  </div>
-
-                  {/* Section 2: Data Structures */}
-                  <div>
-                    <div className="text-[10px] font-mono font-bold uppercase tracking-wider text-muted-foreground px-2 py-1 flex items-center justify-between">
-                      <span className="flex items-center gap-1.5 text-blue-500">
-                        <Database className="h-3 w-3" />
-                        <span>Data Structures</span>
-                      </span>
-                      <span className="text-[10px] text-muted-foreground font-mono">{DATA_STRUCTURES.length} Topics</span>
-                    </div>
-                    <div className="space-y-0.5 mt-1">
-                      {DATA_STRUCTURES.map((id) => {
-                        const topicMeta = ALGORITHMS[id];
-                        const step = LEARNING_PATH.find((s) => s.id === id);
-                        const isActive = id === algorithmId;
-
-                        return (
-                          <Link
-                            key={id}
-                            href={`/algorithms/${id}`}
-                            onClick={() => setTopicDropdownOpen(false)}
-                            className={`flex items-center justify-between p-2 rounded-xl text-xs transition-colors ${
-                              isActive
-                                ? "bg-blue-500/15 text-blue-600 dark:text-blue-300 font-bold border border-blue-500/30"
-                                : "hover:bg-secondary/80 text-muted-foreground hover:text-foreground"
-                            }`}
-                          >
-                            <div className="flex items-center gap-2">
-                              <span className="font-mono text-[10px] text-muted-foreground">0{step?.order}</span>
-                              <span>{topicMeta.name}</span>
-                            </div>
-                            <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-secondary text-muted-foreground border border-border/50">
-                              {id === "array" ? "Access O(1)" : id === "stack" ? "LIFO O(1)" : id === "queue" ? "FIFO O(1)" : "Nodes O(1)"}
-                            </span>
-                          </Link>
-                        );
-                      })}
-                    </div>
-                  </div>
-
-                  {/* Section 3: Complexity Analysis */}
-                  <div className="pt-2 border-t border-border/60">
-                    <div className="text-[10px] font-mono font-bold uppercase tracking-wider text-muted-foreground px-2 py-1 flex items-center justify-between">
-                      <span className="flex items-center gap-1.5 text-purple-500">
-                        <TrendingUp className="h-3 w-3" />
-                        <span>Complexity Analysis</span>
-                      </span>
-                      <span className="text-[10px] text-muted-foreground font-mono">2 Topics</span>
-                    </div>
-                    <div className="space-y-0.5 mt-1">
-                      {COMPLEXITY_TOPICS.map((id) => {
-                        const topicMeta = ALGORITHMS[id];
-                        const step = LEARNING_PATH.find((s) => s.id === id);
-                        const isActive = id === algorithmId;
-
-                        return (
-                          <Link
-                            key={id}
-                            href={`/algorithms/${id}`}
-                            onClick={() => setTopicDropdownOpen(false)}
-                            className={`flex items-center justify-between p-2 rounded-xl text-xs transition-colors ${
-                              isActive
-                                ? "bg-purple-500/15 text-purple-600 dark:text-purple-300 font-bold border border-purple-500/30"
-                                : "hover:bg-secondary/80 text-muted-foreground hover:text-foreground"
-                            }`}
-                          >
-                            <div className="flex items-center gap-2">
-                              <span className="font-mono text-[10px] text-muted-foreground">0{step?.order}</span>
-                              <span>{topicMeta.name}</span>
-                            </div>
-                            <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-secondary text-muted-foreground border border-border/50">
-                              {id === "time-complexity" ? "Big-O" : "Aux Space"}
-                            </span>
-                          </Link>
-                        );
-                      })}
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
 
             <Link
-              href="/visualizer"
+              href={`/visualizer?algo=${algorithmId}`}
               className="inline-flex items-center gap-1.5 rounded-xl border border-border bg-secondary/80 px-3 py-1.5 text-xs font-semibold text-foreground hover:bg-secondary hover:text-cyan-500 transition-all active:scale-95"
             >
               <Layers className="h-3.5 w-3.5" />
@@ -800,34 +639,6 @@ export default function AlgorithmDetailPage() {
             <div className="space-y-6 animate-in fade-in">
               {/* Practice Mode Navigation Tabs */}
               <div className="flex flex-wrap items-center gap-2 p-1.5 rounded-2xl border border-border bg-card backdrop-blur-md shadow-sm">
-                {!isSpecialTopic && (
-                  <button
-                    onClick={() => setActivePracticeTab("debugger")}
-                    className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
-                      activePracticeTab === "debugger"
-                        ? "bg-cyan-500 text-slate-950 shadow-md font-bold"
-                        : "text-muted-foreground hover:text-foreground hover:bg-secondary"
-                    }`}
-                  >
-                    <Terminal className="h-3.5 w-3.5" />
-                    <span>1. Live Debugger</span>
-                  </button>
-                )}
-
-                {!isSpecialTopic && (
-                  <button
-                    onClick={() => setActivePracticeTab("predict")}
-                    className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
-                      activePracticeTab === "predict"
-                        ? "bg-cyan-500 text-slate-950 shadow-md font-bold"
-                        : "text-muted-foreground hover:text-foreground hover:bg-secondary"
-                    }`}
-                  >
-                    <HelpCircle className="h-3.5 w-3.5" />
-                    <span>2. Predict Next</span>
-                  </button>
-                )}
-
                 <button
                   onClick={() => setActivePracticeTab("quiz")}
                   className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
@@ -837,7 +648,7 @@ export default function AlgorithmDetailPage() {
                   }`}
                 >
                   <Sparkles className="h-3.5 w-3.5" />
-                  <span>{isSpecialTopic ? "1. Knowledge Quiz" : "3. Knowledge Quiz"}</span>
+                  <span>1. Knowledge Quiz</span>
                 </button>
 
                 <button
@@ -849,7 +660,7 @@ export default function AlgorithmDetailPage() {
                   }`}
                 >
                   <Bug className="h-3.5 w-3.5" />
-                  <span>{isSpecialTopic ? "2. Bug-Hunt" : "4. Bug-Hunt"}</span>
+                  <span>2. Bug-Hunt</span>
                 </button>
 
                 <button
@@ -861,25 +672,17 @@ export default function AlgorithmDetailPage() {
                   }`}
                 >
                   <Globe className="h-3.5 w-3.5" />
-                  <span>{isSpecialTopic ? "3. Problem Solving" : "5. Problem Solving"}</span>
+                  <span>3. Problem Solving</span>
                 </button>
               </div>
 
               {/* Render Active Practice Component */}
-              {!isSpecialTopic && activePracticeTab === "debugger" && (
-                <CodeDebugger algorithmId={algorithmId} />
-              )}
-
-              {!isSpecialTopic && activePracticeTab === "predict" && (
-                <PredictNext algorithmId={algorithmId} />
+              {activePracticeTab === "quiz" && (
+                <Quiz topicId={algorithmId} />
               )}
 
               {activePracticeTab === "bughunt" && (
                 <BugHunt algorithmId={algorithmId} />
-              )}
-
-              {activePracticeTab === "quiz" && (
-                <Quiz topicId={algorithmId} />
               )}
 
               {activePracticeTab === "problems" && (

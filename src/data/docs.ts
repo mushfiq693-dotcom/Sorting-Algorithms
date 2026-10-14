@@ -1457,7 +1457,7 @@ To establish an objective, machine-independent measure of algorithmic efficiency
 
 ---
 
-### Chapter 2: The Asymptotic Notation Trinity ($\\mathcal{O}, \\Omega, \\Theta$)
+### Chapter 2: The Asymptotic Notation Trinity ($O, \\Omega, \\Theta$)
 
 Asymptotic notation provides a formal mathematical vocabulary to describe the growth rate of functions without being distracted by machine constants or low-order noise.
 
@@ -1467,9 +1467,9 @@ Asymptotic notation provides a formal mathematical vocabulary to describe the gr
   Lower Bound:  f(n) ≥ c · g(n)  ==>  f(n) = Ω(g(n))       [Best-Case Floor]
 \`\`\`
 
-#### 1. Big-O ($\\mathcal{O}$) — Asymptotic Upper Bound
+#### 1. Big-O ($O$) — Asymptotic Upper Bound
 Formal mathematical definition:
-$$f(n) = \\mathcal{O}(g(n)) \\iff \\exists c > 0, n_0 > 0 \\text{ such that } \\forall n \\ge n_0, \\quad 0 \\le f(n) \\le c \\cdot g(n)$$
+$$f(n) = O(g(n)) \\iff \\exists c > 0, n_0 > 0 \\text{ such that } \\forall n \\ge n_0, \\quad 0 \\le f(n) \\le c \\cdot g(n)$$
 - **Engineering Meaning**: Big-O establishes an unbreakable **worst-case upper ceiling**. The algorithm will never perform more operations than proportional to $g(n)$ for sufficiently large inputs.
 
 #### 2. Big-Omega ($\\Omega$) — Asymptotic Lower Bound
@@ -1479,11 +1479,11 @@ $$f(n) = \\Omega(g(n)) \\iff \\exists c > 0, n_0 > 0 \\text{ such that } \\foral
 
 #### 3. Big-Theta ($\\Theta$) — Asymptotically Tight Bound
 Formal mathematical definition:
-$$f(n) = \\Theta(g(n)) \\iff f(n) = \\mathcal{O}(g(n)) \\quad \\text{and} \\quad f(n) = \\Omega(g(n))$$
+$$f(n) = \\Theta(g(n)) \\iff f(n) = O(g(n)) \\quad \\text{and} \\quad f(n) = \\Omega(g(n))$$
 - **Engineering Meaning**: The algorithm's growth is sandwiched tightly within constant multipliers of $g(n)$ in all scenarios.
 
 > **Critical Interview Distinction:**
-> Do not confuse **Best / Average / Worst Case** (which describe input arrangements) with **$\\Omega / \\Theta / \\mathcal{O}$** (which describe mathematical bounds). For example, Quick Sort's worst-case time complexity is $\\Theta(n^2)$, while its best-case is $\\Theta(n \\log n)$.
+> Do not confuse **Best / Average / Worst Case** (which describe input arrangements) with **$\\Omega / \\Theta / O$** (which describe mathematical bounds). For example, Quick Sort's worst-case time complexity is $\\Theta(n^2)$, while its best-case is $\\Theta(n \\log n)$.
 
 ---
 
@@ -1491,19 +1491,19 @@ $$f(n) = \\Theta(g(n)) \\iff f(n) = \\mathcal{O}(g(n)) \\quad \\text{and} \\quad
 
 Below is the complete spectrum of algorithmic complexity classes, ordered from fastest to slowest:
 
-$$\\mathcal{O}(1) < \\mathcal{O}(\\log n) < \\mathcal{O}(\\sqrt{n}) < \\mathcal{O}(n) < \\mathcal{O}(n \\log n) < \\mathcal{O}(n^2) < \\mathcal{O}(n^3) < \\mathcal{O}(2^n) < \\mathcal{O}(n!)$$
+$$O(1) < O(\\log n) < O(\\sqrt{n}) < O(n) < O(n \\log n) < O(n^2) < O(n^3) < O(2^n) < O(n!)$$
 
 | Complexity Class | Canonical Name | Typical Real-World Examples | Scale at $n = 10^6$ | Practical CPU Runtime |
 | :--- | :--- | :--- | :--- | :--- |
-| **$\\mathcal{O}(1)$** | Constant | Hash map lookup, stack push/pop, array indexing \`arr[i]\` | 1 operation | ~1 nanosecond (Instantaneous) |
-| **$\\mathcal{O}(\\log n)$** | Logarithmic | Binary search, balanced BST lookup, Euclidean GCD | ~20 operations | ~20 nanoseconds (Instantaneous) |
-| **$\\mathcal{O}(\\sqrt{n})$** | Square Root | Primality testing, Mo's algorithm block decomposition | 1,000 operations | ~1 microsecond |
-| **$\\mathcal{O}(n)$** | Linear | Linear array scan, Kadane's algorithm, Counting Sort | $10^6$ operations | ~1 millisecond |
-| **$\\mathcal{O}(n \\log n)$** | Linearithmic | Merge Sort, Quick Sort (avg), Heap Sort | $\\approx 2 \\times 10^7$ ops | ~20 milliseconds |
-| **$\\mathcal{O}(n^2)$** | Quadratic | Nested loops, Bubble Sort, Selection Sort, Insertion Sort | $10^{12}$ operations | ~15 - 20 minutes |
-| **$\\mathcal{O}(n^3)$** | Cubic | Naive Matrix Multiplication, Floyd-Warshall shortest path | $10^{18}$ operations | ~31.7 years |
-| **$\\mathcal{O}(2^n)$** | Exponential | Naive recursive Fibonacci, generating all subsets | $2^{1000000}$ | Heat death of universe |
-| **$\\mathcal{O}(n!)$** | Factorial | Traveling Salesperson (brute force), all permutations | Undefined | Intractable |
+| **$O(1)$** | Constant | Hash map lookup, stack push/pop, array indexing \`arr[i]\` | 1 operation | ~1 nanosecond (Instantaneous) |
+| **$O(\\log n)$** | Logarithmic | Binary search, balanced BST lookup, Euclidean GCD | ~20 operations | ~20 nanoseconds (Instantaneous) |
+| **$O(\\sqrt{n})$** | Square Root | Primality testing, Mo's algorithm block decomposition | 1,000 operations | ~1 microsecond |
+| **$O(n)$** | Linear | Linear array scan, Kadane's algorithm, Counting Sort | $10^6$ operations | ~1 millisecond |
+| **$O(n \\log n)$** | Linearithmic | Merge Sort, Quick Sort (avg), Heap Sort | $\\approx 2 \\times 10^7$ ops | ~20 milliseconds |
+| **$O(n^2)$** | Quadratic | Nested loops, Bubble Sort, Selection Sort, Insertion Sort | $10^{12}$ operations | ~15 - 20 minutes |
+| **$O(n^3)$** | Cubic | Naive Matrix Multiplication, Floyd-Warshall shortest path | $10^{18}$ operations | ~31.7 years |
+| **$O(2^n)$** | Exponential | Naive recursive Fibonacci, generating all subsets | $2^{1000000}$ | Heat death of universe |
+| **$O(n!)$** | Factorial | Traveling Salesperson (brute force), all permutations | Undefined | Intractable |
 
 ---
 
@@ -1511,7 +1511,7 @@ $$\\mathcal{O}(1) < \\mathcal{O}(\\log n) < \\mathcal{O}(\\sqrt{n}) < \\mathcal{
 
 When reading or analyzing source code, apply these 6 structural patterns:
 
-#### Pattern 1: Single Linear Iteration $\\implies \\mathcal{O}(n)$
+#### Pattern 1: Single Linear Iteration $\\implies O(n)$
 \`\`\`cpp
 // Loop runs exactly n times
 for (int i = 0; i < n; i++) {
@@ -1519,7 +1519,7 @@ for (int i = 0; i < n; i++) {
 }
 \`\`\`
 
-#### Pattern 2: Multiplicative / Halving Scaling $\\implies \\mathcal{O}(\\log n)$
+#### Pattern 2: Multiplicative / Halving Scaling $\\implies O(\\log n)$
 \`\`\`cpp
 // i doubles every iteration: 1, 2, 4, 8, ..., 2^k >= n ==> k = ceil(log2 n)
 for (int i = 1; i < n; i *= 2) {
@@ -1527,7 +1527,7 @@ for (int i = 1; i < n; i *= 2) {
 }
 \`\`\`
 
-#### Pattern 3: Nested Independent Loops $\\implies \\mathcal{O}(n \\cdot m)$
+#### Pattern 3: Nested Independent Loops $\\implies O(n \\cdot m)$
 \`\`\`cpp
 // Outer loop runs n times; inner loop runs m times independently
 for (int i = 0; i < n; i++) {
@@ -1537,7 +1537,7 @@ for (int i = 0; i < n; i++) {
 }
 \`\`\`
 
-#### Pattern 4: Dependent Nested Loops (Arithmetic Series) $\\implies \\mathcal{O}(n^2)$
+#### Pattern 4: Dependent Nested Loops (Arithmetic Series) $\\implies O(n^2)$
 \`\`\`cpp
 // Inner loop runs 1 + 2 + 3 + ... + n times
 // Sum = n(n + 1) / 2 = 0.5 n^2 + 0.5 n = O(n^2)
@@ -1548,7 +1548,7 @@ for (int i = 0; i < n; i++) {
 }
 \`\`\`
 
-#### Pattern 5: Two-Pointer / Sliding Window Amortized Scan $\\implies \\mathcal{O}(n)$
+#### Pattern 5: Two-Pointer / Sliding Window Amortized Scan $\\implies O(n)$
 \`\`\`cpp
 // Although nested, left and right pointers each move at most n times total
 int left = 0;
@@ -1561,10 +1561,10 @@ for (int right = 0; right < n; right++) {
 \`\`\`
 
 #### Pattern 6: Divide & Conquer Recurrence (Master Theorem)
-For recurrences of the form $T(n) = a T(n/b) + \\mathcal{O}(n^d)$:
-- If $a = b^d \\implies T(n) = \\mathcal{O}(n^d \\log n)$ *(Example: Merge Sort with $a=2, b=2, d=1 \\implies T(n) = \\mathcal{O}(n \\log n)$)*
-- If $a < b^d \\implies T(n) = \\mathcal{O}(n^d)$
-- If $a > b^d \\implies T(n) = \\mathcal{O}(n^{\\log_b a})$
+For recurrences of the form $T(n) = a T(n/b) + O(n^d)$:
+- If $a = b^d \\implies T(n) = O(n^d \\log n)$ *(Example: Merge Sort with $a=2, b=2, d=1 \\implies T(n) = O(n \\log n)$)*
+- If $a < b^d \\implies T(n) = O(n^d)$
+- If $a > b^d \\implies T(n) = O(n^{\\log_b a})$
 
 ---
 
@@ -1576,12 +1576,12 @@ Use this reference table to immediately deduce the expected time complexity from
 
 | Constraint Value ($N$) | Required Time Complexity | Feasible Algorithmic Approach |
 | :--- | :--- | :--- |
-| $N \\le 10$ | $\\mathcal{O}(N!)$ or $\\mathcal{O}(N^2 \\cdot 2^N)$ | Brute Force Permutations, Traveling Salesperson DP |
-| $N \\le 20$ | $\\mathcal{O}(2^N)$ | Bitmask DP, Subset Recursion |
-| $N \\le 500$ | $\\mathcal{O}(N^3)$ | Floyd-Warshall, 3D Dynamic Programming |
-| $N \\le 5,000$ | $\\mathcal{O}(N^2)$ | Bubble/Insertion Sort, All-pairs nested scanning |
-| $N \\le 10^5 - 10^6$ | $\\mathcal{O}(N \\log N)$ or $\\mathcal{O}(N)$ | Merge Sort, Quick Sort, Segment Trees, Hash Maps |
-| $N \\le 10^9$ | $\\mathcal{O}(\\sqrt{N})$ or $\\mathcal{O}(\\log N)$ or $\\mathcal{O}(1)$ | Primality testing, Binary Search, Math & GCD |
+| $N \\le 10$ | $O(N!)$ or $O(N^2 \\cdot 2^N)$ | Brute Force Permutations, Traveling Salesperson DP |
+| $N \\le 20$ | $O(2^N)$ | Bitmask DP, Subset Recursion |
+| $N \\le 500$ | $O(N^3)$ | Floyd-Warshall, 3D Dynamic Programming |
+| $N \\le 5,000$ | $O(N^2)$ | Bubble/Insertion Sort, All-pairs nested scanning |
+| $N \\le 10^5 - 10^6$ | $O(N \\log N)$ or $O(N)$ | Merge Sort, Quick Sort, Segment Trees, Hash Maps |
+| $N \\le 10^9$ | $O(\\sqrt{N})$ or $O(\\log N)$ or $O(1)$ | Primality testing, Binary Search, Math & GCD |
     `,
     banglaNote: {
       topic: "Time Complexity ও বিগ-ও অ্যানালাইসিস (গভীর ও সহজ ব্যাখ্যা)",
@@ -1648,7 +1648,7 @@ When analyzing the memory consumption of an algorithm, we formulate the total me
 $$\\text{Total Space Complexity} = \\text{Input Space} + \\text{Auxiliary Space}$$
 
 #### Definitions:
-1. **Input Space**: The memory required to hold the original input data structures passed to the algorithm (for example, an input vector of $n$ numbers takes $\\mathcal{O}(n)$ input space).
+1. **Input Space**: The memory required to hold the original input data structures passed to the algorithm (for example, an input vector of $n$ numbers takes $O(n)$ input space).
 2. **Auxiliary Space**: The **extra temporary working memory** allocated by the algorithm itself to compute the solution (temporary variables, auxiliary vectors, dynamically allocated heap nodes, recursive call stack frames).
 
 > **Why Technical Interviews Focus Strictly on Auxiliary Space:**
@@ -1711,7 +1711,7 @@ Every time a function invokes itself recursively, the CPU allocates a new **Acti
 2. Local variable declarations.
 3. The return memory address where execution resumes after completion.
 
-#### Linear Recursion Depth $\\implies \\mathcal{O}(n)$ Auxiliary Stack Space
+#### Linear Recursion Depth $\\implies O(n)$ Auxiliary Stack Space
 \`\`\`cpp
 // Depth of recursion is n. At n = 100000, 100000 stack frames reside in RAM simultaneously.
 int linearFactorial(int n) {
@@ -1720,7 +1720,7 @@ int linearFactorial(int n) {
 }
 \`\`\`
 
-#### Divide & Conquer Recursion Depth $\\implies \\mathcal{O}(\\log n)$ Auxiliary Stack Space
+#### Divide & Conquer Recursion Depth $\\implies O(\\log n)$ Auxiliary Stack Space
 \`\`\`cpp
 // The recursion tree has height ceil(log2 n).
 // Only ONE root-to-leaf branch is active on the stack at any given millisecond!
@@ -1737,17 +1737,17 @@ void divideAndConquer(int low, int high) {
 ### Chapter 4: In-Place vs Out-of-Place Algorithmic Categorization
 
 #### Formal Definition of In-Place:
-An algorithm is classified as **In-Place** if its auxiliary memory usage is strictly **$\\mathcal{O}(1)$** (using only a fixed number of scalar pointers and counters), ignoring at most $\\mathcal{O}(\\log n)$ recursive call stack depth.
+An algorithm is classified as **In-Place** if its auxiliary memory usage is strictly **$O(1)$** (using only a fixed number of scalar pointers and counters), ignoring at most $O(\\log n)$ recursive call stack depth.
 
 | Algorithm | Input Space | Auxiliary Array Memory | Call Stack Space | Total Auxiliary Space | Classification |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| **Bubble Sort** | $\\mathcal{O}(n)$ | $\\mathcal{O}(1)$ | $0$ | **$\\mathcal{O}(1)$** | In-Place |
-| **Selection Sort** | $\\mathcal{O}(n)$ | $\\mathcal{O}(1)$ | $0$ | **$\\mathcal{O}(1)$** | In-Place |
-| **Insertion Sort** | $\\mathcal{O}(n)$ | $\\mathcal{O}(1)$ | $0$ | **$\\mathcal{O}(1)$** | In-Place |
-| **Quick Sort** | $\\mathcal{O}(n)$ | $\\mathcal{O}(1)$ | $\\mathcal{O}(\\log n)$ avg | **$\\mathcal{O}(\\log n)$** | In-Place |
-| **Heap Sort** | $\\mathcal{O}(n)$ | $\\mathcal{O}(1)$ | $0$ | **$\\mathcal{O}(1)$** | In-Place |
-| **Merge Sort** | $\\mathcal{O}(n)$ | $\\mathcal{O}(n)$ buffer | $\\mathcal{O}(\\log n)$ | **$\\mathcal{O}(n)$** | Out-of-Place |
-| **Counting Sort** | $\\mathcal{O}(n)$ | $\\mathcal{O}(k)$ count array | $0$ | **$\\mathcal{O}(k)$** | Out-of-Place |
+| **Bubble Sort** | $O(n)$ | $O(1)$ | $0$ | **$O(1)$** | In-Place |
+| **Selection Sort** | $O(n)$ | $O(1)$ | $0$ | **$O(1)$** | In-Place |
+| **Insertion Sort** | $O(n)$ | $O(1)$ | $0$ | **$O(1)$** | In-Place |
+| **Quick Sort** | $O(n)$ | $O(1)$ | $O(\\log n)$ avg | **$O(\\log n)$** | In-Place |
+| **Heap Sort** | $O(n)$ | $O(1)$ | $0$ | **$O(1)$** | In-Place |
+| **Merge Sort** | $O(n)$ | $O(n)$ buffer | $O(\\log n)$ | **$O(n)$** | Out-of-Place |
+| **Counting Sort** | $O(n)$ | $O(k)$ count array | $0$ | **$O(k)$** | Out-of-Place |
 
 ---
 
@@ -2099,9 +2099,9 @@ The algorithm must terminate when the interval is reduced to a single element ($
 $$\\frac{n}{2^k} = 1 \\implies 2^k = n \\implies k = \\log_2 n$$
 
 Therefore, in the worst case, Binary Search performs at most $\\lceil \\log_2 n \\rceil$ comparisons.
-- For $n = 1,000$, it takes at most $\\mathbf{10}$ comparisons.
-- For $n = 1,000,000$, it takes at most $\\mathbf{20}$ comparisons.
-- For $n = 1,000,000,000$, it takes at most $\\mathbf{30}$ comparisons!
+- For $n = 1,000$, it takes at most **10** comparisons.
+- For $n = 1,000,000$, it takes at most **20** comparisons.
+- For $n = 1,000,000,000$, it takes at most **30** comparisons!
 
 ---
 

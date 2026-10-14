@@ -20,7 +20,7 @@ const JOURNEY_STEPS: StepItem[] = [
     tagline: "Concept Before Syntax",
     description: "Understand the core algorithmic intuition and invariant before worrying about the implementation.",
     icon: BookOpen,
-    link: "/docs",
+    link: "/learn",
   },
   {
     number: "02",
