@@ -445,15 +445,14 @@ export default function AlgorithmDetailPage() {
 
                 {/* In-Depth Bengali Theory Explanation & Conceptual Breakdown (Prominently placed at TOP) */}
                 {docsArticle?.banglaNote && (
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-2 text-xs font-mono font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 pt-1">
-                      <Sparkles className="h-4 w-4" />
+                  <div className="space-y-1">
+                    <div className="text-xs font-mono font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 pt-1">
                       <span>বাংলায় বিস্তারিত থিওরি ও বিশ্লেষণ (In-Depth Bengali Theory)</span>
                     </div>
                     <BanglaNote
                       topic={docsArticle.banglaNote.topic}
                       banglaText={docsArticle.banglaNote.banglaText}
-                      defaultExpanded={true}
+                      defaultExpanded={false}
                     />
                   </div>
                 )}

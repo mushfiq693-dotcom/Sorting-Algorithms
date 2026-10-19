@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronDown, Sparkles, BookOpen, Check } from "lucide-react";
+import { ChevronDown, BookOpen, Check } from "lucide-react";
 
 import { FormattedMarkdown } from "@/components/docs/FormattedMarkdown";
 
@@ -78,7 +78,7 @@ export function BanglaNote({ topic, banglaText, defaultExpanded = false }: Bangl
 
               <div className="pt-3 border-t border-emerald-500/20 flex items-center justify-between text-[11px] text-emerald-700 dark:text-emerald-400/80 font-mono">
                 <span className="flex items-center gap-1.5">
-                  <Sparkles className="h-3 w-3" /> সহজ বাংলা টিউটোরিয়াল নোট
+                  <BookOpen className="h-3 w-3" /> সহজ বাংলা টিউটোরিয়াল নোট
                 </span>
                 <span className="italic text-[10px] text-muted-foreground">
                   (Draft for review)
