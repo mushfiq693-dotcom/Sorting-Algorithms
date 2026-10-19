@@ -636,32 +636,42 @@ export function HashTableVisualizer() {
             {/* Interactive Operations Form */}
             {activeTab === "interactive" ? (
               <div className="space-y-3 pt-1 border-t border-border/60">
-                {/* Primary Operations: Insert & Search */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {/* Primary Operations: Insert & Search / Delete */}
+                <div className="grid grid-cols-1 xl:grid-cols-2 gap-3">
                   {/* Insert Box */}
-                  <div className="p-2.5 rounded-xl bg-secondary/30 border border-border space-y-2">
-                    <span className="text-[11px] font-mono text-muted-foreground font-semibold flex items-center gap-1">
-                      <Plus className="h-3 w-3 text-blue-500" />
-                      <span>Insert Key-Value Pair</span>
-                    </span>
-                    <div className="flex items-center gap-1.5">
-                      <input
-                        type="number"
-                        placeholder="Key"
-                        value={inputKey}
-                        onChange={(e) => setInputKey(e.target.value)}
-                        className="w-16 px-2 py-1 rounded-lg border border-border bg-background text-xs font-mono"
-                      />
-                      <input
-                        type="text"
-                        placeholder="Value"
-                        value={inputValue}
-                        onChange={(e) => setInputValue(e.target.value)}
-                        className="flex-1 px-2 py-1 rounded-lg border border-border bg-background text-xs font-mono"
-                      />
+                  <div className="p-3 rounded-xl bg-secondary/30 border border-border/70 flex flex-col justify-between gap-2.5 min-w-0 shadow-2xs">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[11px] font-mono text-muted-foreground font-semibold flex items-center gap-1.5">
+                        <Plus className="h-3.5 w-3.5 text-blue-500" />
+                        <span>Insert Key-Value Pair</span>
+                      </span>
+                      <span className="text-[10px] font-mono text-blue-500/80 bg-blue-500/10 px-1.5 py-0.5 rounded border border-blue-500/20">
+                        O(1) avg
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-2 min-w-0">
+                      <div className="relative shrink-0 w-20">
+                        <input
+                          type="number"
+                          placeholder="Key"
+                          value={inputKey}
+                          onChange={(e) => setInputKey(e.target.value)}
+                          className="w-full px-2.5 py-1.5 rounded-lg border border-border bg-background text-xs font-mono text-center focus:outline-none focus:ring-1 focus:ring-blue-500 text-foreground"
+                        />
+                      </div>
+                      <div className="relative flex-1 min-w-0">
+                        <input
+                          type="text"
+                          placeholder="Value string"
+                          value={inputValue}
+                          onChange={(e) => setInputValue(e.target.value)}
+                          className="w-full min-w-0 px-2.5 py-1.5 rounded-lg border border-border bg-background text-xs font-mono focus:outline-none focus:ring-1 focus:ring-blue-500 text-foreground"
+                        />
+                      </div>
                       <button
                         onClick={handleInsert}
-                        className="px-3 py-1 rounded-lg bg-blue-600 text-white font-medium text-xs font-mono hover:bg-blue-500 transition-all cursor-pointer shadow-xs"
+                        className="shrink-0 px-3.5 py-1.5 rounded-lg bg-blue-600 text-white font-semibold text-xs font-mono hover:bg-blue-500 transition-all cursor-pointer shadow-xs active:scale-95 whitespace-nowrap"
                       >
                         Insert
                       </button>
@@ -669,55 +679,64 @@ export function HashTableVisualizer() {
                   </div>
 
                   {/* Search & Delete Box */}
-                  <div className="p-2.5 rounded-xl bg-secondary/30 border border-border space-y-2">
-                    <span className="text-[11px] font-mono text-muted-foreground font-semibold flex items-center gap-1">
-                      <Search className="h-3 w-3 text-emerald-500" />
-                      <span>Lookup or Remove by Key</span>
-                    </span>
-                    <div className="flex items-center gap-1.5">
-                      <input
-                        type="number"
-                        placeholder="Search Key"
-                        value={searchKey}
-                        onChange={(e) => setSearchKey(e.target.value)}
-                        className="flex-1 px-2 py-1 rounded-lg border border-border bg-background text-xs font-mono"
-                      />
+                  <div className="p-3 rounded-xl bg-secondary/30 border border-border/70 flex flex-col justify-between gap-2.5 min-w-0 shadow-2xs">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[11px] font-mono text-muted-foreground font-semibold flex items-center gap-1.5">
+                        <Search className="h-3.5 w-3.5 text-emerald-500" />
+                        <span>Lookup or Remove by Key</span>
+                      </span>
+                      <span className="text-[10px] font-mono text-emerald-500/80 bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-500/20">
+                        Search / Delete
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-2 min-w-0">
+                      <div className="relative flex-1 min-w-0">
+                        <input
+                          type="number"
+                          placeholder="Target Key"
+                          value={searchKey}
+                          onChange={(e) => setSearchKey(e.target.value)}
+                          className="w-full min-w-0 px-2.5 py-1.5 rounded-lg border border-border bg-background text-xs font-mono focus:outline-none focus:ring-1 focus:ring-emerald-500 text-foreground text-center"
+                        />
+                      </div>
                       <button
                         onClick={handleSearch}
-                        className="px-3 py-1 rounded-lg bg-emerald-600 text-white font-medium text-xs font-mono hover:bg-emerald-500 transition-all cursor-pointer shadow-xs"
+                        className="shrink-0 px-3.5 py-1.5 rounded-lg bg-emerald-600 text-white font-semibold text-xs font-mono hover:bg-emerald-500 transition-all cursor-pointer shadow-xs active:scale-95 whitespace-nowrap"
                       >
                         Search
                       </button>
                       <button
                         onClick={() => handleDelete()}
-                        className="px-2.5 py-1 rounded-lg border border-red-500/40 text-red-500 text-xs font-mono hover:bg-red-500/10 transition-all cursor-pointer"
+                        className="shrink-0 px-3 py-1.5 rounded-lg border border-red-500/40 text-red-500 text-xs font-mono hover:bg-red-500/10 transition-all cursor-pointer active:scale-95 whitespace-nowrap flex items-center gap-1"
                       >
-                        Delete
+                        <Trash2 className="h-3 w-3" />
+                        <span>Delete</span>
                       </button>
                     </div>
                   </div>
                 </div>
 
                 {/* Secondary Actions Toolbar */}
-                <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
-                  <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center justify-between gap-2.5 pt-2 border-t border-border/60">
+                  <div className="flex items-center gap-2 flex-wrap">
                     <button
                       onClick={handleRehash}
-                      className="px-3 py-1.5 rounded-lg border border-border bg-secondary/60 text-xs font-mono text-foreground hover:bg-secondary transition-all flex items-center gap-1.5 cursor-pointer"
+                      className="px-3 py-1.5 rounded-lg border border-border bg-card text-xs font-mono text-foreground hover:bg-secondary transition-all flex items-center gap-1.5 cursor-pointer shadow-2xs whitespace-nowrap active:scale-95"
                     >
                       <RefreshCw className="h-3.5 w-3.5 text-cyan-500" />
                       <span>Double Capacity (Rehash)</span>
                     </button>
                     <button
                       onClick={handleRandomize}
-                      className="px-2.5 py-1.5 rounded-lg border border-border text-xs font-mono text-muted-foreground hover:text-foreground hover:bg-secondary/40 transition-all flex items-center gap-1 cursor-pointer"
+                      className="px-2.5 py-1.5 rounded-lg border border-border bg-card text-xs font-mono text-muted-foreground hover:text-foreground hover:bg-secondary transition-all flex items-center gap-1.5 cursor-pointer shadow-2xs whitespace-nowrap active:scale-95"
                     >
                       <Shuffle className="h-3.5 w-3.5" />
                       <span>Randomize</span>
                     </button>
                     <button
                       onClick={handleClear}
-                      className="px-2.5 py-1.5 rounded-lg border border-red-500/30 text-xs font-mono text-red-500 hover:bg-red-500/10 transition-all flex items-center gap-1 cursor-pointer"
+                      className="px-2.5 py-1.5 rounded-lg border border-red-500/30 bg-card text-xs font-mono text-red-500 hover:bg-red-500/10 transition-all flex items-center gap-1.5 cursor-pointer shadow-2xs whitespace-nowrap active:scale-95"
                     >
                       <Trash2 className="h-3.5 w-3.5" />
                       <span>Clear</span>
@@ -726,28 +745,31 @@ export function HashTableVisualizer() {
 
                   {/* Playback step count if sequence is active */}
                   {playbackSteps.length > 0 && (
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-1.5 p-1 rounded-lg bg-card border border-border shadow-2xs">
                       <button
                         onClick={handleStepBack}
                         disabled={currentStepIndex <= 0 || isPlaying}
-                        className="px-2 py-1 rounded-md border border-border text-xs font-mono disabled:opacity-40"
+                        className="px-2 py-1 rounded text-xs font-mono text-muted-foreground hover:text-foreground disabled:opacity-40 cursor-pointer"
                       >
                         Back
                       </button>
                       <button
                         onClick={handlePlayPause}
-                        className="px-2.5 py-1 rounded-md bg-blue-600 text-white font-mono text-xs flex items-center gap-1"
+                        className="px-2.5 py-1 rounded bg-blue-600 text-white font-mono text-xs flex items-center gap-1 cursor-pointer"
                       >
-                        {isPlaying ? <Pause className="h-3 w-3" /> : <Play className="h-3 w-3" />}
+                        {isPlaying ? <Pause className="h-3 w-3 fill-current" /> : <Play className="h-3 w-3 fill-current" />}
                         <span>{isPlaying ? "Pause" : "Play"}</span>
                       </button>
                       <button
                         onClick={handleStepForward}
                         disabled={currentStepIndex >= playbackSteps.length - 1 || isPlaying}
-                        className="px-2 py-1 rounded-md border border-border text-xs font-mono disabled:opacity-40"
+                        className="px-2 py-1 rounded text-xs font-mono text-muted-foreground hover:text-foreground disabled:opacity-40 cursor-pointer"
                       >
                         Step
                       </button>
+                      <span className="text-[10px] font-mono text-muted-foreground px-1 border-l border-border">
+                        {currentStepIndex + 1}/{playbackSteps.length}
+                      </span>
                     </div>
                   )}
                 </div>
