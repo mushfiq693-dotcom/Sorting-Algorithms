@@ -601,8 +601,8 @@ export function TopicCategoryHub({
                       )}
                     </div>
 
-                    <div className="mt-1.5 flex items-center gap-2 text-xs font-mono text-muted-foreground/90">
-                      <span>{cat.countLabel}</span>
+                    <div className="mt-1.5 flex items-center text-xs font-mono text-muted-foreground/90 whitespace-nowrap">
+                      <span className="whitespace-nowrap">{cat.countLabel}</span>
                     </div>
                   </div>
                 </button>
@@ -643,7 +643,7 @@ export function TopicCategoryHub({
                 <div className="min-w-0">
                   <h2 className="font-heading font-bold text-base sm:text-lg text-foreground flex items-center gap-2 flex-wrap">
                     <span>{activeCatMeta?.title}</span>
-                    <span className="text-xs font-mono font-semibold px-2 py-0.5 rounded-full bg-secondary text-muted-foreground border border-border">
+                    <span className="text-xs font-mono font-semibold px-2 py-0.5 rounded-full bg-secondary text-muted-foreground border border-border whitespace-nowrap">
                       {activeTopics.length} Visualizations
                     </span>
                   </h2>
