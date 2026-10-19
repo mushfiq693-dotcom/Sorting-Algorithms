@@ -30,9 +30,12 @@ export const ORDERED_SEARCHING_ALGORITHMS: OrderedTopicItem[] = [
 export const ORDERED_DATA_STRUCTURES: OrderedTopicItem[] = [
   { id: "array", name: "Array", category: "data-structure" },
   { id: "string", name: "String", category: "data-structure" },
+  { id: "deque", name: "Deque", category: "data-structure" },
   { id: "stack", name: "Stack", category: "data-structure" },
   { id: "queue", name: "Queue", category: "data-structure" },
   { id: "linked-list", name: "Linked List", category: "data-structure" },
+  { id: "hash-table", name: "Hash Table", category: "data-structure" },
+  { id: "binary-tree", name: "Binary Tree", category: "data-structure" },
 ];
 
 export const ORDERED_COMPLEXITY_TOPICS: OrderedTopicItem[] = [
@@ -65,6 +68,7 @@ export const ALGORITHM_NAME_MAP: Record<AlgorithmId, string> = {
   queue: "Queue",
   "linked-list": "Linked List",
   "hash-table": "Hash Table",
+  "binary-tree": "Binary Tree",
   "time-complexity": "Time Complexity",
   "space-complexity": "Space Complexity",
 };
@@ -87,6 +91,7 @@ export const ALGORITHM_DOCS_MAP: Record<AlgorithmId, string[]> = {
   queue: ["queue-data-structure"],
   "linked-list": ["linked-list-fundamentals"],
   "hash-table": ["hash-table-data-structure"],
+  "binary-tree": ["binary-tree-fundamentals"],
   "time-complexity": ["time-complexity", "big-o-for-beginners"],
   "space-complexity": ["space-complexity", "in-place-and-space-complexity"],
 };

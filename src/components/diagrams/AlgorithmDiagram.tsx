@@ -19,6 +19,7 @@ import { LinearSearchTimelineDiagram } from "./LinearSearchTimelineDiagram";
 import { BinarySearchRangeShrinkingDiagram } from "./BinarySearchRangeShrinkingDiagram";
 import { LinkedListPointerDiagram } from "./LinkedListPointerDiagram";
 import { HashTableDiagram } from "./HashTableDiagram";
+import { BinaryTreeDiagram } from "./BinaryTreeDiagram";
 import { Image } from "lucide-react";
 
 interface AlgorithmDiagramProps {
@@ -54,6 +55,8 @@ export function AlgorithmDiagram({ algorithmId }: AlgorithmDiagramProps) {
         return <LinkedListPointerDiagram />;
       case "hash-table":
         return <HashTableDiagram />;
+      case "binary-tree":
+        return <BinaryTreeDiagram />;
       case "linear-search":
         return <LinearSearchTimelineDiagram />;
       case "binary-search":

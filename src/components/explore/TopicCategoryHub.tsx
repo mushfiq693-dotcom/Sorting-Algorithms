@@ -28,6 +28,7 @@ import {
   Sparkles,
   Binary,
   Hash,
+  GitFork,
 } from "lucide-react";
 
 export type CategoryKey = "sorting" | "data-structure" | "searching" | "complexity";
@@ -169,6 +170,12 @@ const TOPIC_VISUALS: Record<AlgorithmId, TopicVisualMeta> = {
     iconColor: "text-emerald-500 dark:text-emerald-400",
     iconBorder: "border-emerald-500/25",
   },
+  "binary-tree": {
+    icon: GitFork,
+    iconBg: "bg-emerald-500/10 dark:bg-emerald-500/20",
+    iconColor: "text-emerald-500 dark:text-emerald-400",
+    iconBorder: "border-emerald-500/25",
+  },
 
   // Searching (Orange / Rust palette)
   "linear-search": {
@@ -216,6 +223,7 @@ const TOPIC_DESCRIPTIONS: Record<AlgorithmId, string> = {
   deque: "Watch dual-end push and pop operations with circular buffer wrap-around and monotonic sliding window.",
   "linked-list": "See nodes connected by pointers traverse, insert, and delete dynamically.",
   "hash-table": "Watch hash functions map keys directly to buckets with collision resolution and O(1) lookups.",
+  "binary-tree": "Explore hierarchical branching, tree anatomy, DFS traversals (pre/in/post), and BFS level orders.",
 
   // Searching
   "linear-search": "Watch linear search scan elements one by one from start to end for a match.",
@@ -357,6 +365,15 @@ const DATA_STRUCTURE_COMPARISON: DataStructureComparisonRow[] = [
     search: "O(1) avg / O(n) worst",
     insertion: "O(1) avg / O(n) worst",
     deletion: "O(1) avg / O(n) worst",
+    space: "O(n)",
+  },
+  {
+    name: "Binary Tree",
+    id: "binary-tree",
+    access: "O(n)",
+    search: "O(n)",
+    insertion: "O(n)",
+    deletion: "O(n)",
     space: "O(n)",
   },
 ];

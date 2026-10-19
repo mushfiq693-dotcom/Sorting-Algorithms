@@ -52,6 +52,10 @@ const HashTableVisualizer = dynamic(
   () => import("@/components/visualizer/HashTableVisualizer").then((mod) => mod.HashTableVisualizer),
   { ssr: false, loading: () => <TabLoading /> }
 );
+const BinaryTreeVisualizer = dynamic(
+  () => import("@/components/visualizer/BinaryTreeVisualizer").then((mod) => mod.BinaryTreeVisualizer),
+  { ssr: false, loading: () => <TabLoading /> }
+);
 const LinearSearchVisualizer = dynamic(
   () => import("@/components/visualizer/LinearSearchVisualizer").then((mod) => mod.LinearSearchVisualizer),
   { ssr: false, loading: () => <TabLoading /> }
@@ -492,6 +496,8 @@ export default function AlgorithmDetailPage() {
                 <LinkedListVisualizer />
               ) : algorithmId === "hash-table" ? (
                 <HashTableVisualizer />
+              ) : algorithmId === "binary-tree" ? (
+                <BinaryTreeVisualizer />
               ) : algorithmId === "linear-search" ? (
                 <LinearSearchVisualizer />
               ) : algorithmId === "binary-search" ? (

@@ -21,6 +21,7 @@ import {
   HardDrive,
   ArrowLeftRight,
   Hash,
+  GitFork,
 } from "lucide-react";
 
 interface RoadmapTopicAnimationProps {
@@ -60,6 +61,7 @@ export function RoadmapTopicAnimation({ topicId }: RoadmapTopicAnimationProps) {
           {topicId === "queue" && <QueueMiniAnimation tick={tick} />}
           {topicId === "linked-list" && <LinkedListMiniAnimation tick={tick} />}
           {topicId === "hash-table" && <HashTableMiniAnimation tick={tick} />}
+          {topicId === "binary-tree" && <BinaryTreeMiniAnimation tick={tick} />}
           {topicId === "linear-search" && <LinearSearchMiniAnimation tick={tick} />}
           {topicId === "binary-search" && <BinarySearchMiniAnimation tick={tick} />}
           {topicId === "time-complexity" && <TimeComplexityMiniAnimation tick={tick} />}
@@ -82,6 +84,7 @@ export function RoadmapTopicAnimation({ topicId }: RoadmapTopicAnimationProps) {
               {topicId === "queue" && "First-In, First-Out: Continuous inflow at REAR and outflow at FRONT"}
               {topicId === "linked-list" && "Scattered Heap Nodes: Dynamic memory linked by pointer references"}
               {topicId === "hash-table" && "Direct Hashing: h(k) = k % M converts keys into instant O(1) memory slots"}
+              {topicId === "binary-tree" && "Hierarchical Branching: Root branches into Left & Right child subtrees"}
               {topicId === "linear-search" && "Sequential Scan: Probes every slot 0..n-1 until target is found"}
               {topicId === "binary-search" && "Logarithmic Bisection: Cuts remaining search space by 50% each probe"}
               {topicId === "time-complexity" && "Asymptotic Scalability: O(1) vs O(log n) vs O(n) vs O(n²) growth"}
@@ -705,3 +708,86 @@ function SpaceComplexityMiniAnimation({ tick }: { tick: number }) {
     </div>
   );
 }
+
+function BinaryTreeMiniAnimation({ tick }: { tick: number }) {
+  // Cycle through 0: Root, 1: Left child, 2: Right child
+  const activeNode = tick % 3;
+
+  return (
+    <div className="flex items-center gap-3 text-xs font-mono">
+      <div className="relative w-36 h-14 flex items-center justify-center">
+        <svg className="w-full h-full" viewBox="0 0 144 56">
+          {/* Edges */}
+          <line
+            x1="72"
+            y1="14"
+            x2="36"
+            y2="42"
+            stroke={activeNode === 1 ? "#10b981" : "#475569"}
+            strokeWidth={activeNode === 1 ? "2.5" : "1.5"}
+            className="transition-all duration-300"
+          />
+          <line
+            x1="72"
+            y1="14"
+            x2="108"
+            y2="42"
+            stroke={activeNode === 2 ? "#10b981" : "#475569"}
+            strokeWidth={activeNode === 2 ? "2.5" : "1.5"}
+            className="transition-all duration-300"
+          />
+
+          {/* Root */}
+          <circle
+            cx="72"
+            cy="14"
+            r="10"
+            fill={activeNode === 0 ? "#047857" : "#1e293b"}
+            stroke={activeNode === 0 ? "#34d399" : "#64748b"}
+            strokeWidth="2"
+            className="transition-all duration-300"
+          />
+          <text x="72" y="17.5" textAnchor="middle" fill="#f8fafc" fontSize="9" fontWeight="bold">
+            1
+          </text>
+
+          {/* Left Child */}
+          <circle
+            cx="36"
+            cy="42"
+            r="9"
+            fill={activeNode === 1 ? "#047857" : "#1e293b"}
+            stroke={activeNode === 1 ? "#34d399" : "#64748b"}
+            strokeWidth="2"
+            className="transition-all duration-300"
+          />
+          <text x="36" y="45.5" textAnchor="middle" fill="#f8fafc" fontSize="8" fontWeight="bold">
+            2
+          </text>
+
+          {/* Right Child */}
+          <circle
+            cx="108"
+            cy="42"
+            r="9"
+            fill={activeNode === 2 ? "#047857" : "#1e293b"}
+            stroke={activeNode === 2 ? "#34d399" : "#64748b"}
+            strokeWidth="2"
+            className="transition-all duration-300"
+          />
+          <text x="108" y="45.5" textAnchor="middle" fill="#f8fafc" fontSize="8" fontWeight="bold">
+            3
+          </text>
+        </svg>
+      </div>
+
+      <div className="flex flex-col text-[10px]">
+        <span className="text-muted-foreground">Active Node:</span>
+        <strong className="text-emerald-400 font-bold">
+          {activeNode === 0 ? "Root (Node 1)" : activeNode === 1 ? "Left Child (Node 2)" : "Right Child (Node 3)"}
+        </strong>
+      </div>
+    </div>
+  );
+}
+

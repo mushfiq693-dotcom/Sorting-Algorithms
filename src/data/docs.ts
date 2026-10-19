@@ -1963,6 +1963,194 @@ The hallmark problem demonstrating Hash Table dominance is **Two Sum** (LeetCode
     },
   },
   {
+    slug: "binary-tree-fundamentals",
+    level: 5,
+    levelTitle: "Level 5: Fundamental Data Structures",
+    order: 5,
+    title: "Binary Tree: Hierarchical Branching, Anatomy & Traversals",
+    subtitle: "Master recursive node relationships, Root/Leaf/Height/Depth formulas, Complete vs Full vs Perfect trees, DFS (Pre/In/Post) and BFS Level-Order.",
+    estimatedReadTime: "14 min",
+    category: "Data Structures",
+    content: `
+### What Is a Binary Tree?
+
+A **Binary Tree** is a fundamental non-linear, hierarchical data structure composed of discrete elements called **Nodes**. Unlike linear data structures (arrays, linked lists, stacks, and queues) where elements follow an unbroken 1D sequence, a binary tree branches dynamically: **every node contains at most two children**, conventionally termed the **Left Child** and the **Right Child**.
+
+Trees model natural hierarchical relationships such as file systems on your hard drive, HTML DOM structures in a web browser, Abstract Syntax Trees (AST) inside compilers, and decision trees in machine learning.
+
+\`\`\`
+          [ 1 ]          <-- Root (Depth 0, Level 0)
+         /     \\
+      [ 2 ]   [ 3 ]      <-- Level 1
+      /   \\   /   \\
+    [4]  [5] [6]  [7]    <-- Level 2 (Leaves)
+\`\`\`
+
+---
+
+### Core Anatomy & Terminology
+
+Understanding binary trees requires precise mathematical definitions of its structural components:
+
+1. **Root Node:** The topmost node with no incoming edges (zero parent). Every non-empty tree has exactly one root.
+2. **Edge:** A directed pointer link from a parent node to its child. A tree with $n$ nodes contains exactly $n - 1$ edges.
+3. **Leaf Node (External Node):** A terminating node with **zero children** (\`left == nullptr && right == nullptr\`).
+4. **Internal Node:** Any node that has at least one child (non-leaf).
+5. **Depth of a Node:** The number of edges on the path from the **Root** downward to the node. The root always has $\\text{Depth} = 0$.
+6. **Height of a Node:** The number of edges on the **longest downward path** from that node to a descendant leaf. A leaf has $\\text{Height} = 0$.
+7. **Height of the Tree:** The height of the Root node, which equals the maximum depth among all nodes in the tree.
+8. **Subtree:** Any node together with all its descendants forms a valid binary tree on its own. This recursive substructure is why virtually all tree algorithms are implemented recursively.
+
+---
+
+### Mathematical Properties of Binary Trees
+
+Binary trees possess elegant combinatorial invariants:
+
+* **Maximum Nodes at Level $L$:** At level $L$ (where root is level 0), there can be at most:
+  $$\\text{Max Nodes}(L) = 2^L$$
+* **Maximum Total Nodes for Height $h$:** Summing over all levels $0 \\le L \\le h$:
+  $$N_{\\max} = \\sum_{L=0}^h 2^L = 2^{h+1} - 1$$
+* **Minimum Height for $n$ Nodes:** When a tree is packed completely full:
+  $$h_{\\min} = \\lceil \\log_2(n + 1) \\rceil - 1 \\in \\Theta(\\log n)$$
+* **Maximum Height for $n$ Nodes:** When each node has only one child (skewed / degenerate tree):
+  $$h_{\\max} = n - 1 \\in \\Theta(n)$$
+
+---
+
+### Classifications of Binary Trees
+
+| Tree Type | Formal Structural Definition | Practical Engineering Significance |
+| :--- | :--- | :--- |
+| **Full (Proper) Tree** | Every node has either **0 or 2 children** (no node has exactly 1 child). | Used in Huffman Coding trees for data compression. |
+| **Complete Tree** | All levels $0$ to $h-1$ are 100% filled, and all leaf nodes on the last level are packed **as far left as possible** without gaps. | Backing structure for **Binary Heaps** and Priority Queues stored in 1D arrays without pointer overhead. |
+| **Perfect Tree** | All internal nodes have 2 children and **all leaves reside at the exact same depth**. | Maximum node density: total nodes $N = 2^{h+1} - 1$. |
+| **Balanced Tree** | For every node, $|\\text{height}(\\text{left}) - \\text{height}(\\text{right})| \\le 1$. | Guarantees $O(\\log n)$ worst-case search and insert times in AVL and Red-Black Trees. |
+| **Degenerate (Skewed)**| Every internal node has exactly one child. | Degenerates into a Singly Linked List with slow $O(n)$ access times. |
+
+---
+
+### Tree Traversal Strategies
+
+To process, search, or display data in a tree, we must visit every node systematically. Traversal strategies are split into **Depth-First Search (DFS)** and **Breadth-First Search (BFS)**:
+
+#### 1. Depth-First Traversals (DFS) — Stack / Recursion
+* **Pre-Order Traversal (Root $\\to$ Left $\\to$ Right / NLR):**
+  Visits the current root node first, then recursively descends into the left subtree, then the right subtree. Used to serialize/clone a tree and evaluate prefix mathematical expressions.
+* **In-Order Traversal (Left $\\to$ Root $\\to$ Right / LNR):**
+  Recursively descends to the leftmost leaf first, visits the root, then descends right. In a **Binary Search Tree (BST)**, in-order traversal yields node keys in strictly sorted, non-decreasing order!
+* **Post-Order Traversal (Left $\\to$ Right $\\to$ Root / LRN):**
+  Processes both child subtrees before visiting the parent. Essential for **bottom-up algorithms**: deleting a tree safely, calculating directory folder disk space, or evaluating post-fix expressions.
+
+#### 2. Breadth-First Traversal (BFS) — Queue
+* **Level-Order Traversal:**
+  Visits nodes tier by tier from top to bottom, left to right. Requires a **FIFO Queue** to buffer child pointers before advancing to subsequent depth levels.
+
+---
+
+### Production C++ Implementation
+
+\`\`\`cpp
+#include <iostream>
+#include <vector>
+#include <queue>
+#include <algorithm>
+using namespace std;
+
+// 1. Dynamic TreeNode Structure
+struct TreeNode {
+    int val;
+    TreeNode* left;
+    TreeNode* right;
+    TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+};
+
+class BinaryTree {
+public:
+    TreeNode* root;
+
+    BinaryTree() : root(nullptr) {}
+
+    // 2. Pre-Order Traversal (Root -> Left -> Right) - O(n) Time, O(h) Auxiliary Space
+    void preOrder(TreeNode* node, vector<int>& out) {
+        if (!node) return;
+        out.push_back(node->val);   // 1. Root
+        preOrder(node->left, out);  // 2. Left
+        preOrder(node->right, out); // 3. Right
+    }
+
+    // 3. In-Order Traversal (Left -> Root -> Right) - O(n) Time, O(h) Auxiliary Space
+    void inOrder(TreeNode* node, vector<int>& out) {
+        if (!node) return;
+        inOrder(node->left, out);   // 1. Left
+        out.push_back(node->val);   // 2. Root
+        inOrder(node->right, out);  // 3. Right
+    }
+
+    // 4. Post-Order Traversal (Left -> Right -> Root) - O(n) Time, O(h) Auxiliary Space
+    void postOrder(TreeNode* node, vector<int>& out) {
+        if (!node) return;
+        postOrder(node->left, out);  // 1. Left
+        postOrder(node->right, out); // 2. Right
+        out.push_back(node->val);    // 3. Root
+    }
+
+    // 5. Level-Order Traversal (BFS Queue) - O(n) Time, O(w) Auxiliary Space
+    vector<int> levelOrder() {
+        vector<int> out;
+        if (!root) return out;
+        queue<TreeNode*> q;
+        q.push(root);
+        while (!q.empty()) {
+            TreeNode* curr = q.front();
+            q.pop();
+            out.push_back(curr->val);
+            if (curr->left) q.push(curr->left);
+            if (curr->right) q.push(curr->right);
+        }
+        return out;
+    }
+
+    // 6. Height / Maximum Depth - O(n) Time
+    int maxDepth(TreeNode* node) {
+        if (!node) return 0;
+        return 1 + max(maxDepth(node->left), maxDepth(node->right));
+    }
+};
+\`\`\`
+    `,
+    banglaNote: {
+      topic: "বাইনারি ট্রি ও ট্রাভার্সাল সহজ বাংলায়",
+      englishContext: "Hierarchical branching, tree classifications & DFS/BFS traversals",
+      banglaText: `
+### বাইনারি ট্রি (Binary Tree) সহজ বাংলায়:
+
+১. **উল্টোমুখী গাছ (Inverted Tree):**
+   প্রকৃতির গাছ নিচ থেকে উপরে বাড়ে, কিন্তু কম্পিউটার সায়েন্সে গাছ শুরু হয় আকাশ থেকে! একদম উপরের নোডটিকে বলা হয় **রুট (Root)**। রুট থেকে শাখা-প্রশাখা নিচের দিকে বিস্তৃত হয় এবং প্রতিটি নোডের সর্বোচ্চ **২টি সন্তান (Left ও Right)** থাকতে পারে।
+
+২. **ডেপথ (Depth) বনাম হাইট (Height):**
+   * **ডেপথ (গভীরতা):** রুট থেকে নিচের দিকে নামার দূরত্ব। রুটের ডেপথ হলো $0$।
+   * **হাইট (উচ্চতা):** কোনো নোড থেকে নিচের পাতার (Leaf) দিকে সবচেয়ে দীর্ঘ পথের দূরত্ব। পাতার হাইট হলো $0$।
+
+৩. **ট্রাভার্সাল (Traversal) মনে রাখার জাদুকরী টেকনিক:**
+   * **Pre-order (আগে রুট):** রুট $\\to$ বাম $\\to$ ডান (Root আগে প্রসেস হবে)
+   * **In-order (মাঝে রুট):** বাম $\\to$ রুট $\\to$ ডান (BST তে এটি ছোট থেকে বড় সাজানো মান দেয়)
+   * **Post-order (শেষে রুট):** বাম $\\to$ ডান $\\to$ রুট (নিচের বাচ্চাদের আগে শেষ করে পরে রুট ডিলিট বা হিসেব করা হয়)
+   * **Level-order (ধাপে ধাপে):** কিউ (Queue) দিয়ে ওপর থেকে নিচে প্রতি তলা ধরে ধরে পরিদর্শন।
+
+৪. **কমপ্লিট ট্রি বনাম পারফেক্ট ট্রি:**
+   * **পারফেক্ট ট্রি:** সব পাতার গভীরতা এক এবং সব নোডের ২টি করে সন্তান থাকে (ত্রিকোণ পিরামিডের মতো নিরেট)।
+   * **কমপ্লিট ট্রি:** শেষ তলা বাদে বাকি সব তলা পূর্ণ থাকে এবং শেষ তলার নোডগুলো কোনো ফাঁকা জায়গা না রেখে বাম ঘেঁষে বসে (বাইনারি হিপের ভিত্তি)।
+      `,
+    },
+    quizTopicId: "binary-tree",
+    visualizerLink: {
+      label: "Binary Tree Studio",
+      algorithmId: "binary-tree",
+      path: "/algorithms/binary-tree",
+    },
+  },
+  {
     slug: "time-complexity",
     level: 6,
     levelTitle: "Level 6: Algorithmic Complexity Analysis",
@@ -2708,7 +2896,7 @@ export const DOCS_LEVELS: DocsLevel[] = [
   {
     level: 5,
     title: "Level 5: Fundamental Data Structures",
-    description: "Core linear containers: Stack (LIFO), Queue (FIFO, circular buffers), and Linked List (dynamic nodes, O(1) prepend).",
+    description: "Core containers: Stack (LIFO), Queue (FIFO, circular buffers), Linked List (dynamic nodes), Hash Table (O(1) direct addressing), and Binary Tree (hierarchical branching & traversals).",
     articles: DOCS_ARTICLES.filter((a) => a.level === 5)
   },
   {

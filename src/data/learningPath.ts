@@ -591,11 +591,65 @@ export const LEARNING_PATH: LearningStep[] = [
   },
 
   // ==========================================
+  // TIER 6.6: NON-LINEAR HIERARCHICAL TREES
+  // ==========================================
+  {
+    id: "binary-tree",
+    order: 12,
+    name: "Binary Tree",
+    category: "data-structure",
+    badge: "Hierarchical Nodes",
+    estimatedTime: "~20 min",
+    difficulty: "Intermediate",
+    reason: "Step out of flat linear data! Learn recursive branching, tree terminology (root, height, depth, leaf), and fundamental DFS & BFS traversals.",
+    hook: "Filesystems, DOM trees, compiler ASTs, and database B-trees all break free from 1D flat arrays. How does a single root branch out to represent millions of items?",
+    superpower: "Hierarchical Branching & Divide-and-Conquer Recursive Problem Solving",
+    tradeoff: "O(n) Worst-Case Degeneration into a Linked List on Skewed Trees",
+    mentalModel: "An Inverted Family Tree or Branching River Delta",
+    keyPrinciples: [
+      "A non-linear tree where every node contains at most two children: Left and Right.",
+      "Root has depth 0; leaves are nodes with no children (left == nullptr && right == nullptr).",
+      "Height is the maximum number of edges from the node to a leaf (Height of tree = Height of root).",
+      "Depth-First Search (DFS) traversals: Pre-order (NLR), In-order (LNR), and Post-order (LRN).",
+      "Breadth-First Search (BFS): Level-order traversal using a FIFO queue."
+    ],
+    analogy: "An upside-down tree with its root in the sky and branches growing downward. Each branch can split into at most two twigs (left and right), ending at the leaves.",
+    idea: "A Binary Tree is a hierarchical data structure where each node stores a payload and pointers to at most two child nodes (left and right). Recursive subproblems naturally match tree subtrees: solving a problem on a tree means solving it on the left and right subtrees and combining the results.",
+    sampleArray: [1, 2, 3, 4, 5, 6, 7],
+    codeBlocks: [
+      {
+        title: "TreeNode Structure",
+        lines: "struct TreeNode {\n    int val;\n    TreeNode* left;\n    TreeNode* right;\n    TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}\n};",
+        explanation: "Each node holds a value and two child pointers initialized to nullptr.",
+      },
+      {
+        title: "Recursive In-Order Traversal (LNR)",
+        lines: "void inOrder(TreeNode* root, vector<int>& res) {\n    if (!root) return;\n    inOrder(root->left, res);\n    res.push_back(root->val);\n    inOrder(root->right, res);\n}",
+        explanation: "Recursively processes left subtree, visits current node, then processes right subtree.",
+      },
+      {
+        title: "Level-Order Traversal (BFS Queue)",
+        lines: "vector<int> levelOrder(TreeNode* root) {\n    vector<int> res;\n    if (!root) return res;\n    queue<TreeNode*> q; q.push(root);\n    while (!q.empty()) {\n        TreeNode* curr = q.front(); q.pop();\n        res.push_back(curr->val);\n        if (curr->left) q.push(curr->left);\n        if (curr->right) q.push(curr->right);\n    }\n    return res;\n}",
+        explanation: "Uses a FIFO queue to visit nodes level-by-level from top to bottom, left to right.",
+      },
+      {
+        title: "Calculating Maximum Depth / Height",
+        lines: "int maxDepth(TreeNode* root) {\n    if (!root) return 0;\n    return 1 + max(maxDepth(root->left), maxDepth(root->right));\n}",
+        explanation: "Recursively finds the deepest path from the current node down to any leaf.",
+      },
+    ],
+    complexityWhy: {
+      time: "Traversals visit every node exactly once: O(n) time. Insertion via BFS takes O(n) to find the first open child slot.",
+      space: "O(h) call stack memory for DFS recursion where h is height (O(log n) balanced, O(n) skewed). BFS queue takes O(w) where w is max level width.",
+    },
+  },
+
+  // ==========================================
   // TIER 7: ELEMENTARY QUADRATIC SORTING
   // ==========================================
   {
     id: "bubble",
-    order: 12,
+    order: 13,
     name: "Bubble Sort",
     category: "sorting",
     badge: "Adjacent Swaps",
@@ -640,7 +694,7 @@ export const LEARNING_PATH: LearningStep[] = [
   },
   {
     id: "selection",
-    order: 13,
+    order: 14,
     name: "Selection Sort",
     category: "sorting",
     badge: "Find Minimum",
@@ -685,7 +739,7 @@ export const LEARNING_PATH: LearningStep[] = [
   },
   {
     id: "insertion",
-    order: 14,
+    order: 15,
     name: "Insertion Sort",
     category: "sorting",
     badge: "Hand-Sorting Cards",
@@ -734,7 +788,7 @@ export const LEARNING_PATH: LearningStep[] = [
   // ==========================================
   {
     id: "merge",
-    order: 15,
+    order: 16,
     name: "Merge Sort",
     category: "sorting",
     badge: "Divide & Conquer",
@@ -779,7 +833,7 @@ export const LEARNING_PATH: LearningStep[] = [
   },
   {
     id: "quick",
-    order: 16,
+    order: 17,
     name: "Quick Sort",
     category: "sorting",
     badge: "Pivot Partition",
@@ -950,5 +1004,25 @@ export const GLOSSARY_TERMS: GlossaryTerm[] = [
     term: "Pointer / Reference",
     category: "Fundamentals",
     definition: "A memory variable that stores the direct physical or virtual heap address of another object or node.",
+  },
+  {
+    term: "Binary Tree",
+    category: "Data Structures",
+    definition: "A hierarchical structure where every node has at most two children: left and right.",
+  },
+  {
+    term: "Root Node",
+    category: "Data Structures",
+    definition: "The top-most node in a tree with no parent, serving as the single entry point.",
+  },
+  {
+    term: "Leaf Node",
+    category: "Data Structures",
+    definition: "A terminating node in a tree with no children (both left and right pointers are nullptr).",
+  },
+  {
+    term: "Tree Traversal",
+    category: "Data Structures",
+    definition: "Systematically visiting every node in a tree exactly once, either Depth-First (DFS) or Breadth-First (BFS).",
   },
 ];

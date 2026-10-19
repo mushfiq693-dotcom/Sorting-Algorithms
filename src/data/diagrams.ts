@@ -347,4 +347,21 @@ for (const auto& [k, v] : table[idx]) {
 return -1; // Not found`,
     highlightedLine: 2,
   },
+  "binary-tree": {
+    algorithmId: "binary-tree",
+    title: "Binary Tree — Hierarchical Node Topology & Traversal Orders",
+    subtitle: "Root node branching down to left and right subtrees with Depth-First (DFS) and Breadth-First (BFS) paths.",
+    caption: "Recursive tree structure: solving a problem on a tree reduces to solving identical subproblems on left and right child subtrees.",
+    fixedArray: [1, 2, 3, 4, 5, 6, 7],
+    complexityFormula: "Traversals: O(n) • Height/Depth: O(n) • Call Stack: O(h)",
+    complexityExplanation: "Every node is visited exactly once in O(n) time. Auxiliary call stack memory is bounded by tree height h (O(log n) balanced, O(n) skewed).",
+    codeSnippet: `// Recursive Depth-First Traversals
+void inOrder(TreeNode* root) {
+    if (!root) return;
+    inOrder(root->left);   // 1. Traverse Left subtree
+    visit(root->val);      // 2. Process Current Root
+    inOrder(root->right);  // 3. Traverse Right subtree
+}`,
+    highlightedLine: 3,
+  },
 };

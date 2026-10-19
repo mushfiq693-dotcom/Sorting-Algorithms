@@ -1098,6 +1098,152 @@ public:
     }
 };`,
   },
+  "binary-tree": {
+    id: "binary-tree",
+    name: "Binary Tree",
+    category: "data-structure",
+    shortDescription: "Hierarchical non-linear data structure where each node points to at most two child nodes (left and right).",
+    description:
+      "A Binary Tree is a fundamental hierarchical data structure where each node contains a value and references to at most two child nodes, conventionally termed left and right. Unlike linear data structures (arrays, linked lists, stacks), trees model hierarchical relationships, recursive structures, and decision spaces. Special classifications include Full, Complete, Perfect, and Balanced trees. Standard tree traversals explore nodes depth-first (Pre-order, In-order, Post-order) or breadth-first (Level-order).",
+    complexity: {
+      best: "O(1)",
+      average: "O(n)",
+      worst: "O(n)",
+      space: "O(n)",
+      stable: true,
+      inPlace: false,
+      operations: [
+        {
+          name: "Pre-order Traversal",
+          time: "O(n)",
+          space: "O(h)",
+          description: "Visits Root, then Left subtree, then Right subtree (DFS).",
+        },
+        {
+          name: "In-order Traversal",
+          time: "O(n)",
+          space: "O(h)",
+          description: "Visits Left subtree, then Root, then Right subtree (DFS).",
+        },
+        {
+          name: "Post-order Traversal",
+          time: "O(n)",
+          space: "O(h)",
+          description: "Visits Left subtree, then Right subtree, then Root (DFS).",
+        },
+        {
+          name: "Level-order Traversal",
+          time: "O(n)",
+          space: "O(w)",
+          description: "Visits nodes level-by-level using a FIFO queue (BFS).",
+        },
+        {
+          name: "Level-Order Insertion",
+          time: "O(n)",
+          space: "O(w)",
+          description: "Finds the first node with an empty child via BFS and attaches new node.",
+        },
+        {
+          name: "Height / Depth Calculation",
+          time: "O(n)",
+          space: "O(h)",
+          description: "1 + max(height(left), height(right)) recursively.",
+        },
+      ],
+    },
+    cppCode: `// Production-Grade C++ Binary Tree Implementation
+#include <iostream>
+#include <queue>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+struct TreeNode {
+    int val;
+    TreeNode* left;
+    TreeNode* right;
+    TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+};
+
+class BinaryTree {
+public:
+    TreeNode* root;
+
+    BinaryTree() : root(nullptr) {}
+
+    // Level-order insertion: fills left-to-right (O(n) time, O(w) space)
+    void insert(int val) {
+        if (!root) {
+            root = new TreeNode(val);
+            return;
+        }
+        queue<TreeNode*> q;
+        q.push(root);
+        while (!q.empty()) {
+            TreeNode* curr = q.front();
+            q.pop();
+
+            if (!curr->left) {
+                curr->left = new TreeNode(val);
+                return;
+            } else {
+                q.push(curr->left);
+            }
+
+            if (!curr->right) {
+                curr->right = new TreeNode(val);
+                return;
+            } else {
+                q.push(curr->right);
+            }
+        }
+    }
+
+    // Depth-First Traversals (O(n) time, O(h) recursion stack)
+    void preOrder(TreeNode* node, vector<int>& res) {
+        if (!node) return;
+        res.push_back(node->val);      // Root
+        preOrder(node->left, res);     // Left
+        preOrder(node->right, res);    // Right
+    }
+
+    void inOrder(TreeNode* node, vector<int>& res) {
+        if (!node) return;
+        inOrder(node->left, res);      // Left
+        res.push_back(node->val);      // Root
+        inOrder(node->right, res);     // Right
+    }
+
+    void postOrder(TreeNode* node, vector<int>& res) {
+        if (!node) return;
+        postOrder(node->left, res);     // Left
+        postOrder(node->right, res);    // Right
+        res.push_back(node->val);       // Root
+    }
+
+    // Breadth-First Level-Order Traversal (O(n) time, O(w) queue)
+    vector<int> levelOrder() {
+        vector<int> res;
+        if (!root) return res;
+        queue<TreeNode*> q;
+        q.push(root);
+        while (!q.empty()) {
+            TreeNode* curr = q.front();
+            q.pop();
+            res.push_back(curr->val);
+            if (curr->left) q.push(curr->left);
+            if (curr->right) q.push(curr->right);
+        }
+        return res;
+    }
+
+    // Calculate maximum depth / height (O(n) time)
+    int maxDepth(TreeNode* node) {
+        if (!node) return 0;
+        return 1 + max(maxDepth(node->left), maxDepth(node->right));
+    }
+};`,
+  },
 };
 
 // All 5 Sorting Algorithms
@@ -1124,6 +1270,7 @@ export const DATA_STRUCTURES: AlgorithmId[] = [
   "queue",
   "linked-list",
   "hash-table",
+  "binary-tree",
 ];
 
 // All Complexity Topics
@@ -1148,6 +1295,7 @@ export const ALL_TOPICS: AlgorithmId[] = [
   "queue",
   "linked-list",
   "hash-table",
+  "binary-tree",
   "bubble",
   "selection",
   "insertion",

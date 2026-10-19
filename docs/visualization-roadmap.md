@@ -32,10 +32,10 @@ This roadmap tracks the long-term sequence of production-quality Data Structure 
 | 02 | **String** | ✅ *Completed* | `/algorithms/string` | Character arrays, ASCII/UTF-8 byte mapping, immutability vs mutability, two-pointer reversal, palindrome validation, sliding window pattern |
 | 03 | **Deque (Double-Ended Queue)** | ✅ *Completed* | `/algorithms/deque` | Circular buffer & doubly-linked deque, front/rear push & pop in $O(1)$, monotonic sliding window maximum, palindrome dual-end verification |
 | 04 | **Hash Table** | ✅ *Completed* | `/algorithms/hash-table` | Hash functions, bucket arrays, separate chaining, open addressing (linear probing), dynamic capacity doubling, Two Sum $O(n)$ map |
-| 05 | **Binary Tree** | 🟡 *Next Eligible* | `/algorithms/binary-tree` | Node structure, parent-child relations, depth/height, tree properties |
-| 06 | **Tree Traversal** | ⚪ *Queued* | `/algorithms/tree-traversal` | In-order, Pre-order, Post-order, Level-order BFS |
-| 07 | **Binary Search Tree** | ⚪ *Queued* | `/algorithms/bst` | BST invariant, search, insert, delete with predecessor/successor |
-| 08 | **AVL Tree** | ⚪ *Queued* | `/algorithms/avl-tree` | Balance factor, LL/RR/LR/RL rotations, self-balancing |
+| 05 | **Binary Tree** | ✅ *Completed* | `/algorithms/binary-tree` | Node structure, parent-child relations, depth/height, full/complete/perfect/balanced invariants, DFS (Pre/In/Post) & BFS traversals, LeetCode 226 Invert |
+| 06 | **Binary Search Tree** | 🟡 *Next Eligible* | `/algorithms/bst` | BST invariant, search, insert, delete with predecessor/successor |
+| 07 | **AVL Tree** | ⚪ *Queued* | `/algorithms/avl-tree` | Balance factor, LL/RR/LR/RL rotations, self-balancing |
+| 08 | **Heap (Min/Max)** | ⚪ *Queued* | `/algorithms/heap` | Array-as-tree representation, bubble-up, bubble-down, heapify |
 | 09 | **Heap (Min/Max)** | ⚪ *Queued* | `/algorithms/heap` | Array-as-tree representation, bubble-up, bubble-down, heapify |
 | 10 | **Priority Queue** | ⚪ *Queued* | `/algorithms/priority-queue` | Priority extraction, task scheduling semantics |
 | 11 | **Union-Find / Disjoint Set** | ⚪ *Queued* | `/algorithms/union-find` | Disjoint set forests, union by rank, path compression |

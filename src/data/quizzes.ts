@@ -1214,6 +1214,73 @@ export const QUIZZES: Record<string, QuizTopic> = {
         explanation: "The Load Factor α = N / M represents the ratio of stored elements to total slots. As α approaches 1.0 in open addressing, probe sequences become catastrophically long (primary clustering). Production tables resize to 2M and re-insert all keys when α > 0.75 to maintain average O(1) efficiency."
       }
     ]
+  },
+  "binary-tree": {
+    id: "binary-tree",
+    title: "Binary Tree Fundamentals Quiz",
+    description: "Test your understanding of tree anatomy (root, leaf, height, depth), full/complete/perfect classifications, and DFS/BFS traversals.",
+    questions: [
+      {
+        id: "bt1",
+        question: "In a binary tree where the root is at level 0, what is the maximum number of nodes possible at level L?",
+        options: [
+          "2ᴸ",
+          "2 × L",
+          "L²",
+          "2ᴸ - 1"
+        ],
+        correctIndex: 0,
+        explanation: "Since each node can have at most 2 children, level 0 has at most 2⁰ = 1 node, level 1 has 2¹ = 2, level 2 has 2² = 4, and level L has at most 2ᴸ nodes."
+      },
+      {
+        id: "bt2",
+        question: "Which Depth-First traversal order visits the Left subtree, then the Root node, and finally the Right subtree?",
+        options: [
+          "In-order Traversal (LNR)",
+          "Pre-order Traversal (NLR)",
+          "Post-order Traversal (LRN)",
+          "Level-order Traversal (BFS)"
+        ],
+        correctIndex: 0,
+        explanation: "In-order traversal follows the Left-Root-Right pattern. In a Binary Search Tree (BST), an In-order traversal visits nodes in strictly sorted non-decreasing numerical order."
+      },
+      {
+        id: "bt3",
+        question: "What is the precise structural definition of a 'Complete Binary Tree'?",
+        options: [
+          "Every level is completely filled except possibly the last level, and all nodes in the last level are populated as far left as possible",
+          "Every single internal node has exactly two children and all leaves are at the exact same depth",
+          "Every node has at most one child, forming a single linear vertical chain",
+          "The tree has an odd number of nodes and left height equals right height at every node"
+        ],
+        correctIndex: 0,
+        explanation: "In a Complete Binary Tree, all levels 0 through h-1 are 100% full. At level h, all leaf nodes reside contiguously on the far left without gaps, which allows compact 1D array representations (like binary heaps) without null pointers."
+      },
+      {
+        id: "bt4",
+        question: "What is the difference between the Depth of a node and the Height of a node in a binary tree?",
+        options: [
+          "Depth is the number of edges from the Root down to the node; Height is the number of edges on the longest path from the node down to a leaf",
+          "Depth and Height are strictly interchangeable identical terms",
+          "Depth is the number of children a node has; Height is the total count of all nodes in the tree",
+          "Depth is measured from bottom-up; Height is measured from top-down"
+        ],
+        correctIndex: 0,
+        explanation: "Depth measures distance downward from the Root (root depth = 0). Height measures distance downward from the node to its furthest descendant leaf (leaf height = 0, tree height = root height)."
+      },
+      {
+        id: "bt5",
+        question: "Which auxiliary data structure is fundamentally required to perform iterative Level-Order (Breadth-First) traversal of a binary tree?",
+        options: [
+          "A FIFO Queue",
+          "A LIFO Stack",
+          "A Hash Table",
+          "A Disjoint Set (Union-Find)"
+        ],
+        correctIndex: 0,
+        explanation: "Level-order traversal visits nodes tier by tier from top to bottom. A First-In-First-Out (FIFO) queue guarantees that nodes at depth d are processed before nodes at depth d + 1."
+      }
+    ]
   }
 };
 

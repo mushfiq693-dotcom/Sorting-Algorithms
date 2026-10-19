@@ -463,5 +463,26 @@ public:
       { type: "overwrite", index: 7, value: 999, description: "Index out of bounds crash: accessed slot capacity instead of wrapping to 0" },
     ],
   },
+  "binary-tree": {
+    algorithmId: "binary-tree",
+    title: "Binary Tree: Off-by-One Base Case in Maximum Depth Recursion",
+    description:
+      "This recursive function computes the maximum depth (height) of a binary tree. However, its base case returns 1 instead of 0 when root is nullptr, causing all tree depths to be inflated by 1!",
+    buggyCode: `int maxDepth(TreeNode* root) {
+    if (!root) return 1; // Bug: empty node returns 1 instead of 0!
+    return 1 + max(maxDepth(root->left), maxDepth(root->right));
+}`,
+    buggyLineNumber: 2,
+    hint: "What is the depth of an empty tree (a nullptr node)? Does a null child contribute 1 level or 0 levels to the tree height?",
+    explanation:
+      "Line 2 returned 1 for the base case when `!root`. When a node pointer is null, that branch has a depth of 0. Returning 1 inflates the height calculation of every leaf node to 2 instead of 1. The base case must be `if (!root) return 0;`.",
+    validateFix: (line: string) => {
+      const trimmed = line.replace(/\s+/g, "");
+      return trimmed.includes("return0");
+    },
+    flawedRunner: () => [
+      { type: "call-enter", fn: "maxDepth", args: [0], description: "Base case returned depth 1 for nullptr, inflating tree height" },
+    ],
+  },
 };
 
