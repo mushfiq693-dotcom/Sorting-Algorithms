@@ -116,9 +116,9 @@ To maximize engagement, retain focus within the app, and eliminate visual clutte
 Step 1: The Idea           -> Curiosity Spark ("The Big Question • Why This Matters" with generous question spacing),
                               3 Badges (Superpower, Tradeoff, Mental Model),
                               Plain English Explanation, Bengali Accordion ("বাংলায় বুঝি")
-Step 2: In-Depth Theory    -> In-Depth Docs & Mathematical Theory FIRST,
-                              Signature Architectural Infographic Diagram at the BOTTOM
-                              (Zero C++ code bloat in diagrams)
+Step 2: In-Depth Theory    -> Bengali Accordion ("বাংলায় বুঝি") at the VERY TOP (Default Closed, Zero Star Icons),
+                              Comprehensive Docs & Mathematical Theory FIRST (Zero C++ implementation code dumps),
+                              Signature Architectural Infographic Diagram at the BOTTOM (Zero C++ code bloat)
 Step 3: Watch It Work      -> Interactive laboratory & step-by-step state visualizer
 Step 4: Why It's Fast/Slow -> Asymptotic complexity grid & operations matrix
                               (Cleaned of redundant description boxes)
@@ -137,6 +137,11 @@ Step 5: Try It (Practice)  -> Live debugger, predict-next, 5 quizzes, bug hunt, 
 > 6. **Clean Studio Visualizer Layout (Zero Clutter & Compact Code)**: All topic visualizers must follow the signature 7/5 studio workspace standard (Visual stage, telemetry explanation box, and studio controls in the left 7 cols; sticky C++ CodeViewer and memory/invariant inspector in the right 5 cols).
 >    - **Color legend rows, buffer capacity strips, and Live Big-O Bounds cards are strictly prohibited** across all existing and upcoming visualizers.
 >    - **Compact C++ CodeViewer Container Standard**: The right column C++ CodeViewer container MUST be strictly constrained (`h-[280px] sm:h-[300px] lg:h-[320px] max-h-[280px] sm:max-h-[300px] lg:max-h-[320px] min-h-0 shrink-0 overflow-hidden flex flex-col` when companion inspector cards exist, or `h-[360px] sm:h-[390px] lg:h-[420px] max-h-[360px] sm:max-h-[390px] lg:max-h-[420px]` for standalone sorting) with internal vertical scrolling (`overflow-y-auto`) so the entire visualizer studio fits within a single screen fold on standard desktop viewports without requiring page scrolling.
+> 7. **Step 2 In-Depth Theory Standards (Bangla-First & Pure Conceptual Theory)**:
+>    - **"বাংলায় বুঝি" (`BanglaNote`) at Top**: Positioned prominently at the very top of Step 2 immediately below the header banner so users instantly recognize Bengali explanations are available.
+>    - **Default-Closed Dropdown**: Configured with `defaultExpanded={false}` to preserve clean screen space on initial load.
+>    - **Zero Star / Sparkles Icons**: No star icons (`<Sparkles />`) in the header label or card footer.
+>    - **No C++ Implementation Dumps in Docs**: In-depth theory documentation (`src/data/docs.ts`) strictly omits long 50-80 line static C++ code blocks. Step 2 focuses on hardware memory mechanics, mathematical proofs, step-by-step traces, loop invariants, and asymptotic derivations. Code inspection and practice belong exclusively in **Step 3 (Watch It Work)** and **Step 5 (Try It / Practice)**.
 
 ---
 
@@ -247,6 +252,16 @@ Every topic must provide a complete 360° mastery suite:
   - Enforced strict container sizing (`h-[280px] sm:h-[300px] lg:h-[320px] max-h-[280px] sm:max-h-[300px] lg:max-h-[320px] min-h-0 shrink-0 overflow-hidden flex flex-col`) across all 12 topic visualizers.
   - Inside `CodeViewer.tsx`, added `min-h-0 max-h-full shrink-0` to the root container and `flex-1 min-h-0 overflow-y-auto` to the code body with custom wood-grain scrollbars.
   - Active execution lines smoothly scroll into view during playback while keeping the entire visualizer studio within a single desktop screen fold.
+
+### 🔄 [2026-10-20] Category Card Polish & In-Depth Theory Bangla/Code Refinements
+* **Category Cards (`TopicCategoryHub.tsx`)**:
+  * **Removed "Explore Topics →" Hover Indicator**: The hover label `Explore Topics →` and its separator dot have been permanently removed from the main category tiles for a clean, calm, and distraction-free experience.
+  * **No Line Wrapping on Counts (`whitespace-nowrap`)**: Added `whitespace-nowrap` to `cat.countLabel` and category detail header badges (`5 Visualizations`, `7 Visualizations`, `1 Visualization`, `2 Visualizations`) ensuring count numbers and label text always sit cleanly on a single line.
+* **In-Depth Theory Section (Step 2 in `/algorithms/[algorithm]` & `docs.ts`)**:
+  * **"বাংলায় বুঝি" (Bangla Note) Placed Prominently at the Very Top**: Moved `BanglaNote` to the very top of Step 2, directly below the article title banner, guaranteeing immediate visibility for Bengali-speaking learners.
+  * **Default-Closed Dropdown**: Configured with `defaultExpanded={false}` so the dropdown stays neatly collapsed until the user chooses to open it.
+  * **Zero Star / Sparkles Icons**: Removed `<Sparkles />` star icons from both the section header and `BanglaNote.tsx` footer (replaced with `<BookOpen />`).
+  * **Elimination of Redundant C++ Implementation Code Blocks**: Stripped long static C++ implementation code blocks from the theory documentation (`src/data/docs.ts`) across all topics (Bubble Sort, Selection Sort, Insertion Sort, Merge Sort, Quick Sort, Array, String, Stack, Queue, Deque, Hash Table, Binary Tree, Linear Search, Binary Search), maintaining high pedagogical focus on core algorithmic invariants, traces, and complexity bounds.
 
 ---
 
