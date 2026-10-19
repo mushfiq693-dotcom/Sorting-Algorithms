@@ -18,6 +18,7 @@ import { LinearSearchVisualizer } from "./LinearSearchVisualizer";
 import { BinarySearchVisualizer } from "./BinarySearchVisualizer";
 import { TimeComplexityVisualizer } from "./TimeComplexityVisualizer";
 import { SpaceComplexityVisualizer } from "./SpaceComplexityVisualizer";
+import { DequeVisualizer } from "./DequeVisualizer";
 import { Sparkles, ArrowLeft } from "lucide-react";
 
 const DEFAULT_INITIAL_ARRAY = [48, 15, 86, 34, 92, 28, 65, 12, 54, 78, 23, 95, 41, 60, 31];
@@ -391,6 +392,7 @@ export function SortingVisualizer({
           {selectedAlgorithm === "stack" && <StackVisualizer />}
           {selectedAlgorithm === "queue" && <QueueVisualizer />}
           {selectedAlgorithm === "linked-list" && <LinkedListVisualizer />}
+          {selectedAlgorithm === "deque" && <DequeVisualizer />}
           {selectedAlgorithm === "linear-search" && <LinearSearchVisualizer />}
           {selectedAlgorithm === "binary-search" && <BinarySearchVisualizer />}
           {selectedAlgorithm === "time-complexity" && <TimeComplexityVisualizer />}
