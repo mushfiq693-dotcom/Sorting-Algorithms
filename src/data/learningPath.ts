@@ -4,7 +4,7 @@ export interface LearningStep {
   id: AlgorithmId;
   order: number;
   name: string;
-  category: "sorting" | "searching" | "data-structure" | "complexity";
+  category: "sorting" | "searching" | "data-structure" | "complexity" | "tree";
   badge: string;
   estimatedTime: string;
   difficulty: "Beginner" | "Intermediate" | "Advanced";
@@ -597,7 +597,7 @@ export const LEARNING_PATH: LearningStep[] = [
     id: "binary-tree",
     order: 12,
     name: "Binary Tree",
-    category: "data-structure",
+    category: "tree",
     badge: "Hierarchical Nodes",
     estimatedTime: "~20 min",
     difficulty: "Intermediate",

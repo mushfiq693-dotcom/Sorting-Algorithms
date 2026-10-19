@@ -31,7 +31,7 @@ import {
   GitFork,
 } from "lucide-react";
 
-export type CategoryKey = "sorting" | "data-structure" | "searching" | "complexity";
+export type CategoryKey = "sorting" | "data-structure" | "tree" | "searching" | "complexity";
 
 export interface CategoryCardMeta {
   key: CategoryKey;
@@ -58,12 +58,22 @@ export const CATEGORY_CARDS: CategoryCardMeta[] = [
   {
     key: "data-structure",
     title: "Data Structures",
-    countLabel: "6 Visualizations",
+    countLabel: "7 Visualizations",
     icon: Network,
     iconBg: "bg-emerald-500/10 dark:bg-emerald-500/20",
     iconColor: "text-emerald-500 dark:text-emerald-400",
     iconBorder: "border-emerald-500/30",
     accentGlow: "group-hover:shadow-[0_0_24px_rgba(16,185,129,0.2)]",
+  },
+  {
+    key: "tree",
+    title: "Trees",
+    countLabel: "1 Visualization",
+    icon: GitFork,
+    iconBg: "bg-teal-500/10 dark:bg-teal-500/20",
+    iconColor: "text-teal-500 dark:text-teal-400",
+    iconBorder: "border-teal-500/30",
+    accentGlow: "group-hover:shadow-[0_0_24px_rgba(20,184,166,0.2)]",
   },
   {
     key: "searching",
@@ -172,9 +182,9 @@ const TOPIC_VISUALS: Record<AlgorithmId, TopicVisualMeta> = {
   },
   "binary-tree": {
     icon: GitFork,
-    iconBg: "bg-emerald-500/10 dark:bg-emerald-500/20",
-    iconColor: "text-emerald-500 dark:text-emerald-400",
-    iconBorder: "border-emerald-500/25",
+    iconBg: "bg-teal-500/10 dark:bg-teal-500/20",
+    iconColor: "text-teal-500 dark:text-teal-400",
+    iconBorder: "border-teal-500/25",
   },
 
   // Searching (Orange / Rust palette)
@@ -367,14 +377,54 @@ const DATA_STRUCTURE_COMPARISON: DataStructureComparisonRow[] = [
     deletion: "O(1) avg / O(n) worst",
     space: "O(n)",
   },
+];
+
+interface TreeComparisonRow {
+  name: string;
+  id: AlgorithmId;
+  type: string;
+  lookup: string;
+  insert: string;
+  delete: string;
+  traversal: string;
+}
+
+const TREE_COMPARISON: TreeComparisonRow[] = [
   {
-    name: "Binary Tree",
+    name: "Binary Tree (Standard)",
     id: "binary-tree",
-    access: "O(n)",
-    search: "O(n)",
-    insertion: "O(n)",
-    deletion: "O(n)",
-    space: "O(n)",
+    type: "Hierarchical (At most 2 children)",
+    lookup: "O(n)",
+    insert: "O(n) BFS / O(1) leaf",
+    delete: "O(n)",
+    traversal: "DFS (NLR, LNR, LRN) & BFS",
+  },
+  {
+    name: "Binary Search Tree (BST)",
+    id: "binary-tree",
+    type: "Sorted Key (Left < Root < Right)",
+    lookup: "O(log n) avg / O(n) worst",
+    insert: "O(log n) avg / O(n) worst",
+    delete: "O(log n) avg / O(n) worst",
+    traversal: "In-Order yields sorted sequence",
+  },
+  {
+    name: "AVL Tree (Balanced BST)",
+    id: "binary-tree",
+    type: "Height-Balanced (|BF| ≤ 1)",
+    lookup: "O(log n) guaranteed",
+    insert: "O(log n) with rotations",
+    delete: "O(log n) with rotations",
+    traversal: "Guaranteed O(log n) height",
+  },
+  {
+    name: "Binary Heap (Priority Queue)",
+    id: "binary-tree",
+    type: "Complete Tree (Heap Property)",
+    lookup: "O(1) Min/Max",
+    insert: "O(log n) percolate up",
+    delete: "O(log n) percolate down",
+    traversal: "Level-Order array mapping",
   },
 ];
 
@@ -514,8 +564,8 @@ export function TopicCategoryHub({
           ======================================================== */}
       {isLearnMode || !currentCategory ? (
         <div>
-          {/* 4 Main Existing Category Cards (2x2 Balanced Grid) */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 sm:gap-4 max-w-5xl mx-auto mb-6">
+          {/* 5 Main Category Cards (Balanced Responsive Grid) */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-4 max-w-5xl mx-auto mb-6">
             {CATEGORY_CARDS.map((cat) => {
               const isSelected = currentCategory === cat.key;
               const IconComponent = cat.icon;
@@ -525,7 +575,7 @@ export function TopicCategoryHub({
                   key={cat.key}
                   type="button"
                   onClick={() => handleCategoryClick(cat.key)}
-                  className={`relative rounded-2xl p-4 sm:p-5 text-left transition-all duration-200 cursor-pointer flex items-center gap-3.5 sm:gap-4 select-none group active:scale-[0.99] ${
+                  className={`relative rounded-2xl p-4 sm:p-5 text-left transition-all duration-200 cursor-pointer flex items-center gap-3.5 sm:gap-4 select-none group active:scale-[0.99] sm:last:col-span-2 lg:last:col-span-1 ${
                     isSelected
                       ? "border-2 border-primary bg-primary/[0.08] shadow-[0_0_24px_rgba(201,169,98,0.2)] ring-1 ring-primary/40"
                       : `border border-border/80 bg-card/75 dark:bg-[#18181b]/80 hover:bg-card hover:border-primary/50 hover:shadow-lg ${cat.accentGlow}`
@@ -734,6 +784,47 @@ export function TopicCategoryHub({
                         <td className="py-3.5 px-4 text-foreground/90">{row.insertion}</td>
                         <td className="py-3.5 px-4 text-foreground/90">{row.deletion}</td>
                         <td className="py-3.5 px-4 sm:px-6 text-foreground/90">{row.space}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {currentCategory === "tree" && (
+            <div className="mt-16 sm:mt-20 lg:mt-24">
+              <h3 className="text-xl sm:text-2xl font-bold font-heading text-foreground mb-5">
+                Tree structures &amp; variants comparison
+              </h3>
+              <div className="rounded-2xl border border-border/80 bg-card/60 backdrop-blur-sm overflow-x-auto shadow-sm">
+                <table className="w-full text-left text-sm border-collapse min-w-[580px]">
+                  <thead>
+                    <tr className="border-b border-border/70 text-xs font-semibold text-muted-foreground uppercase tracking-wider bg-muted/20">
+                      <th className="py-3.5 px-4 sm:px-6">Tree Variant</th>
+                      <th className="py-3.5 px-4">Ordering Invariant</th>
+                      <th className="py-3.5 px-4">Search</th>
+                      <th className="py-3.5 px-4">Insertion</th>
+                      <th className="py-3.5 px-4">Deletion</th>
+                      <th className="py-3.5 px-4 sm:px-6">Traversal Behavior</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-border/40 font-mono text-xs">
+                    {TREE_COMPARISON.map((row, idx) => (
+                      <tr
+                        key={idx}
+                        className="hover:bg-muted/30 transition-colors group"
+                      >
+                        <td className="py-3.5 px-4 sm:px-6 font-sans font-semibold text-foreground group-hover:text-primary transition-colors">
+                          <Link href={`/visualizer?algo=${row.id}`} className="hover:underline">
+                            {row.name}
+                          </Link>
+                        </td>
+                        <td className="py-3.5 px-4 text-foreground/90 font-sans">{row.type}</td>
+                        <td className="py-3.5 px-4 text-foreground/90">{row.lookup}</td>
+                        <td className="py-3.5 px-4 text-foreground/90">{row.insert}</td>
+                        <td className="py-3.5 px-4 text-foreground/90">{row.delete}</td>
+                        <td className="py-3.5 px-4 sm:px-6 text-foreground/90 font-sans">{row.traversal}</td>
                       </tr>
                     ))}
                   </tbody>

@@ -1,6 +1,6 @@
 import { SortOperation } from "./sorting";
 
-export type TopicCategory = "sorting" | "searching" | "data-structure" | "complexity";
+export type TopicCategory = "sorting" | "searching" | "data-structure" | "complexity" | "tree";
 
 export type SortingAlgorithmId =
   | "bubble"

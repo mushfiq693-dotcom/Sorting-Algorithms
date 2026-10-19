@@ -11,6 +11,7 @@ import {
   ChevronDown,
   ChevronUp,
   Layers,
+  GitFork,
 } from "lucide-react";
 
 interface TopicNavbarDropdownProps {
@@ -48,6 +49,14 @@ const CATEGORIES: CategoryGroup[] = [
       { id: "deque", num: "09", name: "Deque", badge: "Dual-End O(1)" },
       { id: "linked-list", num: "10", name: "Linked List", badge: "Nodes O(1)" },
       { id: "hash-table", num: "11", name: "Hash Table", badge: "Lookup O(1)" },
+    ],
+  },
+  {
+    id: "trees",
+    label: "TREE STRUCTURES",
+    icon: GitFork,
+    colorClass: "text-teal-400",
+    items: [
       { id: "binary-tree", num: "12", name: "Binary Tree", badge: "Branch O(n)" },
     ],
   },

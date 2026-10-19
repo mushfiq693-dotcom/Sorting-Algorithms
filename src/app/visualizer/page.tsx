@@ -23,6 +23,8 @@ const getCategoryMetaForAlgo = (algoId: AlgorithmId): { key: CategoryKey; label:
   switch (cat) {
     case "data-structure":
       return { key: "data-structure", label: "Data Structures" };
+    case "tree":
+      return { key: "tree", label: "Trees" };
     case "searching":
       return { key: "searching", label: "Searching" };
     case "complexity":

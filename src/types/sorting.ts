@@ -48,7 +48,7 @@ export interface AlgorithmComplexity {
 export interface AlgorithmMetadata {
   id: AlgorithmId;
   name: string;
-  category?: "sorting" | "searching" | "data-structure" | "complexity";
+  category?: "sorting" | "searching" | "data-structure" | "complexity" | "tree";
   shortDescription: string;
   description: string;
   complexity: AlgorithmComplexity;

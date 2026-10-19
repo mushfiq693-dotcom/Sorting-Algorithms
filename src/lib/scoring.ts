@@ -11,7 +11,7 @@ import { TopicMetrics, TopicScoresRecord, ActivityHistoryItem } from "../../back
 export interface OrderedTopicItem {
   id: AlgorithmId;
   name: string;
-  category: "sorting" | "searching" | "data-structure" | "complexity";
+  category: "sorting" | "searching" | "data-structure" | "complexity" | "tree";
 }
 
 export const ORDERED_SORTING_ALGORITHMS: OrderedTopicItem[] = [
@@ -35,7 +35,7 @@ export const ORDERED_DATA_STRUCTURES: OrderedTopicItem[] = [
   { id: "queue", name: "Queue", category: "data-structure" },
   { id: "linked-list", name: "Linked List", category: "data-structure" },
   { id: "hash-table", name: "Hash Table", category: "data-structure" },
-  { id: "binary-tree", name: "Binary Tree", category: "data-structure" },
+  { id: "binary-tree", name: "Binary Tree", category: "tree" },
 ];
 
 export const ORDERED_COMPLEXITY_TOPICS: OrderedTopicItem[] = [
@@ -260,7 +260,7 @@ export function calculateOverallProgress(topicScores: Partial<TopicScoresRecord>
 
     if (category === "sorting") {
       sortingTotal += score;
-    } else if (category === "data-structure") {
+    } else if (category === "data-structure" || category === "tree") {
       dsTotal += score;
     } else {
       complexityTotal += score;

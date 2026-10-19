@@ -7,9 +7,10 @@ import {
   SORTING_ALGORITHMS,
   SEARCHING_ALGORITHMS,
   DATA_STRUCTURES,
+  TREE_TOPICS,
   COMPLEXITY_TOPICS,
 } from "@/data/algorithms";
-import { Cpu, Database, TrendingUp, ChevronDown, Sparkles, Layers, Search } from "lucide-react";
+import { Cpu, Database, TrendingUp, ChevronDown, Sparkles, Layers, Search, GitFork } from "lucide-react";
 
 interface AlgorithmSelectorProps {
   selectedAlgorithm: AlgorithmId;
@@ -17,7 +18,7 @@ interface AlgorithmSelectorProps {
   disabled?: boolean;
 }
 
-type CategoryKey = "sorting" | "searching" | "data-structures" | "complexity";
+type CategoryKey = "sorting" | "searching" | "data-structures" | "trees" | "complexity";
 
 export function AlgorithmSelector({
   selectedAlgorithm,
@@ -29,6 +30,7 @@ export function AlgorithmSelector({
   const getActiveCategory = (id: AlgorithmId): CategoryKey => {
     if (SORTING_ALGORITHMS.includes(id as any)) return "sorting";
     if (SEARCHING_ALGORITHMS.includes(id as any)) return "searching";
+    if (TREE_TOPICS.includes(id as any)) return "trees";
     if (DATA_STRUCTURES.includes(id as any)) return "data-structures";
     return "complexity";
   };
@@ -40,6 +42,7 @@ export function AlgorithmSelector({
       sorting: active === "sorting",
       searching: active === "searching",
       "data-structures": active === "data-structures",
+      trees: active === "trees",
       complexity: active === "complexity",
     };
   });
@@ -61,11 +64,11 @@ export function AlgorithmSelector({
   };
 
   const expandAll = () => {
-    setOpenCategories({ sorting: true, searching: true, "data-structures": true, complexity: true });
+    setOpenCategories({ sorting: true, searching: true, "data-structures": true, trees: true, complexity: true });
   };
 
   const collapseAll = () => {
-    setOpenCategories({ sorting: false, searching: false, "data-structures": false, complexity: false });
+    setOpenCategories({ sorting: false, searching: false, "data-structures": false, trees: false, complexity: false });
   };
 
   const handleTopicClick = (algoId: AlgorithmId) => {
@@ -75,6 +78,7 @@ export function AlgorithmSelector({
   const isSortingActive = SORTING_ALGORITHMS.includes(selectedAlgorithm as any);
   const isSearchingActive = SEARCHING_ALGORITHMS.includes(selectedAlgorithm as any);
   const isDsActive = DATA_STRUCTURES.includes(selectedAlgorithm as any);
+  const isTreeActive = TREE_TOPICS.includes(selectedAlgorithm as any);
   const isComplexityActive = COMPLEXITY_TOPICS.includes(selectedAlgorithm as any);
 
   return (
@@ -366,6 +370,93 @@ export function AlgorithmSelector({
                     <div className="flex items-center gap-1.5">
                       <span className="text-[9px] font-mono font-semibold px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-600 dark:text-blue-300 border border-blue-500/20">
                         LIFO/FIFO O(1)
+                      </span>
+                    </div>
+                  </div>
+                  <p className="mt-1 text-[10px] text-muted-foreground leading-relaxed line-clamp-1">
+                    {meta.shortDescription}
+                  </p>
+                </button>
+              );
+            })}
+          </div>
+        )}
+      </div>
+
+      {/* =================================================================== */}
+      {/* Category 4: Tree Structures Dropdown */}
+      {/* =================================================================== */}
+      <div className="rounded-xl border border-border/80 bg-secondary/30 overflow-hidden transition-all duration-200">
+        <button
+          type="button"
+          onClick={() => toggleCategory("trees")}
+          className="w-full flex items-center justify-between px-3.5 py-2.5 bg-secondary/50 hover:bg-secondary/80 transition-colors text-left cursor-pointer group"
+          aria-expanded={openCategories.trees}
+        >
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="h-7 w-7 rounded-lg bg-teal-500/10 border border-teal-500/30 flex items-center justify-center text-teal-500 shrink-0 shadow-sm">
+              <GitFork className="h-4 w-4" />
+            </div>
+            <div className="flex flex-col min-w-0">
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-mono font-bold text-foreground truncate">
+                  Tree Structures
+                </span>
+                {isTreeActive && (
+                  <span className="h-1.5 w-1.5 rounded-full bg-teal-400 animate-pulse shrink-0" />
+                )}
+              </div>
+              <span className="text-[10px] text-muted-foreground font-mono truncate">
+                {openCategories.trees ? "Click to collapse" : `Active: ${ALGORITHMS[selectedAlgorithm]?.name || "Select"}`}
+              </span>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2 shrink-0 ml-2">
+            <span className="text-[10px] font-mono font-semibold text-teal-600 dark:text-teal-400 bg-teal-500/10 border border-teal-500/20 px-2 py-0.5 rounded-md">
+              {TREE_TOPICS.length} Structure{TREE_TOPICS.length > 1 ? "s" : ""}
+            </span>
+            <ChevronDown
+              className={`h-4 w-4 text-muted-foreground group-hover:text-foreground transition-transform duration-200 ${
+                openCategories.trees ? "rotate-180 text-teal-500" : ""
+              }`}
+            />
+          </div>
+        </button>
+
+        {openCategories.trees && (
+          <div className="p-2.5 flex flex-col gap-1.5 border-t border-border/60 animate-in fade-in slide-in-from-top-1 duration-150">
+            {TREE_TOPICS.map((treeId) => {
+              const meta = ALGORITHMS[treeId];
+              const isSelected = selectedAlgorithm === treeId;
+
+              return (
+                <button
+                  key={treeId}
+                  id={`tree-btn-${treeId}`}
+                  disabled={disabled}
+                  onClick={() => handleTopicClick(treeId)}
+                  className={`group relative flex flex-col items-start rounded-xl p-2.5 text-left transition-all ${
+                    isSelected
+                      ? "bg-teal-500/15 border border-teal-500/60 shadow-sm text-foreground"
+                      : "border border-border/60 bg-background/60 hover:bg-secondary text-muted-foreground hover:text-foreground"
+                  } ${disabled ? "opacity-50 cursor-not-allowed" : "active:scale-[0.99] cursor-pointer"}`}
+                >
+                  <div className="flex w-full items-center justify-between">
+                    <span className="font-bold text-xs text-foreground flex items-center gap-2">
+                      {meta.name}
+                      {isSelected && (
+                        <span className="flex items-end gap-0.5 h-3 px-1 py-0.5 rounded bg-teal-500/20 text-teal-500">
+                          <span className="w-0.5 h-1 rounded-xs bg-teal-500" />
+                          <span className="w-0.5 h-2 rounded-xs bg-teal-500" />
+                          <span className="w-0.5 h-3 rounded-xs bg-teal-500" />
+                        </span>
+                      )}
+                    </span>
+
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-[9px] font-mono font-semibold px-1.5 py-0.5 rounded bg-teal-500/10 text-teal-600 dark:text-teal-300 border border-teal-500/20">
+                        DFS / BFS O(n)
                       </span>
                     </div>
                   </div>

@@ -1101,7 +1101,7 @@ public:
   "binary-tree": {
     id: "binary-tree",
     name: "Binary Tree",
-    category: "data-structure",
+    category: "tree",
     shortDescription: "Hierarchical non-linear data structure where each node points to at most two child nodes (left and right).",
     description:
       "A Binary Tree is a fundamental hierarchical data structure where each node contains a value and references to at most two child nodes, conventionally termed left and right. Unlike linear data structures (arrays, linked lists, stacks), trees model hierarchical relationships, recursive structures, and decision spaces. Special classifications include Full, Complete, Perfect, and Balanced trees. Standard tree traversals explore nodes depth-first (Pre-order, In-order, Post-order) or breadth-first (Level-order).",
@@ -1261,7 +1261,7 @@ export const SEARCHING_ALGORITHMS: AlgorithmId[] = [
   "binary-search",
 ];
 
-// All Data Structures
+// All Data Structures (Linear & Hash)
 export const DATA_STRUCTURES: AlgorithmId[] = [
   "array",
   "string",
@@ -1270,6 +1270,10 @@ export const DATA_STRUCTURES: AlgorithmId[] = [
   "queue",
   "linked-list",
   "hash-table",
+];
+
+// All Tree Data Structures
+export const TREE_TOPICS: AlgorithmId[] = [
   "binary-tree",
 ];
 

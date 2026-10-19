@@ -103,12 +103,12 @@ assertEqual(
   "Merge Sort score 90 (> 85) names next topic (Quick Sort)"
 );
 
-// Quick Sort > 85 names next topic (Stack)
-const readyStack = getAdaptiveGuidance("quick", 92);
+// Quick Sort > 85 names next topic (Array)
+const readyArray = getAdaptiveGuidance("quick", 92);
 assertEqual(
-  readyStack.message,
-  "You're ready for Stack!",
-  "Quick Sort score 92 (> 85) names next topic (Stack)"
+  readyArray.message,
+  "You're ready for Array!",
+  "Quick Sort score 92 (> 85) names next topic (Array)"
 );
 
 // Space Complexity (Final Topic) > 85
@@ -224,8 +224,8 @@ const mockTopicScores = {
 };
 
 const overall = calculateOverallProgress(mockTopicScores as any);
-// (82 + 100 + 0*10) / 12 = 182 / 12 = 15.16 => rounded 15
-assertEqual(overall.overallScore, 15, "Overall score average across 12 topics is 15%");
+// (82 + 100 + 0*15) / 17 = 182 / 17 = 10.7 => rounded 11
+assertEqual(overall.overallScore, 11, "Overall score average across 17 topics is 11%");
 assertEqual(overall.masteredCount, 1, "Mastered count is 1 (Selection Sort >= 85)");
 assertEqual(overall.activeTopic, "bubble", "Active topic is bubble (< 85)");
 

@@ -141,7 +141,8 @@ export default function AlgorithmDetailPage() {
     notFound();
   }
 
-  const isDataStructure = meta.category === "data-structure";
+  const isDataStructure = meta.category === "data-structure" || meta.category === "tree";
+  const isTree = meta.category === "tree";
   const isComplexity = meta.category === "complexity";
   const isSearching = meta.category === "searching";
 
@@ -231,7 +232,7 @@ export default function AlgorithmDetailPage() {
             <div className="flex items-center gap-2 mb-2">
               <span className="text-xs font-mono font-bold px-2.5 py-1 rounded-lg bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-500/20 flex items-center gap-1.5">
                 <span>
-                  {isDataStructure ? "Data Structure" : isComplexity ? "Complexity Analysis" : isSearching ? "Searching Algorithm" : "Sorting Algorithm"} • {stepData.order < 10 ? `0${stepData.order}` : stepData.order} of {LEARNING_PATH.length < 10 ? `0${LEARNING_PATH.length}` : LEARNING_PATH.length}
+                  {isTree ? "Tree Data Structure" : isDataStructure ? "Data Structure" : isComplexity ? "Complexity Analysis" : isSearching ? "Searching Algorithm" : "Sorting Algorithm"} • {stepData.order < 10 ? `0${stepData.order}` : stepData.order} of {LEARNING_PATH.length < 10 ? `0${LEARNING_PATH.length}` : LEARNING_PATH.length}
                 </span>
               </span>
               <span className="text-xs font-mono text-muted-foreground flex items-center gap-1">
