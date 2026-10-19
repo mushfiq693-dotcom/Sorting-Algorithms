@@ -11,7 +11,7 @@ export type SortingAlgorithmId =
 
 export type SearchingAlgorithmId = "linear-search" | "binary-search";
 
-export type DataStructureId = "stack" | "queue" | "linked-list";
+export type DataStructureId = "array" | "string" | "deque" | "stack" | "queue" | "linked-list";
 
 export type ComplexityTopicId = "time-complexity" | "space-complexity";
 

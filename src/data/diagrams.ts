@@ -167,6 +167,30 @@ int longestUniqueSubstring(const string& s) {
 }`,
     highlightedLine: 5,
   },
+  deque: {
+    algorithmId: "deque",
+    title: "Deque — Double-Ended Queue Circular Array & Node Chain Blueprint",
+    subtitle: "Supports instantaneous O(1) push and pop operations at both the Front and Rear boundaries using modular arithmetic wrap-around or bidirectional node pointers.",
+    caption: "Front wraps backward via (F - 1 + N) % N, while Rear wraps forward via (R + 1) % N without costly element shifts.",
+    fixedArray: [42, 58, 73, 89],
+    complexityFormula: "pushFront, pushBack, popFront, popBack, peekFront, peekBack = O(1)",
+    complexityExplanation: "Both boundaries update their pointers directly in single-instruction modular time without shifting intermediate items.",
+    codeSnippet: `// Circular Array Deque Wrap Operations
+void pushFront(int val) {
+    if (size == capacity) throw overflow_error("Deque full");
+    front = (front - 1 + capacity) % capacity; // Modular backward wrap
+    buffer[front] = val;
+    size++;
+}
+
+void pushBack(int val) {
+    if (size == capacity) throw overflow_error("Deque full");
+    rear = (rear + 1) % capacity; // Modular forward wrap
+    buffer[rear] = val;
+    size++;
+}`,
+    highlightedLine: 4,
+  },
   stack: {
     algorithmId: "stack",
     title: "Stack — LIFO Push, Pop & Call Stack Anatomy",

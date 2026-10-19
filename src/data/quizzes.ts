@@ -1080,5 +1080,73 @@ export const QUIZZES: Record<string, QuizTopic> = {
         explanation: "To remove a node while keeping the chain intact, the predecessor's next pointer must bypass the target node and point to the successor."
       }
     ]
+  },
+  deque: {
+    id: "deque",
+    title: "Deque (Double-Ended Queue) Quiz",
+    description: "Test your mastery of bidirectional boundary operations, circular array wrap-around, monotonic deque invariants, and work-stealing schedulers.",
+    questions: [
+      {
+        id: "dq1",
+        question: "What is the primary operational distinction between a standard FIFO Queue and a Double-Ended Queue (Deque)?",
+        options: [
+          "A Deque supports instantaneous O(1) insertions and deletions at BOTH the front and rear, whereas a standard queue only inserts at rear and removes from front",
+          "A Deque is sorted automatically on every insertion",
+          "A Deque only operates on string data types",
+          "A Deque uses binary tree balancing instead of array storage"
+        ],
+        correctIndex: 0,
+        explanation: "A Deque (Double-Ended Queue) generalizes both Stack and Queue by supporting pushFront, pushBack, popFront, and popBack in strict O(1) time."
+      },
+      {
+        id: "dq2",
+        question: "In a circular array implementation with capacity N, why is `front = (front - 1 + N) % N` used to prepend an element instead of `(front - 1) % N`?",
+        options: [
+          "Because in C++, Java, and JS, `(-1) % N` evaluates to `-1` (a negative invalid index) rather than `N - 1`, so adding N guarantees a non-negative dividend",
+          "Because adding N doubles the array capacity dynamically",
+          "Because modulo arithmetic only works with even numbers",
+          "Because N is the CPU memory page size"
+        ],
+        correctIndex: 0,
+        explanation: "In C++, Java, and JavaScript, the `%` operator calculates the remainder, preserving negative signs: `(-1) % 8 == -1`. Adding capacity N ensures `(0 - 1 + 8) % 8 == 7`, correctly wrapping back to the last slot."
+      },
+      {
+        id: "dq3",
+        question: "In the Monotonic Deque algorithm for Sliding Window Maximum, why are elements smaller than or equal to the current element popped from the BACK of the deque?",
+        options: [
+          "Because the current incoming element is both larger and will stay in the sliding window longer, rendering the smaller previous elements permanently obsolete as maximum candidates",
+          "To keep the deque sorted in ascending order",
+          "Because small elements cause memory fragmentation in the CPU cache",
+          "Because the deque has a fixed capacity of 2 elements"
+        ],
+        correctIndex: 0,
+        explanation: "If an incoming element is greater than or equal to an existing candidate, the existing candidate can never become the maximum of the current or any future window. Popping it preserves the monotonic decreasing invariant."
+      },
+      {
+        id: "dq4",
+        question: "What is the total overall time complexity of finding the maximum in all sliding windows of size k across an array of length n using a Monotonic Deque?",
+        options: [
+          "O(n), because each array index is pushed onto the deque at most once and popped at most once",
+          "O(n × k), because each window requires scanning all k items",
+          "O(n log n), due to binary heap insertions",
+          "O(n²), because of nested while loops"
+        ],
+        correctIndex: 0,
+        explanation: "Although there is a while loop inside the iteration, each element is pushed to the deque exactly once and popped at most once across the entire run. Amortized work per element is O(1), yielding strict O(n) total runtime."
+      },
+      {
+        id: "dq5",
+        question: "In modern multi-core runtimes (such as Go goroutines or Java ForkJoinPool), why do worker thread pools use Deques for 'work-stealing'?",
+        options: [
+          "The owning worker accesses the Front as a LIFO Stack for optimal CPU cache reuse, while idle 'thief' threads steal from the Rear as a FIFO Queue, minimizing lock contention",
+          "Because Deques automatically encrypt thread memory",
+          "Because Deques run on the GPU instead of the CPU",
+          "Because operating systems only permit thread queues with double ends"
+        ],
+        correctIndex: 0,
+        explanation: "In work-stealing, the local owner pushes and pops from the head (LIFO) to maximize cache locality on recent sub-tasks. Thieves steal from the opposite tail end (FIFO), preventing concurrent workers from contending on the same end of the queue."
+      }
+    ]
   }
 };
+

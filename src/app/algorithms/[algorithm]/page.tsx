@@ -32,6 +32,10 @@ const StringVisualizer = dynamic(
   () => import("@/components/visualizer/StringVisualizer").then((mod) => mod.StringVisualizer),
   { ssr: false, loading: () => <TabLoading /> }
 );
+const DequeVisualizer = dynamic(
+  () => import("@/components/visualizer/DequeVisualizer").then((mod) => mod.DequeVisualizer),
+  { ssr: false, loading: () => <TabLoading /> }
+);
 const StackVisualizer = dynamic(
   () => import("@/components/visualizer/StackVisualizer").then((mod) => mod.StackVisualizer),
   { ssr: false, loading: () => <TabLoading /> }
@@ -474,6 +478,8 @@ export default function AlgorithmDetailPage() {
                 <ArrayVisualizer />
               ) : algorithmId === "string" ? (
                 <StringVisualizer />
+              ) : algorithmId === "deque" ? (
+                <DequeVisualizer />
               ) : algorithmId === "stack" ? (
                 <StackVisualizer />
               ) : algorithmId === "queue" ? (

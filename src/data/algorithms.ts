@@ -867,6 +867,116 @@ public:
     }
 };`,
   },
+  deque: {
+    id: "deque",
+    name: "Deque (Double-Ended Queue)",
+    category: "data-structure",
+    shortDescription: "Double-ended sequence supporting O(1) insertion and deletion at both the front and rear.",
+    description:
+      "A Deque (Double-Ended Queue, pronounced 'deck') is a generalized sequence container that allows instantaneous O(1) insertions and removals at both ends: push_front, push_back, pop_front, and pop_back. It can be implemented either as a circular array with modular pointer wrap-around ((i ± 1 + N) % N) or as a doubly-linked list with bidirectional node pointers. Deques provide the foundational engine for high-performance scheduling (work-stealing algorithms in thread pools), monotonic sliding window maximums, and symmetric palindrome algorithms.",
+    complexity: {
+      best: "O(1)",
+      average: "O(1) Boundary Operations / O(n) Search",
+      worst: "O(1) Boundary / O(n) Search",
+      space: "O(n)",
+      stable: true,
+      inPlace: true,
+      operations: [
+        {
+          name: "pushFront(x) / push_front(x)",
+          time: "O(1)",
+          space: "O(1)",
+          description: "Inserts item at front boundary via modular wrap (F - 1 + N) % N or head pointer.",
+        },
+        {
+          name: "pushBack(x) / push_back(x)",
+          time: "O(1)",
+          space: "O(1)",
+          description: "Inserts item at rear boundary via modular wrap (R + 1) % N or tail pointer.",
+        },
+        {
+          name: "popFront() / pop_front()",
+          time: "O(1)",
+          space: "O(1)",
+          description: "Extracts and removes item from front boundary in constant time.",
+        },
+        {
+          name: "popBack() / pop_back()",
+          time: "O(1)",
+          space: "O(1)",
+          description: "Extracts and removes item from rear boundary in constant time.",
+        },
+        {
+          name: "peekFront() / front()",
+          time: "O(1)",
+          space: "O(1)",
+          description: "Reads front element non-destructively in O(1) time.",
+        },
+        {
+          name: "peekBack() / back()",
+          time: "O(1)",
+          space: "O(1)",
+          description: "Reads rear element non-destructively in O(1) time.",
+        },
+        {
+          name: "Linear Search",
+          time: "O(n)",
+          space: "O(1)",
+          description: "Scans all elements sequentially from front to rear.",
+        },
+        {
+          name: "Monotonic Window Max",
+          time: "O(n)",
+          space: "O(k)",
+          description: "Computes maximum for all sliding windows of size k with each element pushed/popped at most once.",
+        },
+      ],
+    },
+    cppCode: `// Production-Grade C++ Double-Ended Queue (Circular Array)
+class CircularDeque {
+private:
+    vector<int> buffer;
+    int capacity, front, rear, count;
+public:
+    CircularDeque(int cap) : capacity(cap), buffer(cap), front(0), rear(0), count(0) {}
+
+    // O(1) Push Front: Modular wrap backward
+    void pushFront(int val) {
+        if (count == capacity) throw overflow_error("Deque full");
+        if (count == 0) front = rear = 0;
+        else front = (front - 1 + capacity) % capacity;
+        buffer[front] = val;
+        count++;
+    }
+
+    // O(1) Push Back: Modular wrap forward
+    void pushBack(int val) {
+        if (count == capacity) throw overflow_error("Deque full");
+        if (count == 0) front = rear = 0;
+        else rear = (rear + 1) % capacity;
+        buffer[rear] = val;
+        count++;
+    }
+
+    // O(1) Pop Front
+    int popFront() {
+        if (count == 0) throw underflow_error("Deque empty");
+        int val = buffer[front];
+        front = (front + 1) % capacity;
+        count--;
+        return val;
+    }
+
+    // O(1) Pop Back
+    int popBack() {
+        if (count == 0) throw underflow_error("Deque empty");
+        int val = buffer[rear];
+        rear = (rear - 1 + capacity) % capacity;
+        count--;
+        return val;
+    }
+};`,
+  },
 };
 
 // All 5 Sorting Algorithms
@@ -888,6 +998,7 @@ export const SEARCHING_ALGORITHMS: AlgorithmId[] = [
 export const DATA_STRUCTURES: AlgorithmId[] = [
   "array",
   "string",
+  "deque",
   "stack",
   "queue",
   "linked-list",
@@ -906,6 +1017,7 @@ export const ALL_ALGORITHMS: AlgorithmId[] = SORTING_ALGORITHMS;
 export const ALL_TOPICS: AlgorithmId[] = [
   "array",
   "string",
+  "deque",
   "linear-search",
   "time-complexity",
   "space-complexity",

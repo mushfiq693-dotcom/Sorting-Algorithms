@@ -56,7 +56,7 @@ export const CATEGORY_CARDS: CategoryCardMeta[] = [
   {
     key: "data-structure",
     title: "Data Structures",
-    countLabel: "5 Visualizations",
+    countLabel: "6 Visualizations",
     icon: Network,
     iconBg: "bg-emerald-500/10 dark:bg-emerald-500/20",
     iconColor: "text-emerald-500 dark:text-emerald-400",
@@ -156,6 +156,12 @@ const TOPIC_VISUALS: Record<AlgorithmId, TopicVisualMeta> = {
     iconColor: "text-emerald-500 dark:text-emerald-400",
     iconBorder: "border-emerald-500/25",
   },
+  deque: {
+    icon: ArrowLeftRight,
+    iconBg: "bg-emerald-500/10 dark:bg-emerald-500/20",
+    iconColor: "text-emerald-500 dark:text-emerald-400",
+    iconBorder: "border-emerald-500/25",
+  },
 
   // Searching (Orange / Rust palette)
   "linear-search": {
@@ -200,6 +206,7 @@ const TOPIC_DESCRIPTIONS: Record<AlgorithmId, string> = {
   string: "Watch contiguous character bytes store text, reverse in-place, and slide dynamic windows.",
   stack: "See elements pushed and popped from the top following Last-In, First-Out order.",
   queue: "Watch elements enter the back and exit the front in First-In, First-Out order.",
+  deque: "Watch dual-end push and pop operations with circular buffer wrap-around and monotonic sliding window.",
   "linked-list": "See nodes connected by pointers traverse, insert, and delete dynamically.",
 
   // Searching
@@ -311,6 +318,15 @@ const DATA_STRUCTURE_COMPARISON: DataStructureComparisonRow[] = [
   {
     name: "Queue",
     id: "queue",
+    access: "O(n)",
+    search: "O(n)",
+    insertion: "O(1)",
+    deletion: "O(1)",
+    space: "O(n)",
+  },
+  {
+    name: "Deque",
+    id: "deque",
     access: "O(n)",
     search: "O(n)",
     insertion: "O(1)",

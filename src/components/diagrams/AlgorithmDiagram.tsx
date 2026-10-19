@@ -12,6 +12,7 @@ import { ArrayContiguousMemoryDiagram } from "./ArrayContiguousMemoryDiagram";
 import { StringMemoryDiagram } from "./StringMemoryDiagram";
 import { StackLIFODiagram } from "./StackLIFODiagram";
 import { QueueFIFODiagram } from "./QueueFIFODiagram";
+import { DequeDiagram } from "./DequeDiagram";
 import { TimeComplexityDiagram } from "./TimeComplexityDiagram";
 import { SpaceComplexityDiagram } from "./SpaceComplexityDiagram";
 import { LinearSearchTimelineDiagram } from "./LinearSearchTimelineDiagram";
@@ -42,6 +43,8 @@ export function AlgorithmDiagram({ algorithmId }: AlgorithmDiagramProps) {
         return <ArrayContiguousMemoryDiagram />;
       case "string":
         return <StringMemoryDiagram />;
+      case "deque":
+        return <DequeDiagram />;
       case "stack":
         return <StackLIFODiagram />;
       case "queue":

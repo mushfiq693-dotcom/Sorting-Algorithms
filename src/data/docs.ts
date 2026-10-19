@@ -1599,6 +1599,160 @@ public:
     },
   },
   {
+    slug: "deque-data-structure",
+    level: 5,
+    levelTitle: "Level 5: Fundamental Data Structures",
+    order: 3,
+    title: "Deque: Double-Ended Queue & Monotonic Invariants",
+    subtitle: "Bidirectional O(1) push and pop, circular modular wrap-around, doubly-linked topology, and sliding window maximum.",
+    estimatedReadTime: "10 min",
+    category: "Data Structures",
+    content: `
+### What Is a Deque?
+
+A **Deque** (short for **Double-Ended Queue**, universally pronounced *"deck"*) is a generalized linear data structure that permits instantaneous, constant-time $O(1)$ insertions and removals at **both endpoints**:
+1. **Front (Head)**: $\\text{pushFront}(x)$ and $\\text{popFront}()$
+2. **Rear (Back / Tail)**: $\\text{pushBack}(x)$ and $\\text{popBack}()$
+
+Unlike a standard Stack (which restricts operations strictly to the Top) or a standard Queue (which restricts entry to the Rear and exit to the Front), a Deque **subsumes both paradigms**. You can use a Deque as a LIFO Stack, a FIFO Queue, or an unrestricted bidirectional sequence container.
+
+---
+
+### Core Deque Operations & Complexity Guarantee
+
+| Operation | Time Complexity | Space Complexity | Description |
+| :--- | :--- | :--- | :--- |
+| $\\text{pushFront}(x)$ | $O(1)$ | $O(1)$ | Inserts item $x$ at the front boundary. |
+| $\\text{pushBack}(x)$ | $O(1)$ | $O(1)$ | Appends item $x$ at the rear boundary. |
+| $\\text{popFront}()$ | $O(1)$ | $O(1)$ | Removes and returns the item currently at the front. |
+| $\\text{popBack}()$ | $O(1)$ | $O(1)$ | Removes and returns the item currently at the rear. |
+| $\\text{peekFront}()$ | $O(1)$ | $O(1)$ | Reads the front item non-destructively. |
+| $\\text{peekBack}()$ | $O(1)$ | $O(1)$ | Reads the rear item non-destructively. |
+| $\\text{empty}()$ | $O(1)$ | $O(1)$ | Returns \`true\` if the deque contains zero elements. |
+| $\\text{size}()$ | $O(1)$ | $O(1)$ | Returns the current total count of active elements. |
+| $\\text{search}(x)$ | $O(n)$ | $O(1)$ | Scans elements sequentially from front to rear. |
+
+---
+
+### Implementation Architecture 1: Circular Array & Modulo Arithmetic
+
+In a fixed-size or dynamic array buffer of capacity $N$:
+* **Push Front (Moving Backward)**: Decrementing the \`front\` pointer can produce a negative index if \`front == 0\`. In languages like C++, Java, and JavaScript, \`(-1) % N\` evaluates to \`-1\` rather than $N-1$! To safely wrap around, we add $N$ before the modulo:
+  $$\\text{front} = (\\text{front} - 1 + N) \\pmod{N}$$
+* **Push Back (Moving Forward)**: Advancing the \`rear\` pointer wraps around using standard forward modulo:
+  $$\\text{rear} = (\\text{rear} + 1) \\pmod{N}$$
+* **Pop Front**: Advances front forward:
+  $$\\text{front} = (\\text{front} + 1) \\pmod{N}$$
+* **Pop Back**: Retracts rear backward:
+  $$\\text{rear} = (\\text{rear} - 1 + N) \\pmod{N}$$
+
+#### Production C++ Circular Deque Implementation
+\`\`\`cpp
+class CircularDeque {
+private:
+    vector<int> buffer;
+    int capacity, front, rear, count;
+public:
+    CircularDeque(int cap) : capacity(cap), buffer(cap), front(0), rear(0), count(0) {}
+
+    bool isFull() const { return count == capacity; }
+    bool isEmpty() const { return count == 0; }
+
+    void pushFront(int val) {
+        if (isFull()) throw overflow_error("Deque full");
+        if (isEmpty()) { front = rear = 0; }
+        else { front = (front - 1 + capacity) % capacity; }
+        buffer[front] = val;
+        count++;
+    }
+
+    void pushBack(int val) {
+        if (isFull()) throw overflow_error("Deque full");
+        if (isEmpty()) { front = rear = 0; }
+        else { rear = (rear + 1) % capacity; }
+        buffer[rear] = val;
+        count++;
+    }
+
+    int popFront() {
+        if (isEmpty()) throw underflow_error("Deque empty");
+        int val = buffer[front];
+        front = (front + 1) % capacity;
+        count--;
+        return val;
+    }
+
+    int popBack() {
+        if (isEmpty()) throw underflow_error("Deque empty");
+        int val = buffer[rear];
+        rear = (rear - 1 + capacity) % capacity;
+        count--;
+        return val;
+    }
+};
+\`\`\`
+
+---
+
+### Implementation Architecture 2: Doubly-Linked Node Chain
+
+When maximum capacity is unknown and dynamic resizing copies ($O(N)$ geometric doubling) must be avoided, a **Doubly-Linked List** provides strict worst-case $O(1)$ operations:
+* Each node holds \`value\`, \`Node* prev\`, and \`Node* next\`.
+* Sentinel (or direct) \`head\` and \`tail\` pointers manage boundary operations.
+* **Trade-off**: Requires $2 \\times$ pointer overhead per element (8 bytes for \`prev\`, 8 bytes for \`next\` on 64-bit architectures), plus CPU cache penalties due to heap memory fragmentation.
+
+---
+
+### Advanced Paradigm: Monotonic Deque & Sliding Window Maximum
+
+The crowning algorithmic superpower of the Deque is solving the **Sliding Window Maximum** problem in optimal linear time $O(n)$:
+
+> **Problem**: Given an array of $n$ numbers and a sliding window of size $k$, find the maximum value in every window as it slides from left to right.  
+> A naive scan takes $O(k)$ per window $\\rightarrow O(n \\times k)$ total time. With a Monotonic Deque, we solve it in **$O(n)$ total time**!
+
+#### The Monotonic Decreasing Invariant
+We maintain a deque of array **indices** whose corresponding values are strictly decreasing from front to back:
+$$\\text{arr}[\\text{dq}[0]] > \\text{arr}[\\text{dq}[1]] > \\text{arr}[\\text{dq}[2]] > \\dots$$
+
+1. **Evict Out-of-Bounds**: Pop from **Front** if $\\text{dq.front}() \\le i - k$.
+2. **Preserve Monotonicity**: While incoming element $\\text{arr}[i] \\ge \\text{arr}[\\text{dq.back}()]$, pop from **Back**. Smaller elements can *never* become the window maximum because the incoming element is both larger and will survive longer in the window!
+3. **Push New Element**: Push index $i$ to **Back**.
+4. **Read Maximum**: The current window's maximum is always $\\text{arr}[\\text{dq.front}()]$ in $O(1)$ time!
+
+Since every index is pushed to the deque at most once and popped at most once, the amortized cost across all $n$ elements is strictly **$O(n)$**.
+
+---
+
+### Real-World Systems Engineering: Work-Stealing Schedulers
+
+In modern high-concurrency runtimes (e.g., the **Go runtime scheduler**, **Java's ForkJoinPool**, and Rust's **Tokio** thread pool):
+* Each worker CPU thread owns its own private **Deque** of pending tasks (goroutines / tasks).
+* The owning thread acts as a **LIFO Stack** at the **Front/Top**: pushing and popping its own tasks with ultra-high cache locality.
+* When a worker thread runs out of work, it becomes a **"Thief"**: it visits another busy worker's deque and **steals work from the Rear/Bottom (FIFO)** in $O(1)$ time!
+* Because the owner works at the Front and thieves steal from the Rear, lock contention is minimized to near zero.
+    `,
+    banglaNote: {
+      topic: "ডেক (Double-Ended Queue) ও মনোটনিক ইনভ্যারিয়েন্ট",
+      englishContext: "Why Deque is the versatile king of linear data structures",
+      banglaText: `
+১. **ডেক (Deque) কী?**
+   ডেক হলো এমন একটি কিউ যেখানে সামনের (Front) ও পেছনের (Rear) উভয় দিক থেকেই $O(1)$ সময়ে উপাদান ঢোকানো (Push) এবং বের (Pop) করা যায়। এটি একই সাথে স্ট্যাক (LIFO) এবং সাধারণ কিউ (FIFO)-এর সব সুবিধা প্রদান করে।
+
+২. **সার্কুলার ডেক ও নেগেটিভ মডুলো ট্রিক:**
+   সি++ বা জাভাতে \`(-1) % N\` করলে রেজাল্ট \`-1\` আসে, যা ভুল ইনডেক্স তৈরি করে। তাই ডেক-এর শুরুতে নতুন আইটেম ঢোকাতে \`front = (front - 1 + capacity) % capacity\` ফর্মুলা ব্যবহার করে বৃত্তাকারে ইনডেক্স ঘোরাতে হয়।
+
+৩. **স্লাইডিং উইন্ডো ম্যাক্সিমাম (Monotonic Deque):**
+   ইন্টারভিউয়ের অন্যতম জনপ্রিয় প্রশ্ন! প্রতিটি উইন্ডোর সর্বোচ্চ সংখ্যা বের করতে সাধারণ নিয়মে $O(n \\times k)$ সময় লাগলেও, মনোটনিক ডেক দিয়ে মাত্র **$O(n)$ লিনিয়ার সময়ে** সব উইন্ডো সমাধান করা যায়। কারণ প্রতিটি উপাদান ডেকে সর্বোচ্চ একবার ঢোকে আর একবার বের হয়।
+      `,
+    },
+    quizTopicId: "deque",
+    visualizerLink: {
+      label: "Deque Studio",
+      algorithmId: "deque",
+      path: "/algorithms/deque",
+    },
+  },
+  {
     slug: "time-complexity",
     level: 6,
     levelTitle: "Level 6: Algorithmic Complexity Analysis",

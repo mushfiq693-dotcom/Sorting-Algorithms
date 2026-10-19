@@ -439,13 +439,62 @@ export const LEARNING_PATH: LearningStep[] = [
       space: "O(1) auxiliary space per operation; O(n) overall storage for n elements.",
     },
   },
+  {
+    id: "deque",
+    order: 9,
+    name: "Deque",
+    category: "data-structure",
+    badge: "Double-Ended Queue",
+    estimatedTime: "~15 min",
+    difficulty: "Beginner",
+    reason: "The supercharged queue: insert and delete at both ends in strictly O(1) time. Master circular buffer wrap-around and monotonic sliding window algorithms.",
+    hook: "What if you need the LIFO capability of a Stack and the FIFO fairness of a Queue in a single structure? Enter the Double-Ended Queue.",
+    superpower: "Strict O(1) Push & Pop at BOTH Boundaries (Front & Rear)",
+    tradeoff: "Slightly more complex pointer management and modulo wrapping arithmetic",
+    mentalModel: "A Double-Ended Pipe Open at Both Ends",
+    keyPrinciples: [
+      "Subsumes both Stack and Queue: can behave as LIFO, FIFO, or bidirectional deque.",
+      "Front wraps backward via (front - 1 + capacity) % capacity in O(1) time.",
+      "Rear wraps forward via (rear + 1) % capacity in O(1) time.",
+      "Powers monotonic deque algorithms (Sliding Window Maximum) and work-stealing schedulers in Go & Java."
+    ],
+    analogy: "A transparent tube open at both ends: train cars can enter or exit from the left end, or enter and exit from the right end independently without disturbing the cars in the middle.",
+    idea: "A Deque (Double-Ended Queue, pronounced 'deck') is a linear sequence that allows insertions and deletions at both ends in strictly O(1) time: push_front, push_back, pop_front, and pop_back. In a circular array, modular arithmetic avoids shifting elements. In a doubly-linked list, bidirectional pointers (prev ⇄ next) allow O(1) head and tail operations.",
+    sampleArray: [15, 28, 42, 56],
+    codeBlocks: [
+      {
+        title: "Push Front via Modular Backward Wrap",
+        lines: "void pushFront(int val) {\n    if (isFull()) throw overflow_error(\"Deque full\");\n    front = (front - 1 + capacity) % capacity;\n    buffer[front] = val;\n    count++;\n}",
+        explanation: "Wraps the front pointer counter-clockwise in O(1) time without shifting any elements.",
+      },
+      {
+        title: "Push Back via Modular Forward Wrap",
+        lines: "void pushBack(int val) {\n    if (isFull()) throw overflow_error(\"Deque full\");\n    rear = (rear + 1) % capacity;\n    buffer[rear] = val;\n    count++;\n}",
+        explanation: "Advances the rear pointer clockwise in O(1) time.",
+      },
+      {
+        title: "Pop Front & Pop Back",
+        lines: "int popFront() {\n    int val = buffer[front];\n    front = (front + 1) % capacity;\n    count--;\n    return val;\n}\nint popBack() {\n    int val = buffer[rear];\n    rear = (rear - 1 + capacity) % capacity;\n    count--;\n    return val;\n}",
+        explanation: "Pops from either boundary in O(1) time by updating the respective pointer.",
+      },
+      {
+        title: "Monotonic Deque (Sliding Window Maximum)",
+        lines: "while (!dq.empty() && nums[dq.back()] <= nums[i]) dq.pop_back();\ndq.push_back(i);",
+        explanation: "Pops smaller candidate elements from the back to maintain a monotonic decreasing deque where the front is always the window maximum.",
+      },
+    ],
+    complexityWhy: {
+      time: "All boundary push, pop, and peek operations run in strictly O(1) constant time. Monotonic sliding window runs in O(n) total time.",
+      space: "O(1) auxiliary space per operation; O(n) overall storage for n elements.",
+    },
+  },
 
   // ==========================================
   // TIER 6: NON-CONTIGUOUS POINTER-LINKED STRUCTURES
   // ==========================================
   {
     id: "linked-list",
-    order: 9,
+    order: 10,
     name: "Linked List",
     category: "data-structure",
     badge: "Pointer Chains",
@@ -493,7 +542,7 @@ export const LEARNING_PATH: LearningStep[] = [
   // ==========================================
   {
     id: "bubble",
-    order: 10,
+    order: 11,
     name: "Bubble Sort",
     category: "sorting",
     badge: "Adjacent Swaps",
@@ -538,7 +587,7 @@ export const LEARNING_PATH: LearningStep[] = [
   },
   {
     id: "selection",
-    order: 11,
+    order: 12,
     name: "Selection Sort",
     category: "sorting",
     badge: "Find Minimum",
@@ -583,7 +632,7 @@ export const LEARNING_PATH: LearningStep[] = [
   },
   {
     id: "insertion",
-    order: 12,
+    order: 13,
     name: "Insertion Sort",
     category: "sorting",
     badge: "Hand-Sorting Cards",
@@ -632,7 +681,7 @@ export const LEARNING_PATH: LearningStep[] = [
   // ==========================================
   {
     id: "merge",
-    order: 13,
+    order: 14,
     name: "Merge Sort",
     category: "sorting",
     badge: "Divide & Conquer",
@@ -677,7 +726,7 @@ export const LEARNING_PATH: LearningStep[] = [
   },
   {
     id: "quick",
-    order: 14,
+    order: 15,
     name: "Quick Sort",
     category: "sorting",
     badge: "Pivot Partition",

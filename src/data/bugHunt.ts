@@ -408,4 +408,29 @@ public:
       { type: "swap", indices: [0, 4], description: "Accessed index out of bounds beyond string boundary" },
     ],
   },
+
+  deque: {
+    algorithmId: "deque",
+    title: "Circular Deque: Negative Modulo Buffer Out-of-Bounds Crash",
+    description:
+      "This circular deque implementation decrements the front pointer with `(front - 1) % capacity`. When `front == 0`, C++ remainder arithmetic evaluates to `-1` instead of wrapping to `capacity - 1`, corrupting heap memory with buffer[-1] access!",
+    buggyCode: `void pushFront(int val) {
+    if (count == capacity) throw overflow_error("Deque full");
+    front = (front - 1) % capacity; // Bug: evaluates to -1 when front == 0!
+    buffer[front] = val;
+    count++;
+}`,
+    buggyLineNumber: 3,
+    hint: "What does `(-1) % capacity` evaluate to in C++ or Java? If capacity is 8, does it evaluate to 7 or -1?",
+    explanation:
+      "Line 3 calculated `front = (front - 1) % capacity`. In C++, the modulo operator `%` calculates truncated division remainder: when `front == 0`, `(0 - 1) % 8 == -1`. Accessing `buffer[-1]` causes memory corruption and crashes the program. To wrap around safely into a valid positive index, always add the capacity before taking modulo: `front = (front - 1 + capacity) % capacity;`.",
+    validateFix: (line: string) => {
+      const trimmed = line.replace(/\s+/g, "");
+      return trimmed.includes("front-1+capacity") || trimmed.includes("front-1+cap");
+    },
+    flawedRunner: () => [
+      { type: "overwrite", index: 0, value: 99, description: "Negative index (-1) heap access violation on circular buffer" },
+    ],
+  },
 };
+

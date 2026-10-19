@@ -54,6 +54,7 @@ export function RoadmapTopicAnimation({ topicId }: RoadmapTopicAnimationProps) {
           {topicId === "quick" && <QuickSortMiniAnimation tick={tick} />}
           {topicId === "array" && <ArrayMiniAnimation tick={tick} />}
           {topicId === "string" && <StringMiniAnimation tick={tick} />}
+          {topicId === "deque" && <DequeMiniAnimation tick={tick} />}
           {topicId === "stack" && <StackMiniAnimation tick={tick} />}
           {topicId === "queue" && <QueueMiniAnimation tick={tick} />}
           {topicId === "linked-list" && <LinkedListMiniAnimation tick={tick} />}
@@ -413,6 +414,57 @@ function QueueMiniAnimation({ tick }: { tick: number }) {
       <div className="flex items-center text-[10px] font-mono text-cyan-400 font-bold gap-0.5">
         <span>REAR</span>
         <ArrowLeft className="h-3 w-3" />
+      </div>
+    </div>
+  );
+}
+
+/* 8b. DEQUE MINI ANIMATION */
+function DequeMiniAnimation({ tick }: { tick: number }) {
+  const isFrontActive = (tick % 2) === 0;
+
+  return (
+    <div className="flex flex-col items-center gap-1.5">
+      <div className="flex items-center gap-2">
+        {/* Front Push/Pop */}
+        <div className={`flex items-center text-[9px] font-mono font-bold gap-0.5 px-1.5 py-0.5 rounded ${
+          isFrontActive ? "bg-red-500/20 text-red-400 border border-red-500/40" : "text-muted-foreground"
+        }`}>
+          <ArrowLeft className="h-2.5 w-2.5" />
+          <span>FRONT O(1)</span>
+        </div>
+
+        {/* Double-ended conveyor chamber */}
+        <div className="flex items-center gap-1 p-1.5 rounded-xl border border-amber-500/40 bg-secondary/40 shadow-inner">
+          {[15, 28, 42, 56].map((val, i) => (
+            <motion.div
+              key={i}
+              animate={{ scale: (isFrontActive && i === 0) || (!isFrontActive && i === 3) ? 1.08 : 1 }}
+              className={`w-7 sm:w-8 h-7 rounded-lg border font-mono text-xs font-bold flex items-center justify-center shadow-xs transition-all ${
+                i === 0
+                  ? "bg-red-500/15 border-red-500/50 text-red-400"
+                  : i === 3
+                  ? "bg-blue-500/15 border-blue-500/50 text-blue-400"
+                  : "bg-card border-border text-foreground"
+              }`}
+            >
+              {val}
+            </motion.div>
+          ))}
+        </div>
+
+        {/* Rear Push/Pop */}
+        <div className={`flex items-center text-[9px] font-mono font-bold gap-0.5 px-1.5 py-0.5 rounded ${
+          !isFrontActive ? "bg-blue-500/20 text-blue-400 border border-blue-500/40" : "text-muted-foreground"
+        }`}>
+          <span>REAR O(1)</span>
+          <ArrowRight className="h-2.5 w-2.5" />
+        </div>
+      </div>
+
+      <div className="text-[10px] font-mono text-amber-500 font-semibold flex items-center gap-1">
+        <ArrowLeftRight className="h-3 w-3" />
+        <span>Bidirectional O(1) Push & Pop • Circular Ring Buffer</span>
       </div>
     </div>
   );
