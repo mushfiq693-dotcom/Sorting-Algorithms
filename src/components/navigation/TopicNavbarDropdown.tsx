@@ -47,6 +47,7 @@ const CATEGORIES: CategoryGroup[] = [
       { id: "queue", num: "08", name: "Queue", badge: "FIFO O(1)" },
       { id: "deque", num: "09", name: "Deque", badge: "Dual-End O(1)" },
       { id: "linked-list", num: "10", name: "Linked List", badge: "Nodes O(1)" },
+      { id: "hash-table", num: "11", name: "Hash Table", badge: "Lookup O(1)" },
     ],
   },
   {

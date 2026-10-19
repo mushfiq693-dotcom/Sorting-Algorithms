@@ -20,6 +20,7 @@ import {
   Clock,
   HardDrive,
   ArrowLeftRight,
+  Hash,
 } from "lucide-react";
 
 interface RoadmapTopicAnimationProps {
@@ -58,6 +59,7 @@ export function RoadmapTopicAnimation({ topicId }: RoadmapTopicAnimationProps) {
           {topicId === "stack" && <StackMiniAnimation tick={tick} />}
           {topicId === "queue" && <QueueMiniAnimation tick={tick} />}
           {topicId === "linked-list" && <LinkedListMiniAnimation tick={tick} />}
+          {topicId === "hash-table" && <HashTableMiniAnimation tick={tick} />}
           {topicId === "linear-search" && <LinearSearchMiniAnimation tick={tick} />}
           {topicId === "binary-search" && <BinarySearchMiniAnimation tick={tick} />}
           {topicId === "time-complexity" && <TimeComplexityMiniAnimation tick={tick} />}
@@ -79,6 +81,7 @@ export function RoadmapTopicAnimation({ topicId }: RoadmapTopicAnimationProps) {
               {topicId === "stack" && "Strict LIFO Order: PUSH ↓ and POP ↑ operations only at the TOP"}
               {topicId === "queue" && "First-In, First-Out: Continuous inflow at REAR and outflow at FRONT"}
               {topicId === "linked-list" && "Scattered Heap Nodes: Dynamic memory linked by pointer references"}
+              {topicId === "hash-table" && "Direct Hashing: h(k) = k % M converts keys into instant O(1) memory slots"}
               {topicId === "linear-search" && "Sequential Scan: Probes every slot 0..n-1 until target is found"}
               {topicId === "binary-search" && "Logarithmic Bisection: Cuts remaining search space by 50% each probe"}
               {topicId === "time-complexity" && "Asymptotic Scalability: O(1) vs O(log n) vs O(n) vs O(n²) growth"}
@@ -495,6 +498,54 @@ function LinkedListMiniAnimation({ tick }: { tick: number }) {
           )}
         </React.Fragment>
       ))}
+    </div>
+  );
+}
+
+/* 9b. HASH TABLE MINI ANIMATION */
+function HashTableMiniAnimation({ tick }: { tick: number }) {
+  const keys = [12, 25, 38];
+  const activeKeyIdx = tick % keys.length;
+  const activeKey = keys[activeKeyIdx];
+  const activeSlot = activeKey % 4;
+
+  return (
+    <div className="flex flex-col items-center gap-1.5">
+      <div className="flex items-center gap-3">
+        {/* Hash Key Input */}
+        <div className="px-2 py-1 rounded-lg bg-cyan-500/15 border border-cyan-500/40 text-xs font-mono font-bold text-cyan-400">
+          key: {activeKey}
+        </div>
+        <ArrowRight className="h-3.5 w-3.5 text-muted-foreground animate-pulse" />
+        {/* Modulo Hash Math */}
+        <div className="text-[10px] font-mono text-muted-foreground bg-secondary/80 px-1.5 py-0.5 rounded border border-border">
+          {activeKey} % 4 = <span className="text-cyan-400 font-bold">[{activeSlot}]</span>
+        </div>
+        <ArrowRight className="h-3.5 w-3.5 text-muted-foreground animate-pulse" />
+        {/* Buckets */}
+        <div className="flex items-center gap-1">
+          {[0, 1, 2, 3].map((slot) => {
+            const isActive = slot === activeSlot;
+            return (
+              <motion.div
+                key={slot}
+                animate={{ scale: isActive ? 1.15 : 1 }}
+                className={`w-7 h-7 rounded-lg border font-mono text-xs font-bold flex items-center justify-center transition-all ${
+                  isActive
+                    ? "bg-cyan-500 text-slate-950 border-cyan-300 shadow-md shadow-cyan-500/30 font-extrabold"
+                    : "bg-card border-border text-muted-foreground"
+                }`}
+              >
+                {slot}
+              </motion.div>
+            );
+          })}
+        </div>
+      </div>
+      <div className="text-[10px] font-mono text-cyan-500 font-semibold flex items-center gap-1">
+        <Hash className="h-3 w-3 text-cyan-400" />
+        <span>Direct Addressing: O(1) Memory Jump to Slot [{activeSlot}]</span>
+      </div>
     </div>
   );
 }

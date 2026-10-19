@@ -432,5 +432,36 @@ public:
       { type: "overwrite", index: 0, value: 99, description: "Negative index (-1) heap access violation on circular buffer" },
     ],
   },
+
+  "hash-table": {
+    algorithmId: "hash-table",
+    title: "Hash Table: Linear Probing Missing Modulo Wrap-Around",
+    description:
+      "This open-addressing Hash Table resolves collisions using linear probing. However, it increments the probe pointer without modulo wrap-around, crashing with an out-of-bounds memory violation when collisions occur near the end of the backing array!",
+    buggyCode: `void insert(int key, int val) {
+    int idx = abs(key) % capacity;
+    while (table[idx].occupied && table[idx].key != key) {
+        idx = idx + 1; // Bug: crashes out of bounds when idx exceeds capacity - 1!
+    }
+    table[idx] = {key, val, true};
+    count++;
+}`,
+    buggyLineNumber: 4,
+    hint: "When a collision occurs at index `capacity - 1`, what should the next probed index be? Does `idx + 1` cycle back to `0` or jump beyond array limits?",
+    explanation:
+      "Line 4 advances the probe index with `idx = idx + 1;`. Once `idx` reaches `capacity - 1`, incrementing it yields `capacity`, which accesses memory beyond the bounds of the array and crashes. Linear probing must wrap circularly back to index 0 using modulo arithmetic: `idx = (idx + 1) % capacity;`.",
+    validateFix: (line: string) => {
+      const trimmed = line.replace(/\s+/g, "");
+      return (
+        trimmed.includes("(idx+1)%capacity") ||
+        trimmed.includes("(idx+1)%cap") ||
+        trimmed.includes("idx=(idx+1)%capacity") ||
+        trimmed.includes("idx=(idx+1)%cap")
+      );
+    },
+    flawedRunner: () => [
+      { type: "overwrite", index: 7, value: 999, description: "Index out of bounds crash: accessed slot capacity instead of wrapping to 0" },
+    ],
+  },
 };
 

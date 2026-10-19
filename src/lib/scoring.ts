@@ -64,6 +64,7 @@ export const ALGORITHM_NAME_MAP: Record<AlgorithmId, string> = {
   stack: "Stack",
   queue: "Queue",
   "linked-list": "Linked List",
+  "hash-table": "Hash Table",
   "time-complexity": "Time Complexity",
   "space-complexity": "Space Complexity",
 };
@@ -85,6 +86,7 @@ export const ALGORITHM_DOCS_MAP: Record<AlgorithmId, string[]> = {
   stack: ["stack-data-structure"],
   queue: ["queue-data-structure"],
   "linked-list": ["linked-list-fundamentals"],
+  "hash-table": ["hash-table-data-structure"],
   "time-complexity": ["time-complexity", "big-o-for-beginners"],
   "space-complexity": ["space-complexity", "in-place-and-space-complexity"],
 };

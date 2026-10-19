@@ -331,4 +331,20 @@ bool search(int target) {
 }`,
     highlightedLine: 4,
   },
+  "hash-table": {
+    algorithmId: "hash-table",
+    title: "Hash Table — Direct Addressing, Hash Functions & Collision Resolution",
+    subtitle: "Maps keys to array buckets via h(key) = key % capacity with Separate Chaining and Linear Probing.",
+    caption: "Instantaneous O(1) expected time for insert, search, and delete with well-distributed hashing.",
+    fixedArray: [12, 25, 38, 51],
+    complexityFormula: "Insert: O(1) avg • Search: O(1) avg • Delete: O(1) avg • Worst: O(n)",
+    complexityExplanation: "Direct bucket jump calculates memory offset instantaneously, degrading only on severe collision clustering.",
+    codeSnippet: `// O(1) Average Hash Table Lookup
+int idx = abs(key) % capacity;
+for (const auto& [k, v] : table[idx]) {
+    if (k == key) return v; // Found in bucket chain
+}
+return -1; // Not found`,
+    highlightedLine: 2,
+  },
 };

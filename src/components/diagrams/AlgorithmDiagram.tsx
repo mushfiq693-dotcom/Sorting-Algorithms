@@ -18,6 +18,7 @@ import { SpaceComplexityDiagram } from "./SpaceComplexityDiagram";
 import { LinearSearchTimelineDiagram } from "./LinearSearchTimelineDiagram";
 import { BinarySearchRangeShrinkingDiagram } from "./BinarySearchRangeShrinkingDiagram";
 import { LinkedListPointerDiagram } from "./LinkedListPointerDiagram";
+import { HashTableDiagram } from "./HashTableDiagram";
 import { Image } from "lucide-react";
 
 interface AlgorithmDiagramProps {
@@ -51,6 +52,8 @@ export function AlgorithmDiagram({ algorithmId }: AlgorithmDiagramProps) {
         return <QueueFIFODiagram />;
       case "linked-list":
         return <LinkedListPointerDiagram />;
+      case "hash-table":
+        return <HashTableDiagram />;
       case "linear-search":
         return <LinearSearchTimelineDiagram />;
       case "binary-search":

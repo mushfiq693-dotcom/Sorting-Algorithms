@@ -48,6 +48,10 @@ const LinkedListVisualizer = dynamic(
   () => import("@/components/visualizer/LinkedListVisualizer").then((mod) => mod.LinkedListVisualizer),
   { ssr: false, loading: () => <TabLoading /> }
 );
+const HashTableVisualizer = dynamic(
+  () => import("@/components/visualizer/HashTableVisualizer").then((mod) => mod.HashTableVisualizer),
+  { ssr: false, loading: () => <TabLoading /> }
+);
 const LinearSearchVisualizer = dynamic(
   () => import("@/components/visualizer/LinearSearchVisualizer").then((mod) => mod.LinearSearchVisualizer),
   { ssr: false, loading: () => <TabLoading /> }
@@ -486,6 +490,8 @@ export default function AlgorithmDetailPage() {
                 <QueueVisualizer />
               ) : algorithmId === "linked-list" ? (
                 <LinkedListVisualizer />
+              ) : algorithmId === "hash-table" ? (
+                <HashTableVisualizer />
               ) : algorithmId === "linear-search" ? (
                 <LinearSearchVisualizer />
               ) : algorithmId === "binary-search" ? (

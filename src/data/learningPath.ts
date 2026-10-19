@@ -538,11 +538,64 @@ export const LEARNING_PATH: LearningStep[] = [
   },
 
   // ==========================================
+  // TIER 6.5: ASSOCIATIVE HASH-BASED CONTAINERS
+  // ==========================================
+  {
+    id: "hash-table",
+    order: 11,
+    name: "Hash Table",
+    category: "data-structure",
+    badge: "Direct Addressing",
+    estimatedTime: "~15 min",
+    difficulty: "Beginner",
+    reason: "Instantaneous O(1) lookups! Transform arbitrary keys into direct array indices using deterministic hash functions and smart collision handling.",
+    hook: "How does Google search, database indexing, and Python dictionaries find any record in constant O(1) time among billions of items?",
+    superpower: "Amortized O(1) Insertion, Deletion, and Lookup via Hash Indexing",
+    tradeoff: "O(n) Worst-Case Degeneration on Pathological Collision Clustering",
+    mentalModel: "A Giant Mail Sorting Room with Numbered Pigeonhole Cubbies",
+    keyPrinciples: [
+      "Deterministic hash function maps arbitrary keys to numeric bucket indices via modulo math: h(k) = k % capacity.",
+      "Separate Chaining resolves collisions by attaching a linked list or bucket chain at each slot.",
+      "Open Addressing (Linear Probing) resolves collisions by scanning for the next adjacent empty slot.",
+      "Load Factor α = N / M tracks table fullness; when α > 0.75, table capacity doubles and all keys are rehashed."
+    ],
+    analogy: "A hotel mailroom where each room number corresponds to an exact numbered cubby on the wall. Mail arrives, the clerk drops it directly into that cubby in O(1) time without searching every room.",
+    idea: "A Hash Table maps keys to values. A mathematical hash function converts a key into a slot index in a backing array. When two keys map to the same slot (a collision), separate chaining stores both in a linked list, while linear probing checks the next slot.",
+    sampleArray: [12, 25, 38, 51],
+    codeBlocks: [
+      {
+        title: "Deterministic Hash Function",
+        lines: "int hash(int key) const {\n    return abs(key) % capacity;\n}",
+        explanation: "Computes the slot index in strictly O(1) time by taking the positive remainder modulo capacity.",
+      },
+      {
+        title: "Separate Chaining Insertion",
+        lines: "void insert(int key, const string& val) {\n    if ((float)(count + 1) / capacity > 0.75) rehash();\n    int idx = hash(key);\n    for (auto& [k, v] : table[idx]) {\n        if (k == key) { v = val; return; }\n    }\n    table[idx].emplace_back(key, val);\n    count++;\n}",
+        explanation: "Traverses bucket chain to update existing key or appends a new node in O(1) average time.",
+      },
+      {
+        title: "Lookup & Retrieval",
+        lines: "bool search(int key, string& outVal) const {\n    int idx = hash(key);\n    for (const auto& [k, v] : table[idx]) {\n        if (k == key) { outVal = v; return true; }\n    }\n    return false;\n}",
+        explanation: "Jumps immediately to the bucket index and scans short collision chain in O(1) expected time.",
+      },
+      {
+        title: "Two Sum Hash Optimization",
+        lines: "unordered_map<int, int> seen;\nfor (int i = 0; i < nums.size(); i++) {\n    int comp = target - nums[i];\n    if (seen.count(comp)) return {seen[comp], i};\n    seen[nums[i]] = i;\n}",
+        explanation: "Replaces naive O(n²) nested loop pair comparison with single-pass O(1) map lookups in O(n) total time.",
+      },
+    ],
+    complexityWhy: {
+      time: "Average case is O(1) for insert, search, and delete assuming uniform hashing distribution. Worst case degrades to O(n) if all keys hash to the same bucket.",
+      space: "O(n) storage for n key-value pairs plus table bucket buffer overhead.",
+    },
+  },
+
+  // ==========================================
   // TIER 7: ELEMENTARY QUADRATIC SORTING
   // ==========================================
   {
     id: "bubble",
-    order: 11,
+    order: 12,
     name: "Bubble Sort",
     category: "sorting",
     badge: "Adjacent Swaps",
@@ -587,7 +640,7 @@ export const LEARNING_PATH: LearningStep[] = [
   },
   {
     id: "selection",
-    order: 12,
+    order: 13,
     name: "Selection Sort",
     category: "sorting",
     badge: "Find Minimum",
@@ -632,7 +685,7 @@ export const LEARNING_PATH: LearningStep[] = [
   },
   {
     id: "insertion",
-    order: 13,
+    order: 14,
     name: "Insertion Sort",
     category: "sorting",
     badge: "Hand-Sorting Cards",
@@ -681,7 +734,7 @@ export const LEARNING_PATH: LearningStep[] = [
   // ==========================================
   {
     id: "merge",
-    order: 14,
+    order: 15,
     name: "Merge Sort",
     category: "sorting",
     badge: "Divide & Conquer",
@@ -726,7 +779,7 @@ export const LEARNING_PATH: LearningStep[] = [
   },
   {
     id: "quick",
-    order: 15,
+    order: 16,
     name: "Quick Sort",
     category: "sorting",
     badge: "Pivot Partition",

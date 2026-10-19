@@ -977,6 +977,127 @@ public:
     }
 };`,
   },
+  "hash-table": {
+    id: "hash-table",
+    name: "Hash Table (Hash Map)",
+    category: "data-structure",
+    shortDescription: "Associative key-value container providing average O(1) insertion, lookup, and deletion via hash functions.",
+    description:
+      "A Hash Table (or Hash Map) is an associative data structure that stores key-value pairs by computing a numeric hash index via a hash function (h(k) = k % capacity) for constant-time direct memory access. Collisions—where distinct keys produce identical hash indices—are resolved using Separate Chaining (linked lists or balanced trees per bucket) or Open Addressing (Linear Probing, Quadratic Probing, or Double Hashing). With a well-distributed hash function and dynamic table resizing when load factor α exceeds threshold (typically 0.75), Hash Tables provide optimal amortized O(1) operations, serving as the backbone for database indices, compilers, caches, and dictionary primitives across all modern software.",
+    complexity: {
+      best: "O(1)",
+      average: "O(1)",
+      worst: "O(n) (Severe Collision Clumping)",
+      space: "O(n)",
+      stable: false,
+      inPlace: false,
+      operations: [
+        {
+          name: "hash(key)",
+          time: "O(1)",
+          space: "O(1)",
+          description: "Maps arbitrary key to deterministic bucket index via hash function and modulo arithmetic.",
+        },
+        {
+          name: "insert(key, value)",
+          time: "O(1) avg / O(n) worst",
+          space: "O(1)",
+          description: "Inserts or updates key-value pair in designated bucket or probe slot.",
+        },
+        {
+          name: "search(key) / find(key)",
+          time: "O(1) avg / O(n) worst",
+          space: "O(1)",
+          description: "Looks up associated value by key via direct bucket jump and short collision traversal.",
+        },
+        {
+          name: "remove(key) / erase(key)",
+          time: "O(1) avg / O(n) worst",
+          space: "O(1)",
+          description: "Deletes key-value pair by splicing linked chain or marking slot as Tombstone (DEL).",
+        },
+        {
+          name: "rehash() / resize()",
+          time: "O(n)",
+          space: "O(n)",
+          description: "Doubles table capacity and re-inserts all existing entries when load factor α > 0.75.",
+        },
+        {
+          name: "Two Sum Hash Lookup",
+          time: "O(n)",
+          space: "O(n)",
+          description: "Single-pass complement matching reducing naive O(n²) pair search to optimal linear time.",
+        },
+      ],
+    },
+    cppCode: `// Production-Grade C++ Hash Table (Separate Chaining)
+#include <iostream>
+#include <vector>
+#include <list>
+#include <utility>
+using namespace std;
+
+class HashTable {
+private:
+    int capacity;
+    int count;
+    vector<list<pair<int, string>>> table;
+
+    int hash(int key) const {
+        return abs(key) % capacity;
+    }
+
+    void rehash() {
+        int oldCap = capacity;
+        capacity *= 2;
+        vector<list<pair<int, string>>> oldTable = move(table);
+        table.assign(capacity, list<pair<int, string>>());
+        count = 0;
+        for (const auto& bucket : oldTable) {
+            for (const auto& [k, v] : bucket) {
+                insert(k, v);
+            }
+        }
+    }
+
+public:
+    HashTable(int cap = 8) : capacity(cap), count(0), table(cap) {}
+
+    // O(1) Average Insert
+    void insert(int key, const string& value) {
+        if ((float)(count + 1) / capacity > 0.75) rehash();
+        int idx = hash(key);
+        for (auto& [k, v] : table[idx]) {
+            if (k == key) { v = value; return; } // Key exists, update
+        }
+        table[idx].emplace_back(key, value);
+        count++;
+    }
+
+    // O(1) Average Search
+    bool search(int key, string& outVal) const {
+        int idx = hash(key);
+        for (const auto& [k, v] : table[idx]) {
+            if (k == key) { outVal = v; return true; }
+        }
+        return false;
+    }
+
+    // O(1) Average Deletion
+    bool erase(int key) {
+        int idx = hash(key);
+        auto& bucket = table[idx];
+        for (auto it = bucket.begin(); it != bucket.end(); ++it) {
+            if (it->first == key) {
+                bucket.erase(it);
+                count--;
+                return true;
+            }
+        }
+        return false;
+    }
+};`,
+  },
 };
 
 // All 5 Sorting Algorithms
@@ -1002,6 +1123,7 @@ export const DATA_STRUCTURES: AlgorithmId[] = [
   "stack",
   "queue",
   "linked-list",
+  "hash-table",
 ];
 
 // All Complexity Topics
@@ -1025,6 +1147,7 @@ export const ALL_TOPICS: AlgorithmId[] = [
   "stack",
   "queue",
   "linked-list",
+  "hash-table",
   "bubble",
   "selection",
   "insertion",

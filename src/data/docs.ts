@@ -1753,6 +1753,216 @@ In modern high-concurrency runtimes (e.g., the **Go runtime scheduler**, **Java'
     },
   },
   {
+    slug: "hash-table-data-structure",
+    level: 5,
+    levelTitle: "Level 5: Fundamental Data Structures",
+    order: 4,
+    title: "Hash Table: Direct Addressing, Collisions & Constant-Time Magic",
+    subtitle: "Hash functions, collision resolution via Separate Chaining & Linear Probing, load factor management, and amortized O(1) performance.",
+    estimatedReadTime: "12 min",
+    category: "Data Structures",
+    content: `
+### What Is a Hash Table?
+
+A **Hash Table** (or **Hash Map**) is an associative data structure designed to solve the single most fundamental computer science problem: **retrieving an arbitrary piece of data in instantaneous, constant $O(1)$ time**.
+
+In a standard contiguous array, reading index $k$ takes $O(1)$ time because the CPU computes the hardware memory address directly:
+$$\\text{Address} = \\text{Base Address} + (k \\times \\text{Element Size})$$
+
+However, standard arrays require dense, sequential, integer keys ($0, 1, 2, \\dots$). If your keys are arbitrary non-sequential integers (like customer IDs \`987654321\`) or strings (like usernames \`"alice"\`, \`"mushfiq"\`), an ordinary array cannot address them directly. 
+
+A Hash Table bridges this gap using a **Hash Function** $h(k)$ that deterministically converts an arbitrary key $k$ into a compact integer index within the bounds of a backing array of size $M$:
+$$h(k) = \\text{hash}(k) \\pmod M$$
+
+---
+
+### Complexity Guarantees & Operations Matrix
+
+| Operation | Average Case | Worst Case (Severe Clumping) | Space Complexity | Description |
+| :--- | :--- | :--- | :--- | :--- |
+| $\\text{insert}(k, v)$ | $O(1)$ | $O(n)$ | $O(1)$ | Hashes key, resolves collision, and stores $(k, v)$ pair. |
+| $\\text{search}(k)$ | $O(1)$ | $O(n)$ | $O(1)$ | Computes $h(k)$, jumps to slot, and returns value $v$. |
+| $\\text{delete}(k)$ | $O(1)$ | $O(n)$ | $O(1)$ | Unlinks node or writes a Tombstone marker in $O(1)$ avg. |
+| $\\text{rehash}()$ | $O(n)$ | $O(n)$ | $O(n)$ | Doubles capacity $M \\to 2M$ and re-inserts all keys when $\\alpha > 0.75$. |
+
+---
+
+### The Hash Function & The Inevitability of Collisions
+
+A robust hash function must fulfill three properties:
+1. **Determinism**: The same key $k$ must *always* yield the exact same integer hash value.
+2. **Uniform Distribution**: Keys must be evenly scattered across all $M$ buckets to prevent localized clusters.
+3. **Efficiency**: Must compute in strictly $O(1)$ time (or $O(L)$ for a string of length $L$).
+
+#### The Pigeonhole Principle & Collisions
+No matter how brilliant your hash function is, collisions are mathematically inevitable. If your key domain contains $|U| = 2^{64}$ possible 64-bit integers, but your hash table buffer has capacity $M = 8$, the **Pigeonhole Principle** dictates that at least two distinct keys must map to the same bucket index:
+$$h(k_1) = h(k_2) \\quad \\text{where } k_1 \\neq k_2$$
+
+When two distinct keys produce identical slot indices, a **Collision** occurs. How an engine resolves collisions determines its performance, cache behavior, and memory footprint.
+
+---
+
+### Collision Strategy 1: Separate Chaining (Buckets)
+
+In **Separate Chaining**, each slot in the table array is not a single item, but the head of a linked list (or balanced BST) called a **Bucket**:
+* When inserting $(k_1, v_1)$, if bucket $h(k_1)$ is empty, a single-element list is created.
+* When inserting $(k_2, v_2)$ where $h(k_2) = h(k_1)$, the new node is simply appended or prepended to the linked list at that bucket.
+* **Lookup**: Hash $k$, jump to bucket index $h(k)$ in $O(1)$, and traverse the linked chain comparing keys ($O(1)$ expected time if chains are short).
+
+#### Trade-offs:
+* **Advantages**: Gracefully handles load factors $\\alpha > 1.0$ without running out of slots; simple deletion logic (standard node pointer splicing).
+* **Disadvantages**: Incurs pointer memory overhead (8 bytes per node on 64-bit architectures) and CPU cache misses due to fragmented heap node allocations.
+
+---
+
+### Collision Strategy 2: Open Addressing & Linear Probing
+
+In **Open Addressing**, all key-value entries are stored directly within the flat backing array—no auxiliary pointers or heap nodes are allocated! Every element occupies a single array cell.
+
+When slot $h(k)$ is already occupied by a different key, the algorithm **probes** adjacent slots sequentially until an empty slot is discovered.
+
+Under **Linear Probing**, probe sequences follow:
+$$h_i(k) = (h(k) + i) \\pmod M \\quad \\text{for } i = 0, 1, 2, \\dots, M-1$$
+
+#### The Critical "Tombstone (DEL)" Problem
+In linear probing, deleting a key requires extreme care!
+* Suppose key $A$ maps to index 2, key $B$ also maps to index 2 (collides and probes to index 3), and key $C$ maps to index 2 (probes to index 4).
+* If you delete key $B$ by simply wiping index 3 back to \`EMPTY\` (null), a subsequent search for key $C$ will hash to index 2, see slot 2 is occupied by $A$, check slot 3, find it is **EMPTY**, and **terminate early**, falsely concluding that key $C$ is not in the table!
+* **Solution**: You must mark deleted slots with a special sentinel value called a **Tombstone (\`DEL\`)**.
+  * During a **Search**: The probe sequence must *continue past* \`DEL\` markers.
+  * During an **Insertion**: The probe sequence can reuse a \`DEL\` slot to store the new incoming key!
+
+---
+
+### Load Factor ($\\alpha$) and Dynamic Rehashing
+
+The **Load Factor** $\\alpha$ measures the saturation level of the table:
+$$\\alpha = \\frac{N}{M} = \\frac{\\text{Total Active Elements}}{\\text{Total Bucket Capacity}}$$
+
+* As $\\alpha \\to 1.0$ in Open Addressing, collisions escalate exponentially into massive contiguous blocks called **Primary Clusters**. Search times degrade from $O(1)$ to disastrous $O(n)$ linear scans.
+* When $\\alpha$ crosses the standard threshold (typically $\\alpha > 0.70$ or $0.75$):
+  1. Allocate a brand new backing array with **double the capacity** ($2M$).
+  2. Iterate through every element in the old table.
+  3. Re-calculate the new hash index $h_{\\text{new}}(k) = k \\pmod{2M}$ and insert it into the new table.
+* Because resizing doubles capacity geometrically, the expensive $O(n)$ rehashing cost is spread over $n$ individual insertions, guaranteeing an **amortized $O(1)$** cost per insertion!
+
+---
+
+### Production C++ Implementation (Separate Chaining)
+
+\`\`\`cpp
+#include <iostream>
+#include <vector>
+#include <list>
+#include <utility>
+using namespace std;
+
+class HashTable {
+private:
+    int capacity;
+    int count;
+    vector<list<pair<int, string>>> table;
+
+    int hash(int key) const {
+        return abs(key) % capacity;
+    }
+
+    void rehash() {
+        int oldCap = capacity;
+        capacity *= 2;
+        vector<list<pair<int, string>>> oldTable = move(table);
+        table.assign(capacity, list<pair<int, string>>());
+        count = 0;
+        for (const auto& bucket : oldTable) {
+            for (const auto& [k, v] : bucket) {
+                insert(k, v);
+            }
+        }
+    }
+
+public:
+    HashTable(int cap = 8) : capacity(cap), count(0), table(cap) {}
+
+    // O(1) Average Insertion
+    void insert(int key, const string& value) {
+        if ((float)(count + 1) / capacity > 0.75) rehash();
+        int idx = hash(key);
+        for (auto& [k, v] : table[idx]) {
+            if (k == key) { v = value; return; } // Key exists: update value
+        }
+        table[idx].emplace_back(key, value);
+        count++;
+    }
+
+    // O(1) Average Search
+    bool search(int key, string& outVal) const {
+        int idx = hash(key);
+        for (const auto& [k, v] : table[idx]) {
+            if (k == key) { outVal = v; return true; }
+        }
+        return false;
+    }
+
+    // O(1) Average Deletion
+    bool erase(int key) {
+        int idx = hash(key);
+        auto& bucket = table[idx];
+        for (auto it = bucket.begin(); it != bucket.end(); ++it) {
+            if (it->first == key) {
+                bucket.erase(it);
+                count--;
+                return true;
+            }
+        }
+        return false;
+    }
+
+    float getLoadFactor() const { return (float)count / capacity; }
+};
+\`\`\`
+
+---
+
+### Algorithmic Superpower: The Two Sum Pattern
+
+The hallmark problem demonstrating Hash Table dominance is **Two Sum** (LeetCode #1):
+> Given an array of $n$ numbers and a target sum $T$, find two indices such that $\\text{nums}[i] + \\text{nums}[j] = T$.
+
+* **Naive Nested Loops**: Comparing every possible pair takes $O(n^2)$ time.
+* **Hash Table Optimization**: For each number $x = \\text{nums}[i]$, compute its required complement:
+  $$\\text{complement} = T - x$$
+* Query the hash table: *"Have we already seen this complement earlier?"*
+  * If **YES**: Found matching pair in instantaneous $O(1)$ time!
+  * If **NO**: Insert $x \\to i$ into the hash table and continue.
+* **Total Time**: Strictly **$O(n)$ linear time** in a single pass!
+    `,
+    banglaNote: {
+      topic: "হ্যাশ টেবিল (Hash Table), কলিশন ও কনস্ট্যান্ট টাইম ও(১) ম্যাজিক",
+      englishContext: "How Hash Tables achieve instant O(1) lookups and handle collisions",
+      banglaText: `
+১. **হ্যাশ টেবিল (Hash Table) কী?**
+   সাধারণ অ্যারেতে ইনডেক্স সরাসরি জানা থাকলে যেমন $O(1)$ সময়ে মেমরি থেকে ডাটা পড়া যায়, হ্যাশ টেবিল যেকোনো কি (Key) যেমন নাম বা বড় কোনো আইডিকে একটি গাণিতিক হ্যাশ ফাংশন \`h(key) = key % capacity\` দিয়ে সরাসরি অ্যারে ইনডেক্সে রূপান্তর করে। ফলে কোটি কোটি ডাটার মাঝেও যেকোনো উপাদান খুঁজতে গড়পড়তা মাত্র **$O(1)$ কনস্ট্যান্ট সময়** লাগে!
+
+২. **কলিশন (Collision) কেন ঘটে এবং সমাধান কী?**
+   পিজিয়নহোল নীতি (Pigeonhole Principle) অনুযায়ী অসীম সংখ্যক সম্ভাব্য কি (Keys)-কে সীমিত সাইজের অ্যারেতে ম্যাপ করলে একাধিক কি একই ইনডেক্সে গিয়ে পড়বেই। একে কলিশন বলে।
+   * **সেপারেট চেইনিং (Separate Chaining):** প্রতিটি স্লটে একটি করে লিংকড লিস্ট থাকে। কলিশন হলে নতুন উপাদানটি সেই স্লটের লিস্টে যুক্ত হয়।
+   * **ওপেন অ্যাড্রেসিং / লিনিয়ার প্রোবিং (Linear Probing):** কোনো স্লট দখল থাকলে পরের খালি স্লট \`(index + 1) % capacity\` খুঁজে সেখানে বসানো হয়।
+
+৩. **টুম্বস্টোন (Tombstone - DEL) কেন জরুরি?**
+   লিনিয়ার প্রোবিংয়ে কোনো উপাদান মুছে ফেললে স্লটটি ফাঁকা (Null) রাখা যায় না। কারণ পরবর্তীতে খোঁজার সময় ফাঁকা স্লট দেখেই অ্যালগরিদম ভাববে ডাটা নেই! তাই সেখানে একটি "কবরফলক" (Tombstone) বসানো হয়, যাতে সার্চিং থেমে না গিয়ে সামনে এগিয়ে যায়।
+
+৪. **লোড ফ্যাক্টর (Load Factor) ও রিহ্যাশিং:**
+   টেবিল যখন ৭৫% পূর্ণ হয়ে যায় (Load Factor $\\alpha > 0.75$), তখন কলিশন খুব বেড়ে যায়। তাই টেবিলের সাইজ দ্বিগুণ করে সবগুলো ডাটাকে নতুন টেবিলে নতুন ইনডেক্সে স্থানান্তর (Rehash) করা হয়।
+      `,
+    },
+    quizTopicId: "hash-table",
+    visualizerLink: {
+      label: "Hash Table Studio",
+      algorithmId: "hash-table",
+      path: "/algorithms/hash-table",
+    },
+  },
+  {
     slug: "time-complexity",
     level: 6,
     levelTitle: "Level 6: Algorithmic Complexity Analysis",

@@ -1147,6 +1147,73 @@ export const QUIZZES: Record<string, QuizTopic> = {
         explanation: "In work-stealing, the local owner pushes and pops from the head (LIFO) to maximize cache locality on recent sub-tasks. Thieves steal from the opposite tail end (FIFO), preventing concurrent workers from contending on the same end of the queue."
       }
     ]
+  },
+  "hash-table": {
+    id: "hash-table",
+    title: "Hash Table (Hash Map) Quiz",
+    description: "Test your mastery of hash functions, collision resolution via Separate Chaining vs Open Addressing, Tombstones, and Load Factor rehashing.",
+    questions: [
+      {
+        id: "ht1",
+        question: "What is the primary mechanism that enables a Hash Table to achieve average O(1) lookups and insertions?",
+        options: [
+          "A deterministic hash function transforms an arbitrary key into a numeric array index, allowing direct memory offset jumps without scanning",
+          "It maintains elements in strictly sorted order using AVL tree rotations",
+          "It uses binary search on a dynamically compressed bit-vector",
+          "It stores all keys on high-speed CPU registers instead of RAM"
+        ],
+        correctIndex: 0,
+        explanation: "A Hash Table maps keys to array slots via a hash function h(k) = k % capacity. This converts the search problem into direct memory index addressing in O(1) constant time."
+      },
+      {
+        id: "ht2",
+        question: "Why can hash collisions never be completely eliminated in any practical Hash Table implementation?",
+        options: [
+          "By the Pigeonhole Principle, the universe of possible keys is vast or infinite, while the table's backing array capacity is finite",
+          "Because modulo arithmetic is inherently imprecise in floating point processors",
+          "Because operating systems restrict arrays to powers of two",
+          "Because C++ and Java compilers enforce random collision generation"
+        ],
+        correctIndex: 0,
+        explanation: "According to the Pigeonhole Principle, mapping an unbounded universe of potential keys (e.g., all 64-bit integers or arbitrary strings) into a finite table buffer of size M guarantees that multiple distinct keys will eventually hash to the same slot."
+      },
+      {
+        id: "ht3",
+        question: "In a Hash Table using Separate Chaining, what is the worst-case time complexity of search(key), and when does it occur?",
+        options: [
+          "O(n), when an adversarial input or pathological hash function causes all n keys to hash into the exact same bucket chain",
+          "O(log n), because buckets are always balanced red-black trees",
+          "O(1), because collisions do not affect chain traversal",
+          "O(n²), because every element must be pairwise compared with every other element"
+        ],
+        correctIndex: 0,
+        explanation: "If a poor hash function or adversarial input maps all n keys to bucket index 0, the bucket degenerates into a linear singly linked list of length n, degrading search and deletion to linear O(n) traversal."
+      },
+      {
+        id: "ht4",
+        question: "In Open Addressing with Linear Probing, why can't a deleted slot simply be emptied (set to null/empty)?",
+        options: [
+          "Because linear probing searches terminate upon encountering the first empty slot; clearing a slot would prematurely terminate future searches for keys that probed past that slot",
+          "Because empty array cells cause hardware bus parity errors",
+          "Because empty slots double the load factor calculation",
+          "Because array slots in C++ cannot be set to null"
+        ],
+        correctIndex: 0,
+        explanation: "If slot i is vacated and left empty, any subsequent search for a collided key that probed past slot i will stop at slot i and incorrectly report that the key does not exist. A Tombstone marker (DEL) signals that the slot is vacant for new insertions, but probes must continue past it during searches."
+      },
+      {
+        id: "ht5",
+        question: "What is the Load Factor (α = N / M) and why do production Hash Tables trigger a rehash when α exceeds approximately 0.70 - 0.75?",
+        options: [
+          "Load factor measures table fullness (elements / capacity); exceeding 0.75 sharply increases collision clustering and probe lengths, so the table doubles capacity and re-hashes all keys to restore O(1) speed",
+          "Load factor measures memory fragmentation; exceeding 0.75 triggers OS garbage collection",
+          "Load factor is the probability of CPU cache misses during hashing",
+          "Load factor determines the encryption strength of the hash function"
+        ],
+        correctIndex: 0,
+        explanation: "The Load Factor α = N / M represents the ratio of stored elements to total slots. As α approaches 1.0 in open addressing, probe sequences become catastrophically long (primary clustering). Production tables resize to 2M and re-insert all keys when α > 0.75 to maintain average O(1) efficiency."
+      }
+    ]
   }
 };
 
