@@ -603,10 +603,6 @@ export function TopicCategoryHub({
 
                     <div className="mt-1.5 flex items-center gap-2 text-xs font-mono text-muted-foreground/90">
                       <span>{cat.countLabel}</span>
-                      <span className="inline-block h-1 w-1 rounded-full bg-border" />
-                      <span className="text-[11px] font-sans font-semibold text-primary opacity-0 group-hover:opacity-100 transition-opacity">
-                        Explore Topics →
-                      </span>
                     </div>
                   </div>
                 </button>

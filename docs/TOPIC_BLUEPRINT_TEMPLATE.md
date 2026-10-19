@@ -186,7 +186,7 @@ Every topic must provide a complete 360° mastery suite:
     2. **Data Structures**: Forest/Emerald squircle icon (`Network`), 4 visualizations.
     3. **Searching**: Rust/Orange squircle icon (`Search`), 2 visualizations.
     4. **Core Concepts / Complexity**: Violet/Purple squircle icon (`Layers`), 2 visualizations.
-  * **Main Category Cards**: Clean tiles without description paragraphs. Each card features a prominent glowing themed icon container, bold title, visualization count badge, and a smooth `Explore Topics →` hover indicator.
+  * **Main Category Cards**: Clean tiles without description paragraphs. Each card features a prominent glowing themed icon container, bold title, and visualization count badge.
 * **Explore Visualizer Route (`/visualizer`) 2-Step Hierarchy**:
   * **Step 1 (Main Landing `/visualizer`)**: Shows **ONLY the 4 Main Category Cards**. Zero topic lists, zero canvas, zero clutter!
   * **Step 2 (Dedicated Category Interface `/visualizer?category=[cat]`)**:
