@@ -364,4 +364,21 @@ void inOrder(TreeNode* root) {
 }`,
     highlightedLine: 3,
   },
+  bst: {
+    algorithmId: "bst",
+    title: "Binary Search Tree — Ordered Search, Insertion & 3-Case Deletion",
+    subtitle: "Left subtree keys < Root < Right subtree keys enable logarithmic lookup and sorted in-order sequence.",
+    caption: "Binary decision at each node eliminates half of the remaining subtrees, achieving O(log n) average search.",
+    fixedArray: [50, 30, 70, 20, 40, 60, 80],
+    complexityFormula: "Search/Insert/Delete: O(log n) avg, O(n) worst • In-Order: O(n) sorted",
+    complexityExplanation: "Height h governs all operations. Balanced BST guarantees h = floor(log2 n). Skewed insertion degrades height to n (linear linked list).",
+    codeSnippet: `// O(log n) Average BST Search
+TreeNode* search(TreeNode* root, int key) {
+    if (!root || root->val == key) return root;
+    if (key < root->val)
+        return search(root->left, key);  // Prune right half
+    return search(root->right, key);     // Prune left half
+}`,
+    highlightedLine: 4,
+  },
 };

@@ -58,6 +58,7 @@ const CATEGORIES: CategoryGroup[] = [
     colorClass: "text-teal-400",
     items: [
       { id: "binary-tree", num: "12", name: "Binary Tree", badge: "Branch O(n)" },
+      { id: "bst", num: "13", name: "Binary Search Tree", badge: "Search O(log n)" },
     ],
   },
   {

@@ -1281,6 +1281,73 @@ export const QUIZZES: Record<string, QuizTopic> = {
         explanation: "Level-order traversal visits nodes tier by tier from top to bottom. A First-In-First-Out (FIFO) queue guarantees that nodes at depth d are processed before nodes at depth d + 1."
       }
     ]
+  },
+  bst: {
+    id: "bst",
+    title: "Binary Search Tree (BST) Mastery Quiz",
+    description: "Test your understanding of the global BST trichotomy invariant, logarithmic search/insert mechanics, 3-case deletion with in-order successors, and degenerate skew hazards.",
+    questions: [
+      {
+        id: "bst1",
+        question: "What is the global ordering invariant that distinguishes a Binary Search Tree (BST) from a general Binary Tree?",
+        options: [
+          "For every node X, all keys in left subtree of X are < X, and all keys in right subtree of X are > X",
+          "Only immediate left and right children must be smaller and larger than the parent respectively",
+          "All leaf nodes must reside on the same level and have values divisible by 2",
+          "The root must be equal to the median of all keys in the tree at all times"
+        ],
+        correctIndex: 0,
+        explanation: "The BST invariant is global across entire subtrees: every descendant in the left subtree must be strictly less than X, and every descendant in the right subtree must be strictly greater than X. Checking only immediate children is a classic bug."
+      },
+      {
+        id: "bst2",
+        question: "When deleting a node that has TWO children from a BST (Case 3), what node is conventionally used to replace its value?",
+        options: [
+          "Its In-Order Successor (smallest node in the right subtree) or In-Order Predecessor (largest in left)",
+          "Any random leaf node in the entire tree",
+          "The root node of the entire tree",
+          "The node's immediate parent"
+        ],
+        correctIndex: 0,
+        explanation: "Replacing with the In-Order Successor (minimum of right subtree) guarantees that all remaining keys in the left subtree are smaller and all remaining keys in the right subtree are larger, preserving the BST invariant. The successor itself has at most one child, making its subsequent removal trivial."
+      },
+      {
+        id: "bst3",
+        question: "Why is the In-Order Successor of a node guaranteed to have at most ONE child?",
+        options: [
+          "Because it is the leftmost node in the right subtree, so by definition its left child pointer is nullptr",
+          "Because it must always be a leaf node with 0 children",
+          "Because C++ memory allocators prohibit two children on successor nodes",
+          "Because its right child pointer is always nullptr"
+        ],
+        correctIndex: 0,
+        explanation: "The In-Order Successor is found by moving once to the right child and then repeatedly following left pointers until left is nullptr. Because it has no left child, it has at most one child (its right child), safely belonging to Case 1 (leaf) or Case 2 (1 child)."
+      },
+      {
+        id: "bst4",
+        question: "What sequence of operations is produced by running an In-Order Traversal (Left -> Root -> Right) on a valid BST?",
+        options: [
+          "A strictly sorted ascending sequence of all keys",
+          "A reverse sorted descending sequence of all keys",
+          "A level-by-level breadth-first sequence",
+          "A pseudo-random permutation depending on insertion order"
+        ],
+        correctIndex: 0,
+        explanation: "Because in-order visits all keys in the left subtree (which are all smaller), then the root, then all keys in the right subtree (which are all larger), induction proves the resulting sequence is strictly sorted in ascending order."
+      },
+      {
+        id: "bst5",
+        question: "What happens to the search and insertion time complexity of an unaugmented BST if keys are inserted in pre-sorted ascending order (e.g., 10, 20, 30, 40, 50)?",
+        options: [
+          "It degrades from O(log n) to O(n) because the tree skews into a single linear linked list",
+          "It improves to O(1) because elements are already sorted",
+          "It remains strictly O(log n) because the compiler balances the tree automatically",
+          "The tree throws a runtime memory exception and refuses the insertion"
+        ],
+        correctIndex: 0,
+        explanation: "Inserting pre-sorted elements causes each new key to become the right child of the previous node. The tree has no left branches, height becomes h = n - 1, and search degenerates to an O(n) linear scan like a linked list. This motivated self-balancing trees like AVL and Red-Black trees."
+      }
+    ]
   }
 };
 

@@ -2021,6 +2021,172 @@ To process, search, or display data in a tree, we must visit every node systemat
     },
   },
   {
+    slug: "bst-fundamentals",
+    level: 5,
+    levelTitle: "Level 5: Fundamental Data Structures",
+    order: 6,
+    title: "Binary Search Tree (BST): The Ordered Invariant & 3-Case Deletion",
+    subtitle: "Master the trichotomy invariant (Left < Root < Right), O(log n) search/insertion, three cases of node deletion with in-order successors, and degenerate skew hazards.",
+    estimatedReadTime: "16 min",
+    category: "Data Structures",
+    content: `
+### What Is a Binary Search Tree (BST)?
+
+A **Binary Search Tree (BST)** is an ordered, node-based binary tree data structure designed specifically to unify the fast $O(\\log n)$ search efficiency of a sorted array with the dynamic pointer-linking flexibility of a linked list.
+
+In a standard Binary Tree, values may be arranged arbitrarily. In contrast, every node in a Binary Search Tree must obey the **Strict Subtree Trichotomy Invariant**:
+
+For every node $X$ in the tree:
+1. Every key in the **Left Subtree** of $X$ is strictly smaller than $X$'s key:
+   $$\\forall u \\in \\text{LeftSubtree}(X): \\quad \\text{key}(u) < \\text{key}(X)$$
+2. Every key in the **Right Subtree** of $X$ is strictly greater than $X$'s key:
+   $$\\forall v \\in \\text{RightSubtree}(X): \\quad \\text{key}(v) > \\text{key}(X)$$
+3. Both the Left and Right subtrees must themselves be valid Binary Search Trees.
+
+\`\`\`
+              [ 50 ]
+             /      \\
+          [ 30 ]    [ 70 ]
+         /    \\    /    \\
+       [20]  [40] [60]  [80]
+\`\`\`
+
+> **Crucial Insight:** The BST invariant is **global, not merely local**! It is not enough for a node to be greater than its immediate left child; it must be strictly greater than **every single descendant** in its entire left subtree. For instance, if node 50 has a left child 30, and 30 has a right child 55, this violates the BST invariant because 55 exceeds the root 50.
+
+---
+
+### Core Operations & Algorithmic Mechanics
+
+#### 1. Search Operation — $O(h)$ Time
+To search for a target key $K$ starting at root $R$:
+* If $R$ is null, the target is not present (return false).
+* If $K == \\text{key}(R)$, the target is found (return true).
+* If $K < \\text{key}(R)$, recursively search the **Left Subtree**. The entire right subtree is pruned from consideration!
+* If $K > \\text{key}(R)$, recursively search the **Right Subtree**. The entire left subtree is pruned from consideration!
+
+Because every decision branches either left or right, search follows a single root-to-leaf path. On a balanced tree of height $h = \\lfloor \\log_2 n \\rfloor$, search takes only $O(\\log n)$ comparisons.
+
+#### 2. Insertion Operation — $O(h)$ Time
+Insertion preserves the BST invariant by locating the unique empty child slot (null pointer) where the new key belongs:
+1. Compare the new value with the current node.
+2. If smaller, descend into the left child; if larger, descend right.
+3. Upon encountering a \`nullptr\`, allocate a new \`BSTNode\` and link it to the parent.
+4. If the value already exists, standard BSTs ignore duplicates or increment a frequency counter.
+
+#### 3. Deletion (The 3 Topological Cases) — $O(h)$ Time
+Deleting a node from a BST is mathematically more intricate than insertion because the ordering invariant must remain unbroken after removal. Deletion partitions into **3 distinct cases based on node degree**:
+
+* **Case 1: Node has 0 Children (Leaf Node)**
+  The target has no descendants (\`left == nullptr && right == nullptr\`). Simply sever the parent pointer to this node and deallocate memory.
+* **Case 2: Node has Exactly 1 Child (Degree 1)**
+  The target has either a left child or a right child, but not both. Splice the node out of the hierarchy by directly pointing the target's parent to the target's sole child (bypassing the target).
+* **Case 3: Node has Exactly 2 Children (Degree 2)**
+  The target has both left and right subtrees. We cannot simply bypass the node because the parent pointer cannot link to two children simultaneously.
+  * **Solution:** Replace the target's value with its **In-Order Successor** (the smallest key in the right subtree) or its **In-Order Predecessor** (the largest key in the left subtree).
+  * The in-order successor is guaranteed to have **at most 1 child** (since it is the leftmost node in the right subtree and therefore has no left child!).
+  * Copy the successor's key into the target node, then recursively delete the successor from the right subtree (which falls safely into Case 1 or Case 2).
+
+---
+
+### The In-Order Traversal Sorting Guarantee
+
+A fundamental theorem of Binary Search Trees states that:
+
+$$\\text{In-Order Traversal } (\\text{Left} \\to \\text{Root} \\to \\text{Right}) \\text{ on any valid BST produces a strictly increasing sequence.}$$
+
+#### Proof Sketch by Structural Induction:
+- **Base Case:** An empty tree or a single root node trivially satisfies sorted order.
+- **Inductive Step:** By definition of the BST invariant:
+  $$\\text{all keys in LeftSubtree} < \\text{key}(Root) < \\text{all keys in RightSubtree}$$
+  By induction, the in-order traversal of the Left Subtree produces a sorted sequence $L$. Then the Root is visited. Then the in-order traversal of the Right Subtree produces a sorted sequence $R$. Since every element of $L < \\text{key}(Root) < \\text{every element of } R$, the concatenated output $\\langle L, \\text{Root}, R \\rangle$ is strictly sorted in ascending order. $\\blacksquare$
+
+---
+
+### Balanced Topology vs. Degenerate Skew Hazard
+
+The primary vulnerability of an unaugmented Binary Search Tree is its susceptibility to **pathological inputs**:
+
+| Scenario | Insertion Order | Resulting Height $h$ | Search Time | Visual Topology |
+| :--- | :--- | :--- | :--- | :--- |
+| **Optimal (Balanced)** | Random or median-first (e.g., 50, 25, 75, 12, 37) | $h = \\lfloor \\log_2 n \\rfloor$ | $O(\\log n)$ | Symmetrical branching pyramid |
+| **Pathological (Degenerate)** | Pre-sorted ascending (e.g., 10, 20, 30, 40, 50) | $h = n - 1$ | $O(n)$ | Linear Single-Chain Linked List |
+
+When inserting already-sorted keys into a naive BST, every new node is attached as the right child of the previous leaf. The tree collapses into an ordinary linked list, completely destroying logarithmic lookup and degrading operations to linear $O(n)$ scans.
+
+This fatal flaw motivated computer scientists to invent **Self-Balancing Binary Search Trees** (such as **AVL Trees** and **Red-Black Trees**), which automatically perform tree rotations upon insertions and deletions to guarantee $h = O(\\log n)$ under all input distributions.
+
+---
+
+### Asymptotic Complexity Summary
+
+| Operation | Best Case | Average Case | Worst Case (Degenerate) | Auxiliary Space |
+| :--- | :--- | :--- | :--- | :--- |
+| **Search** | $O(1)$ | $O(\\log n)$ | $O(n)$ | $O(h)$ call stack |
+| **Insertion** | $O(1)$ | $O(\\log n)$ | $O(n)$ | $O(h)$ call stack |
+| **Deletion** | $O(1)$ | $O(\\log n)$ | $O(n)$ | $O(h)$ call stack |
+| **Find Min / Max**| $O(1)$ | $O(\\log n)$ | $O(n)$ | $O(1)$ iterative |
+| **In-Order Traversal**| $O(n)$ | $O(n)$ | $O(n)$ | $O(h)$ call stack |
+| **Total Memory** | $\\Theta(n)$ | $\\Theta(n)$ | $\\Theta(n)$ | $3 \\times \\text{pointers} + \\text{value}$ |
+`,
+    banglaNote: {
+      topic: "বাইনারি সার্চ ট্রি (BST), ট্রাইকোটমি অর্ডার ও ৩-কেস ডিলিশন মেকানিক্স (BST Deep Dive)",
+      englishContext: "A Binary Search Tree (BST) enforces the strict ordering invariant (Left < Root < Right) across all subtrees, providing O(log n) search, insert, and delete with sorted in-order traversal.",
+      banglaText: `
+### 💡 সহজ উপমা: সংখ্যা অনুমানের খেলা (Higher or Lower Game)
+ছোটবেলায় আমরা একটা খেলা খেলতাম — বন্ধু মনে মনে ১ থেকে ১০০-এর মধ্যে একটি সংখ্যা ধরে রাখত। আমরা বলতাম ৫০। সে বলত "না, আরো বড়!"। তখন আমরা মুহূর্তেই ১ থেকে ৫০ বাদ দিয়ে দিতাম এবং পরবর্তী অনুমান করতাম ৭৫। 
+
+বাইনারি সার্চ ট্রি (BST) হলো এই সংখ্যা অনুমানের খেলার একটি চিরস্থায়ী, ডাইনামিক রূপ! প্রতিটি নোডে গিয়ে সিদ্ধান্ত নেওয়া হয়: "আমি কি বামে যাব নাকি ডানে যাব?"। প্রতিটি পদক্ষেপে বাকি থাকা ট্রির অর্ধেক অংশ সম্পূর্ণ বাতিল হয়ে যায়।
+
+---
+
+### ⚖️ গ্লোবাল ট্রাইকোটমি ইনভেরিয়েন্ট (Subtree Invariant Rule):
+একটি সাধারণ বাইনারি ট্রির সাথে BST-র প্রধান পার্থক্য হলো এর কঠোর গাণিতিক নিয়ম:
+যেকোনো নোড $X$-এর জন্য:
+১. তার **সম্পূর্ণ বাম সাবট্রির** প্রতিটি নোডের মান $X$-এর চেয়ে **ছোট** হতে হবে ($< X$)।
+২. তার **সম্পূর্ণ ডান সাবট্রির** প্রতিটি নোডের মান $X$-এর চেয়ে **বড়** হতে হবে ($> X$)।
+
+> ⚠️ **ইন্টারভিউ সতর্কতা:** অনেকে ভুল মনে করে যে কেবল সরাসরি বাম সন্তান ছোট এবং সরাসরি ডান সন্তান বড় হলেই BST হয়। এটি একদম ভুল! যদি ৫০-এর বাম চাইল্ড ৩০ হয়, আর ৩০-এর ডান চাইল্ড ৫৫ হয় — তবে লোকালি ৩০ < ৫৫ সঠিক মনে হলেও, রুটের সাপেক্ষে বাম সাবট্রিতে ৫০-এর চেয়ে বড় ৫৫ ঢুকে পড়েছে! এটি BST-র নিয়ম ভঙ্গ করে।
+
+---
+
+### 🎯 ডিলিশনের ৩টি কেস ও ইন-অর্ডার সাকসেসর ট্রিক:
+BST থেকে কোনো নোড ডিলিট করা সবচেয়ে মজার ও বুদ্ধিবৃত্তিক অ্যালগরিদম। নোডের কয়টি সন্তান আছে তার ওপর ভিত্তি করে ৩টি কেস তৈরি হয়:
+
+#### ১. কেস ১: পাতা নোড (Leaf Node — ০টি সন্তান)
+কোনো ঝামেলা নেই! নোডের কোনো বংশধর নেই। কেবল তার প্যারেন্টের সংশ্লিষ্ট পয়েন্টার \`nullptr\` করে মেমোরি ফ্রি করে দিলেই কাজ শেষ।
+
+#### ২. কেস ২: একটি সন্তান (Degree 1 — ১টি চাইল্ড)
+নোডের মাত্র একটি সন্তান আছে (হয় বামে অথবা ডানে)। নোডটিকে মাঝখান থেকে সরিয়ে তার প্যারেন্টের সাথে সরাসরি নাতি/নাতনিকে (সন্তানকে) যুক্ত করে দেওয়া হয় (বাইপাস লিংক)।
+
+#### ৩. কেস ৩: দুটি সন্তান (Degree 2 — ২টি চাইল্ড)
+এটি ইন্টারভিউয়ারদের সবচেয়ে প্রিয় প্রশ্ন! নোডের দুটি সাবট্রিই বিদ্যমান। প্যারেন্ট পয়েন্টার একা দুটি চাইল্ডকে ধরে রাখতে পারে না।
+- **সমাধান:** আমরা নোডটির ফিজিক্যাল স্ট্রাকচার ডিলিট না করে তার ভেতরের মান পরিবর্তন করি। 
+- কাকে বসাব? তার **In-Order Successor** (ডান সাবট্রির সবচেয়ে ছোট মান) অথবা **In-Order Predecessor** (বাম সাবট্রির সবচেয়ে বড় মান)।
+- **ম্যাজিক ট্রিক:** ডান সাবট্রির সবচেয়ে ছোট নোডটির কিন্তু **কখনোই বাম সন্তান থাকতে পারে না**! (কারণ বাম সন্তান থাকলে সেই হতো সবচেয়ে ছোট)। তাই সাকসেসর নোডটি নিজে সর্বদা কেস ১ অথবা কেস ২-এর মধ্যে পড়ে। ফলে তাকে সহজেই ডিলিট করা যায়!
+
+---
+
+### 📈 ইন-অর্ডার ট্রাভার্সালের জাদুকরী গ্যারান্টি:
+যেকোনো বৈধ BST-তে যদি আপনি **In-Order Traversal** (বাম সাবট্রি $\\to$ বর্তমান নোড $\\to$ ডান সাবট্রি) চালান, তবে আউটপুট সর্বদা **ছোট থেকে বড় ক্রমানুসারে নিখুঁতভাবে সাজানো (Sorted Ascending Order)** আসবে!
+যেমন: ট্রিতে যদি এলোমেলোভাবে ৫০, ৩০, ৭০, ২০, ৪০, ৬০, ৮০ ইনসার্ট করা থাকে, ইন-অর্ডার ট্রাভার্সাল দিলে সাথে সাথে আউটপুট পাবেন: \`[20, 30, 40, 50, 60, 70, 80]\`।
+
+---
+
+### ⚠️ ডিজেনারেট ট্রির বিপদ (The Sorted Insertion Hazard):
+একটি সর্টেড অ্যারের ওপর বাইনারি সার্চ অত্যন্ত দ্রুত কাজ করলেও নতুন উপাদান যোগ করতে $O(n)$ মেমোরি শিফট লাগে। BST-তে নতুন উপাদান যোগ করতে কোনো মেমোরি শিফটিং লাগে না, শুধু নতুন পয়েন্টার জুড়তে হয়।
+
+কিন্তু একটি মারাত্মক বিপদ আছে! আপনি যদি আগে থেকেই সাজানো সংখ্যা যেমন: \`10, 20, 30, 40, 50\` একের পর এক সাধারণ BST-তে ইনসার্ট করেন, তবে প্রতিটি সংখ্যা আগেরটির ডান সন্তান হিসেবে বসে যাবে। ফলে কোনো বাম শাখা তৈরি হবে না! গাছটি বাঁকা হয়ে একটি সিঙ্গলি লিঙ্কড লিস্টে পরিণত হবে!
+তখন গাছের উচ্চতা $h = n$ হয়ে যায়, এবং সার্চিং স্পিড $\\log n$ থেকে ধসে পড়ে মারাত্মক ধীরগতির $O(n)$-এ রূপ নেয়। এই সংকট সমাধানের জন্যই পরবর্তীতে উদ্ভাবন করা হয়েছে সেলফ-ব্যালান্সিং ট্রি (যেমন **AVL Tree** এবং **Red-Black Tree**)।
+      `,
+    },
+    quizTopicId: "bst",
+    visualizerLink: {
+      label: "Binary Search Tree Studio",
+      algorithmId: "bst",
+      path: "/algorithms/bst",
+    },
+  },
+  {
     slug: "time-complexity",
     level: 6,
     levelTitle: "Level 6: Algorithmic Complexity Analysis",

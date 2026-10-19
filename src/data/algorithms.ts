@@ -1244,6 +1244,163 @@ public:
     }
 };`,
   },
+  bst: {
+    id: "bst",
+    name: "Binary Search Tree",
+    category: "tree",
+    shortDescription:
+      "A binary tree obeying the key invariant: left subtree < root < right subtree, enabling O(log n) search, insert, and delete.",
+    description:
+      "A Binary Search Tree (BST) is an ordered node-based binary tree data structure. For every node, all keys in its left subtree are strictly less than the node's key, and all keys in its right subtree are strictly greater. This trichotomy enables binary search efficiency (O(log n) average time) on dynamic data where insertions and deletions can occur without shifting contiguous memory. An in-order traversal visits all keys in strictly sorted ascending order. However, without self-balancing mechanisms, sequential insertions can cause the tree to degenerate into an O(n) linked list.",
+    complexity: {
+      best: "O(log n)",
+      average: "O(log n)",
+      worst: "O(n)",
+      space: "O(n)",
+      stable: false,
+      inPlace: true,
+      operations: [
+        {
+          name: "Search",
+          time: "O(log n)",
+          space: "O(h)",
+          description: "Prunes half the remaining tree at each node comparison. Worst-case O(n) if skewed.",
+        },
+        {
+          name: "Insertion",
+          time: "O(log n)",
+          space: "O(h)",
+          description: "Traverses to the correct leaf position preserving the BST invariant and attaches new node.",
+        },
+        {
+          name: "Deletion (3 Cases)",
+          time: "O(log n)",
+          space: "O(h)",
+          description: "Case 1: Leaf (sever pointer). Case 2: 1 child (splice child). Case 3: 2 children (replace with in-order successor).",
+        },
+        {
+          name: "In-Order Traversal",
+          time: "O(n)",
+          space: "O(h)",
+          description: "Visits Left -> Root -> Right, yielding elements in strictly sorted ascending order.",
+        },
+        {
+          name: "Find Min / Max",
+          time: "O(log n)",
+          space: "O(h)",
+          description: "Repeatedly follows left (Min) or right (Max) child pointers until reaching null.",
+        },
+        {
+          name: "In-Order Successor",
+          time: "O(log n)",
+          space: "O(h)",
+          description: "Finds the smallest key strictly greater than current key (min node in right subtree).",
+        },
+      ],
+    },
+    cppCode: `// Production-Grade C++ Binary Search Tree (BST)
+#include <iostream>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+struct BSTNode {
+    int val;
+    BSTNode* left;
+    BSTNode* right;
+    BSTNode(int x) : val(x), left(nullptr), right(nullptr) {}
+};
+
+class BinarySearchTree {
+private:
+    BSTNode* root;
+
+    BSTNode* insert(BSTNode* node, int val) {
+        if (!node) return new BSTNode(val);
+        if (val < node->val) {
+            node->left = insert(node->left, val);
+        } else if (val > node->val) {
+            node->right = insert(node->right, val);
+        }
+        // Duplicate keys ignored in standard BST
+        return node;
+    }
+
+    bool search(BSTNode* node, int val) const {
+        if (!node) return false;
+        if (node->val == val) return true;
+        if (val < node->val) return search(node->left, val);
+        return search(node->right, val);
+    }
+
+    BSTNode* findMin(BSTNode* node) const {
+        while (node && node->left) {
+            node = node->left;
+        }
+        return node;
+    }
+
+    BSTNode* remove(BSTNode* node, int val) {
+        if (!node) return nullptr;
+
+        if (val < node->val) {
+            node->left = remove(node->left, val);
+        } else if (val > node->val) {
+            node->right = remove(node->right, val);
+        } else {
+            // Found node to delete! Handle 3 topological cases:
+            // Case 1: Leaf (0 children)
+            if (!node->left && !node->right) {
+                delete node;
+                return nullptr;
+            }
+            // Case 2: Single child
+            if (!node->left) {
+                BSTNode* temp = node->right;
+                delete node;
+                return temp;
+            } else if (!node->right) {
+                BSTNode* temp = node->left;
+                delete node;
+                return temp;
+            }
+            // Case 3: Two children -> Find In-Order Successor
+            BSTNode* successor = findMin(node->right);
+            node->val = successor->val;
+            node->right = remove(node->right, successor->val);
+        }
+        return node;
+    }
+
+    void inOrder(BSTNode* node, vector<int>& result) const {
+        if (!node) return;
+        inOrder(node->left, result);
+        result.push_back(node->val);
+        inOrder(node->right, result);
+    }
+
+    void destroy(BSTNode* node) {
+        if (!node) return;
+        destroy(node->left);
+        destroy(node->right);
+        delete node;
+    }
+
+public:
+    BinarySearchTree() : root(nullptr) {}
+    ~BinarySearchTree() { destroy(root); }
+
+    void insert(int val) { root = insert(root, val); }
+    bool search(int val) const { return search(root, val); }
+    void remove(int val) { root = remove(root, val); }
+
+    vector<int> getSorted() const {
+        vector<int> res;
+        inOrder(root, res);
+        return res; // Ascending sorted order
+    }
+};`,
+  },
 };
 
 // All 5 Sorting Algorithms
@@ -1275,6 +1432,7 @@ export const DATA_STRUCTURES: AlgorithmId[] = [
 // All Tree Data Structures
 export const TREE_TOPICS: AlgorithmId[] = [
   "binary-tree",
+  "bst",
 ];
 
 // All Complexity Topics
@@ -1300,6 +1458,7 @@ export const ALL_TOPICS: AlgorithmId[] = [
   "linked-list",
   "hash-table",
   "binary-tree",
+  "bst",
   "bubble",
   "selection",
   "insertion",

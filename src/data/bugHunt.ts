@@ -484,5 +484,29 @@ public:
       { type: "call-enter", fn: "maxDepth", args: [0], description: "Base case returned depth 1 for nullptr, inflating tree height" },
     ],
   },
+  bst: {
+    algorithmId: "bst",
+    title: "Binary Search Tree: Inverted Branch Direction in Search Recursion",
+    description:
+      "This recursive search function is supposed to find a target value in a BST. However, when the target is smaller than the current node's value, it mistakenly searches the right subtree instead of the left!",
+    buggyCode: `bool search(BSTNode* node, int target) {
+    if (!node) return false;
+    if (node->val == target) return true;
+    if (target < node->val)
+        return search(node->right, target); // Bug: traversing right when target is smaller!
+    return search(node->right, target);
+}`,
+    buggyLineNumber: 5,
+    hint: "According to the fundamental BST invariant, where do all keys strictly smaller than node->val reside: in the left subtree or the right subtree?",
+    explanation:
+      "Line 5 mistakenly called `search(node->right, target)` when `target < node->val`. By the BST trichotomy invariant, all keys strictly smaller than the current node are stored in its left subtree. Searching the right subtree discards the valid half and guarantees the target will not be found. The fix is `return search(node->left, target);`.",
+    validateFix: (line: string) => {
+      const trimmed = line.replace(/\s+/g, "");
+      return trimmed.includes("search(node->left");
+    },
+    flawedRunner: () => [
+      { type: "call-enter", fn: "search", args: [30], description: "Target 30 < 50, but algorithm branched right towards 70 instead of left" },
+    ],
+  },
 };
 

@@ -645,11 +645,65 @@ export const LEARNING_PATH: LearningStep[] = [
   },
 
   // ==========================================
+  // TIER 6.7: ORDERED SEARCH TREES
+  // ==========================================
+  {
+    id: "bst",
+    order: 13,
+    name: "Binary Search Tree",
+    category: "tree",
+    badge: "Left < Root < Right",
+    estimatedTime: "~25 min",
+    difficulty: "Intermediate",
+    reason: "Unlock O(log n) dynamic search, insertion, and deletion by enforcing the global BST invariant across every subtree.",
+    hook: "Binary Search is O(log n), but inserting into a sorted array takes O(n) shifts. How can we get fast searches AND fast dynamic insertions in a single structure?",
+    superpower: "Dynamic O(log n) Searches and In-Order Monotonic Sorting",
+    tradeoff: "Degenerates to O(n) Linear Linked List if Inserted in Sorted Order",
+    mentalModel: "A Binary Search Number Line Folded into a Branching Mobile",
+    keyPrinciples: [
+      "Trichotomy invariant: for any node X, all keys in left(X) < X < all keys in right(X).",
+      "Prunes half the remaining tree at every node comparison during search or insertion.",
+      "In-order traversal (Left -> Root -> Right) produces a strictly sorted ascending sequence.",
+      "3-case deletion: Leaf (sever), 1 child (splice child), 2 children (swap with In-Order Successor).",
+      "Tree height h dictates performance: O(log n) balanced vs O(n) degenerate worst-case."
+    ],
+    analogy: "Like a guess-the-number game where each clue ('higher' or 'lower') cuts the range in half, organized into a branching flowchart of decisions.",
+    idea: "A Binary Search Tree combines the logarithmic search efficiency of a sorted array with the dynamic pointer-linking flexibility of a linked list. By enforcing that left descendants are strictly smaller and right descendants are strictly greater, searching or inserting requires following a single path from root to leaf.",
+    sampleArray: [50, 30, 70, 20, 40, 60, 80],
+    codeBlocks: [
+      {
+        title: "BST Search (O(log n) average)",
+        lines: "TreeNode* search(TreeNode* root, int key) {\n    if (!root || root->val == key) return root;\n    if (key < root->val) return search(root->left, key);\n    return search(root->right, key);\n}",
+        explanation: "Discards half of the remaining subtrees at every step based on key comparison.",
+      },
+      {
+        title: "BST Insertion (O(log n) average)",
+        lines: "TreeNode* insert(TreeNode* node, int val) {\n    if (!node) return new TreeNode(val);\n    if (val < node->val) node->left = insert(node->left, val);\n    else if (val > node->val) node->right = insert(node->right, val);\n    return node;\n}",
+        explanation: "Recursively navigates to the appropriate null leaf position and links the new node.",
+      },
+      {
+        title: "BST Deletion with In-Order Successor (Case 3)",
+        lines: "TreeNode* successor = findMin(node->right);\nnode->val = successor->val;\nnode->right = remove(node->right, successor->val);",
+        explanation: "Replaces the two-child node's value with the smallest node in its right subtree, then deletes that successor.",
+      },
+      {
+        title: "In-Order Traversal Sorting Guarantee",
+        lines: "void inOrder(TreeNode* root) {\n    if (!root) return;\n    inOrder(root->left);\n    cout << root->val << \" \";\n    inOrder(root->right);\n}",
+        explanation: "Visiting Left, Root, Right strictly outputs elements in ascending sorted order.",
+      },
+    ],
+    complexityWhy: {
+      time: "Average O(log n) for search, insert, and delete when balanced. Worst-case O(n) if insertions arrive in monotonic order causing degenerate skew.",
+      space: "O(h) call stack memory where h is tree height. O(n) total node allocation.",
+    },
+  },
+
+  // ==========================================
   // TIER 7: ELEMENTARY QUADRATIC SORTING
   // ==========================================
   {
     id: "bubble",
-    order: 13,
+    order: 14,
     name: "Bubble Sort",
     category: "sorting",
     badge: "Adjacent Swaps",
@@ -694,7 +748,7 @@ export const LEARNING_PATH: LearningStep[] = [
   },
   {
     id: "selection",
-    order: 14,
+    order: 15,
     name: "Selection Sort",
     category: "sorting",
     badge: "Find Minimum",
@@ -739,7 +793,7 @@ export const LEARNING_PATH: LearningStep[] = [
   },
   {
     id: "insertion",
-    order: 15,
+    order: 16,
     name: "Insertion Sort",
     category: "sorting",
     badge: "Hand-Sorting Cards",
@@ -788,7 +842,7 @@ export const LEARNING_PATH: LearningStep[] = [
   // ==========================================
   {
     id: "merge",
-    order: 16,
+    order: 17,
     name: "Merge Sort",
     category: "sorting",
     badge: "Divide & Conquer",
@@ -833,7 +887,7 @@ export const LEARNING_PATH: LearningStep[] = [
   },
   {
     id: "quick",
-    order: 17,
+    order: 18,
     name: "Quick Sort",
     category: "sorting",
     badge: "Pivot Partition",
@@ -882,6 +936,7 @@ export const SORTING_PATH = LEARNING_PATH.filter((s) => s.category === "sorting"
 export const SEARCHING_PATH = LEARNING_PATH.filter((s) => s.category === "searching");
 export const DATA_STRUCTURES_PATH = LEARNING_PATH.filter((s) => s.category === "data-structure");
 export const COMPLEXITY_PATH = LEARNING_PATH.filter((s) => s.category === "complexity");
+export const TREE_PATH = LEARNING_PATH.filter((s) => s.category === "tree");
 
 export interface GlossaryTerm {
   term: string;
@@ -1009,6 +1064,16 @@ export const GLOSSARY_TERMS: GlossaryTerm[] = [
     term: "Binary Tree",
     category: "Data Structures",
     definition: "A hierarchical structure where every node has at most two children: left and right.",
+  },
+  {
+    term: "Binary Search Tree (BST)",
+    category: "Data Structures",
+    definition: "A binary tree obeying the trichotomy invariant: for any node, all keys in left subtree < node < all keys in right subtree.",
+  },
+  {
+    term: "In-Order Successor",
+    category: "Data Structures",
+    definition: "The node with the smallest key strictly greater than a given node's key (the leftmost node of the right subtree).",
   },
   {
     term: "Root Node",

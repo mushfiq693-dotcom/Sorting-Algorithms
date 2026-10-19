@@ -68,7 +68,7 @@ export const CATEGORY_CARDS: CategoryCardMeta[] = [
   {
     key: "tree",
     title: "Trees",
-    countLabel: "1 Visualization",
+    countLabel: "2 Visualizations",
     icon: GitFork,
     iconBg: "bg-teal-500/10 dark:bg-teal-500/20",
     iconColor: "text-teal-500 dark:text-teal-400",
@@ -186,6 +186,12 @@ const TOPIC_VISUALS: Record<AlgorithmId, TopicVisualMeta> = {
     iconColor: "text-teal-500 dark:text-teal-400",
     iconBorder: "border-teal-500/25",
   },
+  bst: {
+    icon: GitFork,
+    iconBg: "bg-teal-500/10 dark:bg-teal-500/20",
+    iconColor: "text-teal-500 dark:text-teal-400",
+    iconBorder: "border-teal-500/25",
+  },
 
   // Searching (Orange / Rust palette)
   "linear-search": {
@@ -234,6 +240,7 @@ const TOPIC_DESCRIPTIONS: Record<AlgorithmId, string> = {
   "linked-list": "See nodes connected by pointers traverse, insert, and delete dynamically.",
   "hash-table": "Watch hash functions map keys directly to buckets with collision resolution and O(1) lookups.",
   "binary-tree": "Explore hierarchical branching, tree anatomy, DFS traversals (pre/in/post), and BFS level orders.",
+  bst: "Explore Left < Root < Right invariant, O(log n) dynamic search, insertion, and 3-case deletion with in-order successors.",
 
   // Searching
   "linear-search": "Watch linear search scan elements one by one from start to end for a match.",
