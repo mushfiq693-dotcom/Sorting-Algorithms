@@ -425,7 +425,7 @@ export function StackVisualizer() {
 
         {/* Right Column: Sticky C++ Code Execution Studio & Inspector */}
         <div className="lg:col-span-5 flex flex-col gap-3 lg:sticky lg:top-20">
-          <div className="h-[270px] sm:h-[290px] lg:h-[310px]">
+          <div className="h-[280px] sm:h-[300px] lg:h-[320px] max-h-[280px] sm:max-h-[300px] lg:max-h-[320px] min-h-0 shrink-0 overflow-hidden flex flex-col">
             <CodeViewer
               code={ALGORITHMS.stack.cppCode}
               algorithmName="Stack"

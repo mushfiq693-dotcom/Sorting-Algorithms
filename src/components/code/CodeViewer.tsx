@@ -8,6 +8,7 @@ interface CodeViewerProps {
   activeLineNumber: number | null;
   algorithmName: string;
   className?: string;
+  maxHeight?: string | number;
 }
 
 export function CodeViewer({
@@ -15,6 +16,7 @@ export function CodeViewer({
   activeLineNumber,
   algorithmName,
   className = "",
+  maxHeight,
 }: CodeViewerProps) {
   const [copied, setCopied] = useState(false);
   const activeLineRef = useRef<HTMLDivElement | null>(null);
@@ -43,7 +45,8 @@ export function CodeViewer({
 
   return (
     <div
-      className={`flex flex-col h-full rounded bg-background dark:bg-[#14100D] border border-border dark:border-[#4A3F35] shadow-2xl overflow-hidden corner-flourish ${className}`}
+      style={maxHeight ? { maxHeight, height: maxHeight } : undefined}
+      className={`flex flex-col h-full max-h-full min-h-0 w-full rounded bg-background dark:bg-[#14100D] border border-border dark:border-[#4A3F35] shadow-2xl overflow-hidden corner-flourish shrink-0 ${className}`}
     >
       {/* Header Bar */}
       <div className="flex items-center justify-between border-b border-border dark:border-[#4A3F35] bg-card dark:bg-[#1C1714] px-4 py-3 shrink-0">

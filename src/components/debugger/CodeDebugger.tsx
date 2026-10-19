@@ -251,7 +251,7 @@ export function CodeDebugger({ algorithmId, initialArray }: CodeDebuggerProps) {
       {/* Main Grid: Left = Code Viewer, Right = Live Variables & Call Stack */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
         {/* Left Column: C++ Code Viewer */}
-        <div className="lg:col-span-7 h-[420px]">
+        <div className="lg:col-span-7 h-[420px] max-h-[420px] min-h-0 shrink-0 overflow-hidden flex flex-col">
           <CodeViewer
             code={meta.cppCode}
             activeLineNumber={currentLine}

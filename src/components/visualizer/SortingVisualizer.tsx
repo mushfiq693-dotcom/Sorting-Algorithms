@@ -450,7 +450,7 @@ export function SortingVisualizer({
 
         {/* Right Column: Synchronized C++ Code Viewer */}
         <div className="lg:col-span-5 flex flex-col gap-3 lg:sticky lg:top-20">
-          <div className="h-[370px] sm:h-[400px] lg:h-[430px]">
+          <div className="h-[360px] sm:h-[390px] lg:h-[420px] max-h-[360px] sm:max-h-[390px] lg:max-h-[420px] min-h-0 shrink-0 overflow-hidden flex flex-col">
             <CodeViewer
               code={currentMeta.cppCode}
               activeLineNumber={currentLineNumber}
