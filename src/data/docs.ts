@@ -321,37 +321,6 @@ Consider the unsorted array \`[5, 1, 4, 2, 8]\` of size $n = 5$:
 
 ---
 
-### Complete Production-Grade C++ Implementation
-
-\`\`\`cpp
-#include <vector>
-#include <utility>
-
-void bubbleSort(std::vector<int>& arr) {
-    const int n = static_cast<int>(arr.size());
-    if (n <= 1) return; // Defensive guard: already sorted
-
-    for (int i = 0; i < n - 1; ++i) {
-        bool swapped = false; // Adaptive termination flag
-
-        // Bound is n - i - 1 because suffix [n-i ... n-1] is already sorted
-        for (int j = 0; j < n - i - 1; ++j) {
-            if (arr[j] > arr[j + 1]) {
-                std::swap(arr[j], arr[j + 1]);
-                swapped = true;
-            }
-        }
-
-        // If no adjacent pair was out of order, array is 100% sorted
-        if (!swapped) {
-            break;
-        }
-    }
-}
-\`\`\`
-
----
-
 ### Detailed Complexity & Mechanical Analysis
 
 | Metric | Complexity | Derivation & Rationale |
@@ -455,36 +424,6 @@ Selection Sort is inherently **Unstable**. Because the minimum element from the 
 
 ---
 
-### Complete Production-Grade C++ Implementation
-
-\`\`\`cpp
-#include <vector>
-#include <utility>
-
-void selectionSort(std::vector<int>& arr) {
-    const int n = static_cast<int>(arr.size());
-    if (n <= 1) return; // Guard against empty or single-element arrays
-
-    for (int i = 0; i < n - 1; ++i) {
-        int minIdx = i; // Assume current boundary item is minimal
-
-        // Scan unsorted suffix [i + 1 ... n - 1] to find true minimum
-        for (int j = i + 1; j < n; ++j) {
-            if (arr[j] < arr[minIdx]) {
-                minIdx = j; // Update candidate index
-            }
-        }
-
-        // Perform at most one swap per outer pass
-        if (minIdx != i) {
-            std::swap(arr[i], arr[minIdx]);
-        }
-    }
-}
-\`\`\`
-
----
-
 ### Detailed Complexity Breakdown
 
 | Metric | Complexity | Derivation & Theoretical Justification |
@@ -571,33 +510,6 @@ Modern language standard libraries rarely use pure Quick Sort or pure Merge Sort
 * **C++ \`std::sort\` (Introsort):** Uses Quick Sort, falls back to Heap Sort if recursion exceeds $2 \\log n$, and switches to **Insertion Sort** whenever partition size drops below $16$ elements.
 * **Python & Java \`Arrays.sort\` (Timsort):** Splits data into natural monotonic runs and uses **Insertion Sort (Binary Insertion Sort)** to sort tiny partitions.
 * **V8 JavaScript Engine:** Runs Insertion Sort on small arrays to avoid recursion stack frames and exploit CPU L1 data cache locality.
-
----
-
-### Complete Production-Grade C++ Implementation
-
-\`\`\`cpp
-#include <vector>
-
-void insertionSort(std::vector<int>& arr) {
-    const int n = static_cast<int>(arr.size());
-    if (n <= 1) return; // Guard: single element or empty
-
-    for (int i = 1; i < n; ++i) {
-        int key = arr[i]; // Stash candidate element
-        int j = i - 1;
-
-        // Shift elements strictly greater than key one position to the right
-        while (j >= 0 && arr[j] > key) {
-            arr[j + 1] = arr[j]; // Single-assignment shift
-            --j;
-        }
-
-        // Drop key into the generated opening
-        arr[j + 1] = key;
-    }
-}
-\`\`\`
 
 ---
 
@@ -780,60 +692,6 @@ If a strict \`<\` were used instead, an equal element from the right half would 
 
 ---
 
-### Complete Production-Grade C++ Implementation
-
-\`\`\`cpp
-#include <vector>
-
-void merge(std::vector<int>& arr, int low, int mid, int high, std::vector<int>& temp) {
-    int i = low;
-    int j = mid + 1;
-    int k = low;
-
-    // Compare heads of both halves and write the smaller element
-    while (i <= mid && j <= high) {
-        if (arr[i] <= arr[j]) { // '<=' ensures stability
-            temp[k++] = arr[i++];
-        } else {
-            temp[k++] = arr[j++];
-        }
-    }
-
-    // Drain remaining elements from left half
-    while (i <= mid) {
-        temp[k++] = arr[i++];
-    }
-
-    // Drain remaining elements from right half
-    while (j <= high) {
-        temp[k++] = arr[j++];
-    }
-
-    // Copy back from staging buffer into original array
-    for (int p = low; p <= high; ++p) {
-        arr[p] = temp[p];
-    }
-}
-
-void mergeSortInternal(std::vector<int>& arr, int low, int high, std::vector<int>& temp) {
-    if (low >= high) return; // Base Case: 1 or 0 elements
-
-    int mid = low + (high - low) / 2; // Overflow-safe midpoint
-    mergeSortInternal(arr, low, mid, temp);
-    mergeSortInternal(arr, mid + 1, high, temp);
-    merge(arr, low, mid, high, temp);
-}
-
-void mergeSort(std::vector<int>& arr) {
-    if (arr.size() <= 1) return;
-    // Allocate single temporary buffer upfront to avoid O(n log n) allocations
-    std::vector<int> temp(arr.size());
-    mergeSortInternal(arr, 0, static_cast<int>(arr.size()) - 1, temp);
-}
-\`\`\`
-
----
-
 ### Detailed Complexity & Engineering Trade-Offs
 
 | Metric | Complexity | Theoretical Justification |
@@ -940,45 +798,6 @@ Furthermore, the recursion call stack depth explodes from $O(\\log n)$ to $O(n)$
 1. **Randomized Quick Sort:** Pick a uniform random index $r \\in [low, high]$ and swap $arr[r]$ with $arr[high]$ before partitioning. This guarantees an expected $\\Theta(n \\log n)$ time regardless of input permutation.
 2. **Median-of-Three:** Sample $\{arr[low], arr[mid], arr[high]\}$ and use their median as the pivot.
 3. **Introsort (C++ \`std::sort\`):** Tracks recursion depth. If depth exceeds $2 \\lfloor \\log_2 n \\rfloor$, it immediately switches execution to **Heap Sort**, guaranteeing $O(n \\log n)$ worst-case safety!
-
----
-
-### Complete Production-Grade C++ Implementation
-
-\`\`\`cpp
-#include <vector>
-#include <utility>
-#include <cstdlib>
-
-int partitionLomuto(std::vector<int>& arr, int low, int high) {
-    int pivot = arr[high]; // Lomuto Pivot
-    int i = low - 1;       // Boundary of smaller region
-
-    for (int j = low; j < high; ++j) {
-        if (arr[j] < pivot) {
-            ++i;
-            std::swap(arr[i], arr[j]);
-        }
-    }
-    std::swap(arr[i + 1], arr[high]); // Place pivot in permanent slot
-    return i + 1;                     // Return pivot's permanent index
-}
-
-void quickSort(std::vector<int>& arr, int low, int high) {
-    if (low < high) {
-        // Median-of-three or random pivot swap to prevent O(n^2)
-        int mid = low + (high - low) / 2;
-        if (arr[mid] < arr[low]) std::swap(arr[low], arr[mid]);
-        if (arr[high] < arr[low]) std::swap(arr[low], arr[high]);
-        if (arr[high] < arr[mid]) std::swap(arr[mid], arr[high]);
-        std::swap(arr[mid], arr[high]); // Median is now at arr[high]
-
-        int pi = partitionLomuto(arr, low, high);
-        quickSort(arr, low, pi - 1);  // Recurse left partition
-        quickSort(arr, pi + 1, high); // Recurse right partition
-    }
-}
-\`\`\`
 
 ---
 
@@ -1481,73 +1300,6 @@ Modern CPUs do not fetch single bytes from RAM; they fetch memory in **64-byte C
 - Subsequent reads to $arr[1..15]$ result in instantaneous **L1 Cache Hits** (1-2 CPU cycles) instead of slow RAM reads (100-200 cycles).
 - Linked Lists, by contrast, allocate nodes discontinuously across the heap, causing frequent **Cache Misses** and pointer stalls.
 
----
-
-### Complete Production C++ Dynamic Array Implementation
-
-\`\`\`cpp
-#include <iostream>
-#include <stdexcept>
-
-template <typename T>
-class Vector {
-private:
-    T* data;
-    size_t length;
-    size_t cap;
-
-    void resize(size_t newCap) {
-        T* next = new T[newCap];
-        for (size_t i = 0; i < length; i++) {
-            next[i] = std::move(data[i]);
-        }
-        delete[] data;
-        data = next;
-        cap = newCap;
-    }
-
-public:
-    Vector(size_t initialCap = 4) : data(new T[initialCap]), length(0), cap(initialCap) {}
-
-    ~Vector() { delete[] data; }
-
-    // O(1) Random Access
-    T& operator[](size_t index) {
-        if (index >= length) throw std::out_of_range("Index out of bounds");
-        return data[index];
-    }
-
-    // O(1) Amortized Append
-    void push_back(const T& val) {
-        if (length == cap) resize(cap * 2);
-        data[length++] = val;
-    }
-
-    // O(n) Insertion with Right Shifting
-    void insert(size_t index, const T& val) {
-        if (index > length) throw std::out_of_range("Index out of bounds");
-        if (length == cap) resize(cap * 2);
-        for (size_t i = length; i > index; i--) {
-            data[i] = std::move(data[i - 1]);
-        }
-        data[index] = val;
-        length++;
-    }
-
-    // O(n) Deletion with Left Shifting
-    void erase(size_t index) {
-        if (index >= length) throw std::out_of_range("Index out of bounds");
-        for (size_t i = index; i < length - 1; i++) {
-            data[i] = std::move(data[i + 1]);
-        }
-        length--;
-    }
-
-    size_t size() const { return length; }
-    size_t capacity() const { return cap; }
-    bool empty() const { return length == 0; }
-};
-\`\`\`
     `
   },
   {
@@ -1685,54 +1437,6 @@ Instead of checking all $O(n^2)$ substrings, the **Sliding Window** maintains a 
 - The **Left pointer ($L$)** contracts the window whenever duplicate characters or constraints are violated.
 - Because both $L$ and $R$ increment monotonically from $0$ to $n$, each character is visited at most twice, delivering a guaranteed **$O(n)$ linear runtime**.
 
----
-
-### Complete Production C++ String Operations Suite
-
-\`\`\`cpp
-#include <iostream>
-#include <string>
-#include <vector>
-#include <algorithm>
-
-class StringMastery {
-public:
-    // 1. In-place two-pointer reversal: O(n) Time, O(1) Space
-    static void reverseString(std::string& s) {
-        int left = 0, right = static_cast<int>(s.size()) - 1;
-        while (left < right) {
-            std::swap(s[left++], s[right--]);
-        }
-    }
-
-    // 2. Palindrome verification with symmetric scan: O(n) Time, O(1) Space
-    static bool isPalindrome(const std::string& s) {
-        int left = 0, right = static_cast<int>(s.size()) - 1;
-        while (left < right) {
-            if (std::tolower(s[left++]) != std::tolower(s[right--])) {
-                return false; // Early exit on first mismatch
-            }
-        }
-        return true;
-    }
-
-    // 3. Sliding window: Longest substring without repeating characters: O(n)
-    static int lengthOfLongestSubstring(const std::string& s) {
-        std::vector<int> lastIndex(256, -1);
-        int maxLen = 0, left = 0;
-
-        for (int right = 0; right < static_cast<int>(s.size()); right++) {
-            unsigned char c = s[right];
-            if (lastIndex[c] >= left) {
-                left = lastIndex[c] + 1; // Contract window past previous duplicate
-            }
-            lastIndex[c] = right;
-            maxLen = std::max(maxLen, right - left + 1);
-        }
-        return maxLen;
-    }
-};
-\`\`\`
     `
   },
   {
@@ -1767,82 +1471,6 @@ All primary stack operations target exclusively the element located at index $\\
 | $\\text{top}()$ / $\\text{peek}()$ | $O(1)$ | $O(1)$ | Returns the top element without removal. |
 | $\\text{empty}()$ | $O(1)$ | $O(1)$ | Checks whether the stack contains 0 items. |
 | $\\text{size}()$ | $O(1)$ | $O(1)$ | Returns the current count of elements. |
-
----
-
-### C++ Implementations: Array vs. Linked List
-
-There are two canonical ways to build a Stack in C++:
-
-#### 1. Fixed-Size Array Stack (Fast & Cache-Friendly)
-\`\`\`cpp
-class ArrayStack {
-private:
-    static const int MAX_SIZE = 1000;
-    int arr[MAX_SIZE];
-    int topIndex;
-
-public:
-    ArrayStack() : topIndex(-1) {}
-
-    bool push(int val) {
-        if (topIndex >= MAX_SIZE - 1) return false; // Stack Overflow
-        arr[++topIndex] = val;
-        return true;
-    }
-
-    bool pop() {
-        if (isEmpty()) return false; // Stack Underflow
-        topIndex--;
-        return true;
-    }
-
-    int peek() const {
-        if (isEmpty()) throw runtime_error("Stack Underflow: Empty Stack");
-        return arr[topIndex];
-    }
-
-    bool isEmpty() const { return topIndex == -1; }
-    int size() const { return topIndex + 1; }
-};
-\`\`\`
-
-#### 2. Dynamic Linked-List Stack (Unbounded Memory)
-\`\`\`cpp
-struct Node {
-    int data;
-    Node* next;
-    Node(int val) : data(val), next(nullptr) {}
-};
-
-class LinkedListStack {
-private:
-    Node* head;
-public:
-    LinkedListStack() : head(nullptr) {}
-
-    void push(int val) {
-        Node* newNode = new Node(val);
-        newNode->next = head;
-        head = newNode;
-    }
-
-    bool pop() {
-        if (!head) return false;
-        Node* temp = head;
-        head = head->next;
-        delete temp;
-        return true;
-    }
-
-    int top() const {
-        if (!head) throw runtime_error("Stack is empty");
-        return head->data;
-    }
-
-    bool isEmpty() const { return head == nullptr; }
-};
-\`\`\`
 
 ---
 
@@ -1948,93 +1576,6 @@ $$\\text{front} = (\\text{front} + 1) \\pmod{\\text{capacity}}$$
 
 ---
 
-### C++ Implementations
-
-#### 1. Circular Array-Based Queue
-\`\`\`cpp
-class CircularQueue {
-private:
-    int* arr;
-    int frontIdx, rearIdx, count, capacity;
-public:
-    CircularQueue(int cap = 100) : capacity(cap), frontIdx(0), rearIdx(-1), count(0) {
-        arr = new int[capacity];
-    }
-    ~CircularQueue() { delete[] arr; }
-
-    bool enqueue(int val) {
-        if (isFull()) return false; // Queue Overflow
-        rearIdx = (rearIdx + 1) % capacity;
-        arr[rearIdx] = val;
-        count++;
-        return true;
-    }
-
-    bool dequeue() {
-        if (isEmpty()) return false; // Queue Underflow
-        frontIdx = (frontIdx + 1) % capacity;
-        count--;
-        return true;
-    }
-
-    int front() const {
-        if (isEmpty()) throw runtime_error("Queue is empty");
-        return arr[frontIdx];
-    }
-
-    bool isEmpty() const { return count == 0; }
-    bool isFull() const { return count == capacity; }
-    int size() const { return count; }
-};
-\`\`\`
-
-#### 2. Dynamic Linked-List Queue
-\`\`\`cpp
-struct QNode {
-    int data;
-    QNode* next;
-    QNode(int val) : data(val), next(nullptr) {}
-};
-
-class LinkedListQueue {
-private:
-    QNode *head, *tail;
-    int count;
-public:
-    LinkedListQueue() : head(nullptr), tail(nullptr), count(0) {}
-
-    void enqueue(int val) {
-        QNode* newNode = new QNode(val);
-        if (!tail) {
-            head = tail = newNode;
-        } else {
-            tail->next = newNode;
-            tail = newNode;
-        }
-        count++;
-    }
-
-    bool dequeue() {
-        if (!head) return false;
-        QNode* temp = head;
-        head = head->next;
-        if (!head) tail = nullptr;
-        delete temp;
-        count--;
-        return true;
-    }
-
-    int front() const {
-        if (!head) throw runtime_error("Empty Queue");
-        return head->data;
-    }
-
-    bool isEmpty() const { return head == nullptr; }
-};
-\`\`\`
-
----
-
 ### Real-World Applications
 
 1. **CPU & OS Task Scheduling**:
@@ -2122,52 +1663,6 @@ In a fixed-size or dynamic array buffer of capacity $N$:
   $$\\text{front} = (\\text{front} + 1) \\pmod{N}$$
 * **Pop Back**: Retracts rear backward:
   $$\\text{rear} = (\\text{rear} - 1 + N) \\pmod{N}$$
-
-#### Production C++ Circular Deque Implementation
-\`\`\`cpp
-class CircularDeque {
-private:
-    vector<int> buffer;
-    int capacity, front, rear, count;
-public:
-    CircularDeque(int cap) : capacity(cap), buffer(cap), front(0), rear(0), count(0) {}
-
-    bool isFull() const { return count == capacity; }
-    bool isEmpty() const { return count == 0; }
-
-    void pushFront(int val) {
-        if (isFull()) throw overflow_error("Deque full");
-        if (isEmpty()) { front = rear = 0; }
-        else { front = (front - 1 + capacity) % capacity; }
-        buffer[front] = val;
-        count++;
-    }
-
-    void pushBack(int val) {
-        if (isFull()) throw overflow_error("Deque full");
-        if (isEmpty()) { front = rear = 0; }
-        else { rear = (rear + 1) % capacity; }
-        buffer[rear] = val;
-        count++;
-    }
-
-    int popFront() {
-        if (isEmpty()) throw underflow_error("Deque empty");
-        int val = buffer[front];
-        front = (front + 1) % capacity;
-        count--;
-        return val;
-    }
-
-    int popBack() {
-        if (isEmpty()) throw underflow_error("Deque empty");
-        int val = buffer[rear];
-        rear = (rear - 1 + capacity) % capacity;
-        count--;
-        return val;
-    }
-};
-\`\`\`
 
 ---
 
@@ -2339,81 +1834,6 @@ $$\\alpha = \\frac{N}{M} = \\frac{\\text{Total Active Elements}}{\\text{Total Bu
 
 ---
 
-### Production C++ Implementation (Separate Chaining)
-
-\`\`\`cpp
-#include <iostream>
-#include <vector>
-#include <list>
-#include <utility>
-using namespace std;
-
-class HashTable {
-private:
-    int capacity;
-    int count;
-    vector<list<pair<int, string>>> table;
-
-    int hash(int key) const {
-        return abs(key) % capacity;
-    }
-
-    void rehash() {
-        int oldCap = capacity;
-        capacity *= 2;
-        vector<list<pair<int, string>>> oldTable = move(table);
-        table.assign(capacity, list<pair<int, string>>());
-        count = 0;
-        for (const auto& bucket : oldTable) {
-            for (const auto& [k, v] : bucket) {
-                insert(k, v);
-            }
-        }
-    }
-
-public:
-    HashTable(int cap = 8) : capacity(cap), count(0), table(cap) {}
-
-    // O(1) Average Insertion
-    void insert(int key, const string& value) {
-        if ((float)(count + 1) / capacity > 0.75) rehash();
-        int idx = hash(key);
-        for (auto& [k, v] : table[idx]) {
-            if (k == key) { v = value; return; } // Key exists: update value
-        }
-        table[idx].emplace_back(key, value);
-        count++;
-    }
-
-    // O(1) Average Search
-    bool search(int key, string& outVal) const {
-        int idx = hash(key);
-        for (const auto& [k, v] : table[idx]) {
-            if (k == key) { outVal = v; return true; }
-        }
-        return false;
-    }
-
-    // O(1) Average Deletion
-    bool erase(int key) {
-        int idx = hash(key);
-        auto& bucket = table[idx];
-        for (auto it = bucket.begin(); it != bucket.end(); ++it) {
-            if (it->first == key) {
-                bucket.erase(it);
-                count--;
-                return true;
-            }
-        }
-        return false;
-    }
-
-    float getLoadFactor() const { return (float)count / capacity; }
-};
-\`\`\`
-
----
-
 ### Algorithmic Superpower: The Two Sum Pattern
 
 The hallmark problem demonstrating Hash Table dominance is **Two Sum** (LeetCode #1):
@@ -2553,78 +1973,6 @@ To process, search, or display data in a tree, we must visit every node systemat
 * **Level-Order Traversal:**
   Visits nodes tier by tier from top to bottom, left to right. Requires a **FIFO Queue** to buffer child pointers before advancing to subsequent depth levels.
 
----
-
-### Production C++ Implementation
-
-\`\`\`cpp
-#include <iostream>
-#include <vector>
-#include <queue>
-#include <algorithm>
-using namespace std;
-
-// 1. Dynamic TreeNode Structure
-struct TreeNode {
-    int val;
-    TreeNode* left;
-    TreeNode* right;
-    TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
-};
-
-class BinaryTree {
-public:
-    TreeNode* root;
-
-    BinaryTree() : root(nullptr) {}
-
-    // 2. Pre-Order Traversal (Root -> Left -> Right) - O(n) Time, O(h) Auxiliary Space
-    void preOrder(TreeNode* node, vector<int>& out) {
-        if (!node) return;
-        out.push_back(node->val);   // 1. Root
-        preOrder(node->left, out);  // 2. Left
-        preOrder(node->right, out); // 3. Right
-    }
-
-    // 3. In-Order Traversal (Left -> Root -> Right) - O(n) Time, O(h) Auxiliary Space
-    void inOrder(TreeNode* node, vector<int>& out) {
-        if (!node) return;
-        inOrder(node->left, out);   // 1. Left
-        out.push_back(node->val);   // 2. Root
-        inOrder(node->right, out);  // 3. Right
-    }
-
-    // 4. Post-Order Traversal (Left -> Right -> Root) - O(n) Time, O(h) Auxiliary Space
-    void postOrder(TreeNode* node, vector<int>& out) {
-        if (!node) return;
-        postOrder(node->left, out);  // 1. Left
-        postOrder(node->right, out); // 2. Right
-        out.push_back(node->val);    // 3. Root
-    }
-
-    // 5. Level-Order Traversal (BFS Queue) - O(n) Time, O(w) Auxiliary Space
-    vector<int> levelOrder() {
-        vector<int> out;
-        if (!root) return out;
-        queue<TreeNode*> q;
-        q.push(root);
-        while (!q.empty()) {
-            TreeNode* curr = q.front();
-            q.pop();
-            out.push_back(curr->val);
-            if (curr->left) q.push(curr->left);
-            if (curr->right) q.push(curr->right);
-        }
-        return out;
-    }
-
-    // 6. Height / Maximum Depth - O(n) Time
-    int maxDepth(TreeNode* node) {
-        if (!node) return 0;
-        return 1 + max(maxDepth(node->left), maxDepth(node->right));
-    }
-};
-\`\`\`
     `,
     banglaNote: {
       topic: "বাইনারি ট্রি, হায়ারার্কিক্যাল নোড ও ট্রাভার্সাল মেকানিক্স (Binary Tree Deep Dive)",
@@ -3228,22 +2576,7 @@ bool deleteValue(int target) {
 
 ---
 
-## 1. C++ Reference Implementation
-
-\`\`\`cpp
-int linearSearch(const vector<int>& arr, int target) {
-    for (int i = 0; i < (int)arr.size(); i++) {
-        if (arr[i] == target) {
-            return i; // Early termination: Target located at index i
-        }
-    }
-    return -1; // Exhausted array: Target does not exist in collection
-}
-\`\`\`
-
----
-
-## 2. Mathematical Complexity Derivation
+## Mathematical Complexity Derivation
 
 ### Best Case: $O(1)$ Comparisons
 If the target happens to be the very first element in the array (\`arr[0] == target\`), the loop body executes exactly once and immediately returns. Time complexity is strictly $O(1)$.
@@ -3318,46 +2651,7 @@ Beginners often assume Linear Search should never be used because Binary Search 
 
 ---
 
-## 1. C++ Implementations: Iterative vs Recursive
-
-### Iterative Version — $O(1)$ Auxiliary Space (Production Standard)
-\`\`\`cpp
-int binarySearchIterative(const vector<int>& arr, int target) {
-    int low = 0, high = (int)arr.size() - 1;
-    while (low <= high) {
-        // Prevents signed 32-bit integer overflow when (low + high) > 2^31 - 1
-        int mid = low + (high - low) / 2;
-
-        if (arr[mid] == target) {
-            return mid; // Target found
-        } else if (arr[mid] < target) {
-            low = mid + 1;  // Discard left half
-        } else {
-            high = mid - 1; // Discard right half
-        }
-    }
-    return -1; // Target not found
-}
-\`\`\`
-
-### Recursive Version — $O(\\log n)$ Call Stack Space
-\`\`\`cpp
-int binarySearchRecursive(const vector<int>& arr, int low, int high, int target) {
-    if (low > high) return -1; // Base case: search interval empty
-
-    int mid = low + (high - low) / 2;
-    if (arr[mid] == target) return mid;
-    else if (arr[mid] < target) {
-        return binarySearchRecursive(arr, mid + 1, high, target);
-    } else {
-        return binarySearchRecursive(arr, low, mid - 1, target);
-    }
-}
-\`\`\`
-
----
-
-## 2. Deriving the $O(\\log n)$ Bound (Connection to Merge Sort)
+## Deriving the $O(\log n)$ Bound (Connection to Merge Sort)
 
 In Phase 8, we proved that Merge Sort splits an array in half repeatedly until singletons remain, creating a tree of depth $\\log_2 n$.
 

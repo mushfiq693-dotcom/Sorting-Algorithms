@@ -443,17 +443,10 @@ export default function AlgorithmDetailPage() {
                   </p>
                 </div>
 
-                {/* Full In-Depth Formatted Markdown Article (Theory First) */}
-                {docsArticle && (
-                  <div className="p-4 sm:p-6 rounded-2xl border border-border/80 bg-background/50">
-                    <FormattedMarkdown content={docsArticle.content} />
-                  </div>
-                )}
-
-                {/* In-Depth Bengali Theory Explanation & Conceptual Breakdown */}
+                {/* In-Depth Bengali Theory Explanation & Conceptual Breakdown (Prominently placed at TOP) */}
                 {docsArticle?.banglaNote && (
                   <div className="space-y-2">
-                    <div className="flex items-center gap-2 text-xs font-mono font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 pt-2">
+                    <div className="flex items-center gap-2 text-xs font-mono font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 pt-1">
                       <Sparkles className="h-4 w-4" />
                       <span>বাংলায় বিস্তারিত থিওরি ও বিশ্লেষণ (In-Depth Bengali Theory)</span>
                     </div>
@@ -462,6 +455,13 @@ export default function AlgorithmDetailPage() {
                       banglaText={docsArticle.banglaNote.banglaText}
                       defaultExpanded={true}
                     />
+                  </div>
+                )}
+
+                {/* Full In-Depth Formatted Markdown Article */}
+                {docsArticle && (
+                  <div className="p-4 sm:p-6 rounded-2xl border border-border/80 bg-background/50">
+                    <FormattedMarkdown content={docsArticle.content} />
                   </div>
                 )}
 
