@@ -129,9 +129,14 @@ Step 5: Try It (Practice)  -> Live debugger, predict-next, 5 quizzes, bug hunt, 
 > 1. **No External Docs Redirects**: All "Full Docs & Theory" external link buttons (`/docs/...`) are **strictly eliminated**. Advanced theory is integrated seamlessly right in **Step 2: In-Depth Theory** directly after **The Idea**.
 > 2. **Theory First, Diagram Below**: In **Step 2**, the comprehensive documentation and theoretical analysis must appear **first**, and the Full Picture architectural diagram must sit cleanly at the **bottom**.
 > 3. **No C++ Code in Diagrams**: The signature diagrams (`AlgorithmDiagram`) must remain strictly visual infographics (memory strips, tree divisions, timelines). All C++ code blocks and duplicate captions are completely omitted from the diagram component.
-> 4. **Minimalistic The Idea**: Step 1 focuses on high-impact intuition (Hook with generous question spacing, 3 Badges, Plain English, and Bengali Note). The redundant "In-Depth Theoretical Deep Dive" gateway banner, principle bullet grids, and analogy blocks are excluded to maintain extreme clarity and eliminate duplicate CTAs.
+> 4. **Strict Elimination of Intermediate Gateway Banners ("In-Depth Theoretical Deep Dive")**:
+>    - The intermediate banner card (`📖 IN-DEPTH THEORETICAL DEEP DIVE` • *"Ready for comprehensive hardware memory layouts, mathematical proofs, and advanced edge cases?"* with button `📖 Explore In-Depth Theory (Step 2) →`) is **strictly and permanently eliminated across ALL topic categories** (Sorting, Data Structures, Searching, Trees, Graphs, Core Concepts).
+>    - Step 1 (**The Idea**) focuses purely on high-impact intuition: Curiosity Spark Hook with generous spacing, 3 Badges (Superpower, Tradeoff, Mental Model), Plain-English explanation, and Bengali Note ("বাংলায় বুঝি").
+>    - Forward navigation must proceed exclusively through the single, standardized bottom footer CTA button (`Next: In-Depth Theory →`). No intermediate gateway cards or duplicate CTAs are permitted in Step 1.
 > 5. **Practice Tab Integrity**: The Practice tab (`Step 5`) is dedicated solely to 3 core interactive learning modalities: **1. Knowledge Quiz**, **2. Bug-Hunt**, and **3. Problem Solving**. Live Debugger and Predict Next have been **completely eliminated** across all topics for a streamlined, focused practice workflow.
-> 6. **Clean Studio Visualizer Layout (Zero Clutter)**: All topic visualizers must follow the signature 7/5 studio workspace standard (Visual stage, telemetry explanation box, and studio controls in the left 7 cols; sticky C++ CodeViewer and memory/invariant inspector in the right 5 cols). **Color legend rows, buffer capacity strips, and Live Big-O Bounds cards are strictly prohibited** across all existing and upcoming visualizers.
+> 6. **Clean Studio Visualizer Layout (Zero Clutter & Compact Code)**: All topic visualizers must follow the signature 7/5 studio workspace standard (Visual stage, telemetry explanation box, and studio controls in the left 7 cols; sticky C++ CodeViewer and memory/invariant inspector in the right 5 cols).
+>    - **Color legend rows, buffer capacity strips, and Live Big-O Bounds cards are strictly prohibited** across all existing and upcoming visualizers.
+>    - **Compact C++ CodeViewer Container Standard**: The right column C++ CodeViewer container MUST be strictly constrained (`h-[280px] sm:h-[300px] lg:h-[320px] max-h-[280px] sm:max-h-[300px] lg:max-h-[320px] min-h-0 shrink-0 overflow-hidden flex flex-col` when companion inspector cards exist, or `h-[360px] sm:h-[390px] lg:h-[420px] max-h-[360px] sm:max-h-[390px] lg:max-h-[420px]` for standalone sorting) with internal vertical scrolling (`overflow-y-auto`) so the entire visualizer studio fits within a single screen fold on standard desktop viewports without requiring page scrolling.
 
 ---
 
@@ -233,6 +238,15 @@ Every topic must provide a complete 360° mastery suite:
 * **Elimination of Redundant "In-Depth Theoretical Deep Dive" Gateway**:
   * Permanently removed the duplicate middle banner (`In-Depth Theoretical Deep Dive` / `Explore In-Depth Theory (Step 2) →`) from Step 1 across all topics.
   * Standardized single forward navigation through the dedicated footer CTA button (`Next: In-Depth Theory →`).
+
+### 🔄 [2026-10-19] Universal Gateway Banner Elimination & Compact C++ CodeViewer Hardening Across All Topics
+* **Strict Prohibition of "In-Depth Theoretical Deep Dive" Gateway Banner**:
+  - The intermediate gateway card (`IN-DEPTH THEORETICAL DEEP DIVE` / `Ready for comprehensive hardware memory layouts, mathematical proofs, and advanced edge cases?` / `Explore In-Depth Theory (Step 2) →`) is **strictly and permanently eliminated** across ALL topic types (Sorting, Data Structures, Searching, Trees, Graphs, Core Concepts).
+  - Step 1 features zero redundant banners; navigation to Step 2 is exclusively handled by the bottom footer button (`Next: In-Depth Theory →`).
+* **Compact Scrollable C++ Code Box Hardening (Zero Vertical Page Bloat)**:
+  - Enforced strict container sizing (`h-[280px] sm:h-[300px] lg:h-[320px] max-h-[280px] sm:max-h-[300px] lg:max-h-[320px] min-h-0 shrink-0 overflow-hidden flex flex-col`) across all 12 topic visualizers.
+  - Inside `CodeViewer.tsx`, added `min-h-0 max-h-full shrink-0` to the root container and `flex-1 min-h-0 overflow-y-auto` to the code body with custom wood-grain scrollbars.
+  - Active execution lines smoothly scroll into view during playback while keeping the entire visualizer studio within a single desktop screen fold.
 
 ---
 
