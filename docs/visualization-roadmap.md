@@ -31,8 +31,8 @@ This roadmap tracks the long-term sequence of production-quality Data Structure 
 | 01 | **Array (Static & Dynamic)** | ✅ *Completed* | `/algorithms/array` | Contiguous memory mapping, $O(1)$ random access arithmetic, shifting on insert/delete, geometric doubling ($2\times$) amortized analysis, spatial cache locality |
 | 02 | **String** | ✅ *Completed* | `/algorithms/string` | Character arrays, ASCII/UTF-8 byte mapping, immutability vs mutability, two-pointer reversal, palindrome validation, sliding window pattern |
 | 03 | **Deque (Double-Ended Queue)** | ✅ *Completed* | `/algorithms/deque` | Circular buffer & doubly-linked deque, front/rear push & pop in $O(1)$, monotonic sliding window maximum, palindrome dual-end verification |
-| 04 | **Hash Table** | 🟡 *Next Eligible* | `/algorithms/hash-table` | Hash functions, bucket arrays, separate chaining, open addressing (linear probing) |
-| 05 | **Binary Tree** | ⚪ *Queued* | `/algorithms/binary-tree` | Node structure, parent-child relations, depth/height, tree properties |
+| 04 | **Hash Table** | ✅ *Completed* | `/algorithms/hash-table` | Hash functions, bucket arrays, separate chaining, open addressing (linear probing), dynamic capacity doubling, Two Sum $O(n)$ map |
+| 05 | **Binary Tree** | 🟡 *Next Eligible* | `/algorithms/binary-tree` | Node structure, parent-child relations, depth/height, tree properties |
 | 06 | **Tree Traversal** | ⚪ *Queued* | `/algorithms/tree-traversal` | In-order, Pre-order, Post-order, Level-order BFS |
 | 07 | **Binary Search Tree** | ⚪ *Queued* | `/algorithms/bst` | BST invariant, search, insert, delete with predecessor/successor |
 | 08 | **AVL Tree** | ⚪ *Queued* | `/algorithms/avl-tree` | Balance factor, LL/RR/LR/RL rotations, self-balancing |
