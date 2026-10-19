@@ -28,6 +28,10 @@ const ArrayVisualizer = dynamic(
   () => import("@/components/visualizer/ArrayVisualizer").then((mod) => mod.ArrayVisualizer),
   { ssr: false, loading: () => <TabLoading /> }
 );
+const StringVisualizer = dynamic(
+  () => import("@/components/visualizer/StringVisualizer").then((mod) => mod.StringVisualizer),
+  { ssr: false, loading: () => <TabLoading /> }
+);
 const StackVisualizer = dynamic(
   () => import("@/components/visualizer/StackVisualizer").then((mod) => mod.StackVisualizer),
   { ssr: false, loading: () => <TabLoading /> }
@@ -321,11 +325,11 @@ export default function AlgorithmDetailPage() {
                   <div className="h-9 w-9 rounded-xl bg-cyan-500/20 border border-cyan-400/40 flex items-center justify-center text-cyan-500 shrink-0 mt-0.5">
                     <Sparkles className="h-5 w-5" />
                   </div>
-                  <div className="space-y-1.5">
+                  <div className="space-y-2.5 sm:space-y-3">
                     <span className="text-[10px] font-mono font-bold tracking-widest uppercase text-cyan-600 dark:text-cyan-400">
                       The Big Question • Why This Matters
                     </span>
-                    <h2 className="text-base sm:text-lg font-bold text-foreground leading-snug">
+                    <h2 className="text-base sm:text-lg font-bold text-foreground leading-relaxed pt-0.5">
                       "{stepData.hook || stepData.reason}"
                     </h2>
                   </div>
@@ -383,27 +387,6 @@ export default function AlgorithmDetailPage() {
                   banglaText={docsArticle.banglaNote.banglaText}
                 />
               )}
-
-              {/* 5. IN-APP IN-DEPTH THEORY GATEWAY (NO EXTERNAL REDIRECTS) */}
-              <div className="rounded-2xl border border-cyan-500/30 bg-gradient-to-r from-cyan-500/10 via-blue-500/10 to-transparent p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2 text-xs font-mono font-bold text-cyan-600 dark:text-cyan-400 uppercase tracking-wider">
-                    <BookOpen className="h-4 w-4" />
-                    <span>In-Depth Theoretical Deep Dive</span>
-                  </div>
-                  <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
-                    Ready for comprehensive hardware memory layouts, mathematical proofs, and advanced edge cases?
-                  </p>
-                </div>
-
-                <button
-                  onClick={() => setActiveStep(2)}
-                  className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-cyan-500/40 bg-cyan-500/15 hover:bg-cyan-500/25 text-cyan-700 dark:text-cyan-300 text-xs font-semibold transition-all active:scale-95 shadow-sm shrink-0 cursor-pointer"
-                >
-                  <BookOpen className="h-4 w-4 text-cyan-500" />
-                  <span>Explore In-Depth Theory (Step 2) →</span>
-                </button>
-              </div>
 
               {/* FOOTER */}
               <div className="pt-4 border-t border-border/40 flex justify-end">
@@ -489,6 +472,8 @@ export default function AlgorithmDetailPage() {
 
               {algorithmId === "array" ? (
                 <ArrayVisualizer />
+              ) : algorithmId === "string" ? (
+                <StringVisualizer />
               ) : algorithmId === "stack" ? (
                 <StackVisualizer />
               ) : algorithmId === "queue" ? (

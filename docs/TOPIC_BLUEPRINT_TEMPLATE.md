@@ -113,10 +113,9 @@ All topic visualizers in AlgoHub strictly implement the **Signature 2-Column Stu
 To maximize engagement, retain focus within the app, and eliminate visual clutter, all topic pages feature a focused **5-step progression** (both for existing and all future topics):
 
 ```
-Step 1: The Idea           -> Curiosity Spark ("The Big Question • Why This Matters"),
+Step 1: The Idea           -> Curiosity Spark ("The Big Question • Why This Matters" with generous question spacing),
                               3 Badges (Superpower, Tradeoff, Mental Model),
-                              Plain English Explanation, Bengali Accordion ("বাংলায় বুঝি"),
-                              Direct In-App Gateway to In-Depth Theory
+                              Plain English Explanation, Bengali Accordion ("বাংলায় বুঝি")
 Step 2: In-Depth Theory    -> In-Depth Docs & Mathematical Theory FIRST,
                               Signature Architectural Infographic Diagram at the BOTTOM
                               (Zero C++ code bloat in diagrams)
@@ -130,7 +129,7 @@ Step 5: Try It (Practice)  -> Live debugger, predict-next, 5 quizzes, bug hunt, 
 > 1. **No External Docs Redirects**: All "Full Docs & Theory" external link buttons (`/docs/...`) are **strictly eliminated**. Advanced theory is integrated seamlessly right in **Step 2: In-Depth Theory** directly after **The Idea**.
 > 2. **Theory First, Diagram Below**: In **Step 2**, the comprehensive documentation and theoretical analysis must appear **first**, and the Full Picture architectural diagram must sit cleanly at the **bottom**.
 > 3. **No C++ Code in Diagrams**: The signature diagrams (`AlgorithmDiagram`) must remain strictly visual infographics (memory strips, tree divisions, timelines). All C++ code blocks and duplicate captions are completely omitted from the diagram component.
-> 4. **Minimalistic The Idea**: Step 1 focuses on high-impact intuition (Hook, 3 Badges, Plain English, and Bengali Note). Redundant principle bullet grids and analogy blocks are excluded to maintain extreme clarity.
+> 4. **Minimalistic The Idea**: Step 1 focuses on high-impact intuition (Hook with generous question spacing, 3 Badges, Plain English, and Bengali Note). The redundant "In-Depth Theoretical Deep Dive" gateway banner, principle bullet grids, and analogy blocks are excluded to maintain extreme clarity and eliminate duplicate CTAs.
 > 5. **Practice Tab Integrity**: The Practice tab (`Step 5`) is dedicated solely to 3 core interactive learning modalities: **1. Knowledge Quiz**, **2. Bug-Hunt**, and **3. Problem Solving**. Live Debugger and Predict Next have been **completely eliminated** across all topics for a streamlined, focused practice workflow.
 > 6. **Clean Studio Visualizer Layout (Zero Clutter)**: All topic visualizers must follow the signature 7/5 studio workspace standard (Visual stage, telemetry explanation box, and studio controls in the left 7 cols; sticky C++ CodeViewer and memory/invariant inspector in the right 5 cols). **Color legend rows, buffer capacity strips, and Live Big-O Bounds cards are strictly prohibited** across all existing and upcoming visualizers.
 
@@ -226,6 +225,14 @@ Every topic must provide a complete 360° mastery suite:
   * Sorted all 13 topics in strict pedagogical progression from day-one memory layouts to divide-and-conquer sorting:
     `Array (01)` → `Linear Search (02)` → `Time Complexity (03)` → `Space Complexity (04)` → `Binary Search (05)` → `Stack (06)` → `Queue (07)` → `Linked List (08)` → `Bubble Sort (09)` → `Selection Sort (10)` → `Insertion Sort (11)` → `Merge Sort (12)` → `Quick Sort (13)`.
   * Synchronized across `LEARNING_PATH`, `ALL_TOPICS`, and `TopicNavbarDropdown`.
+
+### 🔄 [2026-10-14] Step 1 UX Polish: The Big Question Spacing & Gateway Banner Elimination
+* **"The Big Question • Why This Matters" Spacing**:
+  * Increased vertical spacing between the uppercase eyebrow label and the curiosity question text (`space-y-2.5 sm:space-y-3` with `pt-0.5`).
+  * Adjusted question typography to `leading-relaxed` for enhanced readability across multi-line curiosity hooks.
+* **Elimination of Redundant "In-Depth Theoretical Deep Dive" Gateway**:
+  * Permanently removed the duplicate middle banner (`In-Depth Theoretical Deep Dive` / `Explore In-Depth Theory (Step 2) →`) from Step 1 across all topics.
+  * Standardized single forward navigation through the dedicated footer CTA button (`Next: In-Depth Theory →`).
 
 ---
 

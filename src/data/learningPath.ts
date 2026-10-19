@@ -125,13 +125,62 @@ export const LEARNING_PATH: LearningStep[] = [
       space: "Contiguous O(n) storage with zero pointer overhead per element. L1/L2 cache prefetching provides peak spatial locality.",
     },
   },
+  {
+    id: "string",
+    order: 2,
+    name: "String",
+    category: "data-structure",
+    badge: "Contiguous Chars",
+    estimatedTime: "~15 min",
+    difficulty: "Beginner",
+    reason: "A character array in contiguous memory. Master ASCII byte mapping, immutability tradeoffs, and the two-pointer & sliding-window patterns.",
+    hook: "Why does typing str += '!' inside a loop crash your program's performance by 10,000x in JavaScript or Python, but run at instant speed in C++?",
+    superpower: "1-Byte Hardware Offsets & Cache-Saturated Linear Passes",
+    tradeoff: "Language Immutability Duplication Overhead (O(n) Copies)",
+    mentalModel: "A Beaded Necklace with Letter Beads and a Clasp (\\0)",
+    keyPrinciples: [
+      "Characters are stored consecutively as 1-byte ASCII integers (or variable-byte UTF-8) in hardware RAM.",
+      "C-strings terminate with '\\0' (0x00), while modern string objects store a dedicated length header.",
+      "Immutable strings (Python, Java, JS) force new buffer allocations on mutation, turning naive concat loops into O(n²).",
+      "Contiguous layout empowers optimal O(n) Two-Pointer inward scans and Sliding Window substring algorithms."
+    ],
+    analogy: "A beaded necklace with letter beads ending in a magnetic clasp ('\\0'): you can instantly read any bead by its position, but in an immutable language, changing a single bead requires restringing the entire necklace from scratch.",
+    idea: "A String is fundamentally an array of characters mapped contiguously in memory. Because each ASCII character consumes exactly 1 Byte (8 bits), indexing str[i] translates directly to BaseAddress + (i × 1B) in strict O(1) time. In mutable languages (C++ std::string), characters can be modified in-place; in immutable languages (Python, Java, JS), every edit duplicates the buffer in O(n) time. Two pointers moving symmetrically inward allow O(n) reversals and palindrome validation, while sliding window intervals solve complex substring problems in a single linear pass.",
+    sampleArray: [65, 76, 71, 79, 82, 73, 84, 72, 77],
+    codeBlocks: [
+      {
+        title: "Two-Pointer In-Place Reversal: O(n) Time, O(1) Space",
+        lines: "void reverseString(string& s) {\n    int l = 0, r = s.size() - 1;\n    while (l < r) swap(s[l++], s[r--]);\n}",
+        explanation: "Symmetrically swaps characters from opposite ends inward in O(n/2) = O(n) steps without allocating extra memory.",
+      },
+      {
+        title: "Two-Pointer Palindrome Verification: O(n)",
+        lines: "bool isPalindrome(const string& s) {\n    int l = 0, r = s.size() - 1;\n    while (l < r) {\n        if (tolower(s[l++]) != tolower(s[r--])) return false;\n    }\n    return true;\n}",
+        explanation: "Validates string symmetry moving inward with instant O(1) early exit on the first character mismatch.",
+      },
+      {
+        title: "Sliding Window: Longest Substring Without Repeating Chars",
+        lines: "int lengthOfLongestSubstring(string s) {\n    vector<int> last(256, -1);\n    int maxLen = 0, l = 0;\n    for (int r = 0; r < s.size(); r++) {\n        if (last[(unsigned char)s[r]] >= l) l = last[(unsigned char)s[r]] + 1;\n        last[(unsigned char)s[r]] = r;\n        maxLen = max(maxLen, r - l + 1);\n    }\n    return maxLen;\n}",
+        explanation: "Maintains a dynamic window [L..R] that expands rightward and contracts leftward upon duplicate detection in a single O(n) pass.",
+      },
+      {
+        title: "In-Place Mutable Write vs Immutable Duplication",
+        lines: "// C++ Mutable Write: O(1) Time, O(1) Space\ns[index] = newChar;\n\n// Java/Python/JS: Allocates new buffer + copies n chars: O(n)\nString newStr = s.substring(0, i) + newChar + s.substring(i + 1);",
+        explanation: "C++ modifies the physical RAM byte directly in O(1), whereas immutable languages duplicate the entire string buffer in O(n) time.",
+      },
+    ],
+    complexityWhy: {
+      time: "Direct character indexing and in-place mutation are O(1). Two-pointer reversals, palindrome checks, and sliding windows are O(n). Immutable concatenation in loops degrades to O(n²).",
+      space: "Contiguous 1-byte storage O(n) in RAM. In-place algorithms achieve O(1) auxiliary space, while immutable transformations require O(n) extra heap memory.",
+    },
+  },
 
   // ==========================================
   // TIER 2: ELEMENTARY LINEAR SEARCHING
   // ==========================================
   {
     id: "linear-search",
-    order: 2,
+    order: 3,
     name: "Linear Search",
     category: "searching",
     badge: "First Algorithm",
@@ -169,7 +218,7 @@ export const LEARNING_PATH: LearningStep[] = [
   // ==========================================
   {
     id: "time-complexity",
-    order: 3,
+    order: 4,
     name: "Time Complexity",
     category: "complexity",
     badge: "Big-O Foundation",
@@ -213,7 +262,7 @@ export const LEARNING_PATH: LearningStep[] = [
   },
   {
     id: "space-complexity",
-    order: 4,
+    order: 5,
     name: "Space Complexity",
     category: "complexity",
     badge: "Memory Footprint",
@@ -261,7 +310,7 @@ export const LEARNING_PATH: LearningStep[] = [
   // ==========================================
   {
     id: "binary-search",
-    order: 5,
+    order: 6,
     name: "Binary Search",
     category: "searching",
     badge: "Divide & Halve",
@@ -304,7 +353,7 @@ export const LEARNING_PATH: LearningStep[] = [
   // ==========================================
   {
     id: "stack",
-    order: 6,
+    order: 7,
     name: "Stack",
     category: "data-structure",
     badge: "LIFO Container",
@@ -348,7 +397,7 @@ export const LEARNING_PATH: LearningStep[] = [
   },
   {
     id: "queue",
-    order: 7,
+    order: 8,
     name: "Queue",
     category: "data-structure",
     badge: "FIFO Container",
@@ -396,7 +445,7 @@ export const LEARNING_PATH: LearningStep[] = [
   // ==========================================
   {
     id: "linked-list",
-    order: 8,
+    order: 9,
     name: "Linked List",
     category: "data-structure",
     badge: "Pointer Chains",
@@ -444,7 +493,7 @@ export const LEARNING_PATH: LearningStep[] = [
   // ==========================================
   {
     id: "bubble",
-    order: 9,
+    order: 10,
     name: "Bubble Sort",
     category: "sorting",
     badge: "Adjacent Swaps",
@@ -489,7 +538,7 @@ export const LEARNING_PATH: LearningStep[] = [
   },
   {
     id: "selection",
-    order: 10,
+    order: 11,
     name: "Selection Sort",
     category: "sorting",
     badge: "Find Minimum",
@@ -534,7 +583,7 @@ export const LEARNING_PATH: LearningStep[] = [
   },
   {
     id: "insertion",
-    order: 11,
+    order: 12,
     name: "Insertion Sort",
     category: "sorting",
     badge: "Hand-Sorting Cards",
@@ -583,7 +632,7 @@ export const LEARNING_PATH: LearningStep[] = [
   // ==========================================
   {
     id: "merge",
-    order: 12,
+    order: 13,
     name: "Merge Sort",
     category: "sorting",
     badge: "Divide & Conquer",
@@ -628,7 +677,7 @@ export const LEARNING_PATH: LearningStep[] = [
   },
   {
     id: "quick",
-    order: 13,
+    order: 14,
     name: "Quick Sort",
     category: "sorting",
     badge: "Pivot Partition",

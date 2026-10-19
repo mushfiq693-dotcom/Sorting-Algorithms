@@ -770,6 +770,103 @@ public:
     }
 };`,
   },
+  string: {
+    id: "string",
+    name: "String",
+    category: "data-structure",
+    shortDescription: "Contiguous 1-byte character array with O(1) random access, ASCII/UTF-8 mapping, and sliding window patterns.",
+    description:
+      "A String is an array of characters stored consecutively in physical memory. In C and C++, strings are null-terminated ('\\0') character arrays with sizeof(char) == 1 Byte, enabling instant O(1) random indexing and cache-line saturation. Modern high-level languages treat strings either as mutable buffers (C++ std::string) or immutable objects (Java, Python, JavaScript) where any modification triggers an O(n) heap allocation and full byte copy. Contiguous indexing powers quintessential interview paradigms including Two-Pointer reversals, Palindrome checks, and Sliding Window substring optimizations.",
+    complexity: {
+      best: "O(1)",
+      average: "O(1) Access / O(n) Manipulation",
+      worst: "O(n) Worst Case / O(n²) Naive Concat Loop",
+      space: "O(n)",
+      stable: true,
+      inPlace: true,
+      operations: [
+        {
+          name: "Direct Access str[i]",
+          time: "O(1)",
+          space: "O(1)",
+          description: "Direct 1-byte memory offset arithmetic: BaseAddress + (i * 1 Byte).",
+        },
+        {
+          name: "In-Place Update (Mutable)",
+          time: "O(1)",
+          space: "O(1)",
+          description: "Overwrites byte in-place directly in C++ std::string.",
+        },
+        {
+          name: "Two-Pointer Reversal",
+          time: "O(n)",
+          space: "O(1)",
+          description: "Swaps symmetric characters from opposite ends inward (n/2 swaps).",
+        },
+        {
+          name: "Palindrome Verification",
+          time: "O(n)",
+          space: "O(1)",
+          description: "Compares characters inward with early termination on first mismatch.",
+        },
+        {
+          name: "Sliding Window Substring",
+          time: "O(n)",
+          space: "O(min(n, m))",
+          description: "Dynamic window [L..R] expands and contracts in a single linear pass.",
+        },
+        {
+          name: "Substring Search (Naive)",
+          time: "O((n - m + 1) * m)",
+          space: "O(1)",
+          description: "Checks needle alignment character-by-character across haystack.",
+        },
+        {
+          name: "Immutable Concatenation",
+          time: "O(n + m)",
+          space: "O(n + m)",
+          description: "Allocates brand new heap buffer and copies all characters (JS/Python/Java).",
+        },
+      ],
+    },
+    cppCode: `class StringOperations {
+public:
+    // 1. Two-Pointer In-Place Reversal: O(n) Time, O(1) Space
+    void reverseString(string& s) {
+        int left = 0, right = (int)s.size() - 1;
+        while (left < right) {
+            swap(s[left++], s[right--]); // In-place byte swap
+        }
+    }
+
+    // 2. Two-Pointer Palindrome Verification: O(n) Time, O(1) Space
+    bool isPalindrome(const string& s) {
+        int left = 0, right = (int)s.size() - 1;
+        while (left < right) {
+            if (tolower(s[left++]) != tolower(s[right--])) return false;
+        }
+        return true;
+    }
+
+    // 3. Sliding Window: Longest Substring Without Repeating Chars: O(n)
+    int longestUniqueSubstring(const string& s) {
+        vector<int> lastPos(256, -1);
+        int maxLen = 0, left = 0;
+        for (int right = 0; right < (int)s.size(); right++) {
+            if (lastPos[(unsigned char)s[right]] >= left)
+                left = lastPos[(unsigned char)s[right]] + 1;
+            lastPos[(unsigned char)s[right]] = right;
+            maxLen = max(maxLen, right - left + 1);
+        }
+        return maxLen;
+    }
+
+    // 4. In-Place Byte Overwrite vs Immutable Duplication
+    void updateChar(string& s, int index, char newChar) {
+        s[index] = newChar; // C++ in-place mutable write: O(1)
+    }
+};`,
+  },
 };
 
 // All 5 Sorting Algorithms
@@ -790,6 +887,7 @@ export const SEARCHING_ALGORITHMS: AlgorithmId[] = [
 // All Data Structures
 export const DATA_STRUCTURES: AlgorithmId[] = [
   "array",
+  "string",
   "stack",
   "queue",
   "linked-list",
@@ -807,6 +905,7 @@ export const ALL_ALGORITHMS: AlgorithmId[] = SORTING_ALGORITHMS;
 // Global catalog of all topics across all categories (Beginner-First Progression)
 export const ALL_TOPICS: AlgorithmId[] = [
   "array",
+  "string",
   "linear-search",
   "time-complexity",
   "space-complexity",

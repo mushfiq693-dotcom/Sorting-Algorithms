@@ -19,6 +19,7 @@ import {
   TrendingUp,
   Clock,
   HardDrive,
+  ArrowLeftRight,
 } from "lucide-react";
 
 interface RoadmapTopicAnimationProps {
@@ -52,6 +53,7 @@ export function RoadmapTopicAnimation({ topicId }: RoadmapTopicAnimationProps) {
           {topicId === "merge" && <MergeSortMiniAnimation tick={tick} />}
           {topicId === "quick" && <QuickSortMiniAnimation tick={tick} />}
           {topicId === "array" && <ArrayMiniAnimation tick={tick} />}
+          {topicId === "string" && <StringMiniAnimation tick={tick} />}
           {topicId === "stack" && <StackMiniAnimation tick={tick} />}
           {topicId === "queue" && <QueueMiniAnimation tick={tick} />}
           {topicId === "linked-list" && <LinkedListMiniAnimation tick={tick} />}
@@ -72,6 +74,7 @@ export function RoadmapTopicAnimation({ topicId }: RoadmapTopicAnimationProps) {
               {topicId === "merge" && "Divide & Conquer: Halves recursively then zips sorted sub-arrays"}
               {topicId === "quick" && "In-Place Partition: Partitions elements into Left < Pivot < Right"}
               {topicId === "array" && "Contiguous RAM: Instant O(1) jump via Base + (Index × 4B) address"}
+              {topicId === "string" && "Contiguous Chars: Instant 1-Byte offsets, in-place reversal, & sliding windows"}
               {topicId === "stack" && "Strict LIFO Order: PUSH ↓ and POP ↑ operations only at the TOP"}
               {topicId === "queue" && "First-In, First-Out: Continuous inflow at REAR and outflow at FRONT"}
               {topicId === "linked-list" && "Scattered Heap Nodes: Dynamic memory linked by pointer references"}
@@ -298,6 +301,49 @@ function ArrayMiniAnimation({ tick }: { tick: number }) {
       <div className="text-[10px] font-mono text-cyan-500 font-semibold flex items-center gap-1">
         <Zap className="h-3 w-3 text-cyan-400 fill-current animate-pulse" />
         <span>Direct Pointer Formula: Base + ({activeIdx} × 4B)</span>
+      </div>
+    </div>
+  );
+}
+
+/* 7. STRING MINI ANIMATION */
+function StringMiniAnimation({ tick }: { tick: number }) {
+  const chars = ["R", "A", "C", "E", "C", "A", "R"];
+  const step = tick % 4;
+  const left = step;
+  const right = chars.length - 1 - step;
+
+  return (
+    <div className="flex flex-col items-center gap-1.5">
+      <div className="flex items-center gap-1">
+        {chars.map((char, idx) => {
+          const isL = idx === left;
+          const isR = idx === right;
+          const isMatched = idx < left || idx > right;
+          return (
+            <div key={idx} className="flex flex-col items-center relative">
+              <span className={`text-[8px] font-mono ${isL || isR ? "text-cyan-400 font-bold" : "text-muted-foreground"}`}>
+                {isL ? "L↓" : isR ? "R↓" : `+${idx}B`}
+              </span>
+              <motion.div
+                animate={{ scale: isL || isR ? 1.1 : 1 }}
+                className={`w-7 sm:w-8 h-8 rounded-lg border font-mono text-xs font-bold flex items-center justify-center transition-all ${
+                  isL || isR
+                    ? "bg-cyan-500 text-slate-950 border-cyan-300 shadow-md shadow-cyan-500/30"
+                    : isMatched
+                    ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/40"
+                    : "bg-secondary border-border text-foreground"
+                }`}
+              >
+                <span>{char}</span>
+              </motion.div>
+            </div>
+          );
+        })}
+      </div>
+      <div className="text-[10px] font-mono text-cyan-500 font-semibold flex items-center gap-1">
+        <ArrowLeftRight className="h-3 w-3 text-cyan-400" />
+        <span>Two-Pointer Inward Match: str[{left}] ⟷ str[{right}]</span>
       </div>
     </div>
   );

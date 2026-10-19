@@ -69,9 +69,23 @@ export function UserPresenceTracker() {
     let isMounted = true;
 
     async function initPresence() {
+      function withTimeout<T>(promise: Promise<T>, ms: number, fallback: T): Promise<T> {
+        let timer: NodeJS.Timeout | undefined;
+        const timeoutPromise = new Promise<T>((resolve) => {
+          timer = setTimeout(() => resolve(fallback), ms);
+        });
+        return Promise.race([promise, timeoutPromise]).finally(() => {
+          if (timer) clearTimeout(timer);
+        });
+      }
+
       const {
         data: { session },
-      } = await supabase.auth.getSession();
+      } = await withTimeout(
+        supabase.auth.getSession(),
+        800,
+        { data: { session: null } } as any
+      );
 
       const user = session?.user;
       if (!user) return;

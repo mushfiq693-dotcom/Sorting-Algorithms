@@ -44,6 +44,12 @@ export async function updateSession(request: NextRequest) {
       cookie.name.startsWith("sb-")
   );
 
+  // FAST PATH: All public routes (except /auth/login where authenticated users might need redirect)
+  // return immediately without blocking on remote auth network roundtrips.
+  if (isPublicRoute && pathname !== "/auth/login") {
+    return supabaseResponse;
+  }
+
   // FAST PATH: If no auth cookies exist
   if (!hasAuthCookie) {
     if (isPublicRoute) {
@@ -79,12 +85,31 @@ export async function updateSession(request: NextRequest) {
     }
   );
 
-  // Only authenticate via network when auth cookies are present
+  // Helper to ensure network calls never block edge execution if Supabase is slow or unreachable
+  const withTimeout = async <T>(promise: Promise<T>, ms: number, fallback: T): Promise<T> => {
+    let timer: NodeJS.Timeout | undefined;
+    const timeoutPromise = new Promise<T>((resolve) => {
+      timer = setTimeout(() => resolve(fallback), ms);
+    });
+    try {
+      return await Promise.race([promise, timeoutPromise]);
+    } catch {
+      return fallback;
+    } finally {
+      if (timer) clearTimeout(timer);
+    }
+  };
+
+  // Only authenticate via network when auth cookies are present and route requires check
   const {
     data: { user },
-  } = await supabase.auth.getUser();
+  } = await withTimeout(
+    supabase.auth.getUser(),
+    800,
+    { data: { user: null } } as any
+  );
 
-  // If user is unauthenticated (token invalid/expired) and attempting to access protected routes
+  // If user is unauthenticated (token invalid/expired/timed out) and attempting to access protected routes
   if (!user && !isPublicRoute) {
     const url = request.nextUrl.clone();
     url.pathname = "/auth/login";
@@ -94,10 +119,14 @@ export async function updateSession(request: NextRequest) {
 
   // If accessing /admin routes, verify user is an Administrator
   if (user && pathname.startsWith("/admin")) {
-    const { data: profile } = await (supabase.from("profiles") as any)
-      .select("role")
-      .eq("id", user.id)
-      .maybeSingle();
+    const { data: profile } = await withTimeout(
+      (supabase.from("profiles") as any)
+        .select("role")
+        .eq("id", user.id)
+        .maybeSingle(),
+      800,
+      { data: null as any }
+    );
 
     if (profile?.role !== "admin") {
       const url = request.nextUrl.clone();
@@ -108,10 +137,14 @@ export async function updateSession(request: NextRequest) {
 
   // If accessing /mentor routes, verify user is a Mentor or Admin
   if (user && pathname.startsWith("/mentor")) {
-    const { data: profile } = await (supabase.from("profiles") as any)
-      .select("role")
-      .eq("id", user.id)
-      .maybeSingle();
+    const { data: profile } = await withTimeout(
+      (supabase.from("profiles") as any)
+        .select("role")
+        .eq("id", user.id)
+        .maybeSingle(),
+      800,
+      { data: null as any }
+    );
 
     if (profile?.role !== "mentor" && profile?.role !== "admin") {
       const url = request.nextUrl.clone();
@@ -122,10 +155,14 @@ export async function updateSession(request: NextRequest) {
 
   // If user is suspended by admin, redirect to suspended notice
   if (user && !isPublicRoute && !pathname.startsWith("/admin")) {
-    const { data: betaAccess } = await (supabase.from("beta_access") as any)
-      .select("status")
-      .eq("user_id", user.id)
-      .maybeSingle();
+    const { data: betaAccess } = await withTimeout(
+      (supabase.from("beta_access") as any)
+        .select("status")
+        .eq("user_id", user.id)
+        .maybeSingle(),
+      800,
+      { data: null as any }
+    );
 
     if (betaAccess?.status === "suspended" && pathname !== "/auth/suspended") {
       const url = request.nextUrl.clone();

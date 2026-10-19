@@ -29,6 +29,20 @@ export interface AccessControlState {
   closeUnlockModal: () => void;
 }
 
+const withClientTimeout = async <T>(promise: Promise<T>, ms: number, fallback: T): Promise<T> => {
+  let timer: NodeJS.Timeout | undefined;
+  const timeoutPromise = new Promise<T>((resolve) => {
+    timer = setTimeout(() => resolve(fallback), ms);
+  });
+  try {
+    return await Promise.race([promise, timeoutPromise]);
+  } catch {
+    return fallback;
+  } finally {
+    if (timer) clearTimeout(timer);
+  }
+};
+
 export function useAccessControl(): AccessControlState {
   const supabase = createClient();
 
@@ -43,26 +57,38 @@ export function useAccessControl(): AccessControlState {
     try {
       const {
         data: { session },
-      } = await supabase.auth.getSession();
+      } = await withClientTimeout(
+        supabase.auth.getSession(),
+        1000,
+        { data: { session: null } } as any
+      );
 
       const currentUser = session?.user || null;
       setUser(currentUser);
 
       if (currentUser) {
-        // Fetch profile role
-        const { data: profile } = await (supabase.from("profiles") as any)
-          .select("role")
-          .eq("id", currentUser.id)
-          .single();
+        // Fetch profile role with timeout
+        const { data: profile } = await withClientTimeout(
+          (supabase.from("profiles") as any)
+            .select("role")
+            .eq("id", currentUser.id)
+            .single(),
+          1000,
+          { data: null as any }
+        );
 
         const userRole = profile?.role || "student";
         setRole(userRole);
 
-        // Fetch beta_access record to determine access status
-        const { data: accessRecord } = await (supabase.from("beta_access") as any)
-          .select("status")
-          .eq("user_id", currentUser.id)
-          .maybeSingle();
+        // Fetch beta_access record to determine access status with timeout
+        const { data: accessRecord } = await withClientTimeout(
+          (supabase.from("beta_access") as any)
+            .select("status")
+            .eq("user_id", currentUser.id)
+            .maybeSingle(),
+          1000,
+          { data: null as any }
+        );
 
         setBetaStatus(accessRecord?.status || "free");
       } else {
@@ -84,16 +110,24 @@ export function useAccessControl(): AccessControlState {
     } = supabase.auth.onAuthStateChange(async (_event, session) => {
       if (session?.user) {
         setUser(session.user);
-        const { data: profile } = await (supabase.from("profiles") as any)
-          .select("role")
-          .eq("id", session.user.id)
-          .single();
+        const { data: profile } = await withClientTimeout(
+          (supabase.from("profiles") as any)
+            .select("role")
+            .eq("id", session.user.id)
+            .single(),
+          1000,
+          { data: null as any }
+        );
         setRole(profile?.role || "student");
 
-        const { data: accessRecord } = await (supabase.from("beta_access") as any)
-          .select("status")
-          .eq("user_id", session.user.id)
-          .maybeSingle();
+        const { data: accessRecord } = await withClientTimeout(
+          (supabase.from("beta_access") as any)
+            .select("status")
+            .eq("user_id", session.user.id)
+            .maybeSingle(),
+          1000,
+          { data: null as any }
+        );
         setBetaStatus(accessRecord?.status || "free");
       } else {
         setUser(null);

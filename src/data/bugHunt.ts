@@ -383,4 +383,29 @@ public:
       { type: "overwrite", index: 1, value: 14, description: "Forward shift duplicated element across all subsequent slots" },
     ],
   },
+
+  string: {
+    algorithmId: "string",
+    title: "Two-Pointer Reversal: Off-By-One Buffer Overflow Bug",
+    description:
+      "This two-pointer string reversal initializes `right = s.size()` instead of `s.size() - 1`, causing the very first swap to read and write unallocated memory beyond the null-terminator boundary!",
+    buggyCode: `void reverseString(string& s) {
+    int left = 0;
+    int right = s.size(); // Bug: Index out of bounds (should be s.size() - 1)
+    while (left < right) {
+        swap(s[left++], s[right--]);
+    }
+}`,
+    buggyLineNumber: 3,
+    hint: "Remember strings in C++ are 0-indexed. If a string has 5 characters (indices 0..4), what index does `s.size()` access?",
+    explanation:
+      "Line 3 initialized `right = s.size()`. In 0-indexed strings, valid indices range strictly from `0` to `s.size() - 1`. Accessing `s[s.size()]` touches the null terminator '\\0' or unallocated heap memory, causing buffer corruption or undefined behavior. The right pointer must start at `s.size() - 1`.",
+    validateFix: (line: string) => {
+      const trimmed = line.replace(/\s+/g, "");
+      return trimmed.includes("s.size()-1") || trimmed.includes("s.length()-1");
+    },
+    flawedRunner: () => [
+      { type: "swap", indices: [0, 4], description: "Accessed index out of bounds beyond string boundary" },
+    ],
+  },
 };

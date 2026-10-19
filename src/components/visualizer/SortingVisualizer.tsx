@@ -10,6 +10,7 @@ import { VisualizerControls } from "./VisualizerControls";
 import { OperationIndicator } from "./OperationIndicator";
 import { CodeViewer } from "@/components/code/CodeViewer";
 import { ArrayVisualizer } from "./ArrayVisualizer";
+import { StringVisualizer } from "./StringVisualizer";
 import { StackVisualizer } from "./StackVisualizer";
 import { QueueVisualizer } from "./QueueVisualizer";
 import { LinkedListVisualizer } from "./LinkedListVisualizer";
@@ -386,6 +387,7 @@ export function SortingVisualizer({
         {/* Dedicated Specialized Visualizer Stage */}
         <div className="w-full">
           {selectedAlgorithm === "array" && <ArrayVisualizer />}
+          {selectedAlgorithm === "string" && <StringVisualizer />}
           {selectedAlgorithm === "stack" && <StackVisualizer />}
           {selectedAlgorithm === "queue" && <QueueVisualizer />}
           {selectedAlgorithm === "linked-list" && <LinkedListVisualizer />}

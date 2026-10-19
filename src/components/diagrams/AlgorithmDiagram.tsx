@@ -9,6 +9,7 @@ import { InsertionSortShiftDiagram } from "./InsertionSortShiftDiagram";
 import { MergeSortTreeDiagram } from "./MergeSortTreeDiagram";
 import { QuickSortTreeDiagram } from "./QuickSortTreeDiagram";
 import { ArrayContiguousMemoryDiagram } from "./ArrayContiguousMemoryDiagram";
+import { StringMemoryDiagram } from "./StringMemoryDiagram";
 import { StackLIFODiagram } from "./StackLIFODiagram";
 import { QueueFIFODiagram } from "./QueueFIFODiagram";
 import { TimeComplexityDiagram } from "./TimeComplexityDiagram";
@@ -39,6 +40,8 @@ export function AlgorithmDiagram({ algorithmId }: AlgorithmDiagramProps) {
         return <QuickSortTreeDiagram />;
       case "array":
         return <ArrayContiguousMemoryDiagram />;
+      case "string":
+        return <StringMemoryDiagram />;
       case "stack":
         return <StackLIFODiagram />;
       case "queue":

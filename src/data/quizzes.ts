@@ -577,6 +577,73 @@ export const QUIZZES: Record<string, QuizTopic> = {
       }
     ]
   },
+  string: {
+    id: "string",
+    title: "String Data Structure Quiz",
+    description: "Test your mastery of contiguous 1-byte memory mapping, ASCII vs UTF-8 byte encodings, string immutability pitfalls, two-pointer inward scans, and sliding window complexity.",
+    questions: [
+      {
+        id: "str1",
+        question: "Why does repeatedly concatenating characters in a loop (`str += c`) in languages like Python, Java, or JavaScript result in an O(n²) time complexity?",
+        options: [
+          "Because strings use hash tables internally",
+          "Because strings are immutable, so every concatenation allocates a new memory buffer and copies all previous characters",
+          "Because the operating system limits string concatenation to 10 operations per second",
+          "Because garbage collection pauses the CPU for O(n) seconds"
+        ],
+        correctIndex: 1,
+        explanation: "In immutable string runtimes, every `+` or `+=` allocates a new memory array and copies all k existing characters. Across n iterations, 1 + 2 + ... + n = n(n+1)/2 = O(n²) total bytes are copied."
+      },
+      {
+        id: "str2",
+        question: "How does a computer locate the physical RAM address of str[i] in a standard C/C++ string in O(1) time?",
+        options: [
+          "By following linked pointers from the head node",
+          "By calculating Address = BaseAddress + (i * 1 Byte) using direct 1-byte hardware offset arithmetic",
+          "By querying an operating system string registry",
+          "By executing a binary search over the ASCII character codes"
+        ],
+        correctIndex: 1,
+        explanation: "Standard ASCII characters occupy exactly 1 Byte (8 bits). Because the characters reside contiguously in memory, the hardware computes the exact RAM byte address in a single instruction."
+      },
+      {
+        id: "str3",
+        question: "What is the primary role of the null character '\\0' (byte 0x00) in C-style strings (char*)?",
+        options: [
+          "To tell the CPU to invert the string order",
+          "To encrypt the string against buffer reading",
+          "To act as a sentinel value marking the end of the character sequence in memory",
+          "To reserve heap space for future UTF-8 multi-byte characters"
+        ],
+        correctIndex: 2,
+        explanation: "C strings do not store an explicit length field in a struct header. The runtime loops through memory until it encounters '\\0' (byte value 0x00) to determine where the string terminates."
+      },
+      {
+        id: "str4",
+        question: "When verifying whether a string of length n is a palindrome using the Two-Pointer technique, what are the time and auxiliary space complexities?",
+        options: [
+          "Time: O(n), Auxiliary Space: O(1)",
+          "Time: O(n log n), Auxiliary Space: O(n)",
+          "Time: O(n²), Auxiliary Space: O(1)",
+          "Time: O(1), Auxiliary Space: O(n)"
+        ],
+        correctIndex: 0,
+        explanation: "The two pointers `left = 0` and `right = n - 1` step inward symmetrically, comparing at most n/2 pairs in O(n) time. Only two integer pointer variables are needed, consuming strict O(1) auxiliary space."
+      },
+      {
+        id: "str5",
+        question: "In the Sliding Window algorithm for 'Longest Substring Without Repeating Characters', why does the algorithm run in O(n) total time even though it has a nested while/lookup condition?",
+        options: [
+          "Because strings are limited to 256 characters maximum",
+          "Because both the Left and Right window pointers move monotonically forward from 0 to n, so each character is processed at most twice",
+          "Because the CPU parallelizes the inner loop across multiple cores",
+          "Because hashing eliminates all comparison operations completely"
+        ],
+        correctIndex: 1,
+        explanation: "Both the Right expansion pointer and Left contraction pointer only ever increment forward. Since neither pointer ever moves backward, each of the n characters is visited at most twice (once by R, once by L), guaranteeing O(2n) = O(n) total runtime."
+      }
+    ]
+  },
   stack: {
     id: "stack",
     title: "Stack Data Structure Quiz",

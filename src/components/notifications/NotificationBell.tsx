@@ -13,9 +13,23 @@ export function NotificationBell() {
 
   const fetchUnreadCount = useCallback(async () => {
     try {
+      function withTimeout<T>(promise: Promise<T>, ms: number, fallback: T): Promise<T> {
+        let timer: NodeJS.Timeout | undefined;
+        const timeoutPromise = new Promise<T>((resolve) => {
+          timer = setTimeout(() => resolve(fallback), ms);
+        });
+        return Promise.race([promise, timeoutPromise]).finally(() => {
+          if (timer) clearTimeout(timer);
+        });
+      }
+
       const {
         data: { session },
-      } = await supabase.auth.getSession();
+      } = await withTimeout(
+        supabase.auth.getSession(),
+        800,
+        { data: { session: null } } as any
+      );
       if (!session?.user) {
         setUnreadCount(0);
         return;
@@ -29,9 +43,12 @@ export function NotificationBell() {
         return;
       }
 
-      // 1. Fetch total notices
-      const { data: noticesData } = await (supabase.from("notices") as any)
-        .select("id");
+      // 1. Fetch total notices with timeout
+      const { data: noticesData } = await withTimeout(
+        (supabase.from("notices") as any).select("id"),
+        800,
+        { data: null as any }
+      );
 
       if (!noticesData || noticesData.length === 0) {
         setUnreadCount(0);
@@ -39,10 +56,12 @@ export function NotificationBell() {
         return;
       }
 
-      // 2. Fetch notice_reads for current user
-      const { data: readData } = await (supabase.from("notice_reads") as any)
-        .select("notice_id")
-        .eq("user_id", user.id);
+      // 2. Fetch notice_reads for current user with timeout
+      const { data: readData } = await withTimeout(
+        (supabase.from("notice_reads") as any).select("notice_id").eq("user_id", user.id),
+        800,
+        { data: null as any }
+      );
 
       const readIds = new Set((readData || []).map((r: any) => r.notice_id));
       const unread = noticesData.filter((n: any) => !readIds.has(n.id)).length;

@@ -28,6 +28,8 @@ export const ORDERED_SEARCHING_ALGORITHMS: OrderedTopicItem[] = [
 ];
 
 export const ORDERED_DATA_STRUCTURES: OrderedTopicItem[] = [
+  { id: "array", name: "Array", category: "data-structure" },
+  { id: "string", name: "String", category: "data-structure" },
   { id: "stack", name: "Stack", category: "data-structure" },
   { id: "queue", name: "Queue", category: "data-structure" },
   { id: "linked-list", name: "Linked List", category: "data-structure" },
@@ -57,6 +59,7 @@ export const ALGORITHM_NAME_MAP: Record<AlgorithmId, string> = {
   "linear-search": "Linear Search",
   "binary-search": "Binary Search",
   array: "Array",
+  string: "String",
   stack: "Stack",
   queue: "Queue",
   "linked-list": "Linked List",
@@ -76,6 +79,7 @@ export const ALGORITHM_DOCS_MAP: Record<AlgorithmId, string[]> = {
   "linear-search": ["linear-search"],
   "binary-search": ["binary-search"],
   array: ["array-data-structure"],
+  string: ["string-data-structure"],
   stack: ["stack-data-structure"],
   queue: ["queue-data-structure"],
   "linked-list": ["linked-list-fundamentals"],

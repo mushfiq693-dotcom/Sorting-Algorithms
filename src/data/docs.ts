@@ -1116,10 +1116,176 @@ public:
     `
   },
   {
-    slug: "stack-data-structure",
+    slug: "string-data-structure",
     level: 5,
     levelTitle: "Level 5: Fundamental Data Structures",
     order: 2,
+    title: "String: Contiguous Characters, Byte Encodings & The Immutability Trap",
+    subtitle: "Understanding 1-byte character arrays, ASCII vs UTF-8, in-place two-pointer scans, sliding window substrings, and why immutable string concatenation in loops triggers catastrophic O(n²) bottlenecks.",
+    estimatedReadTime: "10 min",
+    category: "Data Structures",
+    banglaNote: {
+      topic: "String ও মেমোরি ইমিউটেবিলিটি (সহজ বাংলায় ধারণা)",
+      englishContext: "A string is an array of characters. In C++, strings can be modified in-place in O(1) time. But in Java, Python, and JavaScript, strings are immutable—every change duplicates all characters into a new memory block in O(n) time!",
+      banglaText: `স্ট্রিং (String) মূলত মেমরিতে পাশাপাশি রাখা ক্যারেক্টার বা অক্ষরের একটা অ্যারে। প্রতিটি ASCII অক্ষর ঠিক ১ বাইট মেমোরি দখল করে, তাই কম্পিউটার ফর্মুলা দিয়ে সাথে সাথে O(1) সময়ে যেকোনো অক্ষর খুঁজে পায়। 
+
+তবে ইন্টারভিউতে সবচেয়ে গুরুত্বপূর্ণ বিষয় হলো **Mutability বনাম Immutability**। C++ এ স্ট্রিং হলো Mutable — অর্থাৎ আপনি চাইলে সরাসরি যেকোনো অক্ষর পরিবর্তন করতে পারেন। কিন্তু JavaScript, Python বা Java-তে স্ট্রিং হলো Immutable (অপরিবর্তনশীল)! সেখানে আপনি যখনই লুপের ভেতরে \`str += 'x'\` লিখবেন, কম্পিউটার প্রতিবার পুরো স্ট্রিংটিকে মেমরিতে নতুন জায়গায় কপি করে, যার ফলে আপনার কোডের স্পিড নেমে যায় O(n²) এ! এজন্য বড় টেক্সট জোড়া দেওয়ার সময় StringBuilder বা অ্যারে জয়েন করতে হয়।`
+    },
+    visualizerLink: {
+      label: "Open Interactive String Studio",
+      algorithmId: "string",
+      path: "/visualizer?algo=string"
+    },
+    quizTopicId: "string",
+    content: `
+### What Is a String Formally?
+
+In computer science, a **String** is a finite sequence of symbols chosen from an alphabet $\\Sigma$. At the hardware architecture level, a string is stored as a **contiguous array of bytes in physical memory**.
+
+Because character codes in standard ASCII occupy exactly **1 Byte (8 bits)**, the CPU computes the memory address of the $i$-th character instantaneously:
+
+$$\\text{Address}(str[i]) = \\text{BaseAddress} + (i \\times 1\\text{ Byte})$$
+
+This single-instruction memory mapping gives strings the same $O(1)$ random-access property and L1 cache spatial locality as numerical arrays.
+
+---
+
+### Memory Anatomy: C-Style Strings vs Modern String Objects
+
+How computers track the end of a string varies fundamentally across programming systems:
+
+#### 1. Null-Terminated C Strings (\`char*\`)
+- In C, a string has no explicit length field. Instead, it terminates with a sentinel **null character** \`'\\0'\` (byte value \`0x00\`).
+- Calculating the length via \`strlen()\` requires walking every single byte until encountering \`'\\0'\`, which costs **$O(n)$ time**.
+- **Buffer Overflow Hazard**: If the terminating null byte is accidentally overwritten or omitted, string operations continue reading arbitrary memory past the buffer boundary.
+
+#### 2. Modern Standard Strings (C++ \`std::string\`, Rust \`String\`)
+Modern systems use a three-word struct header:
+- **Pointer**: Points to the contiguous heap buffer containing the character bytes.
+- **Size / Length**: Stores the active character count, making \`.length()\` a strict **$O(1)$ operation**.
+- **Capacity**: Stores the allocated buffer boundary to support geometric doubling appends.
+- **Small String Optimization (SSO)**: For strings under 15–23 bytes, modern C++ runtimes store the characters directly inside the stack struct itself, avoiding expensive heap allocations entirely!
+
+---
+
+### Core Operations & Complexity Breakdown
+
+| Operation | Time Complexity | Auxiliary Space | Architectural Mechanism |
+| :--- | :--- | :--- | :--- |
+| **Random Read** $str[i]$ | $O(1)$ Constant | $O(1)$ | Direct hardware 1-byte offset arithmetic. |
+| **In-Place Update (Mutable)** | $O(1)$ Constant | $O(1)$ | Direct RAM write at $\\text{Base} + i$ in C++ \`std::string\`. |
+| **Two-Pointer Reversal** | $O(n)$ Linear | $O(1)$ | In-place swaps between symmetric ends ($n/2$ swaps). |
+| **Palindrome Verification** | $O(n)$ Linear | $O(1)$ | Inward two-pointer comparison with early exit on mismatch. |
+| **Sliding Window Substring** | $O(n)$ Linear | $O(\\min(n, |\\Sigma|))$ | Single-pass interval expansion and contraction. |
+| **Naive Substring Search** | $O((n - m + 1) \\times m)$ | $O(1)$ | Character-by-character alignment check. |
+| **Immutable Concatenation** | $O(n + m)$ Linear | $O(n + m)$ | Allocates new buffer and copies every single byte. |
+
+---
+
+### The Immutability Trap & The $O(n^2)$ Concatenation Disaster
+
+One of the most frequent performance bugs in production systems stems from misunderstandings of **String Immutability**.
+
+In languages like **Java, Python, and JavaScript**, strings are strictly immutable: once created, the underlying byte buffer can **never** be modified in place.
+
+#### What Happens During \`str += c\`?
+When you write:
+\`\`\`javascript
+let str = "";
+for (let i = 0; i < n; i++) {
+    str += "a";
+}
+\`\`\`
+1. In iteration 1, an array of size 1 is allocated and \`'a'\` is written.
+2. In iteration 2, an array of size 2 is allocated, 1 byte is copied, and \`'a'\` is written.
+3. In iteration $k$, an array of size $k$ is allocated, $k - 1$ bytes are copied, and the new char is added.
+
+The total number of copied characters across $n$ loop iterations is:
+
+$$\\sum_{k=1}^n k = 1 + 2 + 3 + \\dots + n = \\frac{n(n + 1)}{2} = O(n^2)$$
+
+For $n = 100{,}000$, an operation that should take **10 milliseconds** takes **over 45 seconds** and allocates gigabytes of garbage-collected heap memory!
+
+#### The Fix:
+- **Java**: Use \`StringBuilder\` (internally a mutable dynamic char array with amortized $O(1)$ append).
+- **Python**: Append characters or tokens to a list and call \`"".join(list)\` in $O(n)$ time.
+- **C++**: Use \`std::string::push_back()\` or \`+=\` directly (mutable geometric doubling).
+
+---
+
+### Signature Algorithmic Paradigms
+
+#### 1. Two-Pointer Inward Scan (Reversals & Palindromes)
+Because strings reside contiguously in memory, two pointers initialized at opposite ends can march inward symmetrically:
+\`\`\`cpp
+void reverse(string& s) {
+    int l = 0, r = s.size() - 1;
+    while (l < r) swap(s[l++], s[r--]);
+}
+\`\`\`
+This achieves $O(n)$ time with strict $O(1)$ auxiliary space and peak CPU cache locality.
+
+#### 2. The Sliding Window Paradigm
+Instead of checking all $O(n^2)$ substrings, the **Sliding Window** maintains a dynamic slice $[L \\dots R]$:
+- The **Right pointer ($R$)** expands the window by consuming the next character.
+- The **Left pointer ($L$)** contracts the window whenever duplicate characters or constraints are violated.
+- Because both $L$ and $R$ increment monotonically from $0$ to $n$, each character is visited at most twice, delivering a guaranteed **$O(n)$ linear runtime**.
+
+---
+
+### Complete Production C++ String Operations Suite
+
+\`\`\`cpp
+#include <iostream>
+#include <string>
+#include <vector>
+#include <algorithm>
+
+class StringMastery {
+public:
+    // 1. In-place two-pointer reversal: O(n) Time, O(1) Space
+    static void reverseString(std::string& s) {
+        int left = 0, right = static_cast<int>(s.size()) - 1;
+        while (left < right) {
+            std::swap(s[left++], s[right--]);
+        }
+    }
+
+    // 2. Palindrome verification with symmetric scan: O(n) Time, O(1) Space
+    static bool isPalindrome(const std::string& s) {
+        int left = 0, right = static_cast<int>(s.size()) - 1;
+        while (left < right) {
+            if (std::tolower(s[left++]) != std::tolower(s[right--])) {
+                return false; // Early exit on first mismatch
+            }
+        }
+        return true;
+    }
+
+    // 3. Sliding window: Longest substring without repeating characters: O(n)
+    static int lengthOfLongestSubstring(const std::string& s) {
+        std::vector<int> lastIndex(256, -1);
+        int maxLen = 0, left = 0;
+
+        for (int right = 0; right < static_cast<int>(s.size()); right++) {
+            unsigned char c = s[right];
+            if (lastIndex[c] >= left) {
+                left = lastIndex[c] + 1; // Contract window past previous duplicate
+            }
+            lastIndex[c] = right;
+            maxLen = std::max(maxLen, right - left + 1);
+        }
+        return maxLen;
+    }
+};
+\`\`\`
+    `
+  },
+  {
+    slug: "stack-data-structure",
+    level: 5,
+    levelTitle: "Level 5: Fundamental Data Structures",
+    order: 3,
     title: "Stack: LIFO Mechanism & Applications",
     subtitle: "Understanding Last-In First-Out mechanics, array vs linked-list implementations, call stacks, and expression parsing.",
     estimatedReadTime: "8 min",

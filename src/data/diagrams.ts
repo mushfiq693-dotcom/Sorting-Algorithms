@@ -137,6 +137,36 @@ int getElement(int* arr, int index) {
 }`,
     highlightedLine: 5,
   },
+  string: {
+    algorithmId: "string",
+    title: "String — Contiguous Character Buffer, ASCII & Immutability Architecture",
+    subtitle: "Characters reside in sequential 1-byte physical RAM cells ending with '\\0'. Contiguous layout empowers O(n) two-pointer reversals and sliding windows, while immutability incurs O(n) reallocation penalties.",
+    caption: "Hardware accesses character bytes directly in O(1) time via Base + (index × 1B). Mutable strings permit in-place edits, while immutable runtimes duplicate the entire buffer.",
+    fixedArray: [65, 76, 71, 79, 82, 73, 84, 72, 77], // ASCII for "ALGORITHM"
+    complexityFormula: "Address(str[i]) = BaseAddress + (i × 1 Byte) → O(1) Access",
+    complexityExplanation: "1-byte contiguous indexing guarantees instantaneous random reads and zero pointer hopping.",
+    codeSnippet: `// 1. Two-Pointer In-Place Reversal: O(n) Time, O(1) Auxiliary Space
+void reverseString(string& s) {
+    int left = 0, right = (int)s.size() - 1;
+    while (left < right) {
+        swap(s[left++], s[right--]); // In-place character byte swap
+    }
+}
+
+// 2. Sliding Window: Longest Substring Without Repeating Chars: O(n)
+int longestUniqueSubstring(const string& s) {
+    vector<int> lastPos(256, -1);
+    int maxLen = 0, left = 0;
+    for (int right = 0; right < (int)s.size(); right++) {
+        if (lastPos[(unsigned char)s[right]] >= left)
+            left = lastPos[(unsigned char)s[right]] + 1;
+        lastPos[(unsigned char)s[right]] = right;
+        maxLen = max(maxLen, right - left + 1);
+    }
+    return maxLen;
+}`,
+    highlightedLine: 5,
+  },
   stack: {
     algorithmId: "stack",
     title: "Stack — LIFO Push, Pop & Call Stack Anatomy",

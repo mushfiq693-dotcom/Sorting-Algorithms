@@ -36,9 +36,23 @@ export function useProgressSync() {
   useEffect(() => {
     async function syncDown() {
       try {
+        const withTimeout = <T>(promise: Promise<T>, ms: number, fallback: T): Promise<T> => {
+          let timer: NodeJS.Timeout | undefined;
+          const timeoutPromise = new Promise<T>((resolve) => {
+            timer = setTimeout(() => resolve(fallback), ms);
+          });
+          return Promise.race([promise, timeoutPromise]).finally(() => {
+            if (timer) clearTimeout(timer);
+          });
+        };
+
         const {
           data: { session },
-        } = await supabase.auth.getSession();
+        } = await withTimeout(
+          supabase.auth.getSession(),
+          800,
+          { data: { session: null } } as any
+        );
 
         const user = session?.user;
         if (!user) return;
@@ -48,10 +62,14 @@ export function useProgressSync() {
         if (lastSync) return;
         fastCache.set(`last_sync_${user.id}`, true, 120);
 
-        const { data: progress } = await (supabase.from("user_progress") as any)
-          .select("completed_steps, completed_docs, quiz_scores, topic_scores, activity_history")
-          .eq("user_id", user.id)
-          .single();
+        const { data: progress } = await withTimeout(
+          (supabase.from("user_progress") as any)
+            .select("completed_steps, completed_docs, quiz_scores, topic_scores, activity_history")
+            .eq("user_id", user.id)
+            .single(),
+          1000,
+          { data: null as any }
+        );
 
         if (progress) {
           // 1. Merge Steps

@@ -26,6 +26,7 @@ import {
   Timer,
   Cpu,
   Sparkles,
+  Binary,
 } from "lucide-react";
 
 export type CategoryKey = "sorting" | "data-structure" | "searching" | "complexity";
@@ -55,7 +56,7 @@ export const CATEGORY_CARDS: CategoryCardMeta[] = [
   {
     key: "data-structure",
     title: "Data Structures",
-    countLabel: "4 Visualizations",
+    countLabel: "5 Visualizations",
     icon: Network,
     iconBg: "bg-emerald-500/10 dark:bg-emerald-500/20",
     iconColor: "text-emerald-500 dark:text-emerald-400",
@@ -131,6 +132,12 @@ const TOPIC_VISUALS: Record<AlgorithmId, TopicVisualMeta> = {
     iconColor: "text-emerald-500 dark:text-emerald-400",
     iconBorder: "border-emerald-500/25",
   },
+  string: {
+    icon: Binary,
+    iconBg: "bg-emerald-500/10 dark:bg-emerald-500/20",
+    iconColor: "text-emerald-500 dark:text-emerald-400",
+    iconBorder: "border-emerald-500/25",
+  },
   stack: {
     icon: Layers,
     iconBg: "bg-emerald-500/10 dark:bg-emerald-500/20",
@@ -190,6 +197,7 @@ const TOPIC_DESCRIPTIONS: Record<AlgorithmId, string> = {
 
   // Data Structures
   array: "Watch contiguous memory cells store and access indexed elements instantly.",
+  string: "Watch contiguous character bytes store text, reverse in-place, and slide dynamic windows.",
   stack: "See elements pushed and popped from the top following Last-In, First-Out order.",
   queue: "Watch elements enter the back and exit the front in First-In, First-Out order.",
   "linked-list": "See nodes connected by pointers traverse, insert, and delete dynamically.",
@@ -276,6 +284,15 @@ const DATA_STRUCTURE_COMPARISON: DataStructureComparisonRow[] = [
   {
     name: "Array",
     id: "array",
+    access: "O(1)",
+    search: "O(n)",
+    insertion: "O(n)",
+    deletion: "O(n)",
+    space: "O(n)",
+  },
+  {
+    name: "String",
+    id: "string",
     access: "O(1)",
     search: "O(n)",
     insertion: "O(n)",
