@@ -134,7 +134,10 @@ export default function AlgorithmDetailPage() {
     (a) =>
       a.slug === `${algorithmId}-sort` ||
       a.slug === `${algorithmId}-data-structure` ||
-      a.slug === algorithmId
+      a.slug === `${algorithmId}-fundamentals` ||
+      a.slug === algorithmId ||
+      a.quizTopicId === algorithmId ||
+      a.visualizerLink?.algorithmId === algorithmId
   );
 
   if (!stepData || !meta) {
@@ -444,6 +447,21 @@ export default function AlgorithmDetailPage() {
                 {docsArticle && (
                   <div className="p-4 sm:p-6 rounded-2xl border border-border/80 bg-background/50">
                     <FormattedMarkdown content={docsArticle.content} />
+                  </div>
+                )}
+
+                {/* In-Depth Bengali Theory Explanation & Conceptual Breakdown */}
+                {docsArticle?.banglaNote && (
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2 text-xs font-mono font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 pt-2">
+                      <Sparkles className="h-4 w-4" />
+                      <span>বাংলায় বিস্তারিত থিওরি ও বিশ্লেষণ (In-Depth Bengali Theory)</span>
+                    </div>
+                    <BanglaNote
+                      topic={docsArticle.banglaNote.topic}
+                      banglaText={docsArticle.banglaNote.banglaText}
+                      defaultExpanded={true}
+                    />
                   </div>
                 )}
 

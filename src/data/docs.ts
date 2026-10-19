@@ -252,44 +252,123 @@ for (int i = 0; i < n; i++) {
     level: 1,
     levelTitle: "Level 1: The Simple Algorithms",
     order: 1,
-    title: "Bubble Sort: Adjacent Comparisons",
-    subtitle: "The simplest comparison sorting mechanism: swapping adjacent out-of-order neighbors.",
-    estimatedReadTime: "7 min",
+    title: "Bubble Sort: Adjacent Comparisons & Inversion Resolution",
+    subtitle: "The foundational comparison sort: bubbling maximal keys rightward, loop invariant mechanics, and adaptive early termination.",
+    estimatedReadTime: "10 min",
     category: "Simple Algorithms",
+    banglaNote: {
+      topic: "বাবল সর্ট ও পাশাপাশি উপাদানের অদলবদল (Bubble Sort Deep Dive)",
+      englishContext: "Bubble Sort repeatedly swaps adjacent out-of-order elements, allowing larger values to 'bubble up' to the right while resolving inversions.",
+      banglaText: `
+### 💡 সহজ উপমা: পানির গ্লাসে সোডার বুদবুদ
+পানির গ্লাসে সোডা ঢাললে যেমন হালকা বুদবুদগুলো ভেসে ওপরের দিকে ওঠে আর ভারী উপাদান নিচে জমা হয়, বাবল সর্টেও ঠিক তেমনি বড় সংখ্যাগুলো প্রতি পাসে ভেসে ভেসে অ্যারের ডান প্রান্তে চলে যায়। 
+
+### 🔍 ধাপে ধাপে কার্যপদ্ধতি (Step-by-Step Mechanics):
+১. **পাশাপাশি জোড়া তুলনা:** অ্যারের শুরু থেকে শুরু করে প্রতি জোড়া সংলগ্ন উপাদান (\`arr[j]\` এবং \`arr[j + 1]\`) তুলনা করা হয়।
+২. **অদলবদল (Swap):** বামের সংখ্যাটি যদি ডানেরটির চেয়ে বড় হয় (\`arr[j] > arr[j + 1]\`), তবে তাদের জায়গা অদলবদল করা হয়।
+৩. **প্রথম পাসের ফল:** প্রথমবার পুরো অ্যারে ঘুরে আসার পর নিশ্চিতভাবে পুরো অ্যারের সবচেয়ে বড় সংখ্যাটি একদম শেষ ইনডেক্স ($n-1$) এ গিয়ে স্থায়ীভাবে বসে।
+৪. **পরবর্তী পাসগুলো:** দ্বিতীয় পাসে ২য় বৃহত্তম সংখ্যাটি শেষ ঘরের ঠিক আগের ঘরে যায়। এভাবে $n-1$ টি পাসে সম্পূর্ণ অ্যারে ক্রমানুসারে সাজানো হয়ে যায়।
+
+### 🧠 লুপ ইনভ্যারিয়েন্ট ও অপ্টিমাইজেশন (Early Exit Magic):
+- **ভেতরের লুপে \`n - i - 1\` কেন?** কারণ প্রতিটি পাস $i$ শেষ হওয়ার পর পেছনের $i$ টি উপাদান ইতোমধ্যেই তাদের চূড়ান্ত সঠিক জায়গায় বসে গেছে। তাই প্রতি পাসে ১ ঘর করে চেকিং কমিয়ে দেওয়া হয়।
+- **ফ্ল্যাগ ভ্যারিয়েবল (\`swapped\`):** সাধারণ বাবল সর্ট সবক্ষেত্রেই $O(n^2)$ সময় নেয়। কিন্তু আমরা যদি একটি বুলিয়ান ফ্ল্যাগ রাখি (\`bool swapped = false\`), এবং পুরো একটি পাসে কোনো সোয়াপ না ঘটে, তার মানে অ্যারে আগে থেকেই সাজানো! তখন লুপ সাথে সাথে ব্রেক করে $O(n)$ সময়ে অ্যালগরিদম শেষ করা যায়।
+
+### ⏱️ টাইম ও স্পেস কমপ্লেক্সিটি গভীরভাবে বুঝুন:
+- **Best Case ($O(n)$):** অ্যারে আগে থেকেই সাজানো থাকলে মাত্র $n-1$ বার তুলনা করে অ্যালগরিদম সফলভাবে শেষ হয়।
+- **Worst Case ($O(n^2)$):** অ্যারে সম্পূর্ণ উল্টো ক্রমে সাজানো থাকলে মোট তুলনা ও সোয়াপের সংখ্যা $\\frac{n(n-1)}{2}$।
+- **Space Complexity ($O(1)$ Auxiliary):** এটি সম্পূর্ণ ইন-প্লেস (In-Place), অর্থাৎ কোনো বাড়তি মেমোরি অ্যারে লাগে না।
+- **স্ট্যাবিলিটি (Stability):** বাবল সর্ট সম্পূর্ণ স্ট্যাবল। সমান মানের দুটি উপাদান (\`arr[j] == arr[j+1]\`) থাকলে তাদের কখনো সোয়াপ করা হয় না, ফলে আদি ক্রম অক্ষুণ্ণ থাকে।
+
+### ⚠️ বাস্তব জীবনে ব্যবহারের সতর্কতা:
+বাস্তব প্রজেক্টে বাবল সর্ট খুব কম ব্যবহৃত হয়, কারণ এতে ঘন ঘন মেমোরি রাইট (Memory Writes/Swaps) ঘটে যা আধুনিক সিপিইউ ক্যাশ লাইনের পারফরম্যান্স মারাত্মকভাবে কমিয়ে দেয়। তবে এটি ইনভার্সন সংখ্যা বুঝতে এবং শিক্ষামূলক অ্যালগরিদমিক চিন্তার ভিত্তি গড়তে অতুলনীয়।
+      `,
+    },
     content: `
-### Core Conceptual Model
+### Core Conceptual Model & Physics Analogy
 
-Bubble Sort is the most intuitive sorting algorithm. It makes multiple passes through an array, comparing adjacent pairs of items:
+Bubble Sort is the most visually intuitive comparison-based sorting algorithm. It operates on the physical principle of density stratification: just as carbonated gas bubbles rise to the liquid surface while dense particulate sinks, larger numerical keys systematically "bubble up" to higher index positions through adjacent pairwise comparisons.
 
-1. Look at \`arr[j]\` and \`arr[j + 1]\`.
-2. If \`arr[j] > arr[j + 1]\`, swap them.
-3. Advance to the next adjacent pair.
-4. After pass $i$, the largest remaining unsorted element has "bubbled up" to index $n - 1 - i$.
+Unlike partitioning or divide-and-conquer algorithms, Bubble Sort is strictly localized: **the algorithm never compares elements separated by a distance greater than 1**. Every step evaluates an adjacent pair $(arr[j], arr[j + 1])$ and resolves local out-of-order inversions.
+
+---
+
+### Mathematical Loop Invariants
+
+A formal proof of Bubble Sort's correctness rests upon two complementary invariants:
+
+1. **Outer Loop Invariant:** At the completion of outer pass $i$ (where $0 \\le i < n - 1$), the suffix subarray $arr[n - 1 - i \\dots n - 1]$ contains the $(i + 1)$ largest elements from the entire input in strictly sorted, non-decreasing order. These suffix elements are in their permanent, globally correct positions and need never be inspected again.
+2. **Inner Loop Invariant:** During inner iteration $j$, the element currently at $arr[j]$ is the maximum value encountered in the prefix $arr[0 \\dots j]$. If $arr[j] > arr[j + 1]$, swapping them ensures the moving maximum advances to index $j + 1$.
+
+---
+
+### Step-by-Step Execution Trace
+
+Consider the unsorted array \`[5, 1, 4, 2, 8]\` of size $n = 5$:
+
+* **Pass 0 ($i = 0$):**
+  - Compare \`5\` & \`1\` $\\to$ Swap: \`[1, 5, 4, 2, 8]\`
+  - Compare \`5\` & \`4\` $\\to$ Swap: \`[1, 4, 5, 2, 8]\`
+  - Compare \`5\` & \`2\` $\\to$ Swap: \`[1, 4, 2, 5, 8]\`
+  - Compare \`5\` & \`8\` $\\to$ No swap: \`[1, 4, 2, 5, 8]\`
+  - *Result:* Largest element \`8\` is permanently anchored at index 4.
+* **Pass 1 ($i = 1$):**
+  - Compare \`1\` & \`4\` $\\to$ No swap
+  - Compare \`4\` & \`2\` $\\to$ Swap: \`[1, 2, 4, 5, 8]\`
+  - Compare \`4\` & \`5\` $\\to$ No swap
+  - *Result:* Second largest element \`5\` is permanently anchored at index 3.
+* **Pass 2 ($i = 2$):**
+  - Inner scan verifies \`1 < 2\` and \`2 < 4\`. Zero swaps occur! The \`swapped\` flag remains \`false\`, and the algorithm terminates immediately.
+
+---
+
+### Complete Production-Grade C++ Implementation
 
 \`\`\`cpp
+#include <vector>
+#include <utility>
+
 void bubbleSort(std::vector<int>& arr) {
-    int n = arr.size();
-    for (int i = 0; i < n - 1; i++) {
-        bool swapped = false;
-        for (int j = 0; j < n - i - 1; j++) {
+    const int n = static_cast<int>(arr.size());
+    if (n <= 1) return; // Defensive guard: already sorted
+
+    for (int i = 0; i < n - 1; ++i) {
+        bool swapped = false; // Adaptive termination flag
+
+        // Bound is n - i - 1 because suffix [n-i ... n-1] is already sorted
+        for (int j = 0; j < n - i - 1; ++j) {
             if (arr[j] > arr[j + 1]) {
                 std::swap(arr[j], arr[j + 1]);
                 swapped = true;
             }
         }
-        if (!swapped) break; // Optimized early exit
+
+        // If no adjacent pair was out of order, array is 100% sorted
+        if (!swapped) {
+            break;
+        }
     }
 }
 \`\`\`
 
 ---
 
-### Key Properties
+### Detailed Complexity & Mechanical Analysis
 
-- **Best Case Time**: $O(n)$ with the \`swapped\` flag on an already-sorted array.
-- **Worst Case Time**: $O(n^2)$ when the array is in reverse order.
-- **Space**: $O(1)$ auxiliary memory (strictly In-Place).
-- **Stability**: **Stable** because identical elements ($arr[j] == arr[j+1]$) never trigger a swap.
+| Metric | Complexity | Derivation & Rationale |
+| :--- | :--- | :--- |
+| **Best-Case Time** | $\\Omega(n)$ | Array is already sorted; inner loop executes $n - 1$ comparisons, \`swapped\` remains false, exits in 1 pass. |
+| **Worst-Case Time** | $O(n^2)$ | Reverse-sorted array; requires $\\sum_{k=1}^{n-1} k = \\frac{n(n-1)}{2}$ comparisons and $\\frac{n(n-1)}{2}$ swaps. |
+| **Average-Case Time**| $\\Theta(n^2)$ | Random permutation contains $\\frac{n(n-1)}{4}$ inversions on average; requires $\\Theta(n^2)$ comparisons. |
+| **Auxiliary Space** | $O(1)$ | Strictly in-place. Requires only two scalar iteration indices and one boolean flag. |
+| **Stability** | **Stable** | Identical elements ($arr[j] == arr[j+1]$) fail the strict \`>\` test; their relative order is strictly preserved. |
+
+---
+
+### Why Bubble Sort Is Rare in Production
+
+While conceptually pristine, Bubble Sort is rarely used in high-performance computing engines due to hardware caching penalties:
+1. **High Memory Bus Traffic:** Every swap requires reading from and writing to two RAM/cache locations ($3$ bus operations per inversion). Insertion Sort, by comparison, shifts elements with a single write per inversion.
+2. **Branch Misprediction:** The inner condition \`if (arr[j] > arr[j + 1])\` flips unpredictably on scrambled data, causing frequent CPU pipeline flushes.
     `,
     quizTopicId: "bubble",
     visualizerLink: {
@@ -303,32 +382,100 @@ void bubbleSort(std::vector<int>& arr) {
     level: 1,
     levelTitle: "Level 1: The Simple Algorithms",
     order: 2,
-    title: "Selection Sort: Finding the Minimum",
-    subtitle: "Partitioning the list into sorted and unsorted portions with minimal swaps.",
-    estimatedReadTime: "7 min",
+    title: "Selection Sort: Global Extrema & Minimal Memory Writes",
+    subtitle: "Partitioning the list into sorted and unsorted portions with at most n - 1 total swaps throughout execution.",
+    estimatedReadTime: "10 min",
     category: "Simple Algorithms",
+    banglaNote: {
+      topic: "সিলেকশন সর্ট ও সর্বনিম্ন মান নির্বাচন (Selection Sort Deep Dive)",
+      englishContext: "Selection Sort divides the array into sorted and unsorted regions, repeatedly finding the minimum element from the unsorted section and placing it at the front.",
+      banglaText: `
+### 💡 সহজ উপমা: শ্রেণিকক্ষে উচ্চতা অনুযায়ী দাঁড় করানো
+একজন শিক্ষক ক্লাসের সব শিক্ষার্থীর মধ্য থেকে সবচেয়ে খাটো ছাত্রকে খুঁজে এনে লাইনের ১ম স্থানে দাঁড় করালেন। এরপর বাকিদের ভেতর থেকে সবচেয়ে খাটো জনকে খুঁজে এনে ২য় স্থানে দাঁড় করালেন। এভাবেই সিলেকশন সর্ট প্রতিটি ধাপে অসাজানো অংশের সর্বনিম্ন মানটি খুঁজে নিয়ে আসে।
+
+### 🔍 ধাপে ধাপে কার্যপদ্ধতি (How It Works):
+১. **দুই ভাগে বিভাজন:** অ্যারেটিকে দুটি কাল্পনিক অংশে ভাগ করা হয় — বামপাশে ক্রমবর্ধিষ্ণু সাজানো অংশ, আর ডানপাশে বাকি অসাজানো অংশ। শুরুতে সাজানো অংশ খালি থাকে।
+২. **সর্বনিম্ন ইনডেক্স অনুসন্ধান (\`minIdx\`):** প্রতি ধাপে অসাজানো অংশের ($i$ থেকে $n-1$) প্রতিটি সংখ্যা স্ক্যান করে সবচেয়ে ছোট সংখ্যার ইনডেক্স \`minIdx\` খুঁজে বের করা হয়।
+৩. **নির্দিষ্ট একটি সোয়াপ (Single Swap):** সর্বনিম্ন মান পাওয়ার পর অসাজানো অংশের প্রথম উপাদানের (\`arr[i]\`) সাথে \`arr[minIdx]\`-এর মাত্র **১টি সোয়াপ** করা হয়।
+৪. **সীমানা বৃদ্ধি:** সাজানো অংশের পরিধি ১ ঘর বেড়ে যায়। এভাবে প্রতি পাসে মাত্র ১টি সোয়াপের মাধ্যমে সম্পূর্ণ অ্যারে সর্ট হয়।
+
+### ⚡ সর্বনিম্ন মেমোরি রাইটের সুপারপাওয়ার (At Most $n-1$ Writes):
+- বাবল সর্টে প্রতি পাসে প্রচুর সোয়াপ হতে পারে। কিন্তু সিলেকশন সর্ট পুরো জীবনে সর্বোচ্চ $n-1$ বার সোয়াপ (Memory Write) করে!
+- **কোথায় লাভজনক?** ফ্ল্যাশ মেমোরি (Flash Memory) বা EEPROM চিপে যেখানে মেমোরিতে নতুন ডেটা লেখা ব্যয়বহুল বা ক্ষতিকর (Hardware Wear-leveling), সেখানে সিলেকশন সর্ট অত্যন্ত কার্যকর।
+
+### ⏱️ টাইম ও স্পেস কমপ্লেক্সিটি:
+- **Best, Average, Worst Case সবক্ষেত্রেই $O(n^2)$:** কারণ অ্যারে আগে থেকে সাজানো থাকলেও প্রতিবার সর্বনিম্ন সংখ্যা খুঁজতে তাকে ডানপাশের সব উপাদান পরীক্ষা করতেই হয়।
+- **Space Complexity ($O(1)$ In-Place):** কোনো অতিরিক্ত অ্যারে তৈরি করা হয় না।
+
+### ⚠️ কেন এটি আনস্ট্যাবল (Unstable)?
+সিলেকশন সর্ট দূরবর্তী উপাদানগুলোর মধ্যে জাম্প করে সোয়াপ করে। এর ফলে একই মানের দুটি উপাদান থাকলে তাদের মূল আপেক্ষিক ক্রম ভেঙে যেতে পারে। 
+*উদাহরণ:* \`[4a, 4b, 2]\` সর্ট করার সময় ১ম ধাপে \`2\` এর সাথে \`4a\` সোয়াপ হয়ে যায়, ফলে অ্যারে হয় \`[2, 4b, 4a]\` — দেখুন \`4b\` আগে এসে পড়েছে, যা স্ট্যাবিলিটি নষ্ট করে!
+      `,
+    },
     content: `
-### Core Conceptual Model
+### Core Conceptual Model & The Two-Partition State
 
-Selection Sort splits the array into two distinct partitions:
-- A **sorted subarray** on the left (initially empty).
-- An **unsorted subarray** on the right (initially the entire array).
+Selection Sort operates on a structural invariant: partitioning the linear array into two explicit regions:
+1. **Sorted Prefix Subarray** $[0 \\dots i - 1]$: Fully ordered elements that are already strictly $\\le$ every element in the remaining collection.
+2. **Unsorted Suffix Subarray** $[i \\dots n - 1]$: Raw candidate elements awaiting organization.
 
-In each iteration $i$:
-1. Scan the unsorted partition $[i \\dots n-1]$ to locate the index of the absolute minimum element (\`minIdx\`).
-2. Perform exactly **one single swap** between \`arr[i]\` and \`arr[minIdx]\`.
-3. The boundary of the sorted partition expands to index $i$.
+At each iteration $i$, the algorithm scans the entire unsorted partition, extracts the index of the absolute minimum element (\`minIdx\`), and performs **at most one single swap** between $arr[i]$ and $arr[minIdx]$. 
+
+\`\`\`
+Iteration i = 0:
+[ 5 | 2   8   1   4 ]   --> Scan suffix for min (val = 1 at idx 3)
+  ^           ^
+ Swap arr[0] with arr[3]:
+[ 1 | 2   8   5   4 ]   --> Sorted boundary advances to index 0!
+\`\`\`
+
+---
+
+### The Minimal-Write Superpower
+
+The single defining advantage of Selection Sort over all other $O(n^2)$ algorithms is its **bounded write operations**:
+* Bubble Sort may execute up to $\\frac{n(n-1)}{2} \\approx O(n^2)$ swaps.
+* Insertion Sort performs up to $O(n^2)$ memory writes during rightward element shifts.
+* **Selection Sort executes at most $n - 1$ swaps across its entire execution!**
+
+In hardware architectures where memory writes are computationally costly, power-hungry, or cause physical hardware degradation (e.g., EEPROM write fatigue, Flash memory blocks with limited write-erase cycles), Selection Sort's $O(n)$ write count is an essential algorithmic tool.
+
+---
+
+### In-Depth Stability Analysis (Why It Destroys Stability)
+
+Selection Sort is inherently **Unstable**. Because the minimum element from the unsorted suffix is swapped over long distances across the array, it can jump over duplicate keys with identical values, inverting their original chronological order.
+
+**Concrete Counterexample:**
+* Consider input array: \`[(4, "red"), (4, "blue"), (2, "green")]\`
+* Round 0 ($i = 0$): Scanning from index 0 to 2 locates global minimum \`(2, "green")\` at index 2.
+* Swap $arr[0]$ with $arr[2]$:
+  \`[(2, "green"), (4, "blue"), (4, "red")]\`
+* **Notice:** \`(4, "blue")\` has jumped ahead of \`(4, "red")\`! Their relative original ordering was destroyed.
+
+---
+
+### Complete Production-Grade C++ Implementation
 
 \`\`\`cpp
+#include <vector>
+#include <utility>
+
 void selectionSort(std::vector<int>& arr) {
-    int n = arr.size();
-    for (int i = 0; i < n - 1; i++) {
-        int minIdx = i;
-        for (int j = i + 1; j < n; j++) {
+    const int n = static_cast<int>(arr.size());
+    if (n <= 1) return; // Guard against empty or single-element arrays
+
+    for (int i = 0; i < n - 1; ++i) {
+        int minIdx = i; // Assume current boundary item is minimal
+
+        // Scan unsorted suffix [i + 1 ... n - 1] to find true minimum
+        for (int j = i + 1; j < n; ++j) {
             if (arr[j] < arr[minIdx]) {
-                minIdx = j;
+                minIdx = j; // Update candidate index
             }
         }
+
+        // Perform at most one swap per outer pass
         if (minIdx != i) {
             std::swap(arr[i], arr[minIdx]);
         }
@@ -338,12 +485,16 @@ void selectionSort(std::vector<int>& arr) {
 
 ---
 
-### Why Is It Unstable?
+### Detailed Complexity Breakdown
 
-Because Selection Sort swaps across long distances, it can jump an element over an identical duplicate:
-- Initial array: \`[4a, 4b, 2]\`
-- Round 1: Minimum is \`2\` at index 2. Swaps with \`4a\` at index 0.
-- Result: \`[2, 4b, 4a]\` $\\rightarrow$ \`4b\` is now before \`4a\`, breaking stability!
+| Metric | Complexity | Derivation & Theoretical Justification |
+| :--- | :--- | :--- |
+| **Best-Case Time** | $\\Omega(n^2)$ | Even if already sorted, the algorithm must exhaustively scan all $n - 1 - i$ suffix items to confirm no smaller item exists. |
+| **Worst-Case Time** | $O(n^2)$ | Reverse-sorted array; performs exactly $\\frac{n(n-1)}{2}$ comparisons and $n - 1$ swaps. |
+| **Average-Case Time**| $\\Theta(n^2)$ | Performs identical number of comparisons regardless of initial array permutation. |
+| **Auxiliary Space** | $O(1)$ | Strictly in-place. Requires only index tracker variables (\`minIdx\`, \`i\`, \`j\`). |
+| **Total Memory Writes** | $O(n)$ | Strictly bounded by $3(n - 1)$ scalar assignments; optimal for write-constrained hardware. |
+| **Stability** | **Unstable** | Long-distance boundary swaps leapfrog identical elements. |
     `,
     quizTopicId: "selection",
     visualizerLink: {
@@ -357,40 +508,108 @@ Because Selection Sort swaps across long distances, it can jump an element over 
     level: 1,
     levelTitle: "Level 1: The Simple Algorithms",
     order: 3,
-    title: "Insertion Sort: Hand-Sorting Playing Cards",
-    subtitle: "Extracting keys and shifting sorted elements rightwards.",
-    estimatedReadTime: "8 min",
+    title: "Insertion Sort: Hand-Sorting, Shifting & Adaptive Execution",
+    subtitle: "The card-player's algorithm: extracting keys, shifting elements rightward, and why modern runtimes switch to it for small subarrays.",
+    estimatedReadTime: "11 min",
     category: "Simple Algorithms",
-    content: `
-### The Card-Player's Algorithm
+    banglaNote: {
+      topic: "ইনসার্শন সর্ট ও তাসের মতো সাজানো (Insertion Sort Deep Dive)",
+      englishContext: "Insertion Sort builds the final sorted array one item at a time by shifting larger elements rightwards and inserting each key into its correct position.",
+      banglaText: `
+### 💡 সহজ উপমা: হাতের তাস গোছানো
+আমরা যখন তাস খেলি, তখন এক হাত দিয়ে নতুন একটা তাস তুলে নিই এবং হাতের ভেতর থাকা আগের সাজানো তাসগুলোর সাথে তুলনা করে ঠিক যে জায়গায় বসালে ক্রম ঠিক থাকবে, সেখানে নতুন তাসটি গুঁজে (Insert) দিই।
 
-Insertion Sort models how people naturally sort playing cards held in their hand:
-1. Start with the card at index 1 as the current \`key\`.
-2. Compare the \`key\` backwards against already-sorted cards on the left.
-3. **Shift** cards that are strictly greater than \`key\` one slot to the right.
-4. Insert the \`key\` into the empty opening.
+### 🔍 ধাপে ধাপে কার্যপদ্ধতি (How It Works):
+১. **প্রথম উপাদান স্বয়ংক্রিয়ভাবে সাজানো:** ১টি উপাদান থাকলে তা এমনিতেই সাজানো থাকে। তাই লুপ শুরু হয় ইনডেক্স ১ থেকে।
+২. **কী (Key) সংরক্ষণ:** ইনডেক্স $i$-এর মানটি একটি অস্থায়ী ভ্যারিয়েবল \`key\`-তে তুলে রাখা হয়।
+৩. **ডানে চাপানো (Rightward Shift):** বামপাশের সাজানো অংশের যে সংখ্যাগুলো \`key\`-এর চেয়ে বড়, তাদের এক ঘর করে ডানপাশে চাপিয়ে (Shift) দেওয়া হয়।
+৪. **সঠিক স্থানে স্থাপন:** যেখানেই \`key\`-এর চেয়ে ছোট বা সমান সংখ্যা পাওয়া যায়, ঠিক তার পরের খালি জায়গায় \`key\` বসিয়ে দেওয়া হয়।
+
+### 🚀 কেন বাস্তব ইঞ্জিনে ইনসার্শন সর্ট ব্যবহার করা হয়?
+- পাইথনের ডিফল্ট সর্টিং অ্যালগরিদম **Timsort** এবং গুগল ক্রোমের জাভাস্ক্রিপ্ট ইঞ্জিন **V8** উভয়েই ছোট অ্যারেতে ($n \\le 16$ বা $32$) কুইক সর্টের বদলে ইনসার্শন সর্ট চালায়!
+- **কারণ:** এতে কোনো ফাংশন কলের বাড়তি খরচ নেই, মেমোরি ক্যাশ লোকালিটি চমৎকার, এবং প্রায় সাজানো ডাটায় এটি চোখের পলকে $O(n)$ সময়ে শেষ হয়।
+
+### ⏱️ টাইম ও স্পেস কমপ্লেক্সিটি:
+- **Best Case ($O(n)$):** যদি ডাটা আগে থেকেই সাজানো থাকে, তবে ভেতরের \`while\` লুপ মাত্র ১ বার চেক করেই থেমে যায়।
+- **Worst Case ($O(n^2)$):** যদি সম্পূর্ণ উল্টো ক্রমে সাজানো থাকে, তবে প্রতিটি উপাদানের জন্য পুরো বামপাশ ডানে সরাতে হয়।
+- **Space Complexity ($O(1)$ In-Place):** কোনো বাড়তি মেমোরি বরাদ্দ করতে হয় না।
+- **স্ট্যাবিলিটি (Stable):** সমান মানের সংখ্যা এলে শিফটিং বন্ধ হয়ে যায় (\`arr[j] > key\`), ফলে আদি ক্রম ১০০% অক্ষুণ্ণ থাকে।
+
+### ⚠️ ইন্টারভিউ টিপস ও সাধারণ ভুল:
+অনেক শিক্ষার্থী সোয়াপ (\`swap\`) দিয়ে ইনসার্শন সর্ট লেখার চেষ্টা করে। সোয়াপে ৩টি মেমোরি অ্যাসাইনমেন্ট লাগে, যেখানে একমুখী শিফটে মাত্র ১টি অ্যাসাইনমেন্ট লাগে। তাই সোয়াপের বদলে সবসময় শিফট ব্যবহার করাই স্ট্যান্ডার্ড।
+      `,
+    },
+    content: `
+### The Card-Player's Mental Model & Shift Mechanics
+
+Insertion Sort mirrors the natural human heuristic for ordering playing cards held in a hand. You inspect the hand from left to right: at any moment, the cards in your left hand are sorted, while cards on the table are unsorted. You pluck the next card from the table (the **Key**) and scan backwards through your hand, sliding larger cards to the right to clear a slot before dropping the key into place.
+
+A common implementation blunder is using full pairwise \`std::swap\` calls inside the backwards loop. A swap requires $3$ assignments ($tmp = a; a = b; b = tmp$). In contrast, standard Insertion Sort performs **one-way rightward shifts** ($arr[j+1] = arr[j]$), executing only $1$ assignment per inversion plus $2$ boundary writes for the key.
+
+\`\`\`
+Array: [ 2, 5, 8 | 4 ]  --> key = 4
+Compare with 8: 8 > 4   --> Shift 8 right: [ 2, 5, _, 8 ]
+Compare with 5: 5 > 4   --> Shift 5 right: [ 2, _, 5, 8 ]
+Compare with 2: 2 <= 4  --> Stop shift!
+Insert key into slot 1  --> [ 2, 4, 5, 8 ]
+\`\`\`
+
+---
+
+### Loop Invariant & Adaptivity
+
+* **Formal Invariant:** At the start of iteration $i$, subarray $arr[0 \\dots i - 1]$ consists of the original elements from that range in fully sorted order.
+* **The Adaptivity Theorem:** Let $I(A)$ represent the total number of inversions in the array (pairs $(i, j)$ such that $i < j$ but $arr[i] > arr[j]$). The running time of Insertion Sort is bounded by:
+  $$T(n) = \\Theta(n + I(A))$$
+  When an array is nearly sorted ($I(A) = O(n)$), Insertion Sort executes in blazing $O(n)$ linear time, beating even Quick Sort and Merge Sort!
+
+---
+
+### Why Production Engines Love Insertion Sort (Hybrid Systems)
+
+Modern language standard libraries rarely use pure Quick Sort or pure Merge Sort. Instead, they deploy **Hybrid Sorting Architectures**:
+* **C++ \`std::sort\` (Introsort):** Uses Quick Sort, falls back to Heap Sort if recursion exceeds $2 \\log n$, and switches to **Insertion Sort** whenever partition size drops below $16$ elements.
+* **Python & Java \`Arrays.sort\` (Timsort):** Splits data into natural monotonic runs and uses **Insertion Sort (Binary Insertion Sort)** to sort tiny partitions.
+* **V8 JavaScript Engine:** Runs Insertion Sort on small arrays to avoid recursion stack frames and exploit CPU L1 data cache locality.
+
+---
+
+### Complete Production-Grade C++ Implementation
 
 \`\`\`cpp
+#include <vector>
+
 void insertionSort(std::vector<int>& arr) {
-    int n = arr.size();
-    for (int i = 1; i < n; i++) {
-        int key = arr[i];
+    const int n = static_cast<int>(arr.size());
+    if (n <= 1) return; // Guard: single element or empty
+
+    for (int i = 1; i < n; ++i) {
+        int key = arr[i]; // Stash candidate element
         int j = i - 1;
-        
+
+        // Shift elements strictly greater than key one position to the right
         while (j >= 0 && arr[j] > key) {
-            arr[j + 1] = arr[j]; // Rightward shift
-            j--;
+            arr[j + 1] = arr[j]; // Single-assignment shift
+            --j;
         }
-        arr[j + 1] = key; // Insert into slot
+
+        // Drop key into the generated opening
+        arr[j + 1] = key;
     }
 }
 \`\`\`
 
 ---
 
-### Why Production Engines Love Insertion Sort
+### Detailed Complexity & Mechanical Analysis
 
-Insertion Sort is **adaptive**: on nearly-sorted data with $k$ inversions, it runs in $O(n + k)$ time. Furthermore, because its inner loop has no function call overhead and exhibits great CPU cache locality, engines like **V8** and **Python's Timsort** switch to Insertion Sort whenever subarray sizes drop below ~16 elements!
+| Metric | Complexity | Derivation & Justification |
+| :--- | :--- | :--- |
+| **Best-Case Time** | $\\Omega(n)$ | Array is already sorted; inner while condition \`arr[j] > key\` fails immediately for each $i$. Total comparisons: $n - 1$. |
+| **Worst-Case Time** | $O(n^2)$ | Reverse-sorted array; key must shift past every element on its left. Comparisons & shifts: $\\frac{n(n-1)}{2}$. |
+| **Average-Case Time**| $\\Theta(n^2)$ | On random permutations, each element shifts past half of the sorted prefix on average ($\\approx \\frac{n^2}{4}$ shifts). |
+| **Auxiliary Space** | $O(1)$ | Strictly in-place. Requires only one scalar \`key\` cache and iteration index \`j\`. |
+| **Stability** | **Stable** | The test \`arr[j] > key\` is strictly greater than; shifting terminates when an equal key is encountered, preserving relative order. |
     `,
     quizTopicId: "insertion",
     visualizerLink: {
@@ -473,66 +692,166 @@ Every time a function calls itself, the CPU pushes a new **Stack Frame** (Activa
     level: 2,
     levelTitle: "Level 2: Divide & Conquer",
     order: 2,
-    title: "Merge Sort: Guaranteed O(n log n)",
-    subtitle: "Splitting arrays into halves and zipping sorted subarrays back together.",
-    estimatedReadTime: "9 min",
+    title: "Merge Sort: Guaranteed O(n log n) & Stable Merging",
+    subtitle: "Splitting arrays into halves, recursive call-tree decomposition, two-pointer linear merging, and external disk-based sorting.",
+    estimatedReadTime: "12 min",
     category: "Divide and Conquer",
+    banglaNote: {
+      topic: "মার্জ সর্ট ও ডিভাইড অ্যান্ড কনকার আর্কিটেকচার (Merge Sort Deep Dive)",
+      englishContext: "Merge Sort divides the array into halves, sorts them recursively, and combines the two sorted halves using a two-pointer linear merge step.",
+      banglaText: `
+### 💡 সহজ উপমা: পরীক্ষার খাতা একত্রীকরণ ও সুশৃঙ্খল টিমওয়ার্ক
+ধরা যাক একটি পরীক্ষার ২০০টি খাতা এলোমেলোভাবে পড়ে আছে। প্রধান পরীক্ষক কাজ সহজ করার জন্য ১০০টি ১০০টি করে খাতা দুজন শিক্ষকের মাঝে ভাগ করে দিলেন। শিক্ষকরা আবার ৫০টি ৫০টি করে ভাগ করে নিজেরা আগে ছোট ভাগগুলো সাজিয়ে নিলেন। সবশেষে প্রধান পরীক্ষক দুজনের সাজানো খাতার স্তূপ সামনে নিয়ে প্রতিবার ওপরের দুটি খাতার রোল নম্বর তুলনা করে ছোটটিকে তুলে নিয়ে এক নিমেষে ২০০টি খাতা সম্পূর্ণ সাজিয়ে ফেললেন!
+
+### 🔍 ৩টি মূল স্তম্ভ ও ধাপে ধাপে কার্যপদ্ধতি:
+১. **Divide (ভাগ করো):** অ্যারের ঠিক মাঝখানের ইনডেক্স \`mid = left + (right - left) / 2\` বের করে অ্যারেকে সমান দুই টুকরোয় বিভক্ত করা হয় ($O(1)$ সময়)।
+২. **Conquer (জয় করো):** রিকার্শনের মাধ্যমে বাম এবং ডান দুই অংশকে আলাদাভাবে সর্ট করা হয়। যতক্ষণ না টুকরোটিতে মাত্র ১টি সংখ্যা অবশিষ্ট থাকে, ততক্ষণ ভাগ করা চলতে থাকে (Base Case: ১টি উপাদান স্বয়ংক্রিয়ভাবে সাজানো থাকে)।
+৩. **Combine / Merge (একত্রিত করো):** টু-পয়েন্টার (Two-Pointer) টেকনিক দিয়ে সাজানো দুই ভাগের উপাদান তুলনা করে ছোটটিকে একটি টেম্পোরারি বাফারে তুলে আনা হয় ($O(n)$ সময়)। সবশেষে মূল অ্যারেতে কপি করে দেওয়া হয়।
+
+### ⏱️ গ্যারান্টিযুক্ত $O(n \log n)$ স্পিড:
+- **কেন সবসময় $O(n \log n)$?** ইনপুট যেমনই থাকুক (সম্পূর্ণ এলোমেলো, সাজানো, বা উল্টো সাজানো), প্রতিবার ঠিক অর্ধেক করে ভাগ করার কারণে রিকার্শন ট্রির মোট গভীরতা বা উচ্চতা সবসময় $\\log_2 n$ হয়। আর প্রতিটি লেভেলে সব নোড মার্জ করতে মোট কাজ হয় $O(n)$। সুতরাং মোট সময় = $O(n \\log n)$।
+- **Space Complexity ($O(n)$ Auxiliary):** মার্জ করার সময় উপাদানগুলো অস্থায়ীভাবে রাখার জন্য মূল অ্যারের সমান আকারের একটি বাড়তি মেমোরি বাফার লাগে। তাই এটি ইন-প্লেস নয়।
+- **স্ট্যাবিলিটি (Stable):** মার্জ করার শর্তে \`arr[i] <= arr[j]\` ব্যবহারের ফলে সমান মানের দুটি সংখ্যার মধ্যে বামপাশের সংখ্যাটিই সবসময় আগে বাফারে স্থান পায়, ফলে আদি ক্রম ১০০% অক্ষুণ্ণ থাকে।
+
+### 🌐 বাস্তব জীবনে কোথায় ব্যবহৃত হয়?
+১. **লিঙ্কড লিস্ট সর্টিং:** লিঙ্কড লিস্টে কোনো বাড়তি মেমোরি অ্যারে তৈরি না করেই শুধুমাত্র নোডগুলোর পয়েন্টার রিবাইন্ড করে $O(1)$ বাড়তি স্পেসেই মার্জ সর্ট চালানো যায়!
+২. **এক্সটার্নাল সর্টিং (External Sort):** যখন ডেটাসেটের সাইজ এত বড় হয় (যেমন ১০০ গিগাবাইট বা ১০ টেরাবাইট) যে তা কম্পিউটারের র‍্যামে ধরে না, তখন হার্ডডিস্কে চাঙ্ক আকারে রেখে মার্জ সর্ট চালানো হয় (ডাটাবেজ ইঞ্জিন ও বিগ-ডাটা পাইপলাইন)।
+      `,
+    },
     content: `
-### Divide and Conquer Paradigm
+### Theoretical Framework: Divide and Conquer Paradigm
 
-Merge Sort operates in three phases:
-1. **Divide**: Calculate midpoint \`mid = left + (right - left) / 2\` and divide the array into two equal halves.
-2. **Conquer**: Recursively sort the left half and the right half until subarrays contain only 1 element (base case).
-3. **Combine (Merge)**: Zip the two sorted subarrays together into a single sorted range in linear $O(n)$ time.
+Merge Sort is the canonical exemplar of the **Divide and Conquer** algorithmic paradigm. Rather than repeatedly performing localized swaps across the entire array, Merge Sort structurally decomposes an intractable problem of size $n$ into two independent subproblems of size $n/2$, solves them recursively, and synthesizes the final sorted output through a deterministic linear **Merge** operation.
 
+The algorithm proceeds through three invariant phases:
+1. **Divide:** Compute the arithmetic midpoint:
+   $$mid = low + \\left\\lfloor \\frac{high - low}{2} \\right\\rfloor$$
+   Bisect the continuous range $[low \\dots high]$ into two disjoint intervals: $[low \\dots mid]$ and $[mid + 1 \\dots high]$.
+2. **Conquer:** Recursively invoke \`mergeSort\` on both sub-intervals until reaching the base case: a subarray containing $\\le 1$ element, which is vacuously sorted.
+3. **Combine (Merge):** Interleave the two independently sorted contiguous sequences into a unified non-decreasing sequence in linear time $\\Theta(n)$.
+
+---
+
+### Mathematical Proof of $O(n \\log n)$ via Master Theorem
+
+The recurrence relation governing Merge Sort's execution time is:
+$$T(n) = 2T\\left(\\frac{n}{2}\\right) + \\Theta(n)$$
+where:
+* $2T(n/2)$ models the dual recursive subproblem invocations.
+* $\\Theta(n)$ represents the linear merging phase.
+
+Applying the Master Theorem ($a = 2, b = 2, f(n) = \\Theta(n)$):
+$$\\log_b a = \\log_2 2 = 1 \\implies f(n) = \\Theta(n^1) = \\Theta(n^{\\log_b a})$$
+This satisfies **Case 2** of the Master Theorem, proving conclusively that:
+$$T(n) = \\Theta(n \\log n)$$
+Because the division is purely structural (bisection regardless of element values), Merge Sort runs in **strictly $\\Theta(n \\log n)$ time in the Best, Average, AND Worst cases**!
+
+\`\`\`
+Recursion Tree Level:
+Level 0:                 [       n       ]            --> Total Work = c * n
+                        /                 \\
+Level 1:         [  n/2  ]               [  n/2  ]     --> Total Work = c * n
+                 /       \\               /       \\
+Level 2:     [ n/4 ]   [ n/4 ]       [ n/4 ]   [ n/4 ] --> Total Work = c * n
+...
+Tree Height = log2(n) levels
+Total Running Time = c * n * log2(n) = Theta(n log n)
+\`\`\`
+
+---
+
+### Two-Pointer Linear Merge Mechanics & Stability Proof
+
+The merging phase maintains three index pointers:
+* $i = low$ traversing the sorted left subarray $[low \\dots mid]$.
+* $j = mid + 1$ traversing the sorted right subarray $[mid + 1 \\dots high]$.
+* $k$ populating the auxiliary staging buffer \`temp\`.
+
+**The Stability Criterion:**
+To preserve algorithmic stability, whenever $arr[i] == arr[j]$, the algorithm MUST prioritize the element from the left subarray:
 \`\`\`cpp
-void merge(std::vector<int>& arr, int left, int mid, int right) {
-    std::vector<int> temp;
-    int i = left;
-    int j = mid + 1;
-    
-    // Compare top cards from each half
-    while (i <= mid && j <= right) {
-        if (arr[i] <= arr[j]) { // '<=' ensures stability
-            temp.push_back(arr[i++]);
-        } else {
-            temp.push_back(arr[j++]);
-        }
-    }
-    while (i <= mid) temp.push_back(arr[i++]);
-    while (j <= right) temp.push_back(arr[j++]);
-    
-    // Copy back into original array
-    for (int k = left; k <= right; k++) {
-        arr[k] = temp[k - left];
-    }
-}
-
-void mergeSort(std::vector<int>& arr, int left, int right) {
-    if (left >= right) return; // Base Case
-    int mid = left + (right - left) / 2;
-    mergeSort(arr, left, mid);
-    mergeSort(arr, mid + 1, right);
-    merge(arr, left, mid, right);
+if (arr[i] <= arr[j]) { // '<=' GUARANTEES STABILITY
+    temp.push_back(arr[i++]);
+} else {
+    temp.push_back(arr[j++]);
 }
 \`\`\`
+If a strict \`<\` were used instead, an equal element from the right half would be copied first, inverting the original order of identical keys and breaking stability.
+
+---
+
+### Complete Production-Grade C++ Implementation
+
+\`\`\`cpp
+#include <vector>
+
+void merge(std::vector<int>& arr, int low, int mid, int high, std::vector<int>& temp) {
+    int i = low;
+    int j = mid + 1;
+    int k = low;
+
+    // Compare heads of both halves and write the smaller element
+    while (i <= mid && j <= high) {
+        if (arr[i] <= arr[j]) { // '<=' ensures stability
+            temp[k++] = arr[i++];
+        } else {
+            temp[k++] = arr[j++];
+        }
+    }
+
+    // Drain remaining elements from left half
+    while (i <= mid) {
+        temp[k++] = arr[i++];
+    }
+
+    // Drain remaining elements from right half
+    while (j <= high) {
+        temp[k++] = arr[j++];
+    }
+
+    // Copy back from staging buffer into original array
+    for (int p = low; p <= high; ++p) {
+        arr[p] = temp[p];
+    }
+}
+
+void mergeSortInternal(std::vector<int>& arr, int low, int high, std::vector<int>& temp) {
+    if (low >= high) return; // Base Case: 1 or 0 elements
+
+    int mid = low + (high - low) / 2; // Overflow-safe midpoint
+    mergeSortInternal(arr, low, mid, temp);
+    mergeSortInternal(arr, mid + 1, high, temp);
+    merge(arr, low, mid, high, temp);
+}
+
+void mergeSort(std::vector<int>& arr) {
+    if (arr.size() <= 1) return;
+    // Allocate single temporary buffer upfront to avoid O(n log n) allocations
+    std::vector<int> temp(arr.size());
+    mergeSortInternal(arr, 0, static_cast<int>(arr.size()) - 1, temp);
+}
+\`\`\`
+
+---
+
+### Detailed Complexity & Engineering Trade-Offs
+
+| Metric | Complexity | Theoretical Justification |
+| :--- | :--- | :--- |
+| **Best-Case Time** | $\\Theta(n \\log n)$ | Array is always bisected into equal halves; merging always inspects $\\Theta(n)$ items. |
+| **Worst-Case Time** | $\\Theta(n \\log n)$ | Guaranteed upper bound; zero pathological input cases exist. |
+| **Average-Case Time**| $\\Theta(n \\log n)$ | Identical recursion topology regardless of input permutation. |
+| **Auxiliary Space** | $O(n)$ | Requires a secondary linear buffer of size $n$ to merge elements. |
+| **Stability** | **Stable** | Left-half preference (\`<=\`) preserves original chronological ordering. |
+
+---
+
+### Industrial Application: External Merge Sort
+
+When datasets exceed physical RAM (e.g., sorting 500 GB of log files on a machine with 16 GB RAM), Merge Sort is the industry-standard algorithm:
+1. Stream 10 GB chunks of raw data into RAM, sort each chunk using in-memory Quick Sort, and write sorted "runs" back to disk.
+2. Perform a multi-way external merge pass, streaming sorted runs through a Min-Heap priority queue directly to the final output file.
     `,
-    banglaNote: {
-      topic: "Divide and Conquer (ভাগ করো ও জয় করো)",
-      englishContext: "Divide and conquer divides a problem into subproblems, solves each recursively, and combines the results.",
-      // [REVIEW DRAFT] Bengali translation for user review
-      banglaText: `
-**মার্জ সর্ট ও ডিভাইড-অ্যান্ড-কনকার:**
-
-মার্জ সর্টের মূল দর্শন খুব সহজ: **"ভাগ করো, জয় করো, একত্রিত করো।"**
-
-1. **ভাগ করো (Divide):** একটি বড় অ্যারেকে মাঝ বরাবর দুই টুকরো করে কেটে ফেলুন।
-2. **জয় করো (Conquer):** টুকরো দুটোকে আলাদাভাবে সর্ট করুন।
-3. **একত্রিত করো (Merge):** দুটো সর্ট করা টুকরোর প্রথম উপাদান তুলনা করে ছোটটিকে তুলে এনে নতুন সারিতে সাজান।
-
-💡 **বাস্তব উদাহরণ:** পরীক্ষার খাতা সাজানো। দুজন পরীক্ষক ১০০টি করে খাতা রোল অনুযায়ী সাজিয়ে নিলেন। এবার প্রধান পরীক্ষক দুজনের খাতার ওপরের রোল দেখে খুব সহজে ২০০টি খাতা একবারে সাজিয়ে ফেলতে পারেন!
-      `
-    },
     quizTopicId: "merge",
     visualizerLink: {
       label: "Open Merge Sort in Interactive Visualizer",
@@ -545,43 +864,133 @@ void mergeSort(std::vector<int>& arr, int left, int right) {
     level: 2,
     levelTitle: "Level 2: Divide & Conquer",
     order: 3,
-    title: "Quick Sort: In-Place Partitioning",
-    subtitle: "Choosing a pivot element and dividing numbers into smaller and larger regions without extra array allocations.",
-    estimatedReadTime: "10 min",
+    title: "Quick Sort: In-Place Partitioning & Pivot Architectures",
+    subtitle: "Divide and conquer via Lomuto & Hoare partitioning schemes, pivot selection strategies, and avoiding catastrophic O(n²) degradation.",
+    estimatedReadTime: "12 min",
     category: "Divide and Conquer",
+    banglaNote: {
+      topic: "কুইক সর্ট ও ইন-প্লেস পার্টিশনিং (Quick Sort Deep Dive)",
+      englishContext: "Quick Sort selects a pivot element, partitions the array around it so smaller values move left and larger values move right, then recurses on both partitions.",
+      banglaText: `
+### 💡 সহজ উপমা: ক্লাসের একজনকে মধ্যমণি (Pivot) বানিয়ে দুই দল করা
+ধরা যাক একটি ক্লাসের শিক্ষার্থীদের উচ্চতা অনুযায়ী সাজাতে হবে। শিক্ষক ক্লাসের যেকোনো একজনকে মধ্যমণি বা **পিভট (Pivot)** হিসেবে মঞ্চের মাঝে দাঁড় করালেন। এরপর বাকি সবাইকে বললেন — "তোমাদের মধ্যে যারা এই পিভটের চেয়ে খাটো তারা সবাই বামে চলে যাও, আর যারা লম্বা তারা ডানে চলে যাও।" পিভট ছাত্রটি কিন্তু ঠিক তার চূড়ান্ত সঠিক অবস্থানে বসে গেল! এবার বামপাশের খাটো দল এবং ডানপাশের লম্বা দলের ওপর শিক্ষক একইভাবে পিভট বেছে পুনরাবৃত্তি করলেন।
+
+### 🔍 পার্টিশনিং যেভাবে কাজ করে (Lomuto Partitioning):
+১. **পিভট নির্বাচন:** সাধারণত অ্যারের শেষ উপাদানটিকে (\`arr[high]\`) পিভট হিসেবে বেছে নেওয়া হয়।
+২. **ছোট দলের সীমানা (\`i\`):** একটি পয়েন্টার $i$ রাখা হয় যা পিভটের চেয়ে ছোট উপাদানের শেষ সীমানা চিহ্নিত করে (শুরুতে \`low - 1\`)।
+৩. **স্ক্যানিং (\`j\`):** অন্য একটি পয়েন্টার $j$ দিয়ে \`low\` থেকে \`high - 1\` পর্যন্ত প্রতিটি উপাদান পরীক্ষা করা হয়। যদি \`arr[j] < pivot\` হয়, তবে $i$ এক ঘর বাড়িয়ে \`arr[i]\` এবং \`arr[j]\`-এর মাঝে সোয়াপ করা হয়।
+৪. **পিভটের চূড়ান্ত আসন:** স্ক্যান শেষ হলে পিভটটিকে $i + 1$ ইনডেক্সের সাথে সোয়াপ করা হয়। পিভট তার স্থায়ী আসনে বসে যায় এবং জীবনে আর কখনো স্থান পরিবর্তন করবে না!
+
+### ⚠️ কুইক সর্টের মারাত্মক ফাঁদ ($O(n^2)$ Worst Case):
+- যদি অ্যারে আগে থেকেই সাজানো থাকে বা সম্পূর্ণ উল্টো সাজানো থাকে, আর আপনি সবসময় শেষ উপাদানকে পিভট ধরেন, তবে গাছটির একপাশে কোনো উপাদান থাকে না ($0$ এবং $n - 1$ বিভাজন)।
+- এতে রিকার্শন ট্রির গভীরতা $\\log n$ না হয়ে সোজা $n$ হয়ে যায়, যার ফলে মোট সময় দাঁড়ায় $O(n^2)$ এবং রিকার্শন স্ট্যাক মেমোরি শেষ হয়ে **Stack Overflow** ক্র্যাশ করতে পারে!
+- **বাস্তব সমাধান:** আধুনিক সফটওয়্যারে সবসময় **Randomized Pivot** (লটারির মতো র‍্যান্ডম উপাদান বেছে নেওয়া) অথবা **Median-of-Three** (প্রথম, মাঝের ও শেষের ৩টি মানের মধ্যক) ব্যবহার করা হয়।
+
+### ⏱️ টাইম ও স্পেস কমপ্লেক্সিটি:
+- **Average Case ($O(n \\log n)$):** গড়ে এটি মার্জ সর্টের চেয়েও প্রায় ২ থেকে ৩ গুণ দ্রুত কাজ করে, কারণ এতে কোনো অতিরিক্ত মেমোরি অ্যারে তৈরি করতে হয় না এবং সিপিইউ এল১ ক্যাশের ব্যবহার অতুলনীয়।
+- **Worst Case ($O(n^2)$):** অসতর্ক পিভট নির্বাচনে বা আনব্যালেন্সড পার্টিশনে।
+- **Space Complexity ($O(\\log n)$ Auxiliary):** ইন-প্লেস সর্টিং, কোনো বাড়তি অ্যারে লাগে না, শুধু কল স্ট্যাকের জন্য $\\log n$ জায়গা লাগে।
+- **স্ট্যাবিলিটি (Unstable):** দূরবর্তী উপাদানগুলোর মধ্যে সোয়াপ করার কারণে সমান মানের সংখ্যার আদি ক্রম নষ্ট হতে পারে।
+      `,
+    },
     content: `
-### Partitioning: The Engine of Quick Sort
+### Partitioning: The Mechanical Engine of Quick Sort
 
-Unlike Merge Sort which does all its heavy work *after* recursion (during merging), Quick Sort does all its heavy work *before* recursion (during partitioning):
+Unlike Merge Sort which performs its computational heavy-lifting *after* recursive descent (during the linear merge phase), Quick Sort executes all algorithmic work *before* recursion during **Partitioning**:
 
-1. **Pick a Pivot**: Choose an element (e.g. \`arr[high]\` in Lomuto partitioning).
-2. **Partition**: Rearrange the array in-place so all numbers strictly smaller than the pivot move to the left, and all numbers greater move to the right.
-3. **Permanent Seat**: The pivot is placed into index \`pIdx\`. It will **never move again**!
-4. **Recursion**: Recursively call \`quickSort\` on $[low \\dots pIdx - 1]$ and $[pIdx + 1 \\dots high]$.
+1. **Pivot Selection:** An element $P$ is selected from the array range $[low \\dots high]$ according to a defined heuristic (last element, random index, or median-of-three).
+2. **Partitioning:** The array is rearranged in-place such that all elements strictly smaller than $P$ are grouped to its left, and all elements greater than or equal to $P$ are grouped to its right.
+3. **The Permanent Seat Invariant:** At the conclusion of partitioning, the pivot $P$ is placed into its final, globally sorted index $pIdx$. **The pivot will never move again for the remainder of execution.**
+4. **Independent Sub-Recursion:** The algorithm recurses independently on the left partition $[low \\dots pIdx - 1]$ and right partition $[pIdx + 1 \\dots high]$.
+
+---
+
+### Lomuto Partitioning Scheme: Step-by-Step Mechanics
+
+Lomuto's algorithm uses two moving pointers traversing in the same direction:
+* Pointer $i$ tracks the boundary of elements verified to be $< pivot$ (initialized to $low - 1$).
+* Pointer $j$ scans every candidate element from $low$ up to $high - 1$.
+
+\`\`\`
+Pivot = arr[high] = 4
+Array: [ 2   8   7   1   3   5   6 | 4 ]
+         ^                       ^
+         j                      pivot
+
+When arr[j] < pivot:
+  1. Increment boundary: ++i
+  2. Swap arr[i] with arr[j]
+  
+Final Step: Swap arr[i + 1] with arr[high] (pivot).
+Result: [ 2   1   3 | 4 | 7   8   5   6 ]
+          < 4       pivot      >= 4
+\`\`\`
+
+---
+
+### The Catastrophic Worst-Case Degradation ($O(n^2)$)
+
+When the pivot consistently bisects the array into maximally unbalanced partitions of size $0$ and $n - 1$ (e.g., sorting an already-sorted array with a naive last-element pivot):
+$$T(n) = T(n - 1) + T(0) + \\Theta(n) = T(n - 1) + \\Theta(n)$$
+Expanding this arithmetic summation yields:
+$$T(n) = \\sum_{k=1}^n k = \\frac{n(n + 1)}{2} \\in \\Theta(n^2)$$
+Furthermore, the recursion call stack depth explodes from $O(\\log n)$ to $O(n)$, causing fatal **Stack Overflow** runtime crashes on large datasets!
+
+### Industrial Solutions to Worst-Case Degradation:
+1. **Randomized Quick Sort:** Pick a uniform random index $r \\in [low, high]$ and swap $arr[r]$ with $arr[high]$ before partitioning. This guarantees an expected $\\Theta(n \\log n)$ time regardless of input permutation.
+2. **Median-of-Three:** Sample $\{arr[low], arr[mid], arr[high]\}$ and use their median as the pivot.
+3. **Introsort (C++ \`std::sort\`):** Tracks recursion depth. If depth exceeds $2 \\lfloor \\log_2 n \\rfloor$, it immediately switches execution to **Heap Sort**, guaranteeing $O(n \\log n)$ worst-case safety!
+
+---
+
+### Complete Production-Grade C++ Implementation
 
 \`\`\`cpp
-int partition(std::vector<int>& arr, int low, int high) {
+#include <vector>
+#include <utility>
+#include <cstdlib>
+
+int partitionLomuto(std::vector<int>& arr, int low, int high) {
     int pivot = arr[high]; // Lomuto Pivot
-    int i = low - 1;       // Smaller region boundary
-    
-    for (int j = low; j < high; j++) {
+    int i = low - 1;       // Boundary of smaller region
+
+    for (int j = low; j < high; ++j) {
         if (arr[j] < pivot) {
-            i++;
+            ++i;
             std::swap(arr[i], arr[j]);
         }
     }
     std::swap(arr[i + 1], arr[high]); // Place pivot in permanent slot
-    return i + 1;
+    return i + 1;                     // Return pivot's permanent index
 }
 
 void quickSort(std::vector<int>& arr, int low, int high) {
     if (low < high) {
-        int pi = partition(arr, low, high);
-        quickSort(arr, low, pi - 1);
-        quickSort(arr, pi + 1, high);
+        // Median-of-three or random pivot swap to prevent O(n^2)
+        int mid = low + (high - low) / 2;
+        if (arr[mid] < arr[low]) std::swap(arr[low], arr[mid]);
+        if (arr[high] < arr[low]) std::swap(arr[low], arr[high]);
+        if (arr[high] < arr[mid]) std::swap(arr[mid], arr[high]);
+        std::swap(arr[mid], arr[high]); // Median is now at arr[high]
+
+        int pi = partitionLomuto(arr, low, high);
+        quickSort(arr, low, pi - 1);  // Recurse left partition
+        quickSort(arr, pi + 1, high); // Recurse right partition
     }
 }
 \`\`\`
+
+---
+
+### Detailed Complexity & Mechanical Analysis
+
+| Metric | Complexity | Theoretical Justification |
+| :--- | :--- | :--- |
+| **Best-Case Time** | $\\Theta(n \\log n)$ | Pivot perfectly bisects array into two equal halves at every level. |
+| **Average-Case Time**| $\\Theta(n \\log n)$ | Expected performance over random permutations; cache-efficient linear partitioning. |
+| **Worst-Case Time** | $O(n^2)$ | Pathological pivots yield $0$ vs $n-1$ partition splits; recursion tree degrades into linear chain. |
+| **Auxiliary Space** | $O(\\log n)$ avg / $O(n)$ worst | Strictly in-place data rearrangement; memory consumed solely by recursive call stack frames. |
+| **Stability** | **Unstable** | Long-distance partition swaps across the pivot boundary disrupt chronological order of duplicate keys. |
     `,
     quizTopicId: "quick",
     visualizerLink: {
@@ -975,14 +1384,40 @@ When designing a system, use this decision framework to select the optimal sorti
     estimatedReadTime: "9 min",
     category: "Data Structures",
     banglaNote: {
-      topic: "Array ও Memory Contiguity (সহজ বাংলায় ধারণা)",
-      englishContext: "An array stores items consecutively in RAM, so calculating any index's address takes a single calculation step O(1). But inserting in the middle forces all subsequent items to shift O(n).",
-      banglaText: `অ্যারে (Array) হলো মেমরির একনাগাড়ে পাশাপাশি সাজানো বক্সের মতো। 
+      topic: "অ্যারে, মেমোরি কনটিগুইটি ও ডায়নামিক ভেক্টর (Array Deep Dive)",
+      englishContext: "An array stores items consecutively in physical RAM, enabling instantaneous O(1) random access arithmetic, but requiring O(n) element shifting for middle insertions.",
+      banglaText: `
+### 💡 সহজ উপমা: ট্রেনের পরপর সাজানো কামরা বা ডিমের খাঁচি
+একটি ডিমের খাঁচি কল্পনা করুন যেখানে প্রতিটি ডিম রাখার জন্য সমান মাপের খোপ পরপর তৈরি করা আছে। আপনাকে যদি বলা হয় "৪ নম্বর ডিমটি তুলে আনুন", আপনাকে কিন্তু ১, ২, ৩ নম্বর ডিম গুণে দেখতে হয় না — চোখের পলকে সরাসরি ৪ নম্বর খোপে হাত দেওয়া যায়। অ্যারেও ঠিক তেমনি মেমোরির একনাগাড়ে পাশাপাশি থাকা খোপের সমষ্টি।
 
-যেহেতু প্রতিটি আইটেম সমান সাইজের (যেমন ৪ বাইট পূর্ণসংখ্যা), তাই কম্পিউটার কোনো লুপ ছাড়াই সরাসরি ফর্মুলা দিয়ে যেকোনো ইনডেক্স খুঁজে পায়: 
-**Address = BaseAddress + (Index × 4)**। 
+### ⚙️ হার্ডওয়্যার অ্যাড্রেস গণনার ম্যাজিক ($O(1)$ Random Access):
+অ্যারেতে প্রতিটি উপাদান (যেমন ৪ বাইটের ইন্টিজার) মেমোরিতে গায়ে গায়ে লেগে থাকে। কম্পিউটার কোনো লুপ না চালিয়ে একটি সাধারণ গাণিতিক ফর্মুলায় সরাসরি র‍্যামের ফিজিক্যাল অ্যাড্রেস বের করে ফেলে:
+$$\\text{Address} = \\text{BaseAddress} + (\\text{Index} \\times \\text{sizeof}(T))$$
+যেমন: বেস অ্যাড্রেস \`1000\` হলে, ৩য় ইনডেক্সের ঠিকানা হবে: $1000 + (3 \\times 4) = 1012$। এই কারণেই অ্যারেতে ইনডেক্সিং করতে **সর্বদা মাত্র ১টি ক্লক সাইকেল বা $O(1)$ সময়** লাগে।
 
-কিন্তু এর একটা অসুবিধা আছে — যদি আপনি ৩য় পজিশনে নতুন একটা সংখ্যা ঢোকাতে চান, তবে বাকি সব সংখ্যাকে এক ঘর করে ডানপাশে সরাতে (Shift) হয়, যাতে O(n) সময় লাগে। আর C++ vector যখন পূর্ণ হয়ে যায়, তখন সে মেমরিতে দ্বিগুণ (2x) সাইজের নতুন জায়গা নিয়ে সব কপি করে, যাকে Amortized O(1) বলা হয়।`
+### 🔄 উপাদান যোগ ও মোছার যন্ত্রণা ($O(n)$ Element Shifting):
+- **মাঝখানে নতুন সংখ্যা ঢোকানো:** সিনেমা হলের পূর্ণ একটি সারিতে ৩ নম্বর সিটে নতুন কাউকে বসাতে চাইলে ৩ নম্বর থেকে শুরু করে পেছনের সবাইকে ১ সিট করে ডানে সরে যেতে হয়। একইভাবে অ্যারের মাঝখানে ইনসার্ট করতে $O(n)$ উপাদান ডানে সরাতে হয় (Shift Right)।
+- **মাঝখান থেকে ডিলিট:** মুছে ফেলার পর তৈরি হওয়া ফাঁকা জায়গা পূরণ করতে পেছনের সবাইকে ১ ঘর করে বামে টেনে আনতে হয় ($O(n)$ Shift Left)।
+
+### 📈 ডায়নামিক ভেক্টর ও জ্যামিতিক দ্বিগুণকরণ (Amortized $O(1)$ Geometric Doubling):
+- সি++ \`std::vector\` বা পাইথনের \`list\`-এর নির্দিষ্ট কোনো স্থায়ী সাইজ থাকে না।
+- যখন ভেক্টরের ধারণক্ষমতা (Capacity) পূর্ণ হয়ে যায়, তখন কম্পিউটার বর্তমান মেমোরি ব্লকের দ্বিগুণ ($2 \\times$) আকারের একটি সম্পূর্ণ নতুন মেমোরি ব্লক বরাদ্দ করে এবং পুরনো সব উপাদান সেখানে কপি করে নিয়ে যায়।
+- যদিও এই কপি করতে একবারে $O(n)$ সময় লাগে, কিন্তু এই ঘটনাটি খুব কম ঘটে। গাণিতিকভাবে প্রমাণ করা যায় যে প্রতি পুশের গড় খরচ মাত্র **$O(1)$ Amortized**!
+
+### ⏱️ টাইম ও স্পেস কমপ্লেক্সিটি সামারি:
+| অপারেশন | টাইম কমপ্লেক্সিটি | কারণ ও মেমোরি বিহেভিয়ার |
+| :--- | :--- | :--- |
+| **Random Access \`arr[i]\`** | $O(1)$ | সরাসরি হার্ডওয়্যার অ্যাড্রেস ক্যালকুলেশন |
+| **Update \`arr[i] = x\`** | $O(1)$ | নির্দিষ্ট মেমোরি স্লটে সরাসরি ডেটা রাইট |
+| **Tail Append (\`push_back\`)** | $O(1)$ Amortized | খালি থাকলে ১ পদক্ষেপে বসে, পূর্ণ হলে দ্বিগুণ মেমোরিতে কপি |
+| **Middle/Head Insert** | $O(n)$ | পেছনের সব উপাদানকে ১ ঘর করে ডানে সরাতে হয় |
+| **Middle/Head Delete** | $O(n)$ | পেছনের সব উপাদানকে ১ ঘর করে বামে টানতে হয় |
+| **Search (Unsorted)** | $O(n)$ | লিনিয়ার স্ক্যান করে প্রতি উপাদান চেক করতে হয় |
+
+### ⚠️ ইন্টারভিউ ট্র্যাপ ও সাধারণ ভুল:
+১. **আউট অফ বাউন্ডস (Buffer Overflow):** অ্যারের সাইজ $n$ হলে বৈধ ইনডেক্স $0$ থেকে $n-1$। অসাবধানতাবশত \`arr[n]\` এক্সেস করলে **Segmentation Fault** বা অপ্রত্যাশিত গার্বেজ ভ্যালু তৈরি হয়।
+২. **সিপিইউ ক্যাশ লোকালিটি:** লিঙ্কড লিস্টের তুলনায় অ্যারে হাজার গুণ দ্রুত চলে কারণ এর উপাদানগুলো র‍্যামে পাশাপাশি থাকায় সিপিইউ এক টানে পুরো ক্যাশ লাইন (Cache Line - 64 Bytes) প্রসেসরে নিয়ে আসে।
+      `,
     },
     visualizerLink: {
       label: "Open Interactive Array Studio",
@@ -1125,11 +1560,30 @@ public:
     estimatedReadTime: "10 min",
     category: "Data Structures",
     banglaNote: {
-      topic: "String ও মেমোরি ইমিউটেবিলিটি (সহজ বাংলায় ধারণা)",
-      englishContext: "A string is an array of characters. In C++, strings can be modified in-place in O(1) time. But in Java, Python, and JavaScript, strings are immutable—every change duplicates all characters into a new memory block in O(n) time!",
-      banglaText: `স্ট্রিং (String) মূলত মেমরিতে পাশাপাশি রাখা ক্যারেক্টার বা অক্ষরের একটা অ্যারে। প্রতিটি ASCII অক্ষর ঠিক ১ বাইট মেমোরি দখল করে, তাই কম্পিউটার ফর্মুলা দিয়ে সাথে সাথে O(1) সময়ে যেকোনো অক্ষর খুঁজে পায়। 
+      topic: "স্ট্রিং, মেমোরি এনকোডিং ও ইমিউটেবিলিটি ট্র্যাপ (String Deep Dive)",
+      englishContext: "A string is a contiguous array of character bytes. In C++, strings are mutable in-place O(1), but in Python, JS, and Java, strings are immutable—loop concatenation copies entire strings in O(n²).",
+      banglaText: `
+### 💡 সহজ উপমা: সুতোয় গাঁথা পুঁতির মালা
+একটি সুতোয় নির্দিষ্ট ক্রমে একটার পর একটা বিভিন্ন রঙের পুঁতি গেঁথে মালা বানানোর কথা ভাবুন। আপনি যদি মালার ৫ম পুঁতিটি দেখতে চান, এক মুহূর্তে সরাসরি ৫ম পুঁতিতে চোখ রাখা যায়। কিন্তু সুতোর মাঝখান থেকে কোনো পুঁতি সরাতে গেলে বা নতুন পুঁতি ঢোকাতে গেলে পুরো মালাটিকে আবার নতুন করে সাজাতে হয়। স্ট্রিং হলো মেমরিতে ঠিক তেমনিভাবে সাজানো অক্ষরের (Characters) মালা।
 
-তবে ইন্টারভিউতে সবচেয়ে গুরুত্বপূর্ণ বিষয় হলো **Mutability বনাম Immutability**। C++ এ স্ট্রিং হলো Mutable — অর্থাৎ আপনি চাইলে সরাসরি যেকোনো অক্ষর পরিবর্তন করতে পারেন। কিন্তু JavaScript, Python বা Java-তে স্ট্রিং হলো Immutable (অপরিবর্তনশীল)! সেখানে আপনি যখনই লুপের ভেতরে \`str += 'x'\` লিখবেন, কম্পিউটার প্রতিবার পুরো স্ট্রিংটিকে মেমরিতে নতুন জায়গায় কপি করে, যার ফলে আপনার কোডের স্পিড নেমে যায় O(n²) এ! এজন্য বড় টেক্সট জোড়া দেওয়ার সময় StringBuilder বা অ্যারে জয়েন করতে হয়।`
+### ⚙️ মেমোরি আর্কিটেকচার ও ১-বাইট এনকোডিং:
+- প্রতিটি মানক ASCII অক্ষর কম্পিউটারের র‍্যামে ঠিক **১ বাইট (৮ বিট)** জায়গা দখল করে।
+- ফলে অ্যারের মতো স্ট্রিংয়েও যেকোনো ইনডেক্স খুঁজে পেতে সরাসরি ফর্মুলা কাজ করে: 
+  $$\\text{Address}(str[i]) = \\text{BaseAddress} + (i \\times 1\\text{ Byte})$$
+- এজন্য যেকোনো অক্ষরের মান পড়া (\`str[i]\`) সর্বদা $O(1)$ কনস্ট্যান্ট টাইম।
+
+### ⚠️ ইন্টারভিউয়ের মারাত্মক ফাঁদ: Mutability বনাম Immutability
+সবচেয়ে বেশি শিক্ষার্থী ইন্টারভিউতে যে ভুলটি করে তা হলো স্ট্রিং এর মেমোরি মিউটেবিলিটি না বোঝা:
+১. **C++ (Mutable):** সি++ এ \`std::string\` হলো পরিবর্তনযোগ্য। আপনি চাইলে \`str[0] = 'Z'\` লিখে একই মেমোরি স্লটে $O(1)$ সময়ে অক্ষর বদলে ফেলতে পারেন।
+২. **Python, JavaScript & Java (Immutable):** এই ভাষাগুলোতে স্ট্রিং তৈরি হওয়ার পর তার ভেতরের মেমোরি আর কখনো পরিবর্তন করা যায় না!
+   - আপনি যখনই লুপের ভেতরে \`str = str + ch\` বা \`str += ch\` লেখেন, কম্পিউটার আগের স্ট্রিংয়ে নতুন অক্ষর যোগ করে না; বরং মেমোরিতে নতুন জায়গা বরাদ্দ করে পুরনো সব অক্ষর কপি করে আনে!
+   - ফলে একটি $n$ সাইজের লুপের ভেতরে স্ট্রিং যোগ করতে $1 + 2 + 3 + \\dots + n = O(n^2)$ সময় নষ্ট হয় এবং কোড মারাত্মক স্লো হয়ে যায়!
+   - **সঠিক টেকনিক:** জাভাতে \`StringBuilder\`, পাইথনে \`"".join(list)\`, আর জাভাস্ক্রিপ্টে একটি অ্যারেতে \`push()\` করে লুপ শেষে \`join("")\` করা।
+
+### 🔍 স্ট্রিংয়ের প্রধান দুটি অ্যালগরিদমিক টেকনিক:
+১. **টু-পয়েন্টার (Two Pointers):** স্ট্রিং রিভার্স করা বা প্যালিনড্রোম (Palindrome) চেক করার সময় দুটি পয়েন্টার বাম ও ডান থেকে শুরু করে মাঝের দিকে এগিয়ে আসে। এতে অতিরিক্ত কোনো মেমোরি ছাড়াই ($O(1)$ Auxiliary Space) মাত্র $O(n)$ সময়ে সমাধান পাওয়া যায়।
+২. **স্লাইডিং উইন্ডো (Sliding Window):** কোনো স্ট্রিংয়ের ভেতরে সবচেয়ে বড় সাবস্ট্রিং (যেমন: কোনো ডুপ্লিকেট অক্ষর ছাড়া দীর্ঘতম অংশ) খোঁজার জন্য একটি চলমান উইন্ডো ডানে বাড়ানো ও বামে সংকুচিত করা হয়।
+      `,
     },
     visualizerLink: {
       label: "Open Interactive String Studio",
@@ -1414,18 +1868,30 @@ public:
    - Compilers scan source code by pushing opening brackets \`(\`, \`[\`, \`{\` onto a stack and matching them with corresponding closing brackets.
     `,
     banglaNote: {
-      topic: "স্ট্যাক (Stack) ও LIFO মেকানিজম",
-      englishContext: "Understanding LIFO, Call Stacks, and O(1) Push/Pop operations",
+      topic: "স্ট্যাক, LIFO মেকানিজম ও কল স্ট্যাক আর্কিটেকচার (Stack Deep Dive)",
+      englishContext: "A stack enforces Last-In First-Out (LIFO) discipline where all operations occur strictly at the top in O(1) constant time, powering function recursion and undo engines.",
       banglaText: `
-স্ট্যাক হচ্ছে এমন একটি ডাটা স্ট্রাকচার যা **LIFO (Last-In, First-Out)** নিয়ম মেনে চলে। অর্থাৎ যে উপাদানটি সবার শেষে স্ট্যাকে রাখা হবে, সেটিকে সবার প্রথমে বের করা হবে।
+### 💡 সহজ উপমা: রেস্টুরেন্টের প্লেটের স্তূপ বা কয়েনের টিউব
+একটি রেস্টুরেন্টের প্লেটের স্তূপ বা ক্যাফেটেরিয়ার ট্রে ট্রলি কল্পনা করুন। ধোয়া পরিষ্কার প্লেটগুলো সবসময় স্তূপের একদম উপরে (Top) রাখা হয়। আবার কোনো কাস্টমার যখন প্লেট নেন, তিনি মাঝখান বা নিচ থেকে না টেনে সবার উপরের প্লেটটিই সবার আগে তুলে নেন। অর্থাৎ যেটি **সবার শেষে রাখা হয়েছিল, সেটিই সবার প্রথমে বের হলো** — একেই বলে **LIFO (Last-In, First-Out)**।
 
-**বাস্তব উদাহরণ:**
-একটি রেস্টুরেন্টের প্লেটের স্তূপ কল্পনা করুন। নতুন প্লেট ধুয়ে সবসময় স্তূপের একদম উপরে (Top) রাখা হয়। আবার কোনো কাস্টমার প্লেট নেওয়ার সময়ও একদম উপরের প্লেটটাই আগে নেয়। 
+### ⚙️ অভ্যন্তরীণ মেকানিক্স ও কেন প্রতিটি অপারেশন $O(1)$?
+স্ট্যাকে মাঝখানের উপাদান দেখার বা নাড়াচাড়া করার কোনো অনুমতি নেই। শুধুমাত্র একটি মাত্র ইনডেক্স বা পয়েন্টার \`topIndex\` মেইনটেইন করা হয়:
+- **Push ($O(1)$):** \`++topIndex\` করে নতুন উপাদানটি বসিয়ে দেওয়া হয়। কোনো উপাদান শিফট করতে হয় না।
+- **Pop ($O(1)$):** \`--topIndex\` করে টপ পয়েন্টার এক ঘর নিচে নামিয়ে দিলেই উপাদানটি লজিক্যালি মুছে যায়।
+- **Top / Peek ($O(1)$):** সরাসরি \`arr[topIndex]\` রিটার্ন করে বর্তমান শীর্ষ মানটি দেখা যায়।
 
-**কেন স্ট্যাক গুরুত্বপূর্ণ?**
-১. **রিকিউরশন (Recursion):** আমরা যখন Merge Sort বা Quick Sort এর মতো রিকার্সিভ অ্যালগরিদম চালাই, কম্পিউটার ইন্টারনালি একটি **Call Stack** মেইনটেইন করে। ফাংশন শেষ হলে স্ট্যাক থেকে ফ্রেম বের হয়ে যায়।
-২. **Undo ফিচার:** টেক্সট এডিটরে আপনি যা টাইপ করেন তা স্ট্যাকে জমা হয়। Ctrl+Z চাপলে লাস্ট কাজটি পপ হয়ে পূর্বাবস্থায় ফিরে আসে।
-৩. **সব অপারেশনের সময় $O(1)$:** Push, Pop, Peek সবগুলো অপারেশন কনস্ট্যান্ট টাইম $O(1)$-এ সম্পন্ন হয়।
+### 🧱 অ্যারে বনাম লিঙ্কড লিস্ট ভিত্তিক স্ট্যাক:
+১. **Array-Based Stack:** মেমরিতে উপাদানগুলো পাশাপাশি থাকায় সিপিইউ L1/L2 ক্যাশ পারফরম্যান্স অত্যন্ত দ্রুত। তবে সাইজ ফিক্সড না রাখলে ডায়নামিক রিলিজের প্রয়োজন হয়।
+২. **Linked-List-Based Stack:** প্রতিটি নোড হিপ মেমরিতে তৈরি হওয়ায় সাইজের কোনো সীমাবদ্ধতা নেই (যতক্ষণ র‍্যাম ফাঁকা আছে)। তবে প্রতি নোডে অতিরিক্ত ৮ বাইটের পয়েন্টার খরচ হয়।
+
+### 💻 রিকার্শন ও অপারেটিং সিস্টেমের কল স্ট্যাক (Call Stack Connection):
+- যখনই আপনি কোনো কোডে রিকার্সিভ ফাংশন (যেমন Merge Sort, Quick Sort, DFS) চালান, অপারেটিং সিস্টেম মেমরির **Call Stack**-এ ফাংশনের লোকাল ভ্যারিয়েবল ও রিটার্ন অ্যাড্রেস পুশ করে রাখে।
+- ফাংশন শেষ হলে ফ্রেমটি পপ হয়ে যায়।
+- আপনি যদি ভুল করে কোনো রিকার্শনে থামার শর্ত (Base Case) না দেন, তবে স্ট্যাকের মেমোরি সীমা অতিক্রম করে প্রোগ্রামটি **Stack Overflow** এররে ক্র্যাশ করবে!
+
+### ⚠️ ইন্টারভিউ ট্র্যাপ ও ডিফেন্সিভ কোডিং:
+১. **Stack Underflow:** স্ট্যাক খালি থাকা অবস্থায় (\`topIndex == -1\`) যদি কেউ \`pop()\` বা \`top()\` কল করে, তবে প্রোগ্রাম যাতে গার্বেজ মান না পড়ে বা ক্র্যাশ না করে সেজন্য সর্বদা \`empty()\` চেক করতে হবে।
+২. **মনোটনিক স্ট্যাক (Monotonic Stack):** LeetCode-এর জটিল ইন্টারভিউ প্রশ্ন যেমন "Next Greater Element" বা "Daily Temperatures" সমাধান করতে বিশেষ ধরনের স্ট্যাক ব্যবহৃত হয় যাতে মানগুলো ছোট থেকে বড় বা বড় থেকে ছোট ক্রমানুসারে সাজানো থাকে।
       `,
     },
     quizTopicId: "stack",
@@ -1579,16 +2045,27 @@ public:
    - Message brokers (like RabbitMQ, Kafka) and printer spools process jobs in exact arrival order.
     `,
     banglaNote: {
-      topic: "কিউ (Queue) ও FIFO মেকানিজম",
-      englishContext: "Understanding FIFO, Circular Buffers, and O(1) Enqueue/Dequeue",
+      topic: "কিউ, FIFO মেকানিজম ও সার্কুলার রিং বাফার (Queue Deep Dive)",
+      englishContext: "A queue operates on First-In First-Out (FIFO) ordering where items enter at the rear and exit from the front, solved in O(1) via modular circular array arithmetic.",
       banglaText: `
-কিউ (Queue) হচ্ছে এমন একটি ডাটা স্ট্রাকচার যা **FIFO (First-In, First-Out)** নীতিতে চলে। অর্থাৎ যে ডাটাটি সবার প্রথমে প্রবেশ করবে, সেটিকে সবার প্রথমে প্রসেস বা রিমুভ করা হবে।
+### 💡 সহজ উপমা: রেলওয়ে স্টেশনের টিকিট কাউন্টার
+একটি টিকিট কাউন্টারের লাইনের কথা ভাবুন। যিনি লাইনে সবার প্রথমে এসে দাঁড়িয়েছেন, টিকিট কাউন্টার খোলার পর তিনিই সবার আগে টিকিট পেয়ে লাইন থেকে বেরিয়ে যান। আর নতুন কোনো যাত্রী এলে তাকে লাইনের একদম পেছনে (Rear) গিয়ে দাঁড়াতে হয়। অর্থাৎ **যে আগে এসেছে, সে আগেই সেবা পাবে** — এটাই হলো **FIFO (First-In, First-Out)** নীতি।
 
-**বাস্তব উদাহরণ:**
-একটি টিকিট কাউন্টারের লাইন কল্পনা করুন। যে ব্যক্তি লাইনে প্রথমে দাঁড়ায়, সে সবার আগে টিকিট পেয়ে বেরিয়ে যায়। নতুন লোক আসলে লাইনের পেছনে (Rear) যুক্ত হয়।
+### ⚙️ সাধারণ অ্যারের সীমাবদ্ধতা বনাম সার্কুলার কিউ (Circular Ring Buffer):
+সাধারণ অ্যারে দিয়ে কিউ বানাতে গেলে দুটি মারাত্মক সমস্যা দেখা দেয়:
+১. **$O(n)$ এলিমেন্ট শিফটিং:** সামনের উপাদান বের করার পর যদি পেছনের সবাইকে ১ ঘর করে সামনে টেনে আনা হয়, তবে প্রতি Dequeue-তে $O(n)$ সময় নষ্ট হয়।
+২. **মেমোরি অপচয় (Drifting Pointers):** উপাদান না সরিয়ে শুধু \`front\` পয়েন্টার ডানে বাড়াতে থাকলে অ্যারের পেছনের অংশ শেষ হয়ে যাবে কিন্তু সামনের মেমোরি খালি পড়ে থেকে চিরতরে নষ্ট হবে (False Overflow)।
 
-**সার্কুলার কিউ (Circular Queue) কেন প্রয়োজন?**
-সাধারণ অ্যারেতে সামনের আইটেম মুছে ফেললে পেছনের সব উপাদান ১ ঘর করে সরাতে $O(n)$ সময় নষ্ট হয়। কিন্তু মডুলো $(\\text{rear} + 1) \\% \\text{capacity}$ ব্যবহার করে সার্কুলার কিউ বানালে কোনো উপাদান না সরিয়েই $O(1)$ কনস্ট্যান্ট টাইমে কিউ অপারেশন চালানো যায়।
+### 🔄 মডুলার অ্যারিথমেটিকের ম্যাজিক সমাধান:
+এই সমস্যার সেরা সমাধান হলো মেমোরিকে একটি বৃত্তাকার রিং (Circular Buffer) হিসেবে চিন্তা করা। মডুলো ($\\%$) অপারেটর ব্যবহার করে পয়েন্টার ঘোরানো হয়:
+- **Enqueue ($O(1)$):** \`rear = (rear + 1) % capacity\` — রিয়ার পয়েন্টার ঘুরে আবার শুরুতে চলে আসে।
+- **Dequeue ($O(1)$):** \`front = (front + 1) % capacity\` — কোনো ডেটা না সরিয়েই সামনের খালি জায়গা আবার ব্যবহারের উপযোগী হয়।
+- ফলে কোনো মেমোরি অপচয় ছাড়াই প্রতিটি কিউ অপারেশন কঠোরভাবে **$O(1)$ কনস্ট্যান্ট টাইমে** সম্পন্ন হয়।
+
+### 🌐 বাস্তব জীবনে ও অ্যালগরিদমে কিউয়ের ভূমিকা:
+১. **ব্রেডথ-ফার্স্ট সার্চ (BFS):** বাইনারি ট্রির Level-Order ট্রাভার্সাল (প্রতি তলা ধরে ধরে ভিজিট করা) এবং আনওয়েটেড গ্রাফে সবচেয়ে ছোট পথ (Shortest Path) বের করতে কিউ ডাটা স্ট্রাকচার ছাড়া বিকল্প নেই।
+২. **অপারেটিং সিস্টেম প্রসেস শিডিউলিং:** একাধিক প্রোগ্রাম যখন একসাথে সিপিইউর জন্য অপেক্ষা করে, তখন ওএস রাউন্ড-রবিন (Round-Robin) পদ্ধতিতে কিউ মেনে একে একে সবাইকে সময় দেয়।
+৩. **মেসেজ বাফার ও প্রিন্টার স্পুলার:** Apache Kafka বা প্রিন্টারে যখন একসাথে একাধিক ফাইল পাঠানো হয়, তখন সেগুলো কিউতে জমা হয় এবং ক্রমানুসারে প্রিন্ট হয়।
       `,
     },
     quizTopicId: "queue",
@@ -1732,17 +2209,31 @@ In modern high-concurrency runtimes (e.g., the **Go runtime scheduler**, **Java'
 * Because the owner works at the Front and thieves steal from the Rear, lock contention is minimized to near zero.
     `,
     banglaNote: {
-      topic: "ডেক (Double-Ended Queue) ও মনোটনিক ইনভ্যারিয়েন্ট",
-      englishContext: "Why Deque is the versatile king of linear data structures",
+      topic: "ডেক, উভমুখী ইনসার্শন ও মনোটনিক ডেক মেকানিক্স (Deque Deep Dive)",
+      englishContext: "A Deque (Double-Ended Queue) permits instantaneous O(1) insertions and removals at both endpoints, powering monotonic sliding windows and lock-free work-stealing thread schedulers.",
       banglaText: `
-১. **ডেক (Deque) কী?**
-   ডেক হলো এমন একটি কিউ যেখানে সামনের (Front) ও পেছনের (Rear) উভয় দিক থেকেই $O(1)$ সময়ে উপাদান ঢোকানো (Push) এবং বের (Pop) করা যায়। এটি একই সাথে স্ট্যাক (LIFO) এবং সাধারণ কিউ (FIFO)-এর সব সুবিধা প্রদান করে।
+### 💡 সহজ উপমা: দুই মুখ খোলা সুরঙ্গ বা উভয়মুখী ট্রেন
+একটি দুই মুখ খোলা সুরঙ্গের (Tunnel) কথা ভাবুন। সাধারণ কিউতে একদিকে গাড়ি ঢোকে আর অন্যদিকে বের হয়। কিন্তু ডেক (Deque - Double-Ended Queue) হলো এমন এক বিশেষ সুরঙ্গ যার দুই মুখ দিয়েই গাড়ি ঢুকতেও পারে আবার বেরও হতে পারে! অর্থাৎ এটি একই সাথে স্ট্যাক (LIFO) এবং কিউ (FIFO)-এর সব সুবিধা একক কাঠামোতে প্রদান করে।
 
-২. **সার্কুলার ডেক ও নেগেটিভ মডুলো ট্রিক:**
-   সি++ বা জাভাতে \`(-1) % N\` করলে রেজাল্ট \`-1\` আসে, যা ভুল ইনডেক্স তৈরি করে। তাই ডেক-এর শুরুতে নতুন আইটেম ঢোকাতে \`front = (front - 1 + capacity) % capacity\` ফর্মুলা ব্যবহার করে বৃত্তাকারে ইনডেক্স ঘোরাতে হয়।
+### ⚙️ উভমুখী $O(1)$ অপারেশন মেকানিক্স:
+ডেকে যেকোনো প্রান্তেই ডেটা ঢোকানো বা বের করা সরাসরি $O(1)$ সময়ে সম্পন্ন হয়:
+- **সামনে অপারেশন:** \`push_front(x)\` এবং \`pop_front()\` — $O(1)$
+- **পেছনে অপারেশন:** \`push_back(x)\` এবং \`pop_back()\` — $O(1)$
+- **উভয় প্রান্তে অ্যাক্সেস:** \`front()\` এবং \`back()\` — $O(1)$
 
-৩. **স্লাইডিং উইন্ডো ম্যাক্সিমাম (Monotonic Deque):**
-   ইন্টারভিউয়ের অন্যতম জনপ্রিয় প্রশ্ন! প্রতিটি উইন্ডোর সর্বোচ্চ সংখ্যা বের করতে সাধারণ নিয়মে $O(n \\times k)$ সময় লাগলেও, মনোটনিক ডেক দিয়ে মাত্র **$O(n)$ লিনিয়ার সময়ে** সব উইন্ডো সমাধান করা যায়। কারণ প্রতিটি উপাদান ডেকে সর্বোচ্চ একবার ঢোকে আর একবার বের হয়।
+### 🔄 সার্কুলার ডেক ও নেগেটিভ মডুলো ট্রিক:
+অ্যারে দিয়ে ডেক বাস্তবায়ন করার সময় \`front\` পয়েন্টার বামে সরাতে গেলে ইনডেক্স $0$-এর নিচে নেমে নেগেটিভ হয়ে যেতে পারে। 
+- সি++ বা জাভাতে \`(-1) % capacity\` করলে নেগেটিভ সংখ্যা আসে, যা অবৈধ ইনডেক্স।
+- **জাদুকরী সমাধান:** \`front = (front - 1 + capacity) % capacity\` ফর্মুলা ব্যবহার করলে নেগেটিভ ইনডেক্স এড়িয়ে বৃত্তাকারে শেষ প্রান্তে পৌঁছে যাওয়া যায়।
+
+### 🚀 ইন্টারভিউয়ের সেরা সুপারপাওয়ার: মনোটনিক ডেক (Monotonic Deque):
+- **Sliding Window Maximum:** $n$ আকারের অ্যারেতে $k$ সাইজের প্রতিটি সাব-অ্যারের সর্বোচ্চ সংখ্যা বের করতে সাধারণ নিয়মে সময় লাগে $O(n \\times k)$।
+- কিন্তু একটি **Monotonic Decreasing Deque** (যেখানে উপাদানগুলো সবসময় বড় থেকে ছোট ক্রমানুসারে থাকে) ব্যবহার করলে প্রতিটি উপাদান সর্বোচ্চ একবার ডেকে ঢোকে এবং একবার বের হয়। ফলে সম্পূর্ণ সমস্যাটি মাত্র **$O(n)$ লিনিয়ার সময়ে** সমাধান হয়ে যায়!
+
+### 🌐 আধুনিক সিস্টেমে ওয়ার্ক-স্টিল শিডিউলার (Work-Stealing Schedulers):
+- আধুনিক মাল্টিথ্রেডেড রানটাইম (যেমন Go রুটিন শিডিউলার, Rust-এর Tokio, এবং Java-র ForkJoinPool) প্রতিটি সিপিইউ কোরের জন্য একটি করে ডেক মেইনটেইন করে।
+- কোরটি নিজের কাজ ডেকের সামনে (Front) থেকে স্ট্যাক আকারে অতি দ্রুত চালায়।
+- কোনো কোরের কাজ শেষ হয়ে অলস বসে থাকলে সে অন্য ব্যস্ত কোরের ডেকের পেছন (Rear) থেকে কিউ আকারে কাজ **"চুরি" (Work-Steal)** করে নিয়ে আসে! এর ফলে থ্রেড লকিংয়ের ঝামেলা শূন্যে নেমে আসে।
       `,
     },
     quizTopicId: "deque",
@@ -1937,22 +2428,38 @@ The hallmark problem demonstrating Hash Table dominance is **Two Sum** (LeetCode
 * **Total Time**: Strictly **$O(n)$ linear time** in a single pass!
     `,
     banglaNote: {
-      topic: "হ্যাশ টেবিল (Hash Table), কলিশন ও কনস্ট্যান্ট টাইম ও(১) ম্যাজিক",
-      englishContext: "How Hash Tables achieve instant O(1) lookups and handle collisions",
+      topic: "হ্যাশ টেবিল, হ্যাশ ফাংশন, কলিশন ও লিনিয়ার প্রোবিং (Hash Table Deep Dive)",
+      englishContext: "A hash table transforms arbitrary keys into array indices using mathematical hash functions, delivering instant average O(1) lookups while handling collisions via chaining or open addressing.",
       banglaText: `
-১. **হ্যাশ টেবিল (Hash Table) কী?**
-   সাধারণ অ্যারেতে ইনডেক্স সরাসরি জানা থাকলে যেমন $O(1)$ সময়ে মেমরি থেকে ডাটা পড়া যায়, হ্যাশ টেবিল যেকোনো কি (Key) যেমন নাম বা বড় কোনো আইডিকে একটি গাণিতিক হ্যাশ ফাংশন \`h(key) = key % capacity\` দিয়ে সরাসরি অ্যারে ইনডেক্সে রূপান্তর করে। ফলে কোটি কোটি ডাটার মাঝেও যেকোনো উপাদান খুঁজতে গড়পড়তা মাত্র **$O(1)$ কনস্ট্যান্ট সময়** লাগে!
+### 💡 সহজ উপমা: হোটেলের চাবির বোর্ড বা পোস্ট অফিসের চিঠি খোপ
+একটি ৫-তারকা হোটেলের রিসেপশনের কথা ভাবুন। সেখানে শত শত রুমের চাবি রাখার জন্য একটি কাঠের বোর্ড আছে যেখানে প্রতি রুম নম্বরের জন্য একটি করে নির্দিষ্ট খোপ বরাদ্দ। আপনি যদি বলেন "রুম ৩০৫ এর চাবি দিন", রিসেপশনিস্ট কিন্তু ১ম খোপ থেকে শুরু করে ৩০০টি খোপ খুঁজে দেখেন না; সরাসরি ৩০৫ নম্বর খোপে হাত দিয়েই চাবি বের করে দেন ($O(1)$ সময়)। হ্যাশ টেবিলও ঠিক তেমনি একটি জাদুকরী গাণিতিক বোর্ড!
 
-২. **কলিশন (Collision) কেন ঘটে এবং সমাধান কী?**
-   পিজিয়নহোল নীতি (Pigeonhole Principle) অনুযায়ী অসীম সংখ্যক সম্ভাব্য কি (Keys)-কে সীমিত সাইজের অ্যারেতে ম্যাপ করলে একাধিক কি একই ইনডেক্সে গিয়ে পড়বেই। একে কলিশন বলে।
-   * **সেপারেট চেইনিং (Separate Chaining):** প্রতিটি স্লটে একটি করে লিংকড লিস্ট থাকে। কলিশন হলে নতুন উপাদানটি সেই স্লটের লিস্টে যুক্ত হয়।
-   * **ওপেন অ্যাড্রেসিং / লিনিয়ার প্রোবিং (Linear Probing):** কোনো স্লট দখল থাকলে পরের খালি স্লট \`(index + 1) % capacity\` খুঁজে সেখানে বসানো হয়।
+### ⚙️ হ্যাশ ফাংশন কীভাবে $O(1)$ কনস্ট্যান্ট সময় এনে দেয়?
+সাধারণ অ্যারেতে ইনডেক্সিং করার জন্য $0, 1, 2$ পূর্ণসংখ্যার প্রয়োজন হয়। কিন্তু বাস্তবে আমাদের কি (Key) হতে পারে কারো নাম (যেমন \`"rahim"\`), ইমেইল, বা ১২ সংখ্যার ফোন নম্বর। 
+- **হ্যাশ ফাংশন (\`hash(key)\`):** একটি গাণিতিক সমীকরণ যা যেকোনো টেক্সট বা বড় সংখ্যাকে একটি নির্দিষ্ট রেঞ্জের ইনডেক্সে রূপান্তর করে:
+  $$\\text{Index} = \\text{hash}(key) \\% \\text{capacity}$$
+- ফলে কোটি কোটি ডেটার মধ্যেও মেমোরি অ্যাড্রেস বের করতে কোনো লুপ চালাতে হয় না, সরাসরি $O(1)$ সময়ে ডেটা খুঁজে পাওয়া যায়।
 
-৩. **টুম্বস্টোন (Tombstone - DEL) কেন জরুরি?**
-   লিনিয়ার প্রোবিংয়ে কোনো উপাদান মুছে ফেললে স্লটটি ফাঁকা (Null) রাখা যায় না। কারণ পরবর্তীতে খোঁজার সময় ফাঁকা স্লট দেখেই অ্যালগরিদম ভাববে ডাটা নেই! তাই সেখানে একটি "কবরফলক" (Tombstone) বসানো হয়, যাতে সার্চিং থেমে না গিয়ে সামনে এগিয়ে যায়।
+### 💥 কলিশন (Collision) কেন ঘটে?
+গণিতের **পিজিয়নহোল নীতি (Pigeonhole Principle)** অনুযায়ী: আপনার কাছে যদি ১০টি খোপ থাকে আর ১১টি পায়রা থাকে, তবে অন্তত একটি খোপে ২টি পায়রাকে বসতেই হবে! 
+- যেহেতু সম্ভাব্য কি (Key)-এর সংখ্যা অসীম কিন্তু হ্যাশ টেবিলের মেমোরি সীমিত, তাই দুটি ভিন্ন কি একই ইনডেক্সে ম্যাপ হবেই। একে বলে **Collision**।
 
-৪. **লোড ফ্যাক্টর (Load Factor) ও রিহ্যাশিং:**
-   টেবিল যখন ৭৫% পূর্ণ হয়ে যায় (Load Factor $\\alpha > 0.75$), তখন কলিশন খুব বেড়ে যায়। তাই টেবিলের সাইজ দ্বিগুণ করে সবগুলো ডাটাকে নতুন টেবিলে নতুন ইনডেক্সে স্থানান্তর (Rehash) করা হয়।
+### 🛠️ কলিশন সমাধানের দুটি প্রধান অস্ত্র:
+১. **সেপারেট চেইনিং (Separate Chaining):** হ্যাশ টেবিলের প্রতিটি স্লটে একটি করে ছোট লিঙ্কড লিস্ট রাখা হয়। একই ইনডেক্সে একাধিক ডাটা এলে লিঙ্কড লিস্টের নোড আকারে যুক্ত হয়। (Java HashMap এটি ব্যবহার করে)।
+২. **ওপেন অ্যাড্রেসিং / লিনিয়ার প্রোবিং (Linear Probing):** কোনো ইনডেক্স আগে থেকেই দখল থাকলে পরের খালি স্লট \`(index + 1) % capacity\` খুঁজে সেখানে ডেটা রাখা হয়। কোনো অতিরিক্ত লিঙ্কড লিস্টের প্রয়োজন হয় না।
+
+### 🪦 টুম্বস্টোন (Tombstone - DEL Marker) কেন অপরিহার্য?
+লিনিয়ার প্রোবিংয়ে কোনো উপাদান মুছে ফেললে স্লটটি ফাঁকা (Null) রাখা যাবে না!
+- **কারণ:** পরবর্তীতে অন্য কোনো উপাদান খুঁজতে গিয়ে কম্পিউটার যদি ফাঁকা স্লট পায়, সে ভাববে ডাটাটি টেবিলেই নেই এবং সার্চ বন্ধ করে দেবে!
+- **সমাধান:** মুছে ফেলা স্লটে একটি "কবরফলক" বা টুম্বস্টোন (\`DEL\` মার্কার) বসিয়ে দেওয়া হয়। সার্চিং করার সময় এই স্লট টপকে সামনে যাওয়া যায়, আবার নতুন ডেটা ঢোকানোর সময় এই স্লটে লিখে ফেলা যায়।
+
+### ⚖️ লোড ফ্যাক্টর ($\alpha$) ও ডায়নামিক রিহ্যাশিং:
+- **Load Factor:** $\\alpha = \\frac{\\text{Total Elements (n)}}{\\text{Table Size (m)}}$
+- যখন টেবিলটি ৭০%-৭৫% পূর্ণ হয়ে যায় ($\\alpha > 0.75$), তখন কলিশন খুব বেড়ে যায়।
+- তখন স্বয়ংক্রিয়ভাবে টেবিলের সাইজ দ্বিগুণ ($2 \\times$) করা হয় এবং সব উপাদানকে পুনরায় নতুন হ্যাশ ইনডেক্সে সাজানো হয় (Rehashing)।
+
+### 🚀 বিখ্যাত উদাহরণ: Two-Sum প্রবলেম
+একটি অ্যারে থেকে দুটি সংখ্যার যোগফল $T$ মেলাতে সাধারণ নেস্টেড লুপে $O(n^2)$ সময় লাগে। কিন্তু একটি হ্যাশ টেবিল সাথে রেখে প্রতি সংখ্যার জন্য $T - x$ টেবিলে আছে কি না চেক করলে মাত্র **$O(n)$ লিনিয়ার সময়ে** সম্পূর্ণ সমাধান করা সম্ভব!
       `,
     },
     quizTopicId: "hash-table",
@@ -2120,27 +2627,42 @@ public:
 \`\`\`
     `,
     banglaNote: {
-      topic: "বাইনারি ট্রি ও ট্রাভার্সাল সহজ বাংলায়",
-      englishContext: "Hierarchical branching, tree classifications & DFS/BFS traversals",
+      topic: "বাইনারি ট্রি, হায়ারার্কিক্যাল নোড ও ট্রাভার্সাল মেকানিক্স (Binary Tree Deep Dive)",
+      englishContext: "A binary tree is a non-linear hierarchical data structure where each node branches to at most two children, explored recursively via DFS (Pre/In/Post) or iteratively via BFS Level-Order.",
       banglaText: `
-### বাইনারি ট্রি (Binary Tree) সহজ বাংলায়:
+### 💡 সহজ উপমা: বংশলতিকা (Family Tree) বা হার্ডডিস্কের ফোল্ডার স্ট্রাকচার
+কম্পিউটার হার্ডড্রাইভে ফোল্ডারের কথা ভাবুন। \`C:\` ড্রাইভের ভেতরে বিভিন্ন ফোল্ডার, তার ভেতরে আবার সাব-ফোল্ডার ও ফাইল। অথবা একটি বংশলতিকার কথা ভাবুন যেখানে পিতা-মাতার মাধ্যমে সন্তান-সন্ততি বংশবিস্তার করে। লিনিয়ার ডাটা স্ট্রাকচারের (অ্যারে, লিঙ্কড লিস্ট) মতো এটি সোজা লাইনে থাকে না; এটি শাখা-প্রশাখায় ছড়িয়ে পড়ে।
 
-১. **উল্টোমুখী গাছ (Inverted Tree):**
-   প্রকৃতির গাছ নিচ থেকে উপরে বাড়ে, কিন্তু কম্পিউটার সায়েন্সে গাছ শুরু হয় আকাশ থেকে! একদম উপরের নোডটিকে বলা হয় **রুট (Root)**। রুট থেকে শাখা-প্রশাখা নিচের দিকে বিস্তৃত হয় এবং প্রতিটি নোডের সর্বোচ্চ **২টি সন্তান (Left ও Right)** থাকতে পারে।
+### 🌲 উল্টোমুখী গাছ (Inverted Tree Architecture):
+প্রকৃতির গাছ নিচ থেকে মাটি ফুঁড়ে ওপরের দিকে ওঠে, কিন্তু কম্পিউটার সায়েন্সের গাছ শুরু হয় আকাশ থেকে নিচের দিকে!
+১. **রুট নোড (Root):** গাছের একদম শীর্ষবিন্দু যার কোনো অভিভাবক বা প্যারেন্ট নেই।
+২. **এজ (Edge):** দুটি নোডের মধ্যকার সংযোগকারী তীরচিহ্ন। $n$ টি নোড থাকলে গাছে ঠিক $n - 1$ টি এজ থাকে।
+৩. **লিফ নোড (Leaf Node):** একদম নিচের নোডগুলো যাদের কোনো সন্তান বা চাইল্ড নেই (\`left == nullptr && right == nullptr\`)।
+৪. **বাইনারি নিয়ম:** প্রতিটি নোডের সর্বোচ্চ **২টি চাইল্ড** থাকতে পারে — একটি বাম সন্তান (Left Child) এবং একটি ডান সন্তান (Right Child)।
 
-২. **ডেপথ (Depth) বনাম হাইট (Height):**
-   * **ডেপথ (গভীরতা):** রুট থেকে নিচের দিকে নামার দূরত্ব। রুটের ডেপথ হলো $0$।
-   * **হাইট (উচ্চতা):** কোনো নোড থেকে নিচের পাতার (Leaf) দিকে সবচেয়ে দীর্ঘ পথের দূরত্ব। পাতার হাইট হলো $0$।
+### 📏 ডেপথ (Depth) বনাম হাইট (Height)-এর সূক্ষ্ম তফাত:
+ইন্টারভিউতে সবচেয়ে বেশি গুলিয়ে ফেলা দুটি টার্ম:
+- **ডেপথ (Depth):** রুট থেকে নিচের দিকে কোনো নোডে পৌঁছাতে কয়টি এজ পার হতে হয়। রুটের নিজস্ব $\\text{Depth} = 0$।
+- **হাইট (Height):** কোনো নোড থেকে নিচের পাতার (Leaf) দিকে সবচেয়ে দীর্ঘ পথের এজের সংখ্যা। যেকোনো পাতার $\\text{Height} = 0$।
+- **ট্রি-এর হাইট:** রুট নোডের হাইটই হলো পুরো ট্রির হাইট।
 
-৩. **ট্রাভার্সাল (Traversal) মনে রাখার জাদুকরী টেকনিক:**
-   * **Pre-order (আগে রুট):** রুট $\\to$ বাম $\\to$ ডান (Root আগে প্রসেস হবে)
-   * **In-order (মাঝে রুট):** বাম $\\to$ রুট $\\to$ ডান (BST তে এটি ছোট থেকে বড় সাজানো মান দেয়)
-   * **Post-order (শেষে রুট):** বাম $\\to$ ডান $\\to$ রুট (নিচের বাচ্চাদের আগে শেষ করে পরে রুট ডিলিট বা হিসেব করা হয়)
-   * **Level-order (ধাপে ধাপে):** কিউ (Queue) দিয়ে ওপর থেকে নিচে প্রতি তলা ধরে ধরে পরিদর্শন।
+### 🔄 ট্রাভার্সাল (Traversal) মনে রাখার জাদুকরী টেকনিক:
+ট্রি-এর প্রতিটি নোড পরিদর্শনের জন্য মূলত দুটি পদ্ধতি আছে:
+#### ১. ডেপথ-ফার্স্ট সার্চ (DFS - রিকার্শন / স্ট্যাক):
+- **Pre-Order (Node $\\to$ Left $\\to$ Right):** রুট আগে প্রসেস হয়। ট্রি ক্লোন করা বা এক্সপ্রেশন ট্রি সাজাতে ব্যবহৃত হয়।
+- **In-Order (Left $\\to$ Node $\\to$ Right):** রুট মাঝে থাকে। বাইনারি সার্চ ট্রিতে (BST) ইন-অর্ডার ট্রাভার্সাল সবসময় ছোট থেকে বড় ক্রমানুসারে সাজানো মান দেয়!
+- **Post-Order (Left $\\to$ Right $\\to$ Node):** রুট শেষে প্রসেস হয়। মেমোরি থেকে ট্রি ডিলিট করতে বা সাবট্রি-র সাইজ বের করতে আগে সন্তানদের শেষ করে পরে রুট ডিলিট করতে হয়।
+#### ২. ব্রেডথ-ফার্স্ট সার্চ (BFS / Level-Order - কিউ):
+- কিউ (Queue) ডাটা স্ট্রাকচার ব্যবহার করে ওপরের তলা থেকে শুরু করে ধাপে ধাপে প্রতি তলার সব নোড বাম থেকে ডানে প্রিন্ট করা।
 
-৪. **কমপ্লিট ট্রি বনাম পারফেক্ট ট্রি:**
-   * **পারফেক্ট ট্রি:** সব পাতার গভীরতা এক এবং সব নোডের ২টি করে সন্তান থাকে (ত্রিকোণ পিরামিডের মতো নিরেট)।
-   * **কমপ্লিট ট্রি:** শেষ তলা বাদে বাকি সব তলা পূর্ণ থাকে এবং শেষ তলার নোডগুলো কোনো ফাঁকা জায়গা না রেখে বাম ঘেঁষে বসে (বাইনারি হিপের ভিত্তি)।
+### 🏰 ট্রি-এর গুরুত্বপূর্ণ ক্লাসিফিকেশন:
+১. **Full Binary Tree:** প্রতি নোডের হয় $0$ অথবা $2$ টি চাইল্ড থাকে (কখনোই ১টি চাইল্ড থাকে না)।
+২. **Complete Binary Tree:** শেষ লেভেল বাদে সব লেভেল পূর্ণ থাকে, আর শেষ লেভেলের নোডগুলো কোনো ফাঁকা জায়গা না রেখে যতটা সম্ভব বাম ঘেঁষে বসে (এটি **Binary Heap** বা প্রায়োরিটি কিউয়ের মূল ভিত্তি)।
+৩. **Perfect Binary Tree:** সব নোডের ২টি সন্তান থাকে এবং সব পাতা একই গভীরতায় থাকে (পিরামিডের মতো নিরেট)। $h$ হাইটের পারফেক্ট ট্রিতে মোট নোড থাকে $2^{h+1} - 1$।
+৪. **Balanced Binary Tree:** প্রতিটি নোডের বাম ও ডান সাবট্রির উচ্চতার ব্যবধান সর্বোচ্চ $1$ ($|h_L - h_R| \\le 1$)। এর ফলে সার্চিং সময় নিশ্চিতভাবে $O(\\log n)$ থাকে (AVL ও Red-Black Tree)।
+
+### ⚠️ ডিজেনারেট ট্রি (Skewed Tree Trap):
+যদি প্রতিটি নোডের কেবল একটি করে চাইল্ড থাকে (যেমন শুধু ডানদিকে শাখা বাড়ল), তবে গাছটি একটি সরল লিঙ্কড লিস্টে পরিণত হয়! তখন সার্চিং স্পিড $\\log n$ থেকে ধসে পড়ে মারাত্মক ধীরগতির $O(n)$-এ নেমে আসে।
       `,
     },
     quizTopicId: "binary-tree",
@@ -2644,19 +3166,43 @@ bool deleteValue(int target) {
 \`\`\`
     `,
     banglaNote: {
-      topic: "লিঙ্কড লিস্ট ও পয়েন্টার কনসেপ্ট",
-      englishContext: "Singly Linked List memory architecture & O(1) insertion",
+      topic: "লিঙ্কড লিস্ট, পয়েন্টার আর্কিটেকচার ও নোড স্প্লাইসিং (Linked List Deep Dive)",
+      englishContext: "A linked list stores elements across non-contiguous heap memory linked by next-pointers, enabling O(1) head prepending while trading off O(1) random indexing.",
       banglaText: `
-### লিঙ্কড লিস্ট (Linked List) সহজ বাংলায়:
+### 💡 সহজ উপমা: ট্রেজার হান্ট (Treasure Hunt) বা গুপ্তধনের ক্লু
+একটি গুপ্তধন খোঁজার খেলার কথা ভাবুন। ১ম ক্লুটিতে লেখা থাকে "২য় ক্লুটি অমুক গাছের নিচে পাবে।" আপনি সেই গাছের নিচে গিয়ে ২য় ক্লু পেলেন, যাতে ৩য় ক্লুর ঠিকানা লেখা আছে। আপনি কিন্তু ১ম ক্লু না দেখে সরাসরি ৫ম ক্লুর কাছে যেতে পারবেন না; আপনাকে একের পর এক ঠিকানা অনুসরণ করে সামনে এগোতে হবে। লিঙ্কড লিস্টের নোডগুলো ঠিক তেমনি মেমোরির যেকোনো জায়গায় ছড়িয়ে থাকে এবং প্রতিটি নোড তার পরবর্তী নোডের মেমোরি অ্যাড্রেস বা **পয়েন্টার (\`next\`)** নিজের পেটে ধারণ করে রাখে।
 
-১. **মেমোরিতে ছড়িয়ে থাকা ট্রেনের বগি:**
-   অ্যারে হলো একই লাইনে পরপর সাজানো বক্সের মতো। কিন্তু লিঙ্কড লিস্টের নোডগুলো মেমোরির যেকোনো জায়গায় ছড়িয়ে থাকতে পারে। প্রতিটি নোডের ভেতর পরবর্তী নোডের মেমোরি অ্যাড্রেস বা **পয়েন্টার (\`next\`)** লেখা থাকে।
+### ⚙️ নোডের মেমোরি গঠন (Node Anatomy):
+সি++ এ প্রতিটি নোডে দুটি জিনিস প্যাক করা থাকে:
+১. **ডেটা (\`val\`):** যে সংখ্যা বা তথ্য নোডে সংরক্ষিত আছে।
+২. **পয়েন্টার (\`next\`):** পরবর্তী নোডের ৮ বাইটের মেমোরি অ্যাড্রেস (শেষ নোডের ক্ষেত্রে এটি \`nullptr\`)।
 
-২. **শুরুতে উপাদান যোগ করার ম্যাজিক ($O(1)$):**
-   অ্যারের শুরুতে একটি সংখ্যা ঢুকাতে গেলে পেছনের সবাইকে ১ ঘর করে ডানে সরাতে হয় ($O(n)$)। কিন্তু লিঙ্কড লিস্টে নতুন নোড বানিয়ে শুধু পয়েন্টারটি বদলে দিলেই কাজ শেষ ($O(1)$)! কোনো সংখ্যা সরাতে হয় না।
+### 🚀 শুরুতে উপাদান যোগ করার ম্যাজিক ($O(1)$ Head Insertion):
+- অ্যারেতে শুরুতে নতুন সংখ্যা ঢুকাতে গেলে পেছনের ১০ লাখ উপাদানকে ১ ঘর করে ডানে সরাতে $O(n)$ সময় নষ্ট হয়।
+- কিন্তু লিঙ্কড লিস্টে তালিকা যত বড়ই হোক না কেন, নতুন একটি নোড বানিয়ে শুধু দুটি পয়েন্টার অ্যাসাইন করলেই কাজ শেষ:
+  \`\`\`cpp
+  newNode->next = head; // নতুন নোড আগের ১ম নোডকে নির্দেশ করবে
+  head = newNode;       // হেড এখন নতুন নোডকে নির্দেশ করবে
+  \`\`\`
+- এটি সম্পন্ন করতে তালিকার আকারের ওপর কোনো নির্ভরতা নেই, তাই এটি সর্বদা **$O(1)$ সময়** নেয়।
 
-৩. **সীমাবদ্ধতা (Tradeoff):**
-   অ্যারেতে সরাসরি \`arr[5]\` লিখে এক মুহূর্তে ৫ম সংখ্যায় যাওয়া যায় ($O(1)$)। কিন্তু লিঙ্কড লিস্টে ৫ম সংখ্যায় যেতে হলে মাথা (\`head\`) থেকে শুরু করে ৪ বার পয়েন্টার দিয়ে লাফিয়ে লাফিয়ে এগোতে হয় ($O(n)$)।
+### 🔄 নোড মুছে ফেলা ও পয়েন্টার স্প্লাইসিং (Pointer Splicing):
+মাঝখান থেকে কোনো নোড মুছে ফেলার জন্য কোনো উপাদান নড়াচড়া করতে হয় না। টার্গেট নোডের আগের নোডের (\`prev\`) পয়েন্টারটি টার্গেটের পরবর্তী নোডের (\`curr->next\`) সাথে বাইপাস করে জুড়ে দিলেই টার্গেট নোড বিচ্ছিন্ন হয়ে যায়:
+\`prev->next = curr->next; delete curr;\`
+
+### ⚖️ অ্যারে বনাম লিঙ্কড লিস্টের গভীর তুলনা:
+| বৈশিষ্ট্য | ডায়নামিক অ্যারে (Vector) | একক লিঙ্কড লিস্ট (Singly Linked List) |
+| :--- | :--- | :--- |
+| **ইনডেক্সিং \`arr[i]\`** | $O(1)$ (সরাসরি ফর্মুলা) | $O(n)$ (শুরু থেকে $i$ বার লাফাতে হয়) |
+| **শুরুতে ইনসার্ট** | $O(n)$ (সবাইকে ডানে সরাতে হয়) | $O(1)$ (শুধু ২টি পয়েন্টার বদল) |
+| **মাঝের নোড ডিলিট** | $O(n)$ (বামে শিফট করতে হয়) | $O(n)$ সার্চ + $O(1)$ স্প্লাইস |
+| **মেমোরি ওভারহেড** | শূন্য পয়েন্টার অপচয় | প্রতি নোডে অতিরিক্ত ৮ বাইট পয়েন্টার |
+| **সিপিইউ ক্যাশ** | চমৎকার (Contiguous RAM) | দুর্বল (হিপ মেমরিতে ছড়িয়ে থাকে) |
+
+### ⚠️ ইন্টারভিউ ট্র্যাপ ও সাধারণ ভুল:
+১. **নাল পয়েন্টার ক্র্যাশ (Null Pointer Dereference):** \`curr->next\` চেক করার আগে \`curr != nullptr\` নিশ্চিত না করলে প্রোগ্রাম সাথে সাথে Segmentation Fault দিয়ে ক্র্যাশ করবে।
+২. **মেমোরি লিক (Memory Leak):** পয়েন্টার রিবাইন্ড করার আগে নোডটি \`delete\` না করলে মেমরিতে গার্বেজ ডেটা আটকে থাকে।
+৩. **ফ্লয়েডের কচ্ছপ-খরগোশ অ্যালগরিদম (Floyd's Cycle Finding):** লিঙ্কড লিস্টে কোনো সাইকেল বা লুপ আছে কি না তা একটি স্লো পয়েন্টার (১ ধাপ) ও একটি ফাস্ট পয়েন্টার (২ ধাপ) দিয়ে মাত্র $O(n)$ সময় ও $O(1)$ স্পেসে শনাক্ত করা যায়।
       `,
     },
     quizTopicId: "linked-list",
@@ -2722,20 +3268,28 @@ Beginners often assume Linear Search should never be used because Binary Search 
 3. **Linked Lists:** Since linked lists do not support $O(1)$ random indexing, Binary Search cannot be performed on them efficiently. Linear Search is the native search method for linked lists.
     `,
     banglaNote: {
-      topic: "লিনিয়ার সার্চ (Linear Search)",
-      englishContext: "Sequential search across unsorted collections",
+      topic: "লিনিয়ার সার্চ, ক্রমান্বয়ে অনুসন্ধান ও অপ্টিমাইজেশন (Linear Search Deep Dive)",
+      englishContext: "Linear Search sequentially scans each item from index 0 to n - 1, running in O(1) best case and O(n) worst case, outperforming Binary Search when data is unsorted or small.",
       banglaText: `
-### লিনিয়ার সার্চের মূল কথা:
+### 💡 সহজ উপমা: এলোমেলো ড্রয়ারে চাবি খোঁজা
+একটি ড্রয়ারে এলোমেলোভাবে অনেকগুলো চাবি রাখা আছে। চাবিগুলো কোনো ক্রমানুসারে সাজানো নেই। আপনি কীভাবে নির্দিষ্ট চাবিটি খুঁজবেন? আপনাকে ড্রয়ারের একপাশ থেকে শুরু করে প্রতিটি চাবি হাতে নিয়ে একে একে দেখতে হবে যতক্ষণ না কাঙ্ক্ষিত চাবিটি মিলছে। এটিই হলো **Linear Search** বা ক্রমান্বয়ে অনুসন্ধান।
 
-১. **ধাপে ধাপে খোঁজা:**
-   একটি সারির প্রথম থেকে শেষ পর্যন্ত একটি একটি করে চেক করা। যে মুহূর্তে টার্গেট মিলে যায়, তখনই কাজ শেষ।
+### 🔍 ধাপে ধাপে কার্যপদ্ধতি (How It Works):
+১. **শুরু থেকে স্ক্যান:** ইনডেক্স $0$ থেকে শুরু করে লুপ চালিয়ে প্রতিটি উপাদান পরীক্ষা করা হয়।
+২. **টার্গেট ম্যাচ (Early Exit):** যে মুহূর্তে \`arr[i] == target\` শর্ত সত্য হয়, তখনই কারেন্ট ইনডেক্স $i$ রিটার্ন করে অ্যালগরিদম সাথে সাথে কাজ শেষ করে ($O(1)$ Best Case)।
+৩. **তালিকা শেষ (-1 Not Found):** পুরো অ্যারের $n$ টি উপাদান দেখা শেষ হয়ে গেলেও যদি টার্গেট না মেলে, তবে বুঝবেন উপাদানটি তালিকায় নেই এবং \`-1\` রিটার্ন করা হয়।
 
-২. **কখন এটি সেরা?**
-   - টার্গেট যদি একদম শুরুতে থাকে, তবে মাত্র ১টি কদমেই উত্তর পাওয়া যায় ($O(1)$ Best Case)।
-   - ডাটা যদি সাজানো (Sorted) না থাকে, তবে আগে সাজাতে সময় নষ্ট না করে সরাসরি লিনিয়ার সার্চ চালানোই সবচেয়ে বুদ্ধিমানের কাজ।
+### ⚡ কখন লিনিয়ার সার্চ বাইনারি সার্চের চেয়েও বুদ্ধিমানের কাজ?
+নতুন প্রোগ্রামাররা মনে করে বাইনারি সার্চ যেহেতু $O(\\log n)$, তাই লিনিয়ার সার্চ কখনোই ব্যবহার করা উচিত নয়। কিন্তু বাস্তব সফটওয়্যার ইঞ্জিনিয়ারিংয়ে ৩টি ক্ষেত্রে লিনিয়ার সার্চই সেরা:
+১. **অসাজানো ডেটা (Unsorted Data):** অসাজানো অ্যারেকে আগে সর্ট করতে সময় লাগে $O(n \\log n)$। যদি আপনার মাত্র ১ বা ২ বার সার্চ করার প্রয়োজন হয়, তবে আগে পুরো অ্যারে সর্ট করার পেছনে সময় নষ্ট না করে সরাসরি একটি সাধারণ $O(n)$ লিনিয়ার স্ক্যান করাই বহুগুণ দ্রুত!
+২. **ছোট অ্যারে ($n \\le 30$):** আধুনিক সিপিইউ-এর L1 ক্যাশ লাইন (Cache Line) পুরো ছোট অ্যারেকে এক নিমেষে প্রসেসরের ভেতরে নিয়ে আসে। ফলে কোনো ব্রাঞ্চ মিসপ্রেডিকশন ছাড়াই লিনিয়ার লুপ আলোর গতিতে চলে।
+৩. **লিঙ্কড লিস্ট (Linked List):** লিঙ্কড লিস্টে মাঝের উপাদানে লাফ দিয়ে পৌঁছানোর কোনো উপায় নেই ($O(1)$ র্যান্ডম এক্সেস নেই)। তাই লিঙ্কড লিস্টে বাইনারি সার্চ চালানো অসম্ভব; সেখানে লিনিয়ার সার্চই একমাত্র ভরসা।
 
-৩. **খারাপ দিক:**
-   টার্গেট যদি একদম শেষে থাকে বা তালিকায় না-ই থাকে, তবে সবগুলো উপাদান দেখতে হয় ($O(n)$ Worst Case)।
+### ⏱️ টাইম ও স্পেস কমপ্লেক্সিটি:
+- **Best-Case Time ($O(1)$):** টার্গেট যদি কাকতালীয়ভাবে অ্যারের একদম ১ম ঘরে (\`arr[0]\`) থাকে।
+- **Worst-Case Time ($O(n)$):** টার্গেট যদি একদম শেষ ঘরে থাকে অথবা পুরো তালিকায় না থাকে।
+- **Average-Case Time ($\\Theta(n)$):** গড়ে প্রায় $\\frac{n}{2}$ টি উপাদান পরীক্ষা করতে হয়।
+- **Auxiliary Space ($O(1)$):** কোনো অতিরিক্ত মেমোরি লাগে না, ইন-প্লেস চলে।
       `,
     },
     quizTopicId: "linear-search",
@@ -2838,19 +3392,46 @@ int mid = low + (high - low) / 2; // SAFE
 will NEVER overflow because \`high - low\` is always strictly less than or equal to \`high\`.
     `,
     banglaNote: {
-      topic: "বাইনারি সার্চের মূল রহস্য",
-      englishContext: "Logarithmic interval reduction on sorted data",
+      topic: "বাইনারি সার্চ, ইন্টারভাল বিভাজন ও ওভারফ্লো প্রতিরোধ (Binary Search Deep Dive)",
+      englishContext: "Binary Search repeatedly halves the candidate search space on sorted collections, delivering guaranteed O(log n) convergence while avoiding 32-bit integer overflow.",
       banglaText: `
-### বাইনারি সার্চ (Binary Search) সহজ বাংলায়:
+### 💡 সহজ উপমা: ডিকশনারিতে শব্দ খোঁজা ও "Higher / Lower" অনুমান খেলা
+ধরা যাক একজন বন্ধু আপনাকে ১ থেকে ১০০-এর মধ্যে একটি গোপন সংখ্যা ভাবতে বলল এবং প্রতি অনুমানে সে কেবল বলবে "তোমার সংখ্যাটি আমার সংখ্যার চেয়ে বড়" নাকি "ছোট"।
+- আপনি যদি বুদ্ধিমান হন, আপনি শুরুতেই বলবেন **৫০**।
+- বন্ধু যদি বলে "গোপন সংখ্যাটি ৫০-এর চেয়ে বড়", তবে মাত্র ১টি প্রশ্নেই আপনি ১ থেকে ৫০ পর্যন্ত অর্ধেক পৃথিবী এক নিমেষে বাদ দিয়ে দিলেন!
+- এরপর আপনি বলবেন ৭৫, তারপর ৮৭... এভাবে মাত্র ৭টি প্রশ্নে ১০০টি সংখ্যার মধ্য থেকে সঠিক সংখ্যাটি নিশ্চিতভাবে বের করে ফেলা যায়।
+ডিকশনারিতে শব্দ খোঁজার সময় আমরা ঠিক এই পদ্ধতিই ব্যবহার করি; একেই বলে **Binary Search**।
 
-১. **অভিধান বা ডিকশনারির নিয়ম:**
-   ডিকশনারিতে কোনো শব্দ খুঁজতে আমরা কিন্তু ১ম পৃষ্ঠা থেকে ১টি ১টি করে পাতা উল্টাই না। আমরা ঠিক মাঝখানে বই খুলি। যদি আমাদের শব্দ পেছনের দিকে থাকে, তবে পুরো প্রথমার্ধ এক নিমেষে বাদ দিয়ে বাকি অর্ধেকের মাঝে খুঁজি।
+### ⚠️ অপরিহার্য পূর্বশর্ত (Strict Precondition):
+বাইনারি সার্চের একমাত্র এবং সবচেয়ে গুরুত্বপূর্ণ শর্ত হলো: **ডাটা অবশ্যই ছোট থেকে বড় ক্রমানুসারে সাজানো (Sorted) থাকতে হবে!** 
+এলোমেলো বা অসাজানো ডাটায় বাইনারি সার্চ চালালে এটি সম্পূর্ণ ভুল উত্তর দেবে।
 
-২. **পূর্বশর্ত (Precondition):**
-   ডাটা অবশ্যই **সাজানো (Sorted)** থাকতে হবে! এলোমেলো ডাটার ওপর বাইনারি সার্চ কাজ করে না।
+### 🔍 ধাপে ধাপে অ্যালগরিদম যেভাবে কাজ করে:
+১. **সীমানা নির্ধারণ:** দুটি পয়েন্টার রাখা হয় — \`low = 0\` এবং \`high = n - 1\`।
+২. **মাঝের উপাদান গণনা (\`mid\`):** সীমানার ঠিক মধ্যবিন্দু বের করা হয়।
+৩. **তিনটি সম্ভাবনা:**
+   - \`arr[mid] == target\`: কাঙ্ক্ষিত সংখ্যাটি মিলে গেছে! সাথে সাথে ইনডেক্স \`mid\` রিটার্ন করুন ($O(1)$ Best Case)।
+   - \`arr[mid] < target\`: এর মানে টার্গেটটি ডানপাশের অংশে আছে। তাই বামের অর্ধেক পুরোটাই বাদ দিয়ে \`low = mid + 1\` করা হয়।
+   - \`arr[mid] > target\`: এর মানে টার্গেটটি বামপাশের অংশে আছে। তাই ডানের অর্ধেক পুরোটাই বাদ দিয়ে \`high = mid - 1\` করা হয়।
+৪. **লুপ সমাপ্তি:** \`low > high\` হয়ে গেলে বুঝতে হবে সংখ্যাটি তালিকায় নেই এবং \`-1\` রিটার্ন করা হয়।
 
-৩. **লগারিদমিক গতির কামাল:**
-   ১০ লাখ উপাদানের ভেতর থেকে যেকোনো সংখ্যা খুঁজতে লিনিয়ার সার্চের লাগতে পারে ১০ লাখ কদম। কিন্তু বাইনারি সার্চ মাত্র **২০টি কদমে** সমাধান নিশ্চিত করে!
+### 💥 বিখ্যাত ঐতিহাসিক বাগ: ৩২-বিট ইন্টিজার ওভারফ্লো (Integer Overflow):
+গুগলের গবেষকরাও একসময় এই সাধারণ ভুলটি করেছিলেন:
+\`\`\`cpp
+int mid = (low + high) / 2; // মারাত্মক ভুল!
+\`\`\`
+যদি \`low\` এবং \`high\` উভয়ের মান ১০০ কোটির বেশি হয় (যা বড় ২ বিলিয়ন সাইজের অ্যারেতে খুবই স্বাভাবিক), তবে তাদের যোগফল \`low + high\` দাঁড়ায় ২০০ কোটির ওপরে, যা ৩২-বিট সাইনড ইন্টিজারের সর্বোচ্চ সীমা ($2,147,483,647$) ছাড়িয়ে যায়। ফলে সংখ্যাটি নেগেটিভ হয়ে যায় এবং প্রোগ্রামটি **Segmentation Fault** দিয়ে ক্র্যাশ করে!
+- **নিরাপদ গাণিতিক সূত্র:**
+  \`\`\`cpp
+  int mid = low + (high - low) / 2; // ১০০% নিরাপদ
+  \`\`\`
+  এখানে কখনো ওভারফ্লো ঘটার কোনো সুযোগ নেই।
+
+### ⏱️ লগারিদমিক গতির বিস্ময় ($O(\\log n)$):
+- $1,000$ টি সংখ্যায় খুঁজতে সময় লাগে সর্বোচ্চ **১০টি** তুলনা।
+- $10,00,000$ (১০ লাখ) সংখ্যায় খুঁজতে সময় লাগে সর্বোচ্চ **২০টি** তুলনা।
+- $100,00,00,000$ (১০০ কোটি) সংখ্যায় খুঁজতে সময় লাগে সর্বোচ্চ **৩০টি** তুলনা!
+- **Space Complexity:** ইটারেটিভ ভার্সনে কোনো অতিরিক্ত মেমোরি লাগে না ($O(1)$ ইন-প্লেস)। রিকার্সিভ ভার্সনে কল স্ট্যাকের জন্য $O(\\log n)$ মেমোরি লাগে।
       `,
     },
     quizTopicId: "binary-search",
