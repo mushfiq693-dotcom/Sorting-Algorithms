@@ -23,6 +23,7 @@ import { BinaryTreeDiagram } from "./BinaryTreeDiagram";
 import { BstDiagram } from "./BstDiagram";
 import { AvlTreeDiagram } from "./AvlTreeDiagram";
 import { HeapDiagram } from "./HeapDiagram";
+import { PriorityQueueDiagram } from "./PriorityQueueDiagram";
 import { Image } from "lucide-react";
 
 interface AlgorithmDiagramProps {
@@ -66,6 +67,8 @@ export function AlgorithmDiagram({ algorithmId }: AlgorithmDiagramProps) {
         return <AvlTreeDiagram />;
       case "heap":
         return <HeapDiagram />;
+      case "priority-queue":
+        return <PriorityQueueDiagram />;
       case "linear-search":
         return <LinearSearchTimelineDiagram />;
       case "binary-search":

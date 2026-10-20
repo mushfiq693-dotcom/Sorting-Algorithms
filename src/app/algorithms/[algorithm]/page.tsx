@@ -68,6 +68,10 @@ const HeapVisualizer = dynamic(
   () => import("@/components/visualizer/HeapVisualizer").then((mod) => mod.HeapVisualizer),
   { ssr: false, loading: () => <TabLoading /> }
 );
+const PriorityQueueVisualizer = dynamic(
+  () => import("@/components/visualizer/PriorityQueueVisualizer").then((mod) => mod.PriorityQueueVisualizer),
+  { ssr: false, loading: () => <TabLoading /> }
+);
 const LinearSearchVisualizer = dynamic(
   () => import("@/components/visualizer/LinearSearchVisualizer").then((mod) => mod.LinearSearchVisualizer),
   { ssr: false, loading: () => <TabLoading /> }
@@ -414,6 +418,7 @@ export default function AlgorithmDetailPage() {
                 <BanglaNote
                   topic={docsArticle.banglaNote.topic}
                   banglaText={docsArticle.banglaNote.banglaText}
+                  defaultExpanded={false}
                 />
               )}
 
@@ -535,6 +540,8 @@ export default function AlgorithmDetailPage() {
                 <AvlTreeVisualizer />
               ) : algorithmId === "heap" ? (
                 <HeapVisualizer />
+              ) : algorithmId === "priority-queue" ? (
+                <PriorityQueueVisualizer />
               ) : algorithmId === "linear-search" ? (
                 <LinearSearchVisualizer />
               ) : algorithmId === "binary-search" ? (

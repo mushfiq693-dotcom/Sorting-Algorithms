@@ -570,5 +570,43 @@ public:
       },
     ],
   },
+  "priority-queue": {
+    algorithmId: "priority-queue",
+    title: "Priority Queue: Inverted Sift-Up Comparator Demoting Urgent Tasks",
+    description:
+      "In this Min-Priority Queue implementation for an OS scheduler, tasks with lower numerical priority values have higher urgency. However, the siftUp loop uses `>` instead of `<`, causing low-priority background tasks to bubble up to the root while critical high-priority kernel tasks sink to the bottom!",
+    buggyCode: `void siftUp(int i, vector<Task>& heap) {
+    while (i > 0) {
+        int parent = (i - 1) / 2;
+        if (heap[i].priority > heap[parent].priority) { // Bug: inverted > operator in Min-PQ!
+            swap(heap[i], heap[parent]);
+            i = parent;
+        } else {
+            break;
+        }
+    }
+}`,
+    buggyLineNumber: 4,
+    hint: "In a Min-Priority Queue, a task with a lower numerical priority (higher urgency) must bubble up if it is less than its parent's priority.",
+    explanation:
+      "Line 4 checked `if (heap[i].priority > heap[parent].priority)`. In a Min-Priority Queue, higher priority corresponds to smaller numerical values (e.g. Priority 1 = Emergency, Priority 10 = Background). To maintain the Min-Heap property, the child must bubble up when its priority is strictly smaller than its parent (`heap[i].priority < heap[parent].priority`). The `>` operator inverted the priority queue into an inverted structure where urgent tasks get trapped at the bottom.",
+    validateFix: (line: string) => {
+      const trimmed = line.replace(/\s+/g, "");
+      return (
+        trimmed.includes("heap[i].priority<heap[parent].priority") ||
+        trimmed.includes("heap[parent].priority>heap[i].priority")
+      );
+    },
+    flawedRunner: () => [
+      {
+        type: "call-enter",
+        fn: "siftUp",
+        args: [4],
+        description:
+          "Inserted Critical Kernel Task (Priority 1) beneath Idle Background Task (Priority 10). Condition failed to bubble up!",
+      },
+    ],
+  },
 };
+
 

@@ -39,6 +39,7 @@ export const ORDERED_DATA_STRUCTURES: OrderedTopicItem[] = [
   { id: "bst", name: "Binary Search Tree", category: "tree" },
   { id: "avl-tree", name: "AVL Tree", category: "tree" },
   { id: "heap", name: "Binary Heap", category: "heap" },
+  { id: "priority-queue", name: "Priority Queue", category: "heap" },
 ];
 
 export const ORDERED_COMPLEXITY_TOPICS: OrderedTopicItem[] = [
@@ -75,6 +76,7 @@ export const ALGORITHM_NAME_MAP: Record<AlgorithmId, string> = {
   bst: "Binary Search Tree",
   "avl-tree": "AVL Tree",
   heap: "Binary Heap",
+  "priority-queue": "Priority Queue",
   "time-complexity": "Time Complexity",
   "space-complexity": "Space Complexity",
 };
@@ -101,6 +103,7 @@ export const ALGORITHM_DOCS_MAP: Record<AlgorithmId, string[]> = {
   bst: ["bst-fundamentals"],
   "avl-tree": ["avl-tree-fundamentals"],
   heap: ["heap-fundamentals"],
+  "priority-queue": ["priority-queue-fundamentals"],
   "time-complexity": ["time-complexity", "big-o-for-beginners"],
   "space-complexity": ["space-complexity", "in-place-and-space-complexity"],
 };

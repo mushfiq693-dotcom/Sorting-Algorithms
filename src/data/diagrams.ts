@@ -422,4 +422,23 @@ void siftDown(int i, int n) {
 }`,
     highlightedLine: 7,
   },
+  "priority-queue": {
+    algorithmId: "priority-queue",
+    title: "Priority Queue — Task Scheduling & Greedy Exploration Engine",
+    subtitle: "Abstract Priority Queue ADT backed by an efficient Binary Heap with O(1) peek and O(log n) push/pop.",
+    caption: "Essential for OS kernel thread dispatchers, Emergency Room triage, network packet prioritization, and Dijkstra / A* graph algorithms.",
+    fixedArray: [99, 90, 84, 72, 68, 25, 15],
+    complexityFormula: "Peek: O(1) • Enqueue: O(log n) • Dequeue: O(log n) • Decrease-Key: O(log n)",
+    complexityExplanation: "Balanced O(log n) insertions and extractions combined with O(1) top-priority inspection deliver the optimal tradeoff compared to O(n) unsorted or sorted array implementations.",
+    codeSnippet: `// Priority Queue Task Extraction
+Task extractTop() {
+    if (heap.empty()) throw runtime_error("Empty queue");
+    Task top = heap[0];
+    heap[0] = heap.back();
+    heap.pop_back();
+    siftDown(0);
+    return top;
+}`,
+    highlightedLine: 3,
+  },
 };

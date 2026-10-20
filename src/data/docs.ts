@@ -2588,6 +2588,205 @@ $$\\text{Total Operations} \\le \\frac{n}{2} \\cdot 2 = n = O(n)$$
     },
   },
   {
+    slug: "priority-queue-fundamentals",
+    level: 5,
+    levelTitle: "Level 5: Hierarchical Tree Architectures",
+    order: 5,
+    title: "Priority Queue: ADT Semantics, Heap-Backed Implementation, and Greedy Graph Scheduling",
+    subtitle: "Master the Priority Queue abstract data structure, Max-PQ vs Min-PQ invariants, OS task scheduling, Dijkstra shortest path frontier exploration, Decrease-Key operations, and LeetCode patterns.",
+    estimatedReadTime: "18 min",
+    category: "Data Structures",
+    content: `
+### Chapter 1: The Scheduling Dilemma — Why Standard FIFO Queues Fall Short
+
+In a standard First-In, First-Out (FIFO) queue, the sole determinant of execution order is **time of arrival**. The element that entered first is guaranteed to be serviced first.
+
+While this fairness model is ideal for line printers and customer service queues, modern computer systems and algorithmic optimization problems require a radically different paradigm:
+
+1. **Operating System Thread Scheduling:** If a system triggers a critical hardware interrupt or audio buffer underflow while 10,000 background file-indexing threads are queued, the OS kernel must not wait. The critical task must jump directly to the head of the dispatch line.
+2. **Hospital Emergency Room Triage:** A patient arriving with sudden cardiac arrest cannot wait behind ten patients with minor skin scratches simply because they arrived ten minutes earlier. Severity supersedes arrival time.
+3. **Greedy Graph Algorithms (Dijkstra / Prim / A*):** When finding the shortest path across a road network of 1,000,000 intersections, the algorithm must always explore the unsettled vertex with the **minimum tentative distance** next, regardless of when it was discovered.
+
+These scenarios demand an **Abstract Data Type (ADT)** called the **Priority Queue**.
+
+---
+
+### Chapter 2: The Priority Queue ADT Specification
+
+A **Priority Queue** is a collection of elements where each element has an associated **priority key**. It supports three fundamental primitive operations:
+
+1. \`push(item, priority)\` (or \`enqueue\`): Inserts a new element with a designated priority value.
+2. \`pop()\` (or \`dequeue\`): Removes and returns the element with the highest priority (or lowest value in a Min-Priority Queue).
+3. \`peek()\` (or \`top\`): Returns the current top-priority element without removing it.
+
+#### Max-Priority vs Min-Priority Queues:
+- **Max-Priority Queue:** Dispatches elements in descending order of priority (higher number = greater urgency). Standard default in C++ (\`std::priority_queue<int>\`).
+- **Min-Priority Queue:** Dispatches elements in ascending order of priority (lower number = earlier or cheaper). Crucial for Dijkstra's algorithm, Huffman coding, and event-driven simulation timestamps (\`std::priority_queue<int, vector<int>, greater<int>>\`).
+
+---
+
+### Chapter 3: Concrete Implementations Compared
+
+| Implementation Backing | Peek Top | Push (Enqueue) | Pop (Dequeue) | Memory & Locality |
+| :--- | :--- | :--- | :--- | :--- |
+| **Unsorted Dynamic Array** | $O(n)$ | $O(1)$ | $O(n)$ | Contiguous, zero pointers |
+| **Sorted Array** | $O(1)$ | $O(n)$ shifts | $O(1)$ (pop back) | Contiguous, heavy shift penalty |
+| **Balanced BST (e.g. std::set)** | $O(\\log n)$ | $O(\\log n)$ | $O(\\log n)$ | $24+$ bytes pointer overhead per node |
+| **Binary Heap (Optimal Default)** | **$O(1)$** | **$O(\\log n)$** | **$O(\\log n)$** | **Contiguous 1D RAM, zero pointers** |
+| **Fibonacci Heap (Theoretical)** | $O(1)$ | $O(1)$ amortized | $O(\\log n)$ | Complex node pointers, high constant factor |
+
+#### Why Binary Heap is the Universal Industry Choice:
+A Binary Heap maps directly into a 1D contiguous array with index arithmetic:
+$$\\text{Parent}(i) = \\left\\lfloor \\frac{i - 1}{2} \\right\\rfloor, \\quad \\text{Left}(i) = 2i + 1, \\quad \\text{Right}(i) = 2i + 2$$
+This ensures:
+- Zero dynamic memory allocation overhead per node.
+- Complete tree shape invariant prevents degenerating into a linked list.
+- Hardware CPU cache prefetching lines deliver real-world speeds 3–5x faster than pointer-based trees.
+
+---
+
+### Chapter 4: Real-Time OS Process Scheduling Blueprint
+
+In operating systems like Linux and Windows, every runnable thread is assigned a static or dynamic priority score:
+- **Ring 0 Kernel Panic / Hardware IRQs:** Highest priority (preempts user applications immediately).
+- **Audio / Video Compositor:** Interactive real-time threads (prevents audio glitches and dropped frames).
+- **Foreground GUI Thread:** Normal priority (ensures responsive mouse and keyboard input).
+- **Background Workers:** Low priority (disk indexers, virus scanners, garbage collectors).
+
+When the CPU scheduler dispatches the next thread to a hardware core:
+1. It calls \`pq.pop()\` to extract the highest priority ready thread in $O(\\log n)$.
+2. If a thread exhausts its time slice without completing, its priority may decay (aging) and it is re-enqueued with \`pq.push()\`.
+3. If an urgent event occurs (e.g., packet received on network card), a thread's priority is elevated, triggering an immediate preemption check.
+
+---
+
+### Chapter 5: Greedy Exploration Engine — Dijkstra's Algorithm
+
+Dijkstra's Single-Source Shortest Path algorithm on a directed graph $G = (V, E)$ demonstrates the indispensable power of a Min-Priority Queue:
+
+\`\`\`cpp
+vector<int> dijkstra(int source, int n, const vector<vector<pair<int, int>>>& adj) {
+    vector<int> dist(n, INT_MAX);
+    // Min-Priority Queue storing {tentative_distance, vertex_id}
+    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
+
+    dist[source] = 0;
+    pq.push({0, source});
+
+    while (!pq.empty()) {
+        auto [d, u] = pq.top();
+        pq.pop();
+
+        // Stale entry guard (if we already found a shorter path to u)
+        if (d > dist[u]) continue;
+
+        for (auto [v, weight] : adj[u]) {
+            if (dist[u] + weight < dist[v]) {
+                dist[v] = dist[u] + weight;
+                pq.push({dist[v], v}); // Edge relaxation
+            }
+        }
+    }
+    return dist;
+}
+\`\`\`
+
+#### Complexity Analysis:
+- Without a priority queue (linear array scan for minimum distance): Time is $O(V^2)$.
+- With a binary heap priority queue:
+  - Each vertex extracted once: $V \\times O(\\log V)$.
+  - Each edge relaxed at most once: $E \\times O(\\log V)$.
+  - **Total Runtime:** $O((V + E) \\log V)$, reducing execution on a road network with $V = 10^5, E = 3 \\times 10^5$ from hours to under $20$ milliseconds!
+
+---
+
+### Chapter 6: The Decrease-Key & Change-Priority Challenge
+
+In many theoretical graph algorithms (Dijkstra, Prim), we want to modify the priority of a node already inside the queue:
+- **Decrease-Key:** Lowering tentative distance in Min-PQ.
+- **Increase-Key:** Raising priority in Max-PQ.
+
+#### Why standard \`std::priority_queue\` lacks \`decreaseKey\`:
+A standard heap array does not provide an $O(1)$ reverse lookup from an element's ID to its current index in the array. Finding the task takes $O(n)$ linear scan unless supplemented with an **Index Position Map** (a hash table or array mapping \`item_id -> heap_index\`).
+
+With an indexed priority queue:
+1. Lookup current heap slot in $O(1)$ via \`posMap[id]\`.
+2. Update priority value in-place.
+3. If priority increased in Max-PQ: run **Sift-Up** in $O(\\log n)$.
+4. If priority decreased in Max-PQ: run **Sift-Down** in $O(\\log n)$.
+5. Total modification time: strictly $O(\\log n)$!
+
+---
+
+### Chapter 7: Essential LeetCode Patterns
+
+1. **Top-K Frequent Elements (LC 347) / Kth Largest (LC 215):**
+   - Maintain a Min-Heap of size $k$.
+   - For every new element, push it in. If size exceeds $k$, pop the minimum.
+   - Remaining $k$ elements are guaranteed to be the $k$ largest elements! Runtime: $O(n \\log k)$ instead of $O(n \\log n)$.
+2. **Merge K Sorted Lists (LC 23):**
+   - Push the head node of each of the $k$ lists into a Min-PQ.
+   - Repeatedly pop the smallest node, append to output list, and push its \`next\` pointer. Runtime: $O(N \\log k)$.
+3. **Task Scheduler (LC 621):**
+   - Use a Max-PQ of task frequencies to greedily execute the most frequent available task first.
+4. **Find Median from Data Stream (LC 295):**
+   - Two Heaps Pattern: a Max-Heap for the smaller half and a Min-Heap for the larger half. Instant $O(1)$ median access and $O(\\log n)$ insertions.
+`,
+    banglaNote: {
+      topic: "Priority Queue (প্রায়োরিটি কিউ) সহজ বাংলায় ব্যাখ্যা",
+      englishContext:
+        "A Priority Queue is an abstract data structure where every element possesses a priority key, and extraction always yields the extreme priority element in O(log n) time via an underlying Binary Heap.",
+      banglaText: `
+### 📌 প্রায়োরিটি কিউ (Priority Queue) আসলে কী?
+
+সাধারণ লাইনে (FIFO Queue) যে আগে আসে সে আগে সেবা পায়—যেমন বাসের টিকিট কাউন্টারে লাইন। 
+
+কিন্তু বাস্তব জীবনে এমন অনেক পরিস্থিতি আছে যেখানে **আসার সময় নয়, কাজের গুরুত্ব (Priority)** সবচেয়ে বেশি ম্যাটার করে। 
+
+#### 🏥 একটি বাস্তব উদাহরণ: হাসপাতালের ইমার্জেন্সি রুম
+ধরুন হাসপাতালে এক ব্যক্তি সাধারণ পা মচকে বিকেল ৫টায় আসলেন। কিন্তু ৫টা ২০ মিনিটে হঠাৎ একজন হার্ট অ্যাটাকের রোগী আসলেন। ডাক্তার কি বলবেন—"না, পা মচকানো রোগী আগে এসেছেন, তাকে আগে দেখব"? কক্ষনো না! হার্ট অ্যাটাক রোগীর প্রায়োরিটি সর্বোচ্চ, তাই তাকে সাথে সাথে আগে অপারেশন থিয়েটারে নেওয়া হবে।
+
+এটাই হলো **Priority Queue**-এর মূল ধারণা: প্রতিটি আইটেমের সাথে একটি গুরুত্বের মান (Priority Key) থাকে, এবং কিউ থেকে সবসময় **সর্বোচ্চ (বা সর্বনিম্ন) প্রায়োরিটির আইটেমটি আগে বের হয়**।
+
+---
+
+### ⚙️ কীভাবে প্রায়োরিটি কিউ কাজ করে? (বাইনারি হিপের জাদু)
+
+প্রায়োরিটি কিউকে সবচেয়ে কার্যকরভাবে তৈরি করা হয় **Binary Heap** ডাটা স্ট্রাকচার দিয়ে:
+১. **পয়েন্টার ছাড়া মেমরি:** কোনো ডায়নামিক পয়েন্টার ছাড়া সাধারণ ১ডি অ্যারের ভেতর এটি থাকে।
+২. **Peek O(1):** সবচেয়ে গুরুত্বপূর্ণ আইটেমটি সবসময় ট্রির রুট বা অ্যারের প্রথম ঘরে (ইনডেক্স ০) বসে থাকে। তাই শীর্ষ উপাদানটি দেখতে মাত্র O(1) সময় লাগে।
+৩. **Push (Enqueue) O(log n):** নতুন টাস্ক আসলে অ্যারের শেষে বসিয়ে **Sift-Up (উপরে তোলা)** প্রক্রিয়ায় তার উপযুক্ত অবস্থানে পৌঁছে দেওয়া হয়।
+৪. **Pop (Dequeue) O(log n):** রুট আইটেম বের করে শেষ পাতার উপাদানটিকে রুটে বসানো হয় এবং **Sift-Down (নিচে নামানো)** করে নিয়ম ঠিক রাখা হয়।
+
+---
+
+### 💡 কেন সাধারণ অ্যারে বা শর্টেড অ্যারে ব্যবহার করব না?
+
+| ডাটা স্ট্রাকচার | নতুন আইটেম ঢোকাতে (Push) | শীর্ষ আইটেম বের করতে (Pop) | শীর্ষ আইটেম দেখতে (Peek) |
+| :--- | :--- | :--- | :--- |
+| **অগোছালো অ্যারে (Unsorted Array)** | O(1) খুব দ্রুত | O(n) পুরো অ্যারে খুঁজে বের করতে হয় | O(n) |
+| **সাজানো অ্যারে (Sorted Array)** | O(n) ঘর ফাঁকা করতে শিফট করতে হয় | O(1) শেষ থেকে কেটে ফেলা যায় | O(1) |
+| **বাইনারি হিপ (Priority Queue)** | **O(log n)** সুষম | **O(log n)** সুষম | **O(1) তাত্ক্ষণিক** |
+
+হিপ উভয় অপারেশনের মধ্যে চমৎকার ভারসাম্য (Balance) বজায় রাখে।
+
+---
+
+### 🚀 বাস্তব জীবনে প্রায়োরিটি কিউ কোথায় কাজে লাগে?
+১. **অপারেটিং সিস্টেম (OS CPU Scheduler):** ইউজার যখন কীবোর্ডে টাইপ করেন, সেই সিগন্যাল ব্যাকগ্রাউন্ড ডাউনলোডের চেয়ে বেশি প্রায়োরিটি পায়।
+২. **Dijkstra's Algorithm:** গুগল ম্যাপে সবচেয়ে কম দূরত্বের পথ খুঁজতে যে নোডের দূরত্ব সবচেয়ে কম তাকে সবার আগে এক্সপ্লোর করা হয়।
+৩. **ইন্টারনেট রাউটার (Quality of Service):** জুম ভিডিও কল ও ভয়েস কলের প্যাকেটকে সাধারণ ফাইল ডাউনলোডের আগে ইন্টারনেটে পাঠানো হয় যাতে কথা কেটে না যায়।
+৪. **Top-K Elements:** কোটি কোটি ডাটা থেকে শীর্ষ ১০টি বা ১০০টি সংখ্যা বের করতে।
+      `,
+    },
+    quizTopicId: "priority-queue",
+    visualizerLink: {
+      label: "Priority Queue Studio",
+      algorithmId: "priority-queue",
+      path: "/algorithms/priority-queue",
+    },
+  },
+  {
     slug: "time-complexity",
     level: 6,
     levelTitle: "Level 6: Algorithmic Complexity Analysis",

@@ -808,11 +808,61 @@ export const LEARNING_PATH: LearningStep[] = [
   },
 
   // ==========================================
+  // TIER 6.95: PRIORITY QUEUE ADT
+  // ==========================================
+  {
+    id: "priority-queue",
+    order: 16,
+    name: "Priority Queue",
+    category: "heap",
+    badge: "Scheduling O(log n)",
+    estimatedTime: "~20 min",
+    difficulty: "Intermediate",
+    reason: "Dispatch items by dynamic importance rather than arrival time, powering OS CPU schedulers and Dijkstra's algorithm.",
+    hook: "In a busy hospital ER, should patients be treated first-come-first-served, or should a critical cardiac arrest jump ahead of a minor sprain immediately?",
+    superpower: "Instant O(1) Highest-Priority Access with O(log n) Dispatch",
+    tradeoff: "No Instant Arbitrary Search (O(n) scan to find random non-root tasks)",
+    mentalModel: "Hospital Emergency Room Triage / VIP Fast Lane",
+    keyPrinciples: [
+      "Priority Key Ordering: Every element possesses a priority metric; highest (or lowest) priority is always dispatched first.",
+      "Binary Heap Container: Underlying complete binary tree maps directly into a 1D array with zero pointer overhead.",
+      "Enqueue via Sift-Up: Appends new task at the leaf and bubbles upward along ancestry in O(log n).",
+      "Dequeue via Sift-Down: Replaces top root task with last element and sinks downward in O(log n).",
+      "Dynamic Priority Modification: Decrease-Key and Increase-Key adjust priority and rebalance via Sift in O(log n).",
+      "Greedy Exploration Driver: Backs Dijkstra, Prim, and A* search by dynamically providing the lowest-cost edge/vertex."
+    ],
+    analogy: "Like airport boarding: First class and emergency personnel board before general economy, regardless of when they arrived at the terminal gate.",
+    idea: "A Priority Queue is an abstract data structure where elements are served based on priority weights. Backed by a Binary Heap, it provides O(1) peek access to the highest-priority element and O(log n) insertion and extraction, outperforming both unsorted arrays (O(n) pop) and sorted arrays (O(n) push).",
+    sampleArray: [99, 90, 84, 72, 68, 25, 15],
+    codeBlocks: [
+      {
+        title: "Push (Enqueue) Operation",
+        lines: "void push(Task item) {\n    heap.push_back(item);\n    siftUp(heap.size() - 1);\n}",
+        explanation: "Inserts task at array end and bubbles upward along parent ancestry in O(log n).",
+      },
+      {
+        title: "Pop (Dequeue Top Task)",
+        lines: "Task pop() {\n    Task top = heap[0];\n    heap[0] = heap.back();\n    heap.pop_back();\n    siftDown(0);\n    return top;\n}",
+        explanation: "Dispatches top priority task, swaps root with last element, and sinks down in O(log n).",
+      },
+      {
+        title: "Dijkstra Frontier Relaxation",
+        lines: "if (dist[u] + weight < dist[v]) {\n    dist[v] = dist[u] + weight;\n    pq.push({v, dist[v]});\n}",
+        explanation: "Extracts minimum tentative distance in O(log V), powering greedy shortest path search.",
+      },
+    ],
+    complexityWhy: {
+      time: "Peek is O(1). Push and Pop are O(log n) because the heap tree height is ⌊log₂ n⌋. Batch build takes linear O(n) time.",
+      space: "O(n) contiguous array memory with optimal CPU cache locality and zero pointer overhead.",
+    },
+  },
+
+  // ==========================================
   // TIER 7: ELEMENTARY QUADRATIC SORTING
   // ==========================================
   {
     id: "bubble",
-    order: 16,
+    order: 17,
     name: "Bubble Sort",
     category: "sorting",
     badge: "Adjacent Swaps",
@@ -857,7 +907,7 @@ export const LEARNING_PATH: LearningStep[] = [
   },
   {
     id: "selection",
-    order: 17,
+    order: 18,
     name: "Selection Sort",
     category: "sorting",
     badge: "Find Minimum",
@@ -902,7 +952,7 @@ export const LEARNING_PATH: LearningStep[] = [
   },
   {
     id: "insertion",
-    order: 18,
+    order: 19,
     name: "Insertion Sort",
     category: "sorting",
     badge: "Hand-Sorting Cards",
@@ -951,7 +1001,7 @@ export const LEARNING_PATH: LearningStep[] = [
   // ==========================================
   {
     id: "merge",
-    order: 19,
+    order: 20,
     name: "Merge Sort",
     category: "sorting",
     badge: "Divide & Conquer",
@@ -996,7 +1046,7 @@ export const LEARNING_PATH: LearningStep[] = [
   },
   {
     id: "quick",
-    order: 20,
+    order: 21,
     name: "Quick Sort",
     category: "sorting",
     badge: "Pivot Partition",

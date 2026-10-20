@@ -79,7 +79,7 @@ export const CATEGORY_CARDS: CategoryCardMeta[] = [
   {
     key: "heap",
     title: "Heaps",
-    countLabel: "1 Visualization",
+    countLabel: "2 Visualizations",
     icon: Boxes,
     iconBg: "bg-amber-500/10 dark:bg-amber-500/20",
     iconColor: "text-amber-500 dark:text-amber-400",
@@ -215,6 +215,12 @@ const TOPIC_VISUALS: Record<AlgorithmId, TopicVisualMeta> = {
     iconColor: "text-amber-500 dark:text-amber-400",
     iconBorder: "border-amber-500/25",
   },
+  "priority-queue": {
+    icon: Boxes,
+    iconBg: "bg-amber-500/10 dark:bg-amber-500/20",
+    iconColor: "text-amber-500 dark:text-amber-400",
+    iconBorder: "border-amber-500/25",
+  },
 
   // Searching (Orange / Rust palette)
   "linear-search": {
@@ -266,6 +272,7 @@ const TOPIC_DESCRIPTIONS: Record<AlgorithmId, string> = {
   bst: "Explore Left < Root < Right invariant, O(log n) dynamic search, insertion, and 3-case deletion with in-order successors.",
   "avl-tree": "Watch self-balancing tree rotations (LL, RR, LR, RL) and Balance Factor telemetry keep height strictly O(log n).",
   heap: "Explore array-as-tree representation, O(1) peek, O(log n) sift-up/down, and linear O(n) heapify.",
+  "priority-queue": "Watch priority-based task dispatching, O(1) peek, O(log n) enqueue/dequeue, and Decrease-Key priority mutations.",
 
   // Searching
   "linear-search": "Watch linear search scan elements one by one from start to end for a match.",
@@ -494,7 +501,7 @@ const HEAP_COMPARISON: HeapComparisonRow[] = [
   },
   {
     name: "Priority Queue",
-    id: "heap",
+    id: "priority-queue",
     variant: "Key-Priority Tuple extraction",
     peek: "O(1) Top Priority",
     insert: "O(log n) Enqueue",

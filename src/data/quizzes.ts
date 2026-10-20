@@ -1482,6 +1482,73 @@ export const QUIZZES: Record<string, QuizTopic> = {
         explanation: "Any node at index i has a left child at 2i + 1. If 2i + 1 ≥ n, the node has no children and is therefore a leaf. Solving 2i + 1 ≥ n yields i ≥ (n - 1) / 2, meaning leaf nodes occupy indices from ⌊n / 2⌋ up to n - 1 (approximately half the tree)."
       }
     ]
+  },
+  "priority-queue": {
+    id: "priority-queue",
+    title: "Priority Queue Mastery Assessment",
+    description: "Test your understanding of priority queue semantics, heap vs array tradeoffs, C++ priority_queue syntax, Dijkstra's frontier optimization, and Decrease-Key complexities.",
+    questions: [
+      {
+        id: "pq1",
+        question: "What is the defining operational difference between a standard FIFO Queue and a Priority Queue?",
+        options: [
+          "A FIFO Queue serves items strictly by arrival time, whereas a Priority Queue serves items by their associated priority key regardless of arrival time",
+          "A Priority Queue can only store unique integer values",
+          "A Priority Queue does not support removal of elements",
+          "A FIFO Queue is always faster than a Priority Queue in every scenario"
+        ],
+        correctIndex: 0,
+        explanation: "In a FIFO Queue, the first item in is the first item out. In a Priority Queue, every item has an urgency score; the item with the highest (or lowest) priority is dispatched next, regardless of how recently it arrived."
+      },
+      {
+        id: "pq2",
+        question: "When using a Binary Heap to back a Priority Queue of n items, what are the time complexities of peek(), push(), and pop()?",
+        options: [
+          "peek: O(1), push: O(log n), pop: O(log n)",
+          "peek: O(log n), push: O(1), pop: O(n)",
+          "peek: O(1), push: O(n), pop: O(1)",
+          "peek: O(1), push: O(1), pop: O(1)"
+        ],
+        correctIndex: 0,
+        explanation: "Peek inspects the root element at index [0] in O(1) time. Push appends to the array and calls Sift-Up along the tree branch in O(log n). Pop extracts the root, places the last leaf at the top, and calls Sift-Down in O(log n)."
+      },
+      {
+        id: "pq3",
+        question: "Why is an unsorted dynamic array generally considered a poor choice for a production Priority Queue under frequent extractions?",
+        options: [
+          "While push is O(1), extracting the highest priority item requires a linear O(n) scan across all elements",
+          "An unsorted array cannot store custom task structs",
+          "An unsorted array uses 3x more memory than a binary heap",
+          "An unsorted array does not permit dynamic resizing"
+        ],
+        correctIndex: 0,
+        explanation: "In an unsorted array, inserting is O(1) by appending at the end, but finding and removing the maximum priority item requires scanning the entire array (O(n)), making repeated extractions prohibitively slow for large datasets."
+      },
+      {
+        id: "pq4",
+        question: "In C++ STL, how do you declare a Min-Priority Queue for integers where smaller values have higher dispatch priority?",
+        options: [
+          "std::priority_queue<int, vector<int>, std::greater<int>> pq;",
+          "std::priority_queue<int> pq;",
+          "std::priority_queue<int, std::less<int>> pq;",
+          "std::priority_queue<int, min_heap> pq;"
+        ],
+        correctIndex: 0,
+        explanation: "By default, std::priority_queue<int> uses std::less<int> to create a Max-Heap. Supplying std::greater<int> as the comparator template argument inverts the relationship, creating a Min-Priority Queue where the smallest integer is at the top."
+      },
+      {
+        id: "pq5",
+        question: "How does a Min-Priority Queue reduce the time complexity of Dijkstra's Single-Source Shortest Path algorithm on a graph with V vertices and E edges?",
+        options: [
+          "It greedily extracts the unsettled vertex with minimum tentative distance in O(log V), yielding O((V + E) log V) total time instead of O(V²)",
+          "It completely eliminates the need to inspect graph edges",
+          "It guarantees the graph is bipartite",
+          "It runs in O(1) time by precomputing all pairs shortest paths"
+        ],
+        correctIndex: 0,
+        explanation: "Without a priority queue, scanning all unsettled vertices to find the minimum distance takes O(V) per step, leading to O(V²) total runtime. A Min-PQ extracts the minimum in O(log V) and updates edges in O(log V), achieving optimal O((V + E) log V)."
+      }
+    ]
   }
 };
 

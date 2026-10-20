@@ -36,8 +36,8 @@ This roadmap tracks the long-term sequence of production-quality Data Structure 
 | 06 | **Binary Search Tree** | ✅ *Completed* | `/algorithms/bst` | Subtree trichotomy invariant (Left < Root < Right), O(log n) search, dynamic insertion, 3-case deletion with in-order successor swap, in-order monotonic sort proof, degenerate skew hazard |
 | 07 | **AVL Tree** | ✅ *Completed* | `/algorithms/avl-tree` | Balance factor, LL/RR/LR/RL rotations, self-balancing |
 | 08 | **Heap (Min/Max)** | ✅ *Completed* | `/algorithms/heap` | Pointerless 1D array mapping, Sift-Up ($O(\log n)$), Sift-Down ($O(\log n)$), linear Bottom-Up Heapify ($O(n)$ summation proof), index arithmetic calculator |
-| 09 | **Priority Queue** | 🟡 *Next Eligible* | `/algorithms/priority-queue` | Priority extraction, task scheduling semantics, Dijkstra / A* frontier modeling |
-| 10 | **Union-Find / Disjoint Set** | ⚪ *Queued* | `/algorithms/union-find` | Disjoint set forests, union by rank, path compression |
+| 09 | **Priority Queue** | ✅ *Completed* | `/algorithms/priority-queue` | Priority extraction, task scheduling semantics, Dijkstra / A* frontier modeling, Decrease-Key |
+| 10 | **Union-Find / Disjoint Set** | 🟡 *Next Eligible* | `/algorithms/union-find` | Disjoint set forests, union by rank, path compression |
 
 ---
 
@@ -57,6 +57,9 @@ This roadmap tracks the long-term sequence of production-quality Data Structure 
 - `HeapEngine` (`src/algorithms/heap.ts`): State-machine engine supporting Min-Heap and Max-Heap invariants, Sift-Up, Sift-Down, linear $O(n)$ Bottom-Up Heapify, presets, and 2D coordinate projections.
 - `HeapVisualizer` (`src/components/visualizer/HeapVisualizer.tsx`): Studio visualizer featuring dual synchronized stages (Tree SVG + 1D Array strip), live parent/child index calculator, Min/Max toggle, and synchronized C++ `BinaryHeap` CodeViewer.
 - `HeapDiagram` (`src/components/diagrams/HeapDiagram.tsx`): Blueprint infographic illustrating pointerless array-to-tree index arithmetic, Sift-Up, Sift-Down percolations, and the mathematical $O(n)$ Heapify summation proof.
+- `PriorityQueueEngine` (`src/algorithms/priority-queue.ts`): Pure step generator engine for priority queues with Min-Priority & Max-Priority modes, Sift-Up on Enqueue, Sift-Down on Dequeue, Change-Priority (Decrease-Key / Increase-Key), 4 domain presets (OS Process Scheduler, Hospital ER Triage, Dijkstra Frontier, Network QoS), and 2D SVG tree coordinates.
+- `PriorityQueueVisualizer` (`src/components/visualizer/PriorityQueueVisualizer.tsx`): 7:5 Studio visualizer with Tree SVG + 1D Array strip + CPU Dispatch Runway with history shelf, interactive Enqueue, Dequeue, Peek, Change Priority controls, inline transport playback, speed slider, and synchronized C++ `PriorityQueue<Task>` CodeViewer.
+- `PriorityQueueDiagram` (`src/components/diagrams/PriorityQueueDiagram.tsx`): Comprehensive blueprint infographic with 4 interactive tabs (ADT vs Implementations, OS Process Scheduler Blueprint, Dijkstra Shortest Path Frontier, Change Priority/Decrease-Key).
 
 ---
 
@@ -152,6 +155,25 @@ This roadmap tracks the long-term sequence of production-quality Data Structure 
 - [x] No TypeScript errors (`npx tsc --noEmit` verified)
 - [x] Build succeeds (`npm run build` verified with full route generation)
 - [x] Navigation integration works (Navbar dropdown under Trees with order 15, learning path order 15, topic category hub, 5-step learning workflow with Bengali pedagogical breakdown, Quiz, Bug Hunt, LeetCode Problem Solving)
+
+---
+
+## 🔍 Quality Gate Checklist for Topic 09 (Priority Queue)
+- [x] Algorithm/data-structure logic is correct (Min-Priority & Max-Priority heap invariants, task priority model with key/payload, Sift-Up enqueue percolation, Sift-Down dequeue percolation, Change-Priority / Decrease-Key rebalancing, CPU dispatch runway history)
+- [x] Visualization accurately represents internal state (Triple synchronized representations: 2D Tree SVG + 1D Priority Array strip + CPU Dispatch Runway with live active task slot and execution log shelf)
+- [x] Main interactions work (Enqueue Task with custom ID/priority, Dequeue Highest Priority Task, Peek Extreme, Change Priority / Decrease-Key on existing task, Min/Max Priority toggle, Presets: OS Process Scheduler, Hospital ER Triage, Dijkstra Frontier, Network QoS)
+- [x] Input handling works (Task label input, priority numeric value validation, preset selection, task ID selector for change priority)
+- [x] Reset works (Restores initial state or active domain preset)
+- [x] Step/playback works (Play, Pause, Step Next, Step Prev, Reset, Step Progress Indicator, Speed Delay Slider)
+- [x] Educational explanation is correct (Priority Queue ADT vs Binary Heap concrete implementation, Fibonacci Heap theoretical Decrease-Key $O(1)$ amortized comparison, Dijkstra frontier $O((V+E)\log V)$ speedup, OS process preemption)
+- [x] Complexity information is correct (Peek: $O(1)$, Enqueue: $O(\log n)$, Dequeue: $O(\log n)$, Change Priority / Decrease-Key: $O(\log n)$ with hash index or $O(n)$ search, Space: $O(n)$)
+- [x] UI matches AlgoHub design language (Studio 7:5 split layout, Tree SVG + 1D strip + Dispatch Runway, no live big-O cards, no duplicate legend bars, synchronized C++ `PriorityQueue<Task>` CodeViewer)
+- [x] Responsive layout works (Mobile horizontal scroll and desktop grid layout)
+- [x] Accessibility is acceptable (Aria labels, distinct color-coded priority badges, reduced motion considerations)
+- [x] No TypeScript errors (`npx tsc --noEmit` verified)
+- [x] Build succeeds (`npm run build` verified with full route generation)
+- [x] Navigation integration works (Navbar dropdown under HEAP STRUCTURES order 16, learning path order 16, topic category hub Heaps category with 2 visualizations, 5-step master learning path with Bengali accordion default collapsed, Quiz, Bug Hunt, LeetCode Problem Solving)
+
 
 
 

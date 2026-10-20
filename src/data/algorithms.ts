@@ -1695,6 +1695,121 @@ public:
     }
 };`,
   },
+  "priority-queue": {
+    id: "priority-queue",
+    name: "Priority Queue",
+    category: "heap",
+    shortDescription:
+      "An abstract data structure that dispatches elements according to dynamic priority or urgency, backed by an efficient Binary Heap.",
+    description:
+      "A Priority Queue is an abstract data structure where each element is assigned an explicit priority key. Unlike standard FIFO queues, extraction always dequeues the item with the highest priority (or lowest value in a Min-Priority Queue) in O(log n) time. Typically implemented over a Complete Binary Heap mapped into contiguous memory, Priority Queues form the backbone of OS CPU thread schedulers, Emergency Room triage pipelines, real-time network packet Quality of Service (QoS), and greedy exploration algorithms such as Dijkstra's Shortest Path, Prim's Minimum Spanning Tree, and A* Pathfinding.",
+    complexity: {
+      best: "O(1)",
+      average: "O(log n)",
+      worst: "O(log n)",
+      space: "O(n)",
+      stable: false,
+      inPlace: true,
+      operations: [
+        {
+          name: "Peek (Top Priority)",
+          time: "O(1)",
+          space: "O(1)",
+          description: "Inspects highest priority item at root [0] with zero modification.",
+        },
+        {
+          name: "Push / Enqueue",
+          time: "O(log n)",
+          space: "O(1)",
+          description: "Inserts new task at end of array and bubbles upward via Sift-Up.",
+        },
+        {
+          name: "Pop / Dequeue",
+          time: "O(log n)",
+          space: "O(1)",
+          description: "Extracts root, swaps with last leaf, and sinks downward via Sift-Down.",
+        },
+        {
+          name: "Change Priority (Decrease-Key)",
+          time: "O(log n)",
+          space: "O(1)",
+          description: "Updates task priority and restores heap order with Sift-Up or Sift-Down.",
+        },
+        {
+          name: "Batch Build",
+          time: "O(n)",
+          space: "O(1)",
+          description: "Constructs queue from n arbitrary unsorted tasks in linear time.",
+        },
+      ],
+    },
+    cppCode: `// Production-Grade C++ Priority Queue (Heap-Backed)
+#include <iostream>
+#include <vector>
+#include <stdexcept>
+using namespace std;
+
+struct Task {
+    int id;
+    int priority;
+    string title;
+};
+
+template <typename T>
+class PriorityQueue {
+private:
+    vector<T> heap;
+    bool isMax;
+
+    bool compare(const T& a, const T& b) const {
+        return isMax ? a.priority > b.priority : a.priority < b.priority;
+    }
+
+    void siftUp(int i) {
+        while (i > 0 && compare(heap[i], heap[(i - 1) / 2])) {
+            swap(heap[i], heap[(i - 1) / 2]);
+            i = (i - 1) / 2;
+        }
+    }
+
+    void siftDown(int i) {
+        int n = heap.size();
+        while (2 * i + 1 < n) {
+            int left = 2 * i + 1, right = 2 * i + 2, target = left;
+            if (right < n && compare(heap[right], heap[left])) target = right;
+            if (compare(heap[target], heap[i])) {
+                swap(heap[i], heap[target]);
+                i = target;
+            } else break;
+        }
+    }
+
+public:
+    PriorityQueue(bool maxPrio = true) : isMax(maxPrio) {}
+
+    void push(T item) {
+        heap.push_back(item);
+        siftUp((int)heap.size() - 1);
+    }
+
+    T pop() {
+        if (heap.empty()) throw runtime_error("Empty queue");
+        T top = heap[0];
+        heap[0] = heap.back();
+        heap.pop_back();
+        if (!heap.empty()) siftDown(0);
+        return top;
+    }
+
+    const T& peek() const {
+        if (heap.empty()) throw runtime_error("Empty queue");
+        return heap[0];
+    }
+
+    size_t size() const { return heap.size(); }
+    bool empty() const { return heap.empty(); }
+};`,
+  },
 };
 
 // All 5 Sorting Algorithms
@@ -1733,6 +1848,7 @@ export const TREE_TOPICS: AlgorithmId[] = [
 // All Heap Data Structures
 export const HEAP_TOPICS: AlgorithmId[] = [
   "heap",
+  "priority-queue",
 ];
 
 // All Complexity Topics
@@ -1761,6 +1877,7 @@ export const ALL_TOPICS: AlgorithmId[] = [
   "bst",
   "avl-tree",
   "heap",
+  "priority-queue",
   "bubble",
   "selection",
   "insertion",
