@@ -1348,6 +1348,73 @@ export const QUIZZES: Record<string, QuizTopic> = {
         explanation: "Inserting pre-sorted elements causes each new key to become the right child of the previous node. The tree has no left branches, height becomes h = n - 1, and search degenerates to an O(n) linear scan like a linked list. This motivated self-balancing trees like AVL and Red-Black trees."
       }
     ]
+  },
+  "avl-tree": {
+    id: "avl-tree",
+    title: "AVL Tree Self-Balancing Mastery Quiz",
+    description: "Test your deep understanding of Balance Factor invariants, the 4 canonical rotations (LL, RR, LR, RL), insertion vs deletion rebalancing, and Fibonacci height bounds.",
+    questions: [
+      {
+        id: "avl1",
+        question: "What is the defining balance invariant of an AVL Tree?",
+        options: [
+          "For every node, Balance Factor BF = h(left) - h(right) ∈ {-1, 0, +1}",
+          "Every leaf node must be black and red nodes cannot have red children",
+          "The height of the left subtree must be exactly equal to the height of the right subtree",
+          "The number of nodes in the left subtree must equal the number of nodes in the right subtree"
+        ],
+        correctIndex: 0,
+        explanation: "An AVL Tree enforces that for every single node in the tree, the height difference between its left and right subtrees (Balance Factor) must be at most 1, meaning BF ∈ {-1, 0, +1}."
+      },
+      {
+        id: "avl2",
+        question: "When inserting a new key into an AVL tree, what is the maximum number of rotations required to restore the balance invariant globally?",
+        options: [
+          "At most 1 single or double rotation",
+          "At most 2 rotations",
+          "Up to O(log n) cascading rotations",
+          "Up to O(n) rotations"
+        ],
+        correctIndex: 0,
+        explanation: "During an AVL insertion, a single rotation (LL or RR) or double rotation (LR or RL) at the lowest unbalanced ancestor decreases the height of that subtree back to its pre-insertion height. Because subtree height does not change relative to ancestors above it, no further rotations are needed. Exactly ≤ 1 rotation restores global balance."
+      },
+      {
+        id: "avl3",
+        question: "In contrast to insertion, how many rotations can be triggered in the worst case during an AVL DELETION?",
+        options: [
+          "O(log n) cascading rotations all the way up to the root",
+          "Strictly 0 rotations",
+          "At most 1 single rotation",
+          "Exactly 2 rotations"
+        ],
+        correctIndex: 0,
+        explanation: "During deletion, balancing a node can reduce its subtree height by 1, which may in turn unbalance its parent. This height reduction can cascade up the entire tree, requiring up to O(log n) rotations."
+      },
+      {
+        id: "avl4",
+        question: "A node Z has Balance Factor BF(Z) = +2 and its left child Y has Balance Factor BF(Y) = -1. Which rotation sequence is required to restore balance?",
+        options: [
+          "Left-Right (LR) Double Rotation: Left rotation on Y, followed by Right rotation on Z",
+          "Right-Left (RL) Double Rotation: Right rotation on Y, followed by Left rotation on Z",
+          "Single Right Rotation on Z (LL)",
+          "Single Left Rotation on Z (RR)"
+        ],
+        correctIndex: 0,
+        explanation: "Because BF(Z) = +2 (left-heavy) and BF(Y) = -1 (its left child is right-heavy), this forms a zig-zag Left-Right (LR) imbalance. It requires rotating left on child Y to straighten the branch into a Left-Left line, then rotating right on Z."
+      },
+      {
+        id: "avl5",
+        question: "What is the asymptotic maximum height of an AVL Tree containing n nodes in the worst case?",
+        options: [
+          "h < 1.44 log₂(n + 2) ≈ O(log n)",
+          "h = O(n)",
+          "h = O(√n)",
+          "h = 2 log₂(n + 1)"
+        ],
+        correctIndex: 0,
+        explanation: "Using Fibonacci minimal AVL tree recurrence N(h) = 1 + N(h-1) + N(h-2), the maximum height is mathematically bounded by (log_phi(√5 · (n+1))) ≈ 1.4404 log₂(n + 2), strictly guaranteeing O(log n) time for all operations."
+      }
+    ]
   }
 };
 

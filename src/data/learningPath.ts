@@ -699,11 +699,65 @@ export const LEARNING_PATH: LearningStep[] = [
   },
 
   // ==========================================
+  // TIER 6.8: SELF-BALANCING TREES
+  // ==========================================
+  {
+    id: "avl-tree",
+    order: 14,
+    name: "AVL Tree",
+    category: "tree",
+    badge: "Self-Balancing |BF| ≤ 1",
+    estimatedTime: "~25 min",
+    difficulty: "Advanced",
+    reason: "Permanently conquer O(n) degenerate skew by guaranteeing logarithmic height through automatic localized O(1) tree rotations.",
+    hook: "What if a tree could automatically sense when one branch became too heavy and instantly perform a localized 'gymnastic spin' to balance itself?",
+    superpower: "Guaranteed Worst-Case O(log n) Time by Strict Height Balancing",
+    tradeoff: "O(1) Rotation Overhead on Insertions and Deletions",
+    mentalModel: "An Equal-Arm Balance Scale with Automatic Counterweights",
+    keyPrinciples: [
+      "Strict balance invariant: for every node, Balance Factor BF = h(left) - h(right) ∈ {-1, 0, +1}.",
+      "Single Rotations (LL and RR): restore balance when insertion occurs in the outer subtrees.",
+      "Double Rotations (LR and RL): resolve zig-zag inner subtree imbalances with two atomic pivots.",
+      "Insertion rebalancing requires at most ONE single or double rotation to restore global balance.",
+      "Deletion rebalancing may trigger cascading rotations ascending all the way to the root."
+    ],
+    analogy: "Like a gymnast balancing on a beam: whenever weight tilts too far to one side, an instinctive pivot immediately brings the center of mass back to center.",
+    idea: "An AVL Tree is a self-balancing binary search tree that tracks node heights and balance factors. Whenever an insertion or deletion pushes any node's balance factor to +2 or -2, localized O(1) pointer rotations immediately restore balance, capping maximum tree height at ~1.44 log₂(n).",
+    sampleArray: [50, 25, 75, 15, 35, 65, 85],
+    codeBlocks: [
+      {
+        title: "Balance Factor Calculation",
+        lines: "int getBF(AVLNode* n) {\n    return n ? getHeight(n->left) - getHeight(n->right) : 0;\n}",
+        explanation: "Computes the height difference between left and right subtrees. Must remain in {-1, 0, 1}.",
+      },
+      {
+        title: "Right Rotation (LL Case)",
+        lines: "AVLNode* rotateRight(AVLNode* y) {\n    AVLNode* x = y->left;\n    AVLNode* T2 = x->right;\n    x->right = y;\n    y->left = T2;\n    updateH(y); updateH(x);\n    return x;\n}",
+        explanation: "Promotes left child x to subtree root and demotes y to x's right child in O(1) time.",
+      },
+      {
+        title: "Left-Right Double Rotation (LR Case)",
+        lines: "if (bf > 1 && val > node->left->val) {\n    node->left = rotateLeft(node->left);\n    return rotateRight(node);\n}",
+        explanation: "Converts zig-zag imbalance into a straight line with Left rotation, then completes balance with Right rotation.",
+      },
+      {
+        title: "Height Update Formula",
+        lines: "void updateH(AVLNode* n) {\n    if (n) n->height = 1 + max(getHeight(n->left), getHeight(n->right));\n}",
+        explanation: "Maintains accurate height values bottom-up during recursive backtracking.",
+      },
+    ],
+    complexityWhy: {
+      time: "Strictly O(log n) across all cases (best, average, worst). Tree height is mathematically capped at ≤ 1.44 log₂(n).",
+      space: "O(log n) recursion call stack depth. Each node stores an integer height field.",
+    },
+  },
+
+  // ==========================================
   // TIER 7: ELEMENTARY QUADRATIC SORTING
   // ==========================================
   {
     id: "bubble",
-    order: 14,
+    order: 15,
     name: "Bubble Sort",
     category: "sorting",
     badge: "Adjacent Swaps",
@@ -748,7 +802,7 @@ export const LEARNING_PATH: LearningStep[] = [
   },
   {
     id: "selection",
-    order: 15,
+    order: 16,
     name: "Selection Sort",
     category: "sorting",
     badge: "Find Minimum",
@@ -793,7 +847,7 @@ export const LEARNING_PATH: LearningStep[] = [
   },
   {
     id: "insertion",
-    order: 16,
+    order: 17,
     name: "Insertion Sort",
     category: "sorting",
     badge: "Hand-Sorting Cards",
@@ -842,7 +896,7 @@ export const LEARNING_PATH: LearningStep[] = [
   // ==========================================
   {
     id: "merge",
-    order: 17,
+    order: 18,
     name: "Merge Sort",
     category: "sorting",
     badge: "Divide & Conquer",
@@ -887,7 +941,7 @@ export const LEARNING_PATH: LearningStep[] = [
   },
   {
     id: "quick",
-    order: 18,
+    order: 19,
     name: "Quick Sort",
     category: "sorting",
     badge: "Pivot Partition",
@@ -1089,5 +1143,20 @@ export const GLOSSARY_TERMS: GlossaryTerm[] = [
     term: "Tree Traversal",
     category: "Data Structures",
     definition: "Systematically visiting every node in a tree exactly once, either Depth-First (DFS) or Breadth-First (BFS).",
+  },
+  {
+    term: "AVL Tree",
+    category: "Data Structures",
+    definition: "A self-balancing binary search tree where the height difference between the left and right subtrees of any node is strictly at most 1.",
+  },
+  {
+    term: "Balance Factor",
+    category: "Data Structures",
+    definition: "The metric calculated as height(left subtree) - height(right subtree). For an AVL tree, it must strictly evaluate to -1, 0, or +1.",
+  },
+  {
+    term: "Tree Rotation",
+    category: "Data Structures",
+    definition: "An O(1) pointer restructuring operation that changes local tree height and restores the balance invariant without violating in-order binary search order.",
   },
 ];

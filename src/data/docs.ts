@@ -2187,6 +2187,224 @@ BST থেকে কোনো নোড ডিলিট করা সবচে�
     },
   },
   {
+    slug: "avl-tree-fundamentals",
+    level: 5,
+    levelTitle: "Level 5: Hierarchical Tree Architectures",
+    order: 3,
+    title: "AVL Tree: Strictly Self-Balancing Binary Search Trees",
+    subtitle: "Mathematical proof of logarithmic height bounds, the Balance Factor invariant, localized O(1) single/double rotations (LL, RR, LR, RL), and cascading deletion mechanics.",
+    estimatedReadTime: "18 min",
+    category: "Data Structures",
+    content: `
+### Chapter 1: The Problem of Degenerate Trees and the AVL Breakthrough
+
+In a naive Binary Search Tree (BST), the shape of the tree is entirely at the mercy of the input sequence. If $n$ elements arrive in monotonic ascending order (e.g., $10, 20, 30, 40, 50$), every node attaches as a solitary right child. The tree structure degenerates into a linear linked list of height $h = n - 1$, and search, insertion, and deletion catastrophically collapse from logarithmic $O(\\log n)$ down to linear $O(n)$.
+
+In 1962, two Soviet mathematicians, **Georgy Adelson-Velsky** and **Evgenii Landis**, published a seminal paper introducing the world's very first self-balancing binary search tree, named the **AVL Tree** in their honor.
+
+#### The Core AVL Innovation:
+An AVL Tree is an augmented binary search tree where every node maintains an explicit height invariant:
+$$\\text{For every node } X, \\quad |\\text{height}(X.\\text{left}) - \\text{height}(X.\\text{right})| \\le 1$$
+
+Whenever an insertion or deletion threatens to break this invariant, the tree detects the imbalance during recursive backtracking and performs localized $O(1)$ pointer rearrangements called **Tree Rotations** to instantly restore balance.
+
+---
+
+### Chapter 2: The Balance Factor (BF) Invariant
+
+To enforce self-balancing efficiently, every AVL node tracks its own subtree height. By convention:
+- An empty subtree (null pointer) has height $h = 0$ (or $-1$ in 0-indexed definitions; in AlgoHub we define $h(\\text{null}) = 0$).
+- A leaf node has height $h = 1$.
+- Any internal node has height:
+  $$h(X) = 1 + \\max(h(X.\\text{left}), h(X.\\text{right}))$$
+
+The **Balance Factor** of a node $X$, denoted $BF(X)$, is defined as:
+$$BF(X) = h(X.\\text{left}) - h(X.\\text{right})$$
+
+#### The Invariant States:
+| Balance Factor $BF(X)$ | Subtree State | Interpretation |
+| :--- | :--- | :--- |
+| **$+1$** | Left-Heavy | Left subtree is taller by exactly 1 level. Perfectly legal. |
+| **$0$** | Symmetrical | Left and right subtrees have equal height. Perfectly balanced. |
+| **$-1$** | Right-Heavy | Right subtree is taller by exactly 1 level. Perfectly legal. |
+| **$+2$** | Critical Left Violation | Left subtree is 2 levels taller. **Must trigger rotation.** |
+| **$-2$** | Critical Right Violation | Right subtree is 2 levels taller. **Must trigger rotation.** |
+
+---
+
+### Chapter 3: Mathematical Proof of the Maximum Height Bound
+
+Why does the simple constraint $|BF| \\le 1$ guarantee that an AVL tree with $n$ nodes will never degenerate into $O(n)$?
+
+Let $N(h)$ represent the **minimum number of nodes** required to construct an AVL tree of height $h$.
+- For $h = 0$: $N(0) = 0$ (empty tree)
+- For $h = 1$: $N(1) = 1$ (single root node)
+- For $h = 2$: $N(2) = 2$ (root with 1 child)
+
+To construct an AVL tree of height $h$ with the absolute fewest possible nodes, one subtree must have height $h - 1$ and the other subtree must have height $h - 2$ (differing by exactly 1):
+$$N(h) = 1 + N(h - 1) + N(h - 2)$$
+
+Notice the striking resemblance to the **Fibonacci recurrence** ($F_k = F_{k-1} + F_{k-2}$)!
+By mathematical induction, we can prove:
+$$N(h) = F_{h+2} - 1$$
+
+Recall that the $k$-th Fibonacci number grows exponentially according to Binet's formula with the Golden Ratio $\\phi = \\frac{1 + \\sqrt{5}}{2} \\approx 1.618$:
+$$F_k \\approx \\frac{\\phi^k}{\\sqrt{5}}$$
+
+Therefore:
+$$n \\ge N(h) \\approx \\frac{\\phi^{h+2}}{\\sqrt{5}} - 1$$
+$$\\phi^{h+2} \\le \\sqrt{5}(n + 1)$$
+$$(h + 2) \\log_2(\\phi) \\le \\log_2(\\sqrt{5}(n + 1))$$
+$$h < \\frac{\\log_2(n + 1)}{\\log_2(\\phi)} \\approx \\frac{1}{\\log_2(1.618)} \\log_2(n + 1) \\approx 1.4404 \\log_2(n + 1)$$
+
+$$\\mathbf{h_{\\text{max}} < 1.4404 \\log_2(n + 2) = O(\\log n)}$$
+
+**Theorem Conclusion:** Even in the most pathological, minimally-packed worst case imaginable, an AVL tree of 1,000,000 nodes will have a maximum height of at most:
+$$h \\le 1.44 \\times \\log_2(10^6) \\approx 1.44 \\times 20 \\approx 28 \\text{ levels}$$
+Search operations will never require more than 28 pointer dereferences!
+
+---
+
+### Chapter 4: The Four Fundamental Tree Rotations
+
+When an insertion or deletion causes a node $Z$ to have $BF(Z) = +2$ or $BF(Z) = -2$, we inspect the balance factor of $Z$'s taller child $Y$ to identify which of the **4 canonical rotation cases** applies:
+
+#### Case 1: Left-Left (LL) — Single Right Rotation
+- **Condition:** $BF(Z) = +2$ and $BF(Z.\\text{left}) \\ge 0$.
+- **Cause:** Insertion occurred in the left subtree of the left child.
+- **Remedy:** Rotate $Z$ to the right. $Y$ (left child) becomes the new subtree root; $Z$ becomes $Y$'s right child. $Y$'s original right subtree ($T_2$) is transferred to become $Z$'s new left child.
+- **Time Complexity:** $O(1)$ constant time (3 pointer reassignments, 2 height recalculations).
+
+#### Case 2: Right-Right (RR) — Single Left Rotation
+- **Condition:** $BF(Z) = -2$ and $BF(Z.\\text{right}) \\le 0$.
+- **Cause:** Insertion occurred in the right subtree of the right child.
+- **Remedy:** Rotate $Z$ to the left. $Y$ (right child) becomes the new subtree root; $Z$ becomes $Y$'s left child. $Y$'s original left subtree ($T_2$) is transferred to become $Z$'s new right child.
+- **Time Complexity:** $O(1)$ constant time.
+
+#### Case 3: Left-Right (LR) — Double Rotation
+- **Condition:** $BF(Z) = +2$ and $BF(Z.\\text{left}) < 0$.
+- **Cause:** The left subtree is taller overall, but its inner right branch is heavy (zig-zag configuration). A single right rotation would simply flip the zig-zag to the other side without fixing height!
+- **Remedy:** Two atomic steps:
+  1. Perform a **Left Rotation** on $Z$'s left child ($Y$). This converts the zig-zag into a straight left-left line.
+  2. Perform a **Right Rotation** on $Z$. Balance is fully restored.
+- **Time Complexity:** $O(1)$ constant time.
+
+#### Case 4: Right-Left (RL) — Double Rotation
+- **Condition:** $BF(Z) = -2$ and $BF(Z.\\text{right}) > 0$.
+- **Cause:** The right subtree is taller overall, but its inner left branch is heavy (zag-zig configuration).
+- **Remedy:** Two atomic steps:
+  1. Perform a **Right Rotation** on $Z$'s right child ($Y$). This converts the zag-zig into a straight right-right line.
+  2. Perform a **Left Rotation** on $Z$. Balance is fully restored.
+- **Time Complexity:** $O(1)$ constant time.
+
+---
+
+### Chapter 5: Insertion vs. Deletion Rebalancing
+
+A critical architectural distinction exists between AVL insertions and deletions:
+
+#### 1. The Insertion Rebalance Invariant:
+When a new key is inserted into an AVL tree, it increases the height of at most one leaf-to-root branch by 1. As the recursive call backtracks towards the root:
+- We encounter the **lowest unbalanced node** $Z$ ($|BF| = 2$).
+- We execute exactly **one single or double rotation** at $Z$.
+- This rotation reduces the height of $Z$'s subtree back to what it was before the insertion!
+- Therefore, no ancestor above $Z$ experiences a height change.
+- **Rule:** AVL insertion requires **at most 1 rotation** to restore global balance across the entire tree!
+
+#### 2. The Deletion Rebalance Hazard (Cascading Rotations):
+When a key is deleted, a subtree's height may decrease by 1. 
+- Restoring balance at node $Z$ may decrease the overall height of $Z$'s subtree.
+- This height reduction can propagate upwards, causing $Z$'s parent to become unbalanced ($|BF| = 2$).
+- In the worst case, rotations must cascade all the way up to the root node.
+- **Rule:** AVL deletion may require up to $O(\\log n)$ rotations during recursive backtracking.
+
+---
+
+### Chapter 6: Architectural Comparison: AVL vs. Red-Black vs. Naive BST
+
+| Metric / Feature | Naive BST | AVL Tree | Red-Black Tree |
+| :--- | :--- | :--- | :--- |
+| **Balance Strictness** | None (Unbalanced) | Strict ($|BF| \\le 1$) | Relaxed ($h \\le 2 \\log_2(n+1)$) |
+| **Max Height Bound** | $n - 1$ | $\\approx 1.44 \\log_2 n$ | $\\approx 2.0 \\log_2 n$ |
+| **Search Performance** | $O(n)$ worst-case | **Fastest** (flattest tree) | Slightly slower (taller tree) |
+| **Insertion Rotations** | $0$ | $\\le 1$ rotation | $\\le 2$ rotations |
+| **Deletion Rotations** | $0$ | $\\le O(\\log n)$ rotations | $\\le 3$ rotations |
+| **Per-Node Metadata** | None | 1 integer (Height or $BF$) | 1 bit (Color: Red/Black) |
+| **Ideal Production Use** | Prototyping / Teaching | **Lookup-intensive** systems | **Write-heavy** maps (\`std::map\`) |
+`,
+    banglaNote: {
+      topic: "এভিএল ট্রি (AVL Tree), ব্যালান্স ফ্যাক্টর ও ৪-ঘূর্ণন মেকানিক্স (AVL Tree Deep Dive)",
+      englishContext: "An AVL Tree strictly bounds height to 1.44 log₂(n) via Balance Factor tracking and four localized O(1) rotations (LL, RR, LR, RL), eliminating worst-case skew forever.",
+      banglaText: `
+### 💡 সহজ উপমা: অ্যাক্রোব্যাট ও ব্যালান্সিং স্কেল (The Self-Balancing Scale)
+একটি সাধারণ বাইনারি সার্চ ট্রিতে যদি ছোট থেকে বড় সংখ্যা ক্রমানুসারে ইনসার্ট করতে থাকেন (যেমন: ১০, ২০, ৩০, ৪০, ৫০), তবে প্রতিবার নতুন সংখ্যাটি শুধু ডান সন্তান হিসেবে যুক্ত হতে থাকে। ফলে গাছটি বেঁকে গিয়ে একটি সাধারণ সিঙ্গলি লিঙ্কড লিস্টের মতো লম্বা হয়ে যায়! তখন এর সার্চিং স্পিড $\\log n$ থেকে ধসে পড়ে মারাত্মক ধীরগতির $O(n)$-এ পরিণত হয়।
+
+১৯৬২ সালে দুই গণিতবিদ **Georgy Adelson-Velsky** এবং **Evgenii Landis** এমন একটি কাঠামোর উদ্ভাবন করেন যা কখনোই বাঁকা হতে পারে না!
+ভাবুন একজন দড়ির ওপর হাঁটা অ্যাক্রোব্যাটের কথা — তার হাতে একটি লম্বা ভারসাম্য রক্ষার লাঠি থাকে। শরীরের ওজন সামান্য বামে বা ডানে ঝুঁকলেই সে সাথে সাথে লাঠি ঘুরিয়ে নিজেকে সোজা করে নেয়।
+
+এভিএল ট্রি ঠিক এই কাজটিই করে! প্রতিটি ইনসারশন বা ডিলিশনের পর সে স্বয়ংক্রিয়ভাবে গাছটির উচ্চতা পরিমাপ করে এবং কোনো দিক বেশি ভারী হয়ে গেলে সাথে সাথে **O(1) সময়ের লোকাল রোটেশন (ঘূর্ণন)** চালিয়ে ভারসাম্য ফিরিয়ে আনে।
+
+---
+
+### ⚖️ ব্যালান্স ফ্যাক্টর (Balance Factor - BF) কী?
+প্রতিটি নোডের একটি নিজস্ব ব্যালান্স ফ্যাক্টর থাকে:
+$$\\text{Balance Factor (BF)} = \\text{বাম সাবট্রির উচ্চতা} - \\text{ডান সাবট্রির উচ্চতা}$$
+
+একটি এভিএল ট্রিতে প্রতিটি নোডের ব্যালান্স ফ্যাক্টর অবশ্যই নিচের ৩টির যেকোনো একটি হতে হবে:
+- **$+1$**: বাম দিক ১ ধাপ লম্বা (Left-Heavy কিন্তু সম্পূর্ণ বৈধ)।
+- **$0$**: বাম ও ডান সাবট্রি সমান সমান (Perfect Balance)।
+- **$-1$**: ডান দিক ১ ধাপ লম্বা (Right-Heavy কিন্তু সম্পূর্ণ বৈধ)।
+
+যদি কোনো অপারেশনের পর কোনো নোডের BF হয়ে যায় **$+2$** অথবা **$-2$**, তবে সাথে সাথে অ্যালার্ম বেজে ওঠে এবং গাছটি তাৎক্ষণিক রোটেশন চালিয়ে ভারসাম্য ঠিক করে নেয়!
+
+---
+
+### 🔄 ৪টি ক্লাসিক রোটেশন (The 4 Canonical Rotations)
+
+ভারসাম্যহীনতা কোন দিকে তৈরি হয়েছে তার ওপর নির্ভর করে ৪ ধরনের রোটেশন সম্পন্ন হয়:
+
+#### ১. Left-Left (LL) কেস ➔ Single Right Rotation:
+- **কখন হয়:** কোনো নোডের $BF = +2$ এবং তার বাম সন্তানের $BF \\ge 0$। অর্থাৎ বাম দিকের বাইরের শাখায় নতুন নোড ঢুকেছে।
+- **সমাধান:** ভারাক্রান্ত নোডটিকে ডান দিকে এক পাক ঘুরিয়ে দিন (Right Rotation)। বাম সন্তান ওপরে উঠে নতুন রুট হয়, আর আগের রুটটি তার ডান সন্তান হিসেবে নিচে নেমে আসে।
+
+#### ২. Right-Right (RR) কেস ➔ Single Left Rotation:
+- **কখন হয়:** কোনো নোডের $BF = -2$ এবং তার ডান সন্তানের $BF \\le 0$। অর্থাৎ ডান দিকের বাইরের শাখায় নতুন নোড ঢুকেছে।
+- **সমাধান:** নোডটিকে বাম দিকে এক পাক ঘুরিয়ে দিন (Left Rotation)। ডান সন্তান ওপরে ওঠে এবং আগের রুটটি তার বাম সন্তান হয়ে যায়।
+
+#### ৩. Left-Right (LR) কেস ➔ Double Rotation (Left then Right):
+- **কখন হয়:** কোনো নোডের $BF = +2$ কিন্তু তার বাম সন্তানের $BF < 0$। এটি একটি জিগ-জ্যাগ (Zig-Zag) বা ভেতরের দিকের মোচড়। সরাসরি Right Rotation দিলে জিগ-জ্যাগটি শুধু অন্যদিকে উল্টে যাবে, উচ্চতা কমবে না!
+- **সমাধান:** 
+  - ধাপ ১: প্রথমে বাম সন্তানকে বামে ঘুরিয়ে (Left Rotate) জিগ-জ্যাগ সোজা করে LL লাইনে পরিণত করা হয়।
+  - ধাপ ২: এরপর মূল নোডটিকে ডানে ঘুরিয়ে (Right Rotate) নিখুঁত ভারসাম্য ফিরিয়ে আনা হয়।
+
+#### ৪. Right-Left (RL) কেস ➔ Double Rotation (Right then Left):
+- **কখন হয়:** কোনো নোডের $BF = -2$ কিন্তু তার ডান সন্তানের $BF > 0$ (জ্যাগ-জিগ বাঁক)।
+- **সমাধান:** 
+  - ধাপ ১: প্রথমে ডান সন্তানকে ডানে ঘুরিয়ে (Right Rotate) RR লাইনে সোজা করা হয়।
+  - ধাপ ২: এরপর মূল নোডটিকে বামে ঘুরিয়ে (Left Rotate) ভারসাম্য আনা হয়।
+
+---
+
+### 🎯 ইনসারশন বনাম ডিলিশন: রোটেশনের গুরুত্বপূর্ণ পার্থক্য!
+ইন্টারভিউতে এটি অত্যন্ত প্রচলিত একটি ট্রিক প্রশ্ন:
+- **ইনসারশন (Insertion):** নতুন নোড যোগ করার ফলে ট্রির উচ্চতা সর্বোচ্চ ১ বাড়তে পারে। রিকার্শনের ব্যাকট্র্যাকিংয়ে প্রথম যে নোডে ভারসাম্য নষ্ট হয়, সেখানে **কেবলমাত্র ১টি রোটেশন (সিঙ্গেল বা ডাবল)** দিলেই সেই সাবট্রির উচ্চতা আগের মতো হয়ে যায়! ফলে তার উপরের কোনো পূর্বপুরুষের (Ancestors) ভারসাম্য আর নষ্ট হয় না। তাই ইনসারশনে সর্বোচ্চ **১টি রোটেশনেই কাজ শেষ**।
+- **ডিলিশন (Deletion):** কোনো নোড ডিলিট করলে একটি সাবট্রি ছোট হয়ে যেতে পারে। ফলে সেই নোডে রোটেশন দিয়ে ব্যালান্স ঠিক করার পর দেখা যেতে পারে পুরো সাবট্রিটির উচ্চতা ১ কমে গেছে! এই কমে যাওয়া উচ্চতা তার প্যারেন্টকেও ভারসাম্যহীন ($|BF| = 2$) করে দিতে পারে। এভাবে রুট পর্যন্ত **ক্যাসকেডিং রোটেশন** ঘটতে পারে (সর্বোচ্চ $O(\\log n)$ বার রোটেশন)।
+
+---
+
+### 🚀 কখন AVL Tree ব্যবহার করবেন?
+- **Read-Heavy সিস্টেমে সেরা:** যেহেতু AVL ট্রির উচ্চতা কঠোরভাবে $\\le 1.44 \\log_2 n$ সীমার মধ্যে রাখা হয়, তাই যেকোনো সার্চিং বা লুকআপ অপারেশনে এটি রেড-ব্ল্যাক ট্রির চেয়েও বেশি দ্রুত।
+- যদি আপনার সিস্টেমে ঘন ঘন সার্চ করতে হয় কিন্তু তুলনামূলকভাবে ইনসার্ট/ডিলিট কম হয় (যেমন: ডিকশনারি লুকআপ, ইন-মেমোরি ক্যাশ ইনডেক্সিং), তবে AVL Tree হলো অবিসংবাদিত চ্যাম্পিয়ন!
+      `,
+    },
+    quizTopicId: "avl-tree",
+    visualizerLink: {
+      label: "AVL Tree Studio",
+      algorithmId: "avl-tree",
+      path: "/algorithms/avl-tree",
+    },
+  },
+  {
     slug: "time-complexity",
     level: 6,
     levelTitle: "Level 6: Algorithmic Complexity Analysis",

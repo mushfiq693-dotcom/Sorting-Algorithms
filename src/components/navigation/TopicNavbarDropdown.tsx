@@ -59,6 +59,7 @@ const CATEGORIES: CategoryGroup[] = [
     items: [
       { id: "binary-tree", num: "12", name: "Binary Tree", badge: "Branch O(n)" },
       { id: "bst", num: "13", name: "Binary Search Tree", badge: "Search O(log n)" },
+      { id: "avl-tree", num: "14", name: "AVL Tree", badge: "Balanced O(log n)" },
     ],
   },
   {
@@ -87,11 +88,11 @@ const CATEGORIES: CategoryGroup[] = [
     icon: Cpu,
     colorClass: "text-cyan-400",
     items: [
-      { id: "bubble", num: "10", name: "Bubble Sort", badge: "O(n²)" },
-      { id: "selection", num: "11", name: "Selection Sort", badge: "O(n²)" },
-      { id: "insertion", num: "12", name: "Insertion Sort", badge: "O(n²)" },
-      { id: "merge", num: "13", name: "Merge Sort", badge: "O(n log n)" },
-      { id: "quick", num: "14", name: "Quick Sort", badge: "O(n log n)" },
+      { id: "bubble", num: "15", name: "Bubble Sort", badge: "O(n²)" },
+      { id: "selection", num: "16", name: "Selection Sort", badge: "O(n²)" },
+      { id: "insertion", num: "17", name: "Insertion Sort", badge: "O(n²)" },
+      { id: "merge", num: "18", name: "Merge Sort", badge: "O(n log n)" },
+      { id: "quick", num: "19", name: "Quick Sort", badge: "O(n log n)" },
     ],
   },
 ];

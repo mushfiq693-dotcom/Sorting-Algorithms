@@ -22,6 +22,7 @@ import { DequeVisualizer } from "./DequeVisualizer";
 import { HashTableVisualizer } from "./HashTableVisualizer";
 import { BinaryTreeVisualizer } from "./BinaryTreeVisualizer";
 import { BstVisualizer } from "./BstVisualizer";
+import { AvlTreeVisualizer } from "./AvlTreeVisualizer";
 import { Sparkles, ArrowLeft } from "lucide-react";
 
 const DEFAULT_INITIAL_ARRAY = [48, 15, 86, 34, 92, 28, 65, 12, 54, 78, 23, 95, 41, 60, 31];
@@ -399,6 +400,7 @@ export function SortingVisualizer({
           {selectedAlgorithm === "hash-table" && <HashTableVisualizer />}
           {selectedAlgorithm === "binary-tree" && <BinaryTreeVisualizer />}
           {selectedAlgorithm === "bst" && <BstVisualizer />}
+          {selectedAlgorithm === "avl-tree" && <AvlTreeVisualizer />}
           {selectedAlgorithm === "linear-search" && <LinearSearchVisualizer />}
           {selectedAlgorithm === "binary-search" && <BinarySearchVisualizer />}
           {selectedAlgorithm === "time-complexity" && <TimeComplexityVisualizer />}

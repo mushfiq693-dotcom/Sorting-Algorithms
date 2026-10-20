@@ -60,6 +60,10 @@ const BstVisualizer = dynamic(
   () => import("@/components/visualizer/BstVisualizer").then((mod) => mod.BstVisualizer),
   { ssr: false, loading: () => <TabLoading /> }
 );
+const AvlTreeVisualizer = dynamic(
+  () => import("@/components/visualizer/AvlTreeVisualizer").then((mod) => mod.AvlTreeVisualizer),
+  { ssr: false, loading: () => <TabLoading /> }
+);
 const LinearSearchVisualizer = dynamic(
   () => import("@/components/visualizer/LinearSearchVisualizer").then((mod) => mod.LinearSearchVisualizer),
   { ssr: false, loading: () => <TabLoading /> }
@@ -522,6 +526,8 @@ export default function AlgorithmDetailPage() {
                 <BinaryTreeVisualizer />
               ) : algorithmId === "bst" ? (
                 <BstVisualizer />
+              ) : algorithmId === "avl-tree" ? (
+                <AvlTreeVisualizer />
               ) : algorithmId === "linear-search" ? (
                 <LinearSearchVisualizer />
               ) : algorithmId === "binary-search" ? (

@@ -381,4 +381,24 @@ TreeNode* search(TreeNode* root, int key) {
 }`,
     highlightedLine: 4,
   },
+  "avl-tree": {
+    algorithmId: "avl-tree",
+    title: "AVL Tree — Height-Balanced Self-Correction via Tree Rotations",
+    subtitle: "Maintains Balance Factor BF = h(left) - h(right) ∈ {-1, 0, 1} with LL, RR, LR, and RL rotations.",
+    caption: "Automatic O(1) rotation primitives rebalance the tree whenever insertion or deletion causes |BF| ≥ 2.",
+    fixedArray: [50, 25, 75, 15, 35, 65, 85],
+    complexityFormula: "Search: O(log n) • Insert: O(log n) • Delete: O(log n) • Max Height: 1.44 log₂(n)",
+    complexityExplanation: "Strict height balancing guarantees tree height h never exceeds 1.44 log2(n), completely eliminating the O(n) skew hazard of ordinary BSTs.",
+    codeSnippet: `// O(1) Right Rotation (LL Case)
+AVLNode* rotateRight(AVLNode* y) {
+    AVLNode* x = y->left;
+    AVLNode* T2 = x->right;
+    x->right = y;   // y becomes right child of x
+    y->left = T2;   // T2 becomes left child of y
+    updateHeight(y);
+    updateHeight(x);
+    return x;       // New subtree root
+}`,
+    highlightedLine: 4,
+  },
 };

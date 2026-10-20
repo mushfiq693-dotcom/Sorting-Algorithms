@@ -34,11 +34,10 @@ This roadmap tracks the long-term sequence of production-quality Data Structure 
 | 04 | **Hash Table** | ✅ *Completed* | `/algorithms/hash-table` | Hash functions, bucket arrays, separate chaining, open addressing (linear probing), dynamic capacity doubling, Two Sum $O(n)$ map |
 | 05 | **Binary Tree** | ✅ *Completed* | `/algorithms/binary-tree` | Node structure, parent-child relations, depth/height, full/complete/perfect/balanced invariants, DFS (Pre/In/Post) & BFS traversals, LeetCode 226 Invert |
 | 06 | **Binary Search Tree** | ✅ *Completed* | `/algorithms/bst` | Subtree trichotomy invariant (Left < Root < Right), O(log n) search, dynamic insertion, 3-case deletion with in-order successor swap, in-order monotonic sort proof, degenerate skew hazard |
-| 07 | **AVL Tree** | 🟡 *Next Eligible* | `/algorithms/avl-tree` | Balance factor, LL/RR/LR/RL rotations, self-balancing |
-| 08 | **Heap (Min/Max)** | ⚪ *Queued* | `/algorithms/heap` | Array-as-tree representation, bubble-up, bubble-down, heapify |
-| 09 | **Heap (Min/Max)** | ⚪ *Queued* | `/algorithms/heap` | Array-as-tree representation, bubble-up, bubble-down, heapify |
-| 10 | **Priority Queue** | ⚪ *Queued* | `/algorithms/priority-queue` | Priority extraction, task scheduling semantics |
-| 11 | **Union-Find / Disjoint Set** | ⚪ *Queued* | `/algorithms/union-find` | Disjoint set forests, union by rank, path compression |
+| 07 | **AVL Tree** | ✅ *Completed* | `/algorithms/avl-tree` | Balance factor, LL/RR/LR/RL rotations, self-balancing |
+| 08 | **Heap (Min/Max)** | 🟡 *Next Eligible* | `/algorithms/heap` | Array-as-tree representation, bubble-up, bubble-down, heapify |
+| 09 | **Priority Queue** | ⚪ *Queued* | `/algorithms/priority-queue` | Priority extraction, task scheduling semantics |
+| 10 | **Union-Find / Disjoint Set** | ⚪ *Queued* | `/algorithms/union-find` | Disjoint set forests, union by rank, path compression |
 
 ---
 
@@ -52,6 +51,9 @@ This roadmap tracks the long-term sequence of production-quality Data Structure 
 - `DequeEngine` (`src/algorithms/deque.ts`): Pure step generator engine for double-ended queues supporting circular buffer wrap-around, doubly-linked node chains, monotonic sliding window maximum, and symmetric palindrome testing.
 - `DequeVisualizer` (`src/components/visualizer/DequeVisualizer.tsx`): Studio visualizer implementing signature 7/5 workspace with circular memory ring, bidirectional pointers, monotonic candidate window chamber, and synchronized C++ code viewer.
 - `DequeDiagram` (`src/components/diagrams/DequeDiagram.tsx`): Signature architectural infographic illustrating circular buffer modulo wrap formulas and doubly-linked node chain topology.
+- `AvlEngine` (`src/algorithms/avl-tree.ts`): State-machine engine supporting strict height balancing, balance factor tracking, 4 canonical pointer rotations (LL, RR, LR, RL), and recursive rebalancing steps.
+- `AvlTreeVisualizer` (`src/components/visualizer/AvlTreeVisualizer.tsx`): Studio visualizer featuring dynamic SVG coordinate projections, real-time balance factor badges, rotation banner overlays, synchronized C++ CodeViewer, and interactive presets.
+- `AvlTreeDiagram` (`src/components/diagrams/AvlTreeDiagram.tsx`): Signature blueprint diagram illustrating balance factor invariants, the 4 rotation cases, and comparison against naive BST height bounds.
 
 ---
 
@@ -111,4 +113,23 @@ This roadmap tracks the long-term sequence of production-quality Data Structure 
 - [x] Build succeeds (`npm run build` passed with 23/23 static routes generated)
 - [x] Existing visualizations still work (Protected reference check passed)
 - [x] Navigation integration works (Navbar dropdown with 6 data structures, learn roadmap Tier 5 order 9, topic category hub with 6 visualizations, in-depth theory 5-step flow)
+
+---
+
+## 🔍 Quality Gate Checklist for Topic 07 (AVL Tree)
+- [x] Algorithm/data-structure logic is correct (Balance Factor $BF = h_L - h_R \in \{-1, 0, 1\}$, 4 canonical rotations LL, RR, LR, RL, self-balancing insert, 3-case deletion with cascading rebalancing, in-order sorted scan)
+- [x] Visualization accurately represents internal state (Tree SVG topology with in-order non-overlapping coordinates, color-coded node BF badges, rotation pivot badges, unbalanced alert nodes, synchronized C++ code lines)
+- [x] Main interactions work (Insert, Delete, Search, In-Order traversal, Random node generation, Presets: Balanced 7 nodes, Trigger LL, Trigger RR, Trigger LR, Trigger RL, Monotonic sorted sequence)
+- [x] Input handling works (Numeric key input, bounded random generator, preset selection)
+- [x] Reset works (Restores selected preset or baseline tree)
+- [x] Step/playback works (Play, Pause, Step Forward, Step Back, Reset, Step Indicator, Delay slider)
+- [x] Educational explanation is correct (Fibonacci tree height bound $h < 1.44 \log_2 n$, $O(1)$ single vs double rotation mechanics, single rotation on insert vs cascading $O(\log n)$ rotations on deletion)
+- [x] Complexity information is correct (Guaranteed $O(\log n)$ search/insert/delete across all cases, $O(1)$ rotation runtime, $O(n)$ space)
+- [x] UI matches AlgoHub design language (Studio 2-column layout with 7-column tree canvas and 5-column sticky C++ CodeViewer + telemetry)
+- [x] Responsive layout works (Mobile horizontal scroll and tablet flex layouts)
+- [x] Accessibility is acceptable (Aria labels, reduced motion support, clear button controls)
+- [x] No TypeScript errors (`npx tsc --noEmit` passed with 0 errors)
+- [x] Build succeeds (`npm run build` succeeds)
+- [x] Navigation integration works (Navbar dropdown under TREE STRUCTURES, learn roadmap Tier 6.8 order 14, topic category hub, 5-step learning workflow with Bangla theory)
+
 

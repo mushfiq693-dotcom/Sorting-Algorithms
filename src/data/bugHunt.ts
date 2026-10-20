@@ -508,5 +508,26 @@ public:
       { type: "call-enter", fn: "search", args: [30], description: "Target 30 < 50, but algorithm branched right towards 70 instead of left" },
     ],
   },
+  "avl-tree": {
+    algorithmId: "avl-tree",
+    title: "AVL Tree: Inverted Balance Factor Formula Causing Wrong Rotation Triggers",
+    description:
+      "This helper function computes the Balance Factor (BF) of an AVL node. However, it mistakenly subtracts the left subtree height from the right subtree height (right - left) instead of left - right, completely inverting balance signals and triggering the wrong rotations!",
+    buggyCode: `int getBalanceFactor(AVLNode* node) {
+    if (!node) return 0;
+    return getHeight(node->right) - getHeight(node->left); // Bug: inverted BF formula!
+}`,
+    buggyLineNumber: 3,
+    hint: "In standard AVL definitions, if the left subtree is taller than the right subtree, should the Balance Factor be positive (+1/+2) or negative (-1/-2)?",
+    explanation:
+      "Line 3 calculated `getHeight(node->right) - getHeight(node->left)`. The standard AVL Balance Factor is defined as `getHeight(node->left) - getHeight(node->right)`. Inverting the subtraction turns left-heavy subtrees into negative balance factors and right-heavy subtrees into positive ones, causing the tree to attempt RR/RL rotations on left-heavy trees and corrupting balance invariants. The fix is `return getHeight(node->left) - getHeight(node->right);`.",
+    validateFix: (line: string) => {
+      const trimmed = line.replace(/\s+/g, "");
+      return trimmed.includes("getHeight(node->left)-getHeight(node->right)");
+    },
+    flawedRunner: () => [
+      { type: "call-enter", fn: "getBalanceFactor", args: [2], description: "Node has left height 2 and right height 0, but returned BF = -2 instead of +2" },
+    ],
+  },
 };
 

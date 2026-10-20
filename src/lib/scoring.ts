@@ -37,6 +37,7 @@ export const ORDERED_DATA_STRUCTURES: OrderedTopicItem[] = [
   { id: "hash-table", name: "Hash Table", category: "data-structure" },
   { id: "binary-tree", name: "Binary Tree", category: "tree" },
   { id: "bst", name: "Binary Search Tree", category: "tree" },
+  { id: "avl-tree", name: "AVL Tree", category: "tree" },
 ];
 
 export const ORDERED_COMPLEXITY_TOPICS: OrderedTopicItem[] = [
@@ -71,6 +72,7 @@ export const ALGORITHM_NAME_MAP: Record<AlgorithmId, string> = {
   "hash-table": "Hash Table",
   "binary-tree": "Binary Tree",
   bst: "Binary Search Tree",
+  "avl-tree": "AVL Tree",
   "time-complexity": "Time Complexity",
   "space-complexity": "Space Complexity",
 };
@@ -95,6 +97,7 @@ export const ALGORITHM_DOCS_MAP: Record<AlgorithmId, string[]> = {
   "hash-table": ["hash-table-data-structure"],
   "binary-tree": ["binary-tree-fundamentals"],
   bst: ["bst-fundamentals"],
+  "avl-tree": ["avl-tree-fundamentals"],
   "time-complexity": ["time-complexity", "big-o-for-beginners"],
   "space-complexity": ["space-complexity", "in-place-and-space-complexity"],
 };

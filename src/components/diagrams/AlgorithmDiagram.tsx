@@ -21,6 +21,7 @@ import { LinkedListPointerDiagram } from "./LinkedListPointerDiagram";
 import { HashTableDiagram } from "./HashTableDiagram";
 import { BinaryTreeDiagram } from "./BinaryTreeDiagram";
 import { BstDiagram } from "./BstDiagram";
+import { AvlTreeDiagram } from "./AvlTreeDiagram";
 import { Image } from "lucide-react";
 
 interface AlgorithmDiagramProps {
@@ -60,6 +61,8 @@ export function AlgorithmDiagram({ algorithmId }: AlgorithmDiagramProps) {
         return <BinaryTreeDiagram />;
       case "bst":
         return <BstDiagram />;
+      case "avl-tree":
+        return <AvlTreeDiagram />;
       case "linear-search":
         return <LinearSearchTimelineDiagram />;
       case "binary-search":

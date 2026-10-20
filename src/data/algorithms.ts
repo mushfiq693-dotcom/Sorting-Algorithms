@@ -1401,6 +1401,185 @@ public:
     }
 };`,
   },
+  "avl-tree": {
+    id: "avl-tree",
+    name: "AVL Tree",
+    category: "tree",
+    shortDescription:
+      "A self-balancing binary search tree where subtree heights differ by at most 1, guaranteeing strict O(log n) operations.",
+    description:
+      "An AVL Tree (Adelson-Velsky and Landis) is a self-balancing binary search tree. For every node, the difference between the heights of its left and right subtrees (the Balance Factor, BF = h_left - h_right) is strictly maintained within {-1, 0, +1}. When an insertion or deletion causes |BF| to reach 2, localized O(1) tree rotations (Single Left, Single Right, Double Left-Right, Double Right-Left) are immediately executed to restore balance. This guarantees that the tree height h never exceeds 1.44 log2(n), completely preventing the catastrophic O(n) degeneration seen in naive BSTs.",
+    complexity: {
+      best: "O(log n)",
+      average: "O(log n)",
+      worst: "O(log n)",
+      space: "O(n)",
+      stable: false,
+      inPlace: true,
+      operations: [
+        {
+          name: "Search",
+          time: "O(log n)",
+          space: "O(log n)",
+          description: "Strictly logarithmic in all cases because tree height is mathematically capped at ≤ 1.44 log₂(n).",
+        },
+        {
+          name: "Insertion & Rebalance",
+          time: "O(log n)",
+          space: "O(log n)",
+          description: "Standard BST insertion followed by at most ONE single or double rotation to restore global balance.",
+        },
+        {
+          name: "Deletion & Rebalance",
+          time: "O(log n)",
+          space: "O(log n)",
+          description: "Standard BST deletion with potential cascading rotations along the ancestry path up to the root.",
+        },
+        {
+          name: "Single Rotation (LL / RR)",
+          time: "O(1)",
+          space: "O(1)",
+          description: "Re-links 3 pointers and recalculates 2 node heights in constant time.",
+        },
+        {
+          name: "Double Rotation (LR / RL)",
+          time: "O(1)",
+          space: "O(1)",
+          description: "Two consecutive single rotations resolving zig-zag and zag-zig imbalances.",
+        },
+        {
+          name: "In-Order Traversal",
+          time: "O(n)",
+          space: "O(log n)",
+          description: "Visits Left -> Root -> Right, yielding elements in strictly sorted ascending order.",
+        },
+      ],
+    },
+    cppCode: `// Production-Grade C++ AVL Tree
+#include <iostream>
+#include <algorithm>
+#include <vector>
+using namespace std;
+
+struct AVLNode {
+    int val, height;
+    AVLNode *left, *right;
+    AVLNode(int x) : val(x), height(1), left(nullptr), right(nullptr) {}
+};
+
+class AVLTree {
+private:
+    AVLNode* root;
+
+    int getHeight(AVLNode* n) const { return n ? n->height : 0; }
+    int getBF(AVLNode* n) const { return n ? getHeight(n->left) - getHeight(n->right) : 0; }
+    void updateH(AVLNode* n) { if (n) n->height = 1 + max(getHeight(n->left), getHeight(n->right)); }
+
+    AVLNode* rotateRight(AVLNode* y) {
+        AVLNode* x = y->left;
+        AVLNode* T2 = x->right;
+        x->right = y;
+        y->left = T2;
+        updateH(y);
+        updateH(x);
+        return x; // New root of subtree
+    }
+
+    AVLNode* rotateLeft(AVLNode* x) {
+        AVLNode* y = x->right;
+        AVLNode* T2 = y->left;
+        y->left = x;
+        x->right = T2;
+        updateH(x);
+        updateH(y);
+        return y; // New root of subtree
+    }
+
+    AVLNode* insert(AVLNode* node, int val) {
+        if (!node) return new AVLNode(val);
+        if (val < node->val) node->left = insert(node->left, val);
+        else if (val > node->val) node->right = insert(node->right, val);
+        else return node; // Duplicate keys ignored
+
+        updateH(node);
+        int bf = getBF(node);
+
+        // 4 Rotation Cases:
+        // LL Case
+        if (bf > 1 && val < node->left->val)
+            return rotateRight(node);
+        // RR Case
+        if (bf < -1 && val > node->right->val)
+            return rotateLeft(node);
+        // LR Case
+        if (bf > 1 && val > node->left->val) {
+            node->left = rotateLeft(node->left);
+            return rotateRight(node);
+        }
+        // RL Case
+        if (bf < -1 && val < node->right->val) {
+            node->right = rotateRight(node->right);
+            return rotateLeft(node);
+        }
+        return node;
+    }
+
+    AVLNode* findMin(AVLNode* node) const {
+        while (node && node->left) node = node->left;
+        return node;
+    }
+
+    AVLNode* remove(AVLNode* node, int val) {
+        if (!node) return nullptr;
+
+        if (val < node->val) node->left = remove(node->left, val);
+        else if (val > node->val) node->right = remove(node->right, val);
+        else {
+            if (!node->left || !node->right) {
+                AVLNode* temp = node->left ? node->left : node->right;
+                if (!temp) { temp = node; node = nullptr; }
+                else *node = *temp;
+                delete temp;
+            } else {
+                AVLNode* temp = findMin(node->right);
+                node->val = temp->val;
+                node->right = remove(node->right, temp->val);
+            }
+        }
+        if (!node) return nullptr;
+
+        updateH(node);
+        int bf = getBF(node);
+
+        // Rebalance
+        if (bf > 1 && getBF(node->left) >= 0) return rotateRight(node);
+        if (bf > 1 && getBF(node->left) < 0) {
+            node->left = rotateLeft(node->left);
+            return rotateRight(node);
+        }
+        if (bf < -1 && getBF(node->right) <= 0) return rotateLeft(node);
+        if (bf < -1 && getBF(node->right) > 0) {
+            node->right = rotateRight(node->right);
+            return rotateLeft(node);
+        }
+        return node;
+    }
+
+    void destroy(AVLNode* n) {
+        if (!n) return;
+        destroy(n->left);
+        destroy(n->right);
+        delete n;
+    }
+
+public:
+    AVLTree() : root(nullptr) {}
+    ~AVLTree() { destroy(root); }
+
+    void insert(int val) { root = insert(root, val); }
+    void remove(int val) { root = remove(root, val); }
+};`,
+  },
 };
 
 // All 5 Sorting Algorithms
@@ -1433,6 +1612,7 @@ export const DATA_STRUCTURES: AlgorithmId[] = [
 export const TREE_TOPICS: AlgorithmId[] = [
   "binary-tree",
   "bst",
+  "avl-tree",
 ];
 
 // All Complexity Topics
@@ -1459,6 +1639,7 @@ export const ALL_TOPICS: AlgorithmId[] = [
   "hash-table",
   "binary-tree",
   "bst",
+  "avl-tree",
   "bubble",
   "selection",
   "insertion",

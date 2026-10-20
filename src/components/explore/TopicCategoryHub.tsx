@@ -68,7 +68,7 @@ export const CATEGORY_CARDS: CategoryCardMeta[] = [
   {
     key: "tree",
     title: "Trees",
-    countLabel: "2 Visualizations",
+    countLabel: "3 Visualizations",
     icon: GitFork,
     iconBg: "bg-teal-500/10 dark:bg-teal-500/20",
     iconColor: "text-teal-500 dark:text-teal-400",
@@ -192,6 +192,12 @@ const TOPIC_VISUALS: Record<AlgorithmId, TopicVisualMeta> = {
     iconColor: "text-teal-500 dark:text-teal-400",
     iconBorder: "border-teal-500/25",
   },
+  "avl-tree": {
+    icon: GitFork,
+    iconBg: "bg-teal-500/10 dark:bg-teal-500/20",
+    iconColor: "text-teal-500 dark:text-teal-400",
+    iconBorder: "border-teal-500/25",
+  },
 
   // Searching (Orange / Rust palette)
   "linear-search": {
@@ -241,6 +247,7 @@ const TOPIC_DESCRIPTIONS: Record<AlgorithmId, string> = {
   "hash-table": "Watch hash functions map keys directly to buckets with collision resolution and O(1) lookups.",
   "binary-tree": "Explore hierarchical branching, tree anatomy, DFS traversals (pre/in/post), and BFS level orders.",
   bst: "Explore Left < Root < Right invariant, O(log n) dynamic search, insertion, and 3-case deletion with in-order successors.",
+  "avl-tree": "Watch self-balancing tree rotations (LL, RR, LR, RL) and Balance Factor telemetry keep height strictly O(log n).",
 
   // Searching
   "linear-search": "Watch linear search scan elements one by one from start to end for a match.",
@@ -408,7 +415,7 @@ const TREE_COMPARISON: TreeComparisonRow[] = [
   },
   {
     name: "Binary Search Tree (BST)",
-    id: "binary-tree",
+    id: "bst",
     type: "Sorted Key (Left < Root < Right)",
     lookup: "O(log n) avg / O(n) worst",
     insert: "O(log n) avg / O(n) worst",
@@ -417,7 +424,7 @@ const TREE_COMPARISON: TreeComparisonRow[] = [
   },
   {
     name: "AVL Tree (Balanced BST)",
-    id: "binary-tree",
+    id: "avl-tree",
     type: "Height-Balanced (|BF| ≤ 1)",
     lookup: "O(log n) guaranteed",
     insert: "O(log n) with rotations",
