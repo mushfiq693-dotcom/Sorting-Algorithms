@@ -2405,6 +2405,189 @@ $$\\text{Balance Factor (BF)} = \\text{বাম সাবট্রির উচ
     },
   },
   {
+    slug: "heap-fundamentals",
+    level: 5,
+    levelTitle: "Level 5: Hierarchical Tree Architectures",
+    order: 4,
+    title: "Binary Heap: Complete Trees, Array Indexing, and Linear O(n) Heapify",
+    subtitle: "Master pointerless binary tree representation in contiguous RAM, O(1) peek access, Sift-Up/Sift-Down invariants, mathematical proof of linear O(n) Build-Heap, and priority queue applications.",
+    estimatedReadTime: "18 min",
+    category: "Data Structures",
+    content: `
+### Chapter 1: The Priority Problem — Why Not a Sorted Array or BST?
+
+In countless real-world computer systems, algorithms do not need all $n$ items sorted from smallest to largest at every given moment. Instead, they require a **Priority Queue**:
+1. Repeatedly inspect the single most critical element (e.g., the minimum cost edge in Prim's/Dijkstra's algorithm, the highest priority process in an OS scheduler).
+2. Insert newly arriving elements dynamically.
+3. Extract the extreme element and efficiently rebalance.
+
+#### The Fundamental Trade-off of Naive Approaches:
+| Data Structure | Peek Min/Max | Insert New Element | Extract Min/Max | Memory / Pointers |
+| :--- | :--- | :--- | :--- | :--- |
+| **Unsorted Array** | $O(n)$ (Linear scan) | $O(1)$ (Append at end) | $O(n)$ (Find min and shift) | Contiguous (Zero pointers) |
+| **Sorted Array** | $O(1)$ (Inspect head/tail) | $O(n)$ (Shift elements) | $O(1)$ or $O(n)$ | Contiguous (Zero pointers) |
+| **Linked List** | $O(n)$ or $O(1)$ | $O(1)$ or $O(n)$ | $O(1)$ or $O(n)$ | Pointer overhead ($8$ bytes/node) |
+| **Self-Balancing BST** | $O(\\log n)$ | $O(\\log n)$ | $O(\\log n)$ | $24+$ bytes pointer overhead |
+| **Binary Heap** | **$O(1)$** | **$O(\\log n)$** | **$O(\\log n)$** | **Contiguous (Zero pointers!)** |
+
+A **Binary Heap** strikes the optimal sweet spot: it does not pay the heavy penalty of maintaining total order among all nodes. It maintains only a **partial order** (parent dominates children), giving instant $O(1)$ extreme element access and blazing $O(\\log n)$ updates—all inside a raw, flat array!
+
+---
+
+### Chapter 2: The Complete Binary Tree Invariant & Zero-Pointer Math
+
+A **Complete Binary Tree** is a binary tree in which every level, except possibly the last, is completely filled, and all nodes in the last level are as far left as possible.
+
+Because there are no gaps or missing branches, a complete binary tree can be mapped directly into a 1D contiguous array using **Level-Order (Breadth-First)** sequence:
+- Root is at index \`0\`.
+- Root's children are at indices \`1\` and \`2\`.
+- Level 2 nodes are at indices \`3, 4, 5, 6\`.
+
+#### The Fundamental Pointerless Index Formulas (0-Indexed):
+For any node at array index $i$:
+$$\\text{Parent}(i) = \\left\\lfloor \\frac{i - 1}{2} \\right\\rfloor$$
+$$\\text{LeftChild}(i) = 2i + 1$$
+$$\\text{RightChild}(i) = 2i + 2$$
+
+#### Boundary Conditions:
+- If $2i + 1 \\ge n$, the node has **no left child** (it is a leaf node).
+- If $2i + 2 \\ge n$, the node has **no right child**.
+- The first leaf node in an array of size $n$ begins at index $\\lfloor n / 2 \\rfloor$.
+- All non-leaf internal nodes reside in the index range $[0, \\lfloor n / 2 \\rfloor - 1]$.
+
+> [!NOTE]
+> **Zero Pointer Overhead & L1 Cache Locality:**
+> Standard pointer-based trees store left, right, and parent memory addresses ($24$ bytes of metadata per node). A Binary Heap stores pure integer keys contiguously in cache lines. Navigating from parent to child requires zero memory dereferencing, enabling blistering hardware prefetching speeds.
+
+---
+
+### Chapter 3: Min-Heap vs Max-Heap Ordering Invariants
+
+1. **Min-Heap Property:**
+   For every node $i$ other than the root:
+   $$\\text{Array}[\\text{Parent}(i)] \\le \\text{Array}[i]$$
+   The smallest element is guaranteed to reside at the root index \`0\`.
+
+2. **Max-Heap Property:**
+   For every node $i$ other than the root:
+   $$\\text{Array}[\\text{Parent}(i)] \\ge \\text{Array}[i]$$
+   The largest element is guaranteed to reside at the root index \`0\`.
+
+*Crucial Note:* There is **no relative ordering** between the left sibling and right sibling! In a Min-Heap, the left child could be larger than the right child or vice versa. The invariant only restricts the vertical parent-child relationship.
+
+---
+
+### Chapter 4: Sift-Up & Sift-Down Mechanics
+
+#### 1. Insertion (Sift-Up / Bubble-Up) — $O(\\log n)$:
+1. Append the new element $x$ to the end of the array at index $n$. This preserves the complete binary tree structure with zero empty slots.
+2. Compare $x$ with its parent at $p = \\lfloor (curr - 1) / 2 \\rfloor$.
+3. If $x$ violates the heap property (e.g., $x < \\text{arr}[p]$ in a Min-Heap), swap them.
+4. Set $curr = p$ and repeat until $curr = 0$ (root reached) or the parent is already $\\le x$.
+5. Height is bounded by $\\lfloor \\log_2 n \\rfloor$, so at most $\\log_2 n$ swaps occur.
+
+#### 2. Extract Root (Sift-Down / Bubble-Down) — $O(\\log n)$:
+1. Cache the root value $\\text{arr}[0]$ to return.
+2. Move the very last element $\\text{arr}[n - 1]$ into index \`0\` and pop the last slot.
+3. Compare the new root with its children ($2i + 1$ and $2i + 2$).
+4. Find the **smallest child** (in a Min-Heap) or **largest child** (in a Max-Heap).
+5. If the chosen child violates the heap property with the current node, swap them.
+6. Recurse downward until the node is smaller than both children or becomes a leaf.
+
+---
+
+### Chapter 5: The Mathematical Triumph of Linear $O(n)$ Heapify
+
+If you insert $n$ elements into an empty heap one by one, each insertion costs up to $O(\\log n)$, yielding a total time of $O(n \\log n)$.
+
+However, Robert W. Floyd invented **Bottom-Up Heapify (Build-Heap)**: start from the last non-leaf node $\\lfloor n / 2 \\rfloor - 1$ down to the root \`0\`, and call \`siftDown()\` on each node!
+
+#### The Surprising Mathematical Proof of $O(n)$:
+In a complete binary tree of height $H = \\lfloor \\log_2 n \\rfloor$:
+- Level $0$ (Leaves): $\\approx n / 2$ nodes. Their height is $0$. Sift-down work = $0$.
+- Level $1$: $\\approx n / 4$ nodes. Their height is $1$. Sift-down work $\\le 1$.
+- Level $2$: $\\approx n / 8$ nodes. Their height is $2$. Sift-down work $\\le 2$.
+- Root level: Exactly $1$ node. Its height is $H$. Sift-down work $\\le H$.
+
+Summing the total work across all levels:
+$$\\text{Total Work} = \\sum_{h=0}^{\\lfloor \\log_2 n \\rfloor} \\frac{n}{2^{h+1}} \\cdot h = \\frac{n}{2} \\sum_{h=0}^{\\infty} \\frac{h}{2^h}$$
+
+The infinite series $\\sum_{h=0}^{\\infty} \\frac{h}{2^h}$ converges exactly to $2$:
+$$\\sum_{h=0}^{\\infty} \\frac{h}{2^h} = \\frac{1}{2} + \\frac{2}{4} + \\frac{3}{8} + \\frac{4}{16} + \\cdots = 2$$
+
+Therefore:
+$$\\text{Total Operations} \\le \\frac{n}{2} \\cdot 2 = n = O(n)$$
+
+> [!TIP]
+> **Why is Build-Heap linear?**
+> The vast majority of nodes in a binary tree live at the bottom (half are leaves, three-quarters are in the bottom two levels). In bottom-up heapify, the huge number of bottom nodes do almost zero work ($h=0$ or $1$), while only the solitary root node traverses the full height $\\log n$.
+      `,
+    banglaNote: {
+      topic: "বাইনারি হিপ (Binary Heap), ১-ডি অ্যারে ম্যাপিং এবং লিনিয়ার O(n) হিপিফাই (Binary Heap Deep Dive)",
+      englishContext: "Binary Heap maps a complete binary tree into a contiguous 1D array without pointers. Parent-child relationships are derived in O(1) using index arithmetic, giving O(1) extreme element lookup and O(log n) insertions and extractions.",
+      banglaText: `
+### 💡 সহজ উপমা: টুর্নামেন্ট ব্র্যাকেট ও অফিসের পিরামিড কাঠামো (The Tournament Hierarchy)
+একটি সাধারণ ডাটা স্ট্রাকচারে যদি আপনি ১,০০,০০০ উপাদান রাখেন এবং প্রতি মুহূর্তে জানতে চান "সবচেয়ে ছোট (বা সবচেয়ে বড়) উপাদান কোনটি?", তবে পুরো লিস্টটি প্রতিবার সর্ট করা মারাত্মক অপচয় ($O(n \\log n)$)।
+
+ভাবুন একটি নকআউট ফুটবল টুর্নামেন্টের কথা — আপনি যদি জানতে চান চ্যাম্পিয়ন কে, তবে ১৬ দলের ১৬ জনকেই ১ থেকে ১৬ পর্যন্ত র‍্যাঙ্ক করতে হয় না! কেবল প্রতি ধাপে বিজয়ীদের ওপরে তুলে ফাইনালে চ্যাম্পিয়ন নির্বাচন করলেই চলে।
+
+**বাইনারি হিপ (Binary Heap)** ঠিক এই নীতিতেই কাজ করে:
+- **Min-Heap:** প্রতিটি অভিভাবক (Parent) তার সন্তানদের (Children) চেয়ে ছোট বা সমান হয়। ফলে ট্রির সর্বশীর্ষে (রুট-এ) সবসময় থাকে **গ্লোবাল মিনিমাম**!
+- **Max-Heap:** প্রতিটি অভিভাবক তার সন্তানদের চেয়ে বড় বা সমান হয়। রুটে সবসময় থাকে **গ্লোবাল ম্যাক্সিমাম**!
+
+---
+
+### 🪄 কোনো পয়েন্টার ছাড়া সাধারণ অ্যারেতে গাছ বানানোর জাদু!
+একটি সাধারণ বাইনারি ট্রিতে প্রতিটি নোডের জন্য \`left\` এবং \`right\` পয়েন্টার রাখতে প্রচুর মেমোরি নষ্ট হয়। কিন্তু বাইনারি হিপ একটি **Complete Binary Tree** হওয়ায় একে একটি সাধারণ ১-ডি ফ্ল্যাট অ্যারেতে (Contiguous Memory) রাখা যায়!
+
+কোনো নোডের ইনডেক্স যদি $i$ হয়, তবে জাদুকরী সূত্ৰ:
+- **প্যারেন্ট (Parent):** $\\lfloor (i - 1) / 2 \\rfloor$
+- **বাম সন্তান (Left Child):** $2i + 1$
+- **ডান সন্তান (Right Child):** $2i + 2$
+
+যেমন: রুট থাকে ইনডেক্স \`0\`-এ। তার বাম সন্তান ইনডেক্স $2(0)+1 = 1$, আর ডান সন্তান $2(0)+2 = 2$। কোনো পয়েন্টার ছাড়া শুধু যোগ-গুণ করেই নিমেষে সন্তানের কাছে পৌঁছানো যায়!
+
+---
+
+### 🔄 কোর অপারেশনের সহজ মেকানিক্স:
+
+#### ১. বাবল-আপ বা শিফট-আপ (Sift-Up on Insert):
+- নতুন কোনো মান হিপে যোগ করতে হলে তাকে অ্যারের একদম শেষে ($n$ নম্বর ইনডেক্সে) বসানো হয়।
+- এরপর সে তার প্যারেন্টের সাথে লড়াই করে। যদি সে প্যারেন্টের চেয়ে ছোট হয় (Min-Heap-এ), তবে দুজনের স্থান অদলবদল (Swap) হয়।
+- এভাবে সে বংশপরম্পরা বেয়ে ওপরে উঠতে থাকে যতক্ষণ না তার উপযুক্ত স্থানে পৌঁছায়। সর্বোচ্চ গাছের উচ্চতা $\\log_2 n$ বার সোয়াপ করতে হয়। সময় লাগে $O(\\log n)$।
+
+#### ২. বাবল-ডাউন বা শিফট-ডাউন (Sift-Down on Extract):
+- রুট থেকে সবচেয়ে ছোট মানটি বের করে নেওয়া হয়।
+- কিন্তু রুট তো ফাঁকা রাখা যাবে না! তখন অ্যারের একদম শেষের এলিমেন্টটিকে টেনে এনে রুটে বসিয়ে দেওয়া হয়।
+- এবার সে তো অনেক বড় মান, তাই সে নিচে নামতে শুরু করে। সে তার দুই সন্তানের মধ্যে **সবচেয়ে ছোটটির** সাথে তুলনা করে নিচে নামে।
+- এভাবে ধাপে ধাপে নেমে সে তার যোগ্য জায়গায় বসে। এতেও সময় লাগে সর্বোচ্চ $O(\\log n)$।
+
+---
+
+### ⚡ কেন সাধারণ ইনসারশনে O(n log n) লাগে, কিন্তু Heapify করলে মাত্র O(n)?
+এটি ইন্টারভিউয়ের অন্যতম সেরা প্রশ্ন:
+- যদি আপনি একটা একটা করে $n$ টি উপাদান ইনসার্ট করেন, তবে মোট সময় লাগে $n \\times O(\\log n) = O(n \\log n)$।
+- কিন্তু আপনি যদি একটি অগোছালো অ্যারের শেষ নন-লিফ নোড ($\lfloor n/2 \rfloor - 1$) থেকে শুরু করে নিচ থেকে ওপরের দিকে (Bottom-Up) \`siftDown\` চালাতে থাকেন, তবে সময় লাগে মাত্র **$O(n)$**!
+
+**কারণটা খুব চমকপ্রদ:**
+একটি গাছের প্রায় অর্ধেক নোডই থাকে একদম নিচের তলায় (পাতায়)। পাতাদের উচ্চতা $0$, তাই তাদের জন্য কোনো কাজই করতে হয় না! আর ওপরের তলায় যেখানে কাজের পরিমাণ বেশি (উচ্চতা বেশি), সেখানে নোড থাকে খুব কম (যেমন রুটে মাত্র ১টি নোড)। ফলে গাণিতিক ধারার যোগফল লিনিয়ার $O(n)$-এ নেমে আসে।
+
+---
+
+### 🚀 বাস্তব জীবনে বাইনারি হিপের ব্যবহার:
+১. **Priority Queue (প্রায়োরিটি কিউ):** সিপียু শিডিউলিং বা প্রিন্টার জবে সবচেয়ে গুরুত্বপূর্ণ টাস্ক আগে এক্সিকিউট করতে।
+২. **Dijkstra & Prim's Algorithm:** গ্রাফে শর্টেস্ট পাথ বা মিনিমাম স্প্যানিং ট্রি বের করতে।
+৩. **Top-K Frequent Elements / Kth Largest:** কোটি কোটি ডাটার মধ্যে সেরা ১০টি বা ৫০টি সংখ্যা মুহূর্তের মধ্যে বের করতে।
+      `,
+    },
+    quizTopicId: "heap",
+    visualizerLink: {
+      label: "Binary Heap Studio",
+      algorithmId: "heap",
+      path: "/algorithms/heap",
+    },
+  },
+  {
     slug: "time-complexity",
     level: 6,
     levelTitle: "Level 6: Algorithmic Complexity Analysis",

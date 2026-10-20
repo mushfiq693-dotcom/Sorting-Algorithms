@@ -753,11 +753,66 @@ export const LEARNING_PATH: LearningStep[] = [
   },
 
   // ==========================================
+  // TIER 6.9: COMPLETE TREES & HEAPS
+  // ==========================================
+  {
+    id: "heap",
+    order: 15,
+    name: "Binary Heap",
+    category: "tree",
+    badge: "Priority Queue O(1)",
+    estimatedTime: "~20 min",
+    difficulty: "Intermediate",
+    reason: "Achieve instant O(1) minimum or maximum access without sorting, using an ingenious array-as-tree representation with zero pointers.",
+    hook: "How can you instantly find the highest priority task among 1,000,000 items in O(1) time without keeping the whole list sorted?",
+    superpower: "Instant Extreme Element Access with O(n) Heapify",
+    tradeoff: "O(n) Arbitrary Search (Not a Search Tree)",
+    mentalModel: "A Corporate Hierarchy / Pyramid Tournament",
+    keyPrinciples: [
+      "Complete Binary Tree Invariant: Every level is full except possibly the last, which fills strictly from left to right.",
+      "Zero-Pointer Index Arithmetic: Parent(i) = ⌊(i-1)/2⌋, Left(i) = 2i+1, Right(i) = 2i+2.",
+      "Heap-Order Property: In a Min-Heap, parent ≤ children; in a Max-Heap, parent ≥ children.",
+      "Sift-Up on Insertion: Append at the end and bubble upward along ancestry in O(log n).",
+      "Sift-Down on Extraction: Replace root with last element and sink downward in O(log n).",
+      "Bottom-Up Heapify: Construct a valid heap from any raw array in linear O(n) time."
+    ],
+    analogy: "Like a sports tournament ladder: the reigning champion sits at the top (root). When a new contender arrives, they duel their parent upward to settle at their proper rank.",
+    idea: "A Binary Heap maps a complete binary tree into a 1D array where parent nodes dominate their children. This gives instant O(1) peek access to the extreme element and O(log n) insertions and extractions with zero pointer overhead and perfect CPU cache locality.",
+    sampleArray: [10, 20, 15, 30, 40, 50, 60],
+    codeBlocks: [
+      {
+        title: "Index Arithmetic Formulas",
+        lines: "int parent(int i) { return (i - 1) / 2; }\nint left(int i)   { return 2 * i + 1; }\nint right(int i)  { return 2 * i + 2; }",
+        explanation: "Navigates the tree through pure pointerless math directly on contiguous array indices in O(1).",
+      },
+      {
+        title: "Sift-Up (Insertion)",
+        lines: "while (i > 0 && heap[i] < heap[parent(i)]) {\n    swap(heap[i], heap[parent(i)]);\n    i = parent(i);\n}",
+        explanation: "Bubbles newly appended leaf upward until parent satisfies heap property. Runs in O(log n) time.",
+      },
+      {
+        title: "Sift-Down (Extract Root)",
+        lines: "int smallest = i;\nif (l < n && heap[l] < heap[smallest]) smallest = l;\nif (r < n && heap[r] < heap[smallest]) smallest = r;\nif (smallest != i) { swap(heap[i], heap[smallest]); siftDown(smallest); }",
+        explanation: "Sinks the replaced root downward by swapping with the smaller child until heap invariant is restored.",
+      },
+      {
+        title: "Linear O(n) Heapify",
+        lines: "for (int i = n / 2 - 1; i >= 0; i--) {\n    siftDown(i);\n}",
+        explanation: "Processes all non-leaf nodes bottom-up, building a valid heap in strictly linear O(n) time.",
+      },
+    ],
+    complexityWhy: {
+      time: "Peek is O(1) at index [0]. Insert and extract are O(log n) because complete tree height is bounded by ⌊log₂ n⌋. Build-heap runs in linear O(n) time.",
+      space: "O(1) auxiliary space beyond the storage array because all swaps are performed completely in-place.",
+    },
+  },
+
+  // ==========================================
   // TIER 7: ELEMENTARY QUADRATIC SORTING
   // ==========================================
   {
     id: "bubble",
-    order: 15,
+    order: 16,
     name: "Bubble Sort",
     category: "sorting",
     badge: "Adjacent Swaps",
@@ -802,7 +857,7 @@ export const LEARNING_PATH: LearningStep[] = [
   },
   {
     id: "selection",
-    order: 16,
+    order: 17,
     name: "Selection Sort",
     category: "sorting",
     badge: "Find Minimum",
@@ -847,7 +902,7 @@ export const LEARNING_PATH: LearningStep[] = [
   },
   {
     id: "insertion",
-    order: 17,
+    order: 18,
     name: "Insertion Sort",
     category: "sorting",
     badge: "Hand-Sorting Cards",
@@ -896,7 +951,7 @@ export const LEARNING_PATH: LearningStep[] = [
   // ==========================================
   {
     id: "merge",
-    order: 18,
+    order: 19,
     name: "Merge Sort",
     category: "sorting",
     badge: "Divide & Conquer",
@@ -941,7 +996,7 @@ export const LEARNING_PATH: LearningStep[] = [
   },
   {
     id: "quick",
-    order: 19,
+    order: 20,
     name: "Quick Sort",
     category: "sorting",
     badge: "Pivot Partition",
@@ -1158,5 +1213,20 @@ export const GLOSSARY_TERMS: GlossaryTerm[] = [
     term: "Tree Rotation",
     category: "Data Structures",
     definition: "An O(1) pointer restructuring operation that changes local tree height and restores the balance invariant without violating in-order binary search order.",
+  },
+  {
+    term: "Binary Heap",
+    category: "Data Structures",
+    definition: "A complete binary tree stored inside a contiguous 1D array where every parent node satisfies the heap property relative to its children.",
+  },
+  {
+    term: "Heapify",
+    category: "Data Structures",
+    definition: "The linear O(n) process of converting an arbitrary unsorted array into a valid binary heap by sifting down non-leaf nodes bottom-up.",
+  },
+  {
+    term: "Priority Queue",
+    category: "Data Structures",
+    definition: "An abstract data structure where each element has an associated priority, and elements with highest/lowest priority are dequeued before others.",
   },
 ];

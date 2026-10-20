@@ -1580,6 +1580,121 @@ public:
     void remove(int val) { root = remove(root, val); }
 };`,
   },
+  heap: {
+    id: "heap",
+    name: "Binary Heap",
+    category: "tree",
+    shortDescription:
+      "A complete binary tree array mapping where parent nodes dominate children, enabling O(1) peek and O(log n) insert/extract.",
+    description:
+      "A Binary Heap is a complete binary tree implemented efficiently within a 1D contiguous array with zero pointer overhead. In a Min-Heap, every parent node is less than or equal to its children (Array[Parent(i)] <= Array[i]), ensuring the global minimum is instantly accessible at index [0] in O(1) time. In a Max-Heap, every parent is greater than or equal to its children. Insertions utilize Sift-Up (Bubble-Up) in O(log n) time, and extractions utilize Sift-Down (Bubble-Down) in O(log n) time. Remarkably, an arbitrary array can be converted into a valid heap in strictly linear O(n) time via Bottom-Up Heapify.",
+    complexity: {
+      best: "O(1)",
+      average: "O(log n)",
+      worst: "O(log n)",
+      space: "O(n)",
+      stable: false,
+      inPlace: true,
+      operations: [
+        {
+          name: "Peek (Get Min/Max)",
+          time: "O(1)",
+          space: "O(1)",
+          description: "Root is stored at index [0], giving instant constant-time access to the extreme element.",
+        },
+        {
+          name: "Insert (Sift-Up)",
+          time: "O(log n)",
+          space: "O(1)",
+          description: "Append element to end of array and bubble upward along its parent ancestry line.",
+        },
+        {
+          name: "Extract Root (Sift-Down)",
+          time: "O(log n)",
+          space: "O(1)",
+          description: "Swap root with last element, pop back, and sink new root downward by swapping with best child.",
+        },
+        {
+          name: "Bottom-Up Heapify",
+          time: "O(n)",
+          space: "O(1)",
+          description: "Builds a complete heap from arbitrary array in linear time starting at last non-leaf node.",
+        },
+        {
+          name: "Heap Sort",
+          time: "O(n log n)",
+          space: "O(1)",
+          description: "In-place comparison sort repeatedly extracting maximum to the end of the array.",
+        },
+      ],
+    },
+    cppCode: `// Production-Grade C++ Binary Heap
+#include <iostream>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+class BinaryHeap {
+private:
+    vector<int> heap;
+    bool isMin;
+
+    int parent(int i) { return (i - 1) / 2; }
+    int left(int i)   { return 2 * i + 1; }
+    int right(int i)  { return 2 * i + 2; }
+
+    void siftUp(int i) {
+        while (i > 0) {
+            int p = parent(i);
+            bool swapNeeded = isMin ? heap[i] < heap[p] : heap[i] > heap[p];
+            if (!swapNeeded) break;
+            swap(heap[i], heap[p]);
+            i = p;
+        }
+    }
+
+    void siftDown(int i) {
+        int n = heap.size();
+        while (true) {
+            int target = i;
+            int l = left(i), r = right(i);
+            if (l < n && (isMin ? heap[l] < heap[target] : heap[l] > heap[target]))
+                target = l;
+            if (r < n && (isMin ? heap[r] < heap[target] : heap[r] > heap[target]))
+                target = r;
+            if (target == i) break;
+            swap(heap[i], heap[target]);
+            i = target;
+        }
+    }
+
+public:
+    BinaryHeap(bool minMode = true) : isMin(minMode) {}
+
+    int peek() const { return heap.empty() ? -1 : heap[0]; }
+
+    void insert(int val) {
+        heap.push_back(val);
+        siftUp(heap.size() - 1);
+    }
+
+    int extractRoot() {
+        if (heap.empty()) return -1;
+        int rootVal = heap[0];
+        heap[0] = heap.back();
+        heap.pop_back();
+        if (!heap.empty()) siftDown(0);
+        return rootVal;
+    }
+
+    void buildHeap(const vector<int>& arr) {
+        heap = arr;
+        for (int i = (int)heap.size() / 2 - 1; i >= 0; i--) {
+            siftDown(i);
+        }
+    }
+};`,
+  },
 };
 
 // All 5 Sorting Algorithms
@@ -1613,6 +1728,7 @@ export const TREE_TOPICS: AlgorithmId[] = [
   "binary-tree",
   "bst",
   "avl-tree",
+  "heap",
 ];
 
 // All Complexity Topics
@@ -1640,6 +1756,7 @@ export const ALL_TOPICS: AlgorithmId[] = [
   "binary-tree",
   "bst",
   "avl-tree",
+  "heap",
   "bubble",
   "selection",
   "insertion",

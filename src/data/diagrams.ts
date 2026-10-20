@@ -401,4 +401,25 @@ AVLNode* rotateRight(AVLNode* y) {
 }`,
     highlightedLine: 4,
   },
+  heap: {
+    algorithmId: "heap",
+    title: "Binary Heap — Pointerless Complete Tree Array Mapping",
+    subtitle: "Complete binary tree invariants mapped directly to 1D contiguous RAM with Parent ⌊(i-1)/2⌋ and Children 2i+1, 2i+2.",
+    caption: "Sift-Up and Sift-Down maintain heap order in O(log n), while Bottom-Up Heapify builds the entire heap in linear O(n) time.",
+    fixedArray: [10, 20, 15, 30, 40, 50, 60],
+    complexityFormula: "Peek: O(1) • Insert: O(log n) • Extract: O(log n) • Build-Heap: O(n)",
+    complexityExplanation: "Array indexing eliminates pointer overhead and guarantees optimal CPU L1/L2 cache locality, making heaps the premier choice for priority queues.",
+    codeSnippet: `// O(log n) Sift-Down (Min-Heap)
+void siftDown(int i, int n) {
+    int smallest = i;
+    int l = 2 * i + 1, r = 2 * i + 2;
+    if (l < n && arr[l] < arr[smallest]) smallest = l;
+    if (r < n && arr[r] < arr[smallest]) smallest = r;
+    if (smallest != i) {
+        swap(arr[i], arr[smallest]);
+        siftDown(smallest, n);
+    }
+}`,
+    highlightedLine: 7,
+  },
 };

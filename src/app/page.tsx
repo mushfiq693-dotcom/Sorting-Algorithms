@@ -4,7 +4,6 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { HeroAnimation } from "@/components/landing/HeroAnimation";
 import { LearningJourney } from "@/components/landing/LearningJourney";
-import { WhyChooseAlgoHub } from "@/components/landing/WhyChooseAlgoHub";
 import { BetaBanner } from "@/components/landing/BetaBanner";
 import { AmbientSortLogo } from "@/components/brand/AmbientSortLogo";
 import { AuthButton } from "@/components/auth/AuthButton";
@@ -230,10 +229,7 @@ export default function Home() {
         {/* 1. PRIMARY NARRATIVE: 4-STAGE LEARNING JOURNEY */}
         <LearningJourney />
 
-        {/* 2. WHY CHOOSE ALGOHUB SECTION — UNIQUENESS & DIFFERENTIATION */}
-        <WhyChooseAlgoHub />
-
-        {/* 3. COMMUNITY & FEEDBACK SECTION */}
+        {/* 2. COMMUNITY & FEEDBACK SECTION */}
         <BetaBanner />
       </main>
 

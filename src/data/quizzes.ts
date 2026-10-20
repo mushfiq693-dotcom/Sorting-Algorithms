@@ -1415,6 +1415,73 @@ export const QUIZZES: Record<string, QuizTopic> = {
         explanation: "Using Fibonacci minimal AVL tree recurrence N(h) = 1 + N(h-1) + N(h-2), the maximum height is mathematically bounded by (log_phi(√5 · (n+1))) ≈ 1.4404 log₂(n + 2), strictly guaranteeing O(log n) time for all operations."
       }
     ]
+  },
+  heap: {
+    id: "heap",
+    title: "Binary Heap & Priority Queue Mastery Quiz",
+    description: "Test your understanding of array-as-tree representation, index formulas, Sift-Up/Sift-Down mechanics, and linear O(n) Heapify.",
+    questions: [
+      {
+        id: "heap1",
+        question: "What mathematical invariant defines a Min-Heap stored in a 0-indexed array?",
+        options: [
+          "Array[Parent(i)] ≤ Array[i] for every node i > 0, where Parent(i) = ⌊(i - 1) / 2⌋",
+          "Array[Left(i)] < Array[i] < Array[Right(i)] (BST invariant)",
+          "Array[Parent(i)] ≥ Array[i] for every node i > 0",
+          "All elements must be sorted in ascending order from index 0 to n - 1"
+        ],
+        correctIndex: 0,
+        explanation: "In a Min-Heap, every parent node must be less than or equal to its children. This guarantees that the global minimum element always resides at root index [0]. Unlike a BST, there is no required ordering between left and right siblings."
+      },
+      {
+        id: "heap2",
+        question: "For a node at index i in a 0-indexed complete binary tree array, which formulas compute its children?",
+        options: [
+          "Left: 2i + 1, Right: 2i + 2",
+          "Left: 2i, Right: 2i + 1",
+          "Left: i / 2, Right: i / 2 + 1",
+          "Left: 2i - 1, Right: 2i"
+        ],
+        correctIndex: 0,
+        explanation: "In 0-indexed complete binary trees, level-order packing places the left child of node i at index 2i + 1 and the right child at index 2i + 2. (In 1-based indexing, they are 2i and 2i + 1)."
+      },
+      {
+        id: "heap3",
+        question: "What is the time complexity of converting an arbitrary unsorted array of n elements into a valid binary heap using bottom-up Heapify (Build-Heap)?",
+        options: [
+          "O(n) linear time",
+          "O(n log n) time",
+          "O(n²) time",
+          "O(log n) time"
+        ],
+        correctIndex: 0,
+        explanation: "Bottom-up Heapify starts at the lowest non-leaf nodes (⌊n/2⌋ - 1) and calls sift-down. Because approximately n/2 nodes are leaves requiring 0 swaps and only the root node requires up to log n swaps, the sum of heights ∑ (n / 2^(h+1)) · h converges to ≤ O(n)."
+      },
+      {
+        id: "heap4",
+        question: "During extractMin() in a Min-Heap, why does the new root sift down by swapping with the SMALLER of its two children?",
+        options: [
+          "Because the chosen child becomes the new parent of both subtrees, so it must be ≤ both children to preserve the Min-Heap invariant",
+          "Because swapping with the larger child would cause an infinite loop",
+          "Because left children always have priority over right children",
+          "It does not matter; either child can be picked arbitrarily"
+        ],
+        correctIndex: 0,
+        explanation: "When node P swaps with child C, C becomes the new parent of both its original sibling and the demoted node P. To satisfy the Min-Heap property (parent ≤ both children), C must be the minimum among {P, Left, Right}."
+      },
+      {
+        id: "heap5",
+        question: "In an array representation of a complete binary tree of size n (0-indexed), at which index range do all leaf nodes reside?",
+        options: [
+          "From index ⌊n / 2⌋ to n - 1",
+          "From index 0 to ⌊n / 2⌋ - 1",
+          "Only at odd indices",
+          "Only at index n - 1"
+        ],
+        correctIndex: 0,
+        explanation: "Any node at index i has a left child at 2i + 1. If 2i + 1 ≥ n, the node has no children and is therefore a leaf. Solving 2i + 1 ≥ n yields i ≥ (n - 1) / 2, meaning leaf nodes occupy indices from ⌊n / 2⌋ up to n - 1 (approximately half the tree)."
+      }
+    ]
   }
 };
 

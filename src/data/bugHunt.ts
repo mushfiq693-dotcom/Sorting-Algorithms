@@ -529,5 +529,46 @@ public:
       { type: "call-enter", fn: "getBalanceFactor", args: [2], description: "Node has left height 2 and right height 0, but returned BF = -2 instead of +2" },
     ],
   },
+  heap: {
+    algorithmId: "heap",
+    title: "Binary Heap: Inverted Sift-Down Child Comparison Violating Min-Heap Invariant",
+    description:
+      "This Min-Heap siftDown function is supposed to sink a node downward by swapping with its smallest child. However, when inspecting the right child, the comparison operator is inverted (> instead of <), causing the function to pick the larger child and corrupting the Min-Heap property!",
+    buggyCode: `void siftDown(int i, int n, vector<int>& heap) {
+    int smallest = i;
+    int l = 2 * i + 1;
+    int r = 2 * i + 2;
+
+    if (l < n && heap[l] < heap[smallest])
+        smallest = l;
+    if (r < n && heap[r] > heap[smallest]) // Bug: inverted > operator in Min-Heap!
+        smallest = r;
+
+    if (smallest != i) {
+        swap(heap[i], heap[smallest]);
+        siftDown(smallest, n, heap);
+    }
+}`,
+    buggyLineNumber: 8,
+    hint: "In a Min-Heap, the new parent must be smaller than both its children. Should you swap with the smaller child (< heap[smallest]) or the larger one?",
+    explanation:
+      "Line 8 checked `if (r < n && heap[r] > heap[smallest])`. In a Min-Heap, the node must swap with the absolute smallest child so that the promoted child dominates both subtrees. Checking `> heap[smallest]` causes the function to prefer larger elements, immediately breaking the Min-Heap invariant `heap[parent] <= heap[child]`. The fix is `if (r < n && heap[r] < heap[smallest])`.",
+    validateFix: (line: string) => {
+      const trimmed = line.replace(/\s+/g, "");
+      return (
+        trimmed.includes("heap[r]<heap[smallest]") ||
+        trimmed.includes("arr[r]<arr[smallest]")
+      );
+    },
+    flawedRunner: () => [
+      {
+        type: "call-enter",
+        fn: "siftDown",
+        args: [0],
+        description:
+          "Parent is 50, Left child is 10, Right child is 30. Function selected right child 30 instead of smaller child 10!",
+      },
+    ],
+  },
 };
 

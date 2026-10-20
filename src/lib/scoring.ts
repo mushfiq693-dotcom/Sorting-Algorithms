@@ -38,6 +38,7 @@ export const ORDERED_DATA_STRUCTURES: OrderedTopicItem[] = [
   { id: "binary-tree", name: "Binary Tree", category: "tree" },
   { id: "bst", name: "Binary Search Tree", category: "tree" },
   { id: "avl-tree", name: "AVL Tree", category: "tree" },
+  { id: "heap", name: "Binary Heap", category: "tree" },
 ];
 
 export const ORDERED_COMPLEXITY_TOPICS: OrderedTopicItem[] = [
