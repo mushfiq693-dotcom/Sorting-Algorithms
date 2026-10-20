@@ -74,6 +74,7 @@ export const ALGORITHM_NAME_MAP: Record<AlgorithmId, string> = {
   "binary-tree": "Binary Tree",
   bst: "Binary Search Tree",
   "avl-tree": "AVL Tree",
+  heap: "Binary Heap",
   "time-complexity": "Time Complexity",
   "space-complexity": "Space Complexity",
 };
@@ -99,6 +100,7 @@ export const ALGORITHM_DOCS_MAP: Record<AlgorithmId, string[]> = {
   "binary-tree": ["binary-tree-fundamentals"],
   bst: ["bst-fundamentals"],
   "avl-tree": ["avl-tree-fundamentals"],
+  heap: ["heap-fundamentals"],
   "time-complexity": ["time-complexity", "big-o-for-beginners"],
   "space-complexity": ["space-complexity", "in-place-and-space-complexity"],
 };

@@ -64,6 +64,10 @@ const AvlTreeVisualizer = dynamic(
   () => import("@/components/visualizer/AvlTreeVisualizer").then((mod) => mod.AvlTreeVisualizer),
   { ssr: false, loading: () => <TabLoading /> }
 );
+const HeapVisualizer = dynamic(
+  () => import("@/components/visualizer/HeapVisualizer").then((mod) => mod.HeapVisualizer),
+  { ssr: false, loading: () => <TabLoading /> }
+);
 const LinearSearchVisualizer = dynamic(
   () => import("@/components/visualizer/LinearSearchVisualizer").then((mod) => mod.LinearSearchVisualizer),
   { ssr: false, loading: () => <TabLoading /> }
@@ -528,6 +532,8 @@ export default function AlgorithmDetailPage() {
                 <BstVisualizer />
               ) : algorithmId === "avl-tree" ? (
                 <AvlTreeVisualizer />
+              ) : algorithmId === "heap" ? (
+                <HeapVisualizer />
               ) : algorithmId === "linear-search" ? (
                 <LinearSearchVisualizer />
               ) : algorithmId === "binary-search" ? (

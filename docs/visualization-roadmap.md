@@ -35,8 +35,8 @@ This roadmap tracks the long-term sequence of production-quality Data Structure 
 | 05 | **Binary Tree** | ✅ *Completed* | `/algorithms/binary-tree` | Node structure, parent-child relations, depth/height, full/complete/perfect/balanced invariants, DFS (Pre/In/Post) & BFS traversals, LeetCode 226 Invert |
 | 06 | **Binary Search Tree** | ✅ *Completed* | `/algorithms/bst` | Subtree trichotomy invariant (Left < Root < Right), O(log n) search, dynamic insertion, 3-case deletion with in-order successor swap, in-order monotonic sort proof, degenerate skew hazard |
 | 07 | **AVL Tree** | ✅ *Completed* | `/algorithms/avl-tree` | Balance factor, LL/RR/LR/RL rotations, self-balancing |
-| 08 | **Heap (Min/Max)** | 🟡 *Next Eligible* | `/algorithms/heap` | Array-as-tree representation, bubble-up, bubble-down, heapify |
-| 09 | **Priority Queue** | ⚪ *Queued* | `/algorithms/priority-queue` | Priority extraction, task scheduling semantics |
+| 08 | **Heap (Min/Max)** | ✅ *Completed* | `/algorithms/heap` | Pointerless 1D array mapping, Sift-Up ($O(\log n)$), Sift-Down ($O(\log n)$), linear Bottom-Up Heapify ($O(n)$ summation proof), index arithmetic calculator |
+| 09 | **Priority Queue** | 🟡 *Next Eligible* | `/algorithms/priority-queue` | Priority extraction, task scheduling semantics, Dijkstra / A* frontier modeling |
 | 10 | **Union-Find / Disjoint Set** | ⚪ *Queued* | `/algorithms/union-find` | Disjoint set forests, union by rank, path compression |
 
 ---
@@ -54,6 +54,9 @@ This roadmap tracks the long-term sequence of production-quality Data Structure 
 - `AvlEngine` (`src/algorithms/avl-tree.ts`): State-machine engine supporting strict height balancing, balance factor tracking, 4 canonical pointer rotations (LL, RR, LR, RL), and recursive rebalancing steps.
 - `AvlTreeVisualizer` (`src/components/visualizer/AvlTreeVisualizer.tsx`): Studio visualizer featuring dynamic SVG coordinate projections, real-time balance factor badges, rotation banner overlays, synchronized C++ CodeViewer, and interactive presets.
 - `AvlTreeDiagram` (`src/components/diagrams/AvlTreeDiagram.tsx`): Signature blueprint diagram illustrating balance factor invariants, the 4 rotation cases, and comparison against naive BST height bounds.
+- `HeapEngine` (`src/algorithms/heap.ts`): State-machine engine supporting Min-Heap and Max-Heap invariants, Sift-Up, Sift-Down, linear $O(n)$ Bottom-Up Heapify, presets, and 2D coordinate projections.
+- `HeapVisualizer` (`src/components/visualizer/HeapVisualizer.tsx`): Studio visualizer featuring dual synchronized stages (Tree SVG + 1D Array strip), live parent/child index calculator, Min/Max toggle, and synchronized C++ `BinaryHeap` CodeViewer.
+- `HeapDiagram` (`src/components/diagrams/HeapDiagram.tsx`): Blueprint infographic illustrating pointerless array-to-tree index arithmetic, Sift-Up, Sift-Down percolations, and the mathematical $O(n)$ Heapify summation proof.
 
 ---
 
@@ -131,5 +134,24 @@ This roadmap tracks the long-term sequence of production-quality Data Structure 
 - [x] No TypeScript errors (`npx tsc --noEmit` passed with 0 errors)
 - [x] Build succeeds (`npm run build` succeeds)
 - [x] Navigation integration works (Navbar dropdown under TREE STRUCTURES, learn roadmap Tier 6.8 order 14, topic category hub, 5-step learning workflow with Bangla theory)
+
+---
+
+## 🔍 Quality Gate Checklist for Topic 08 (Binary Heap)
+- [x] Algorithm/data-structure logic is correct (Min-Heap & Max-Heap invariants, pointerless 0-indexed arithmetic, Sift-Up percolation, Sift-Down percolation, linear $O(n)$ Bottom-Up Heapify, Extract-Min/Max root replacement)
+- [x] Visualization accurately represents internal state (Dual synchronized stages: 2D Complete Binary Tree SVG + 1D Array strip, highlighted comparison pairs, swap arcs, active percolating node, live Parent/Left/Right formula calculator)
+- [x] Main interactions work (Insert element with Sift-Up, Extract Root with leaf swap & Sift-Down, Linear Heapify, Min-Heap / Max-Heap mode toggle, Peek root, Clear, Presets: Classic Min-Heap, Classic Max-Heap, Unsorted Random Array, Nearly Sorted)
+- [x] Input handling works (Numeric value input with validation, bounds check, preset selector)
+- [x] Reset works (Restores initial state or active preset)
+- [x] Step/playback works (Play, Pause, Step Next, Step Prev, Reset, Step Progress Indicator, Speed Delay Slider)
+- [x] Educational explanation is correct (Complete tree property, pointerless array mapping, Sift-Up $O(\log n)$ insertion, Sift-Down $O(\log n)$ extraction, linear $O(n)$ Heapify summation proof $\sum_{h=0}^{\lfloor\log_2 n\rfloor} \frac{n}{2^{h+1}} \cdot h = O(n)$)
+- [x] Complexity information is correct (Peek: $O(1)$, Insert: $O(\log n)$, Extract-Root: $O(\log n)$, Build Heap: $O(n)$, Search: $O(n)$, Space: $O(n)$ in-place)
+- [x] UI matches AlgoHub design language (Studio 7:5 split layout, Tree SVG + Array Strip, live formula telemetry, synchronized C++ `BinaryHeap` CodeViewer)
+- [x] Responsive layout works (Mobile horizontal scroll and desktop grid layout)
+- [x] Accessibility is acceptable (Aria labels, distinct visual highlight colors, reduced motion considerations)
+- [x] No TypeScript errors (`npx tsc --noEmit` verified)
+- [x] Build succeeds (`npm run build` verified with full route generation)
+- [x] Navigation integration works (Navbar dropdown under Trees with order 15, learning path order 15, topic category hub, 5-step learning workflow with Bengali pedagogical breakdown, Quiz, Bug Hunt, LeetCode Problem Solving)
+
 
 

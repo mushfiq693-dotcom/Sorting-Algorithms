@@ -198,6 +198,12 @@ const TOPIC_VISUALS: Record<AlgorithmId, TopicVisualMeta> = {
     iconColor: "text-teal-500 dark:text-teal-400",
     iconBorder: "border-teal-500/25",
   },
+  heap: {
+    icon: Layers,
+    iconBg: "bg-amber-500/10 dark:bg-amber-500/20",
+    iconColor: "text-amber-500 dark:text-amber-400",
+    iconBorder: "border-amber-500/25",
+  },
 
   // Searching (Orange / Rust palette)
   "linear-search": {
@@ -248,6 +254,7 @@ const TOPIC_DESCRIPTIONS: Record<AlgorithmId, string> = {
   "binary-tree": "Explore hierarchical branching, tree anatomy, DFS traversals (pre/in/post), and BFS level orders.",
   bst: "Explore Left < Root < Right invariant, O(log n) dynamic search, insertion, and 3-case deletion with in-order successors.",
   "avl-tree": "Watch self-balancing tree rotations (LL, RR, LR, RL) and Balance Factor telemetry keep height strictly O(log n).",
+  heap: "Explore array-as-tree representation, O(1) peek, O(log n) sift-up/down, and linear O(n) heapify.",
 
   // Searching
   "linear-search": "Watch linear search scan elements one by one from start to end for a match.",
@@ -433,7 +440,7 @@ const TREE_COMPARISON: TreeComparisonRow[] = [
   },
   {
     name: "Binary Heap (Priority Queue)",
-    id: "binary-tree",
+    id: "heap",
     type: "Complete Tree (Heap Property)",
     lookup: "O(1) Min/Max",
     insert: "O(log n) percolate up",
