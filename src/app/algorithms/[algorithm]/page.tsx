@@ -156,8 +156,9 @@ export default function AlgorithmDetailPage() {
     notFound();
   }
 
-  const isDataStructure = meta.category === "data-structure" || meta.category === "tree";
-  const isTree = meta.category === "tree";
+  const isDataStructure = meta.category === "data-structure" || meta.category === "tree" || meta.category === "heap";
+  const isTree = meta.category === "tree" || meta.category === "heap";
+  const isHeap = meta.category === "heap";
   const isComplexity = meta.category === "complexity";
   const isSearching = meta.category === "searching";
 

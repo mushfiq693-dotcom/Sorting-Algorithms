@@ -29,9 +29,10 @@ import {
   Binary,
   Hash,
   GitFork,
+  Boxes,
 } from "lucide-react";
 
-export type CategoryKey = "sorting" | "data-structure" | "tree" | "searching" | "complexity";
+export type CategoryKey = "sorting" | "data-structure" | "tree" | "heap" | "searching" | "complexity";
 
 export interface CategoryCardMeta {
   key: CategoryKey;
@@ -74,6 +75,16 @@ export const CATEGORY_CARDS: CategoryCardMeta[] = [
     iconColor: "text-teal-500 dark:text-teal-400",
     iconBorder: "border-teal-500/30",
     accentGlow: "group-hover:shadow-[0_0_24px_rgba(20,184,166,0.2)]",
+  },
+  {
+    key: "heap",
+    title: "Heaps",
+    countLabel: "1 Visualization",
+    icon: Boxes,
+    iconBg: "bg-amber-500/10 dark:bg-amber-500/20",
+    iconColor: "text-amber-500 dark:text-amber-400",
+    iconBorder: "border-amber-500/30",
+    accentGlow: "group-hover:shadow-[0_0_24px_rgba(245,158,11,0.2)]",
   },
   {
     key: "searching",
@@ -199,7 +210,7 @@ const TOPIC_VISUALS: Record<AlgorithmId, TopicVisualMeta> = {
     iconBorder: "border-teal-500/25",
   },
   heap: {
-    icon: Layers,
+    icon: Boxes,
     iconBg: "bg-amber-500/10 dark:bg-amber-500/20",
     iconColor: "text-amber-500 dark:text-amber-400",
     iconBorder: "border-amber-500/25",
@@ -449,6 +460,60 @@ const TREE_COMPARISON: TreeComparisonRow[] = [
   },
 ];
 
+interface HeapComparisonRow {
+  name: string;
+  id: AlgorithmId;
+  variant: string;
+  peek: string;
+  insert: string;
+  extract: string;
+  heapify: string;
+  representation: string;
+}
+
+const HEAP_COMPARISON: HeapComparisonRow[] = [
+  {
+    name: "Min-Heap",
+    id: "heap",
+    variant: "Parent ≤ Children (Global min at root)",
+    peek: "O(1) Min",
+    insert: "O(log n) Sift-Up",
+    extract: "O(log n) Sift-Down",
+    heapify: "O(n) Bottom-Up",
+    representation: "0-Indexed Array: P=⌊(i-1)/2⌋, L=2i+1, R=2i+2",
+  },
+  {
+    name: "Max-Heap",
+    id: "heap",
+    variant: "Parent ≥ Children (Global max at root)",
+    peek: "O(1) Max",
+    insert: "O(log n) Sift-Up",
+    extract: "O(log n) Sift-Down",
+    heapify: "O(n) Bottom-Up",
+    representation: "0-Indexed Array: P=⌊(i-1)/2⌋, L=2i+1, R=2i+2",
+  },
+  {
+    name: "Priority Queue",
+    id: "heap",
+    variant: "Key-Priority Tuple extraction",
+    peek: "O(1) Top Priority",
+    insert: "O(log n) Enqueue",
+    extract: "O(log n) Dequeue Extreme",
+    heapify: "O(n) Batch Build",
+    representation: "Underlying Binary Heap Container",
+  },
+  {
+    name: "Binary Search Tree (Comparison)",
+    id: "bst",
+    variant: "Left < Root < Right (Total Ordering)",
+    peek: "O(log n) avg / O(n) worst",
+    insert: "O(log n) avg / O(n) worst",
+    extract: "O(log n) avg / O(n) worst",
+    heapify: "O(n log n) sequential insert",
+    representation: "Pointer-Linked Dynamic Nodes",
+  },
+];
+
 interface SearchComparisonRow {
   name: string;
   id: AlgorithmId;
@@ -585,7 +650,7 @@ export function TopicCategoryHub({
           ======================================================== */}
       {isLearnMode || !currentCategory ? (
         <div>
-          {/* 5 Main Category Cards (Balanced Responsive Grid) */}
+          {/* 6 Main Category Cards (Balanced 2x3 Responsive Grid) */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-4 max-w-5xl mx-auto mb-6">
             {CATEGORY_CARDS.map((cat) => {
               const isSelected = currentCategory === cat.key;
@@ -596,7 +661,7 @@ export function TopicCategoryHub({
                   key={cat.key}
                   type="button"
                   onClick={() => handleCategoryClick(cat.key)}
-                  className={`relative rounded-2xl p-4 sm:p-5 text-left transition-all duration-200 cursor-pointer flex items-center gap-3.5 sm:gap-4 select-none group active:scale-[0.99] sm:last:col-span-2 lg:last:col-span-1 ${
+                  className={`relative rounded-2xl p-4 sm:p-5 text-left transition-all duration-200 cursor-pointer flex items-center gap-3.5 sm:gap-4 select-none group active:scale-[0.99] ${
                     isSelected
                       ? "border-2 border-primary bg-primary/[0.08] shadow-[0_0_24px_rgba(201,169,98,0.2)] ring-1 ring-primary/40"
                       : `border border-border/80 bg-card/75 dark:bg-[#18181b]/80 hover:bg-card hover:border-primary/50 hover:shadow-lg ${cat.accentGlow}`
@@ -842,6 +907,49 @@ export function TopicCategoryHub({
                         <td className="py-3.5 px-4 text-foreground/90">{row.insert}</td>
                         <td className="py-3.5 px-4 text-foreground/90">{row.delete}</td>
                         <td className="py-3.5 px-4 sm:px-6 text-foreground/90 font-sans">{row.traversal}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {currentCategory === "heap" && (
+            <div className="mt-16 sm:mt-20 lg:mt-24">
+              <h3 className="text-xl sm:text-2xl font-bold font-heading text-foreground mb-5">
+                Heap structures &amp; variants comparison
+              </h3>
+              <div className="rounded-2xl border border-border/80 bg-card/60 backdrop-blur-sm overflow-x-auto shadow-sm">
+                <table className="w-full text-left text-sm border-collapse min-w-[580px]">
+                  <thead>
+                    <tr className="border-b border-border/70 text-xs font-semibold text-muted-foreground uppercase tracking-wider bg-muted/20">
+                      <th className="py-3.5 px-4 sm:px-6">Variant / Structure</th>
+                      <th className="py-3.5 px-4">Ordering Invariant</th>
+                      <th className="py-3.5 px-4">Peek Extreme</th>
+                      <th className="py-3.5 px-4">Insert</th>
+                      <th className="py-3.5 px-4">Extract</th>
+                      <th className="py-3.5 px-4">Build / Heapify</th>
+                      <th className="py-3.5 px-4 sm:px-6">Internal Layout</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-border/40 font-mono text-xs">
+                    {HEAP_COMPARISON.map((row, idx) => (
+                      <tr
+                        key={idx}
+                        className="hover:bg-muted/30 transition-colors group"
+                      >
+                        <td className="py-3.5 px-4 sm:px-6 font-sans font-semibold text-foreground group-hover:text-primary transition-colors">
+                          <Link href={`/visualizer?algo=${row.id}`} className="hover:underline">
+                            {row.name}
+                          </Link>
+                        </td>
+                        <td className="py-3.5 px-4 text-foreground/90 font-sans">{row.variant}</td>
+                        <td className="py-3.5 px-4 text-foreground/90">{row.peek}</td>
+                        <td className="py-3.5 px-4 text-foreground/90">{row.insert}</td>
+                        <td className="py-3.5 px-4 text-foreground/90">{row.extract}</td>
+                        <td className="py-3.5 px-4 text-foreground/90">{row.heapify}</td>
+                        <td className="py-3.5 px-4 sm:px-6 text-foreground/90 font-sans">{row.representation}</td>
                       </tr>
                     ))}
                   </tbody>

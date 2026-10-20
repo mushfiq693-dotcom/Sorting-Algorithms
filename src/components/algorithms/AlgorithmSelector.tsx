@@ -8,9 +8,10 @@ import {
   SEARCHING_ALGORITHMS,
   DATA_STRUCTURES,
   TREE_TOPICS,
+  HEAP_TOPICS,
   COMPLEXITY_TOPICS,
 } from "@/data/algorithms";
-import { Cpu, Database, TrendingUp, ChevronDown, Sparkles, Layers, Search, GitFork } from "lucide-react";
+import { Cpu, Database, TrendingUp, ChevronDown, Sparkles, Layers, Search, GitFork, Boxes } from "lucide-react";
 
 interface AlgorithmSelectorProps {
   selectedAlgorithm: AlgorithmId;
@@ -18,7 +19,7 @@ interface AlgorithmSelectorProps {
   disabled?: boolean;
 }
 
-type CategoryKey = "sorting" | "searching" | "data-structures" | "trees" | "complexity";
+type CategoryKey = "sorting" | "searching" | "data-structures" | "trees" | "heaps" | "complexity";
 
 export function AlgorithmSelector({
   selectedAlgorithm,
@@ -30,6 +31,7 @@ export function AlgorithmSelector({
   const getActiveCategory = (id: AlgorithmId): CategoryKey => {
     if (SORTING_ALGORITHMS.includes(id as any)) return "sorting";
     if (SEARCHING_ALGORITHMS.includes(id as any)) return "searching";
+    if (HEAP_TOPICS.includes(id as any)) return "heaps";
     if (TREE_TOPICS.includes(id as any)) return "trees";
     if (DATA_STRUCTURES.includes(id as any)) return "data-structures";
     return "complexity";
@@ -43,6 +45,7 @@ export function AlgorithmSelector({
       searching: active === "searching",
       "data-structures": active === "data-structures",
       trees: active === "trees",
+      heaps: active === "heaps",
       complexity: active === "complexity",
     };
   });
@@ -64,11 +67,11 @@ export function AlgorithmSelector({
   };
 
   const expandAll = () => {
-    setOpenCategories({ sorting: true, searching: true, "data-structures": true, trees: true, complexity: true });
+    setOpenCategories({ sorting: true, searching: true, "data-structures": true, trees: true, heaps: true, complexity: true });
   };
 
   const collapseAll = () => {
-    setOpenCategories({ sorting: false, searching: false, "data-structures": false, trees: false, complexity: false });
+    setOpenCategories({ sorting: false, searching: false, "data-structures": false, trees: false, heaps: false, complexity: false });
   };
 
   const handleTopicClick = (algoId: AlgorithmId) => {
@@ -79,6 +82,7 @@ export function AlgorithmSelector({
   const isSearchingActive = SEARCHING_ALGORITHMS.includes(selectedAlgorithm as any);
   const isDsActive = DATA_STRUCTURES.includes(selectedAlgorithm as any);
   const isTreeActive = TREE_TOPICS.includes(selectedAlgorithm as any);
+  const isHeapActive = HEAP_TOPICS.includes(selectedAlgorithm as any);
   const isComplexityActive = COMPLEXITY_TOPICS.includes(selectedAlgorithm as any);
 
   return (
@@ -457,6 +461,93 @@ export function AlgorithmSelector({
                     <div className="flex items-center gap-1.5">
                       <span className="text-[9px] font-mono font-semibold px-1.5 py-0.5 rounded bg-teal-500/10 text-teal-600 dark:text-teal-300 border border-teal-500/20">
                         DFS / BFS O(n)
+                      </span>
+                    </div>
+                  </div>
+                  <p className="mt-1 text-[10px] text-muted-foreground leading-relaxed line-clamp-1">
+                    {meta.shortDescription}
+                  </p>
+                </button>
+              );
+            })}
+          </div>
+        )}
+      </div>
+
+      {/* =================================================================== */}
+      {/* Category: Heap Structures Dropdown */}
+      {/* =================================================================== */}
+      <div className="rounded-xl border border-border/80 bg-secondary/30 overflow-hidden transition-all duration-200">
+        <button
+          type="button"
+          onClick={() => toggleCategory("heaps")}
+          className="w-full flex items-center justify-between px-3.5 py-2.5 bg-secondary/50 hover:bg-secondary/80 transition-colors text-left cursor-pointer group"
+          aria-expanded={openCategories.heaps}
+        >
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="h-7 w-7 rounded-lg bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-500 shrink-0 shadow-sm">
+              <Boxes className="h-4 w-4" />
+            </div>
+            <div className="flex flex-col min-w-0">
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-mono font-bold text-foreground truncate">
+                  Heap Structures
+                </span>
+                {isHeapActive && (
+                  <span className="h-1.5 w-1.5 rounded-full bg-amber-400 animate-pulse shrink-0" />
+                )}
+              </div>
+              <span className="text-[10px] text-muted-foreground font-mono truncate">
+                {openCategories.heaps ? "Click to collapse" : `Active: ${ALGORITHMS[selectedAlgorithm]?.name || "Select"}`}
+              </span>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2 shrink-0 ml-2">
+            <span className="text-[10px] font-mono font-semibold text-amber-600 dark:text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded-md">
+              {HEAP_TOPICS.length} Structure{HEAP_TOPICS.length > 1 ? "s" : ""}
+            </span>
+            <ChevronDown
+              className={`h-4 w-4 text-muted-foreground group-hover:text-foreground transition-transform duration-200 ${
+                openCategories.heaps ? "rotate-180 text-amber-500" : ""
+              }`}
+            />
+          </div>
+        </button>
+
+        {openCategories.heaps && (
+          <div className="p-2.5 flex flex-col gap-1.5 border-t border-border/60 animate-in fade-in slide-in-from-top-1 duration-150">
+            {HEAP_TOPICS.map((heapId) => {
+              const meta = ALGORITHMS[heapId];
+              const isSelected = selectedAlgorithm === heapId;
+
+              return (
+                <button
+                  key={heapId}
+                  id={`heap-btn-${heapId}`}
+                  disabled={disabled}
+                  onClick={() => handleTopicClick(heapId)}
+                  className={`group relative flex flex-col items-start rounded-xl p-2.5 text-left transition-all ${
+                    isSelected
+                      ? "bg-amber-500/15 border border-amber-500/60 shadow-sm text-foreground"
+                      : "border border-border/60 bg-background/60 hover:bg-secondary text-muted-foreground hover:text-foreground"
+                  } ${disabled ? "opacity-50 cursor-not-allowed" : "active:scale-[0.99] cursor-pointer"}`}
+                >
+                  <div className="flex w-full items-center justify-between">
+                    <span className="font-bold text-xs text-foreground flex items-center gap-2">
+                      {meta.name}
+                      {isSelected && (
+                        <span className="flex items-end gap-0.5 h-3 px-1 py-0.5 rounded bg-amber-500/20 text-amber-500">
+                          <span className="w-0.5 h-1 rounded-xs bg-amber-500" />
+                          <span className="w-0.5 h-2 rounded-xs bg-amber-500" />
+                          <span className="w-0.5 h-3 rounded-xs bg-amber-500" />
+                        </span>
+                      )}
+                    </span>
+
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-[9px] font-mono font-semibold px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-600 dark:text-amber-300 border border-amber-500/20">
+                        Priority O(1)
                       </span>
                     </div>
                   </div>

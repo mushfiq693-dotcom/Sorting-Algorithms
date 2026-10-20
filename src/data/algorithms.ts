@@ -1583,7 +1583,7 @@ public:
   heap: {
     id: "heap",
     name: "Binary Heap",
-    category: "tree",
+    category: "heap",
     shortDescription:
       "A complete binary tree array mapping where parent nodes dominate children, enabling O(1) peek and O(log n) insert/extract.",
     description:
@@ -1728,6 +1728,10 @@ export const TREE_TOPICS: AlgorithmId[] = [
   "binary-tree",
   "bst",
   "avl-tree",
+];
+
+// All Heap Data Structures
+export const HEAP_TOPICS: AlgorithmId[] = [
   "heap",
 ];
 

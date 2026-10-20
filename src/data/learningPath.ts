@@ -4,7 +4,7 @@ export interface LearningStep {
   id: AlgorithmId;
   order: number;
   name: string;
-  category: "sorting" | "searching" | "data-structure" | "complexity" | "tree";
+  category: "sorting" | "searching" | "data-structure" | "complexity" | "tree" | "heap";
   badge: string;
   estimatedTime: string;
   difficulty: "Beginner" | "Intermediate" | "Advanced";
@@ -759,7 +759,7 @@ export const LEARNING_PATH: LearningStep[] = [
     id: "heap",
     order: 15,
     name: "Binary Heap",
-    category: "tree",
+    category: "heap",
     badge: "Priority Queue O(1)",
     estimatedTime: "~20 min",
     difficulty: "Intermediate",
@@ -1046,6 +1046,7 @@ export const SEARCHING_PATH = LEARNING_PATH.filter((s) => s.category === "search
 export const DATA_STRUCTURES_PATH = LEARNING_PATH.filter((s) => s.category === "data-structure");
 export const COMPLEXITY_PATH = LEARNING_PATH.filter((s) => s.category === "complexity");
 export const TREE_PATH = LEARNING_PATH.filter((s) => s.category === "tree");
+export const HEAP_PATH = LEARNING_PATH.filter((s) => s.category === "heap");
 
 export interface GlossaryTerm {
   term: string;

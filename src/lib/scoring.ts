@@ -11,7 +11,7 @@ import { TopicMetrics, TopicScoresRecord, ActivityHistoryItem } from "../../back
 export interface OrderedTopicItem {
   id: AlgorithmId;
   name: string;
-  category: "sorting" | "searching" | "data-structure" | "complexity" | "tree";
+  category: "sorting" | "searching" | "data-structure" | "complexity" | "tree" | "heap";
 }
 
 export const ORDERED_SORTING_ALGORITHMS: OrderedTopicItem[] = [
@@ -38,7 +38,7 @@ export const ORDERED_DATA_STRUCTURES: OrderedTopicItem[] = [
   { id: "binary-tree", name: "Binary Tree", category: "tree" },
   { id: "bst", name: "Binary Search Tree", category: "tree" },
   { id: "avl-tree", name: "AVL Tree", category: "tree" },
-  { id: "heap", name: "Binary Heap", category: "tree" },
+  { id: "heap", name: "Binary Heap", category: "heap" },
 ];
 
 export const ORDERED_COMPLEXITY_TOPICS: OrderedTopicItem[] = [
@@ -269,7 +269,7 @@ export function calculateOverallProgress(topicScores: Partial<TopicScoresRecord>
 
     if (category === "sorting") {
       sortingTotal += score;
-    } else if (category === "data-structure" || category === "tree") {
+    } else if (category === "data-structure" || category === "tree" || category === "heap") {
       dsTotal += score;
     } else {
       complexityTotal += score;

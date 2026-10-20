@@ -100,12 +100,12 @@ export function CurriculumShowcase() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {ALL_TOPICS.map((id) => {
               const meta = ALGORITHMS[id];
-              const isDS = meta.category === "data-structure";
+              const isDS = meta.category === "data-structure" || meta.category === "tree" || meta.category === "heap";
               const isComplexity = meta.category === "complexity";
               const isSearching = meta.category === "searching";
 
               const docsHref = isDS
-                ? (id === "linked-list" ? "/docs/linked-list-fundamentals" : `/docs/${id}-data-structure`)
+                ? (["linked-list", "binary-tree", "bst", "avl-tree", "heap"].includes(id) ? `/docs/${id}-fundamentals` : `/docs/${id}-data-structure`)
                 : isComplexity
                 ? `/docs/${id}`
                 : isSearching

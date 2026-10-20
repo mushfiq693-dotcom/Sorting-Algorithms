@@ -25,6 +25,8 @@ const getCategoryMetaForAlgo = (algoId: AlgorithmId): { key: CategoryKey; label:
       return { key: "data-structure", label: "Data Structures" };
     case "tree":
       return { key: "tree", label: "Trees" };
+    case "heap":
+      return { key: "heap", label: "Heaps" };
     case "searching":
       return { key: "searching", label: "Searching" };
     case "complexity":

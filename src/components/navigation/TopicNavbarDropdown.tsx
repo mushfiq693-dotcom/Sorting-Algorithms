@@ -12,6 +12,7 @@ import {
   ChevronUp,
   Layers,
   GitFork,
+  Boxes,
 } from "lucide-react";
 
 interface TopicNavbarDropdownProps {
@@ -60,6 +61,14 @@ const CATEGORIES: CategoryGroup[] = [
       { id: "binary-tree", num: "12", name: "Binary Tree", badge: "Branch O(n)" },
       { id: "bst", num: "13", name: "Binary Search Tree", badge: "Search O(log n)" },
       { id: "avl-tree", num: "14", name: "AVL Tree", badge: "Balanced O(log n)" },
+    ],
+  },
+  {
+    id: "heaps",
+    label: "HEAP STRUCTURES",
+    icon: Boxes,
+    colorClass: "text-amber-400",
+    items: [
       { id: "heap", num: "15", name: "Binary Heap", badge: "Priority O(1)" },
     ],
   },
