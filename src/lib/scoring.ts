@@ -11,7 +11,7 @@ import { TopicMetrics, TopicScoresRecord, ActivityHistoryItem } from "../../back
 export interface OrderedTopicItem {
   id: AlgorithmId;
   name: string;
-  category: "sorting" | "searching" | "data-structure" | "complexity" | "tree" | "heap";
+  category: "sorting" | "searching" | "data-structure" | "complexity" | "tree" | "heap" | "technique";
 }
 
 export const ORDERED_SORTING_ALGORITHMS: OrderedTopicItem[] = [
@@ -48,6 +48,10 @@ export const ORDERED_COMPLEXITY_TOPICS: OrderedTopicItem[] = [
   { id: "space-complexity", name: "Space Complexity", category: "complexity" },
 ];
 
+export const ORDERED_TECHNIQUES: OrderedTopicItem[] = [
+  { id: "two-pointers", name: "Two Pointers", category: "technique" },
+];
+
 // Backwards compatibility list
 export const ORDERED_ALGORITHMS = ORDERED_SORTING_ALGORITHMS;
 
@@ -56,6 +60,7 @@ export const ORDERED_TOPICS: OrderedTopicItem[] = [
   ...ORDERED_DATA_STRUCTURES,
   ...ORDERED_SEARCHING_ALGORITHMS,
   ...ORDERED_COMPLEXITY_TOPICS,
+  ...ORDERED_TECHNIQUES,
 ];
 
 export const ALGORITHM_NAME_MAP: Record<AlgorithmId, string> = {
@@ -81,6 +86,7 @@ export const ALGORITHM_NAME_MAP: Record<AlgorithmId, string> = {
   "union-find": "Union-Find (DSU)",
   "time-complexity": "Time Complexity",
   "space-complexity": "Space Complexity",
+  "two-pointers": "Two Pointers",
 };
 
 /**
@@ -109,6 +115,7 @@ export const ALGORITHM_DOCS_MAP: Record<AlgorithmId, string[]> = {
   "union-find": ["union-find-fundamentals"],
   "time-complexity": ["time-complexity", "big-o-for-beginners"],
   "space-complexity": ["space-complexity", "in-place-and-space-complexity"],
+  "two-pointers": ["two-pointers-fundamentals"],
 };
 
 export const TOPIC_DOCS_MAP = ALGORITHM_DOCS_MAP;
@@ -277,7 +284,7 @@ export function calculateOverallProgress(topicScores: Partial<TopicScoresRecord>
       sortingTotal += score;
     } else if (category === "data-structure" || category === "tree" || category === "heap") {
       dsTotal += score;
-    } else {
+    } else if (category === "complexity") {
       complexityTotal += score;
     }
 

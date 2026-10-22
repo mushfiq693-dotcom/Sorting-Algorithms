@@ -1904,6 +1904,91 @@ public:
     int getSize(int x) { return size[find(x)]; }
 };`,
   },
+  "two-pointers": {
+    id: "two-pointers",
+    name: "Two Pointers",
+    category: "technique",
+    shortDescription: "Converging and fast/slow pointer coordinates for linear time search and in-place mutation.",
+    description:
+      "The Two Pointers technique is a foundational algorithmic strategy that employs two index pointers traversing an array or sequence in coordinated directions. In Opposite-Direction traversal, pointers start at opposing boundaries (left = 0, right = n - 1) and converge inward. Monotonicity—such as sorted element values or bounded geometric dimensions—guarantees that every comparison safely prunes an entire row or column of candidate pairs, collapsing an otherwise quadratic O(n²) nested brute-force search into a strict linear O(n) pass. In Same-Direction traversal (Fast and Slow / Reader and Writer), a fast pointer scans unexplored elements while a slow pointer demarcates the boundary of unique or processed values, executing array compactions in-place with strict O(1) auxiliary space.",
+    complexity: {
+      best: "O(1)",
+      average: "O(n)",
+      worst: "O(n)",
+      space: "O(1)",
+      inPlace: true,
+      spaceNote: "Only two index scalar variables allocated in CPU registers; zero dynamic memory allocations.",
+      operations: [
+        {
+          name: "Opposite Converging (Two Sum)",
+          time: "O(n)",
+          space: "O(1)",
+          description: "Prunes pair search space monotonically by advancing L or decrementing R based on sum comparison.",
+        },
+        {
+          name: "Container Area Maximization",
+          time: "O(n)",
+          space: "O(1)",
+          description: "Eliminates smaller boundary walls in O(1) steps based on the shorter wall height lemma.",
+        },
+        {
+          name: "Fast & Slow (Reader/Writer)",
+          time: "O(n)",
+          space: "O(1)",
+          description: "Overwrites duplicate elements in-place with single forward scan and zero secondary buffers.",
+        },
+        {
+          name: "Symmetric Palindrome Test",
+          time: "O(n/2)",
+          space: "O(1)",
+          description: "Verifies mirror symmetry from outer boundaries inward with early exit on first mismatch.",
+        },
+      ],
+    },
+    cppCode: `// Production C++ Two Pointers Subroutines
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+// 1. Sorted Two Sum: O(n) Time, O(1) Space
+bool twoSumSorted(const vector<int>& nums, int target, int& left, int& right) {
+    left = 0;
+    right = nums.size() - 1;
+    while (left < right) {
+        int sum = nums[left] + nums[right];
+        if (sum == target) return true;
+        if (sum < target) left++; // Need larger sum
+        else right--;             // Need smaller sum
+    }
+    return false;
+}
+
+// 2. Container With Most Water: O(n) Time, O(1) Space
+int maxArea(const vector<int>& height) {
+    int l = 0, r = height.size() - 1;
+    int maxWater = 0;
+    while (l < r) {
+        int h = min(height[l], height[r]);
+        maxWater = max(maxWater, (r - l) * h);
+        if (height[l] <= height[r]) l++;
+        else r--;
+    }
+    return maxWater;
+}
+
+// 3. Remove Duplicates In-Place: O(n) Time, O(1) Space
+int removeDuplicates(vector<int>& nums) {
+    if (nums.empty()) return 0;
+    int slow = 0;
+    for (int fast = 1; fast < (int)nums.size(); fast++) {
+        if (nums[fast] != nums[slow]) {
+            slow++;
+            nums[slow] = nums[fast];
+        }
+    }
+    return slow + 1;
+}`,
+  },
 };
 
 // All 5 Sorting Algorithms
@@ -1952,6 +2037,11 @@ export const COMPLEXITY_TOPICS: AlgorithmId[] = [
   "space-complexity",
 ];
 
+// All Problem-Solving Techniques (Phase 2)
+export const TECHNIQUE_TOPICS: AlgorithmId[] = [
+  "two-pointers",
+];
+
 // Backward compatibility alias for sorting visualizer
 export const ALL_ALGORITHMS: AlgorithmId[] = SORTING_ALGORITHMS;
 
@@ -1974,6 +2064,7 @@ export const ALL_TOPICS: AlgorithmId[] = [
   "heap",
   "priority-queue",
   "union-find",
+  "two-pointers",
   "bubble",
   "selection",
   "insertion",

@@ -638,7 +638,43 @@ public:
       },
     ],
   },
+  "two-pointers": {
+    algorithmId: "two-pointers",
+    title: "Two Pointers: Inverted Pointer Step in Sorted Two Sum",
+    description:
+      "This Two Sum II function searches a sorted array for a target sum. When sum < target, the current sum is too small and needs to increase. However, the code decrements right-- instead of incrementing left++, causing the sum to shrink further and missing valid pairs!",
+    buggyCode: `vector<int> twoSum(vector<int>& numbers, int target) {
+    int left = 0, right = numbers.size() - 1;
+    while (left < right) {
+        int sum = numbers[left] + numbers[right];
+        if (sum == target)
+            return {left + 1, right + 1};
+        else if (sum < target)
+            right--; // Bug: sum < target means sum is too small, need to increment left++!
+        else
+            right--;
+    }
+    return {};
+}`,
+    buggyLineNumber: 7,
+    hint: "When the current sum is less than the target in an ascending sorted array, should you move the left pointer rightward (left++) to get a larger value, or decrement right?",
+    explanation:
+      "Line 7 executed right--; when sum < target. Because the array is sorted in ascending order, if the current pair sum is smaller than the target, we must increase the sum by shifting left++ to point to a larger element. Decrementing right-- when the sum is already too small decreases the sum even further and fails to explore the correct candidates. The fix is left++;.",
+    validateFix: (line: string) => {
+      const trimmed = line.replace(/\s+/g, "");
+      return trimmed.includes("left++") || trimmed.includes("++left") || trimmed.includes("left+=1");
+    },
+    flawedRunner: () => [
+      {
+        type: "compare",
+        indices: [0, 6],
+        description:
+          "Target is 18. Current sum numbers[0] + numbers[6] is 15 (< 18). Decremented right to index 5, reducing sum to 12 instead of increasing with left++!",
+      },
+    ],
+  },
 };
+
 
 
 

@@ -8,7 +8,6 @@ export interface PracticeProblem {
   difficulty: "Easy" | "Medium" | "Hard";
   url: string;
   description: string;
-  keyConcept: string;
   tags: string[];
 }
 
@@ -22,7 +21,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Medium",
       url: "https://leetcode.com/problems/sort-an-array/",
       description: "Given an array of integers nums, sort the array in ascending order and return it.",
-      keyConcept: "Array traversal, in-place ordering, and comparator logic.",
       tags: ["Sorting", "Array", "Fundamentals"],
     },
     {
@@ -33,7 +31,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Easy",
       url: "https://leetcode.com/problems/move-zeroes/",
       description: "Move all 0's to the end of the array while maintaining the relative order of non-zero elements.",
-      keyConcept: "Adjacent element bubble/shift mechanics and stable preservation.",
       tags: ["Two Pointers", "Array", "In-Place"],
     },
     {
@@ -44,7 +41,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Easy",
       url: "https://codeforces.com/problemset/problem/1092/B",
       description: "Sort students by programming skill level to minimize the total problems solved to pair them up.",
-      keyConcept: "Pairwise greedy sorting and element difference minimization.",
       tags: ["Greedy", "Sorting", "800"],
     },
     {
@@ -55,7 +51,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Medium",
       url: "https://codeforces.com/problemset/problem/451/B",
       description: "Check whether you can sort an array by reversing exactly one contiguous subarray segment.",
-      keyConcept: "Inversion inspection, sorted state validation, and pass analysis.",
       tags: ["Implementation", "Sorting", "1300"],
     },
     {
@@ -66,7 +61,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Easy",
       url: "https://atcoder.jp/contests/abc088/tasks/abc088_b",
       description: "Alice and Bob take turns picking the largest remaining card from a deck.",
-      keyConcept: "Sorting in descending order to simulate optimal greedy turn-based plays.",
       tags: ["Greedy", "Sorting", "Beginner"],
     },
     {
@@ -77,7 +71,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Medium",
       url: "https://atcoder.jp/contests/abc121/tasks/abc121_c",
       description: "Buy M energy drinks with minimum money from N shops with limited stock.",
-      keyConcept: "Sorting store pairs by price (ascending) and greedy capacity accumulation.",
       tags: ["Greedy", "Sorting Pairs", "Intermediate"],
     },
   ],
@@ -91,7 +84,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Medium",
       url: "https://leetcode.com/problems/kth-largest-element-in-an-array/",
       description: "Given an integer array nums and an integer k, return the kth largest element in the array.",
-      keyConcept: "Selection principle — repeatedly selecting extremum elements without full sort.",
       tags: ["Array", "Divide and Conquer", "Quickselect"],
     },
     {
@@ -102,7 +94,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Medium",
       url: "https://leetcode.com/problems/sort-colors/",
       description: "Sort an array with n objects colored red, white, or blue in-place with discrete item groups.",
-      keyConcept: "Min/Max bucket selection and exact pointer boundaries.",
       tags: ["Array", "Two Pointers", "Sorting"],
     },
     {
@@ -113,7 +104,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Easy",
       url: "https://codeforces.com/problemset/problem/339/A",
       description: "Rearrange summands (1+3+2) into non-decreasing order.",
-      keyConcept: "Selecting minimal values iteratively to rebuild the sequence.",
       tags: ["Greedy", "Strings", "800"],
     },
     {
@@ -124,7 +114,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Easy",
       url: "https://codeforces.com/problemset/problem/160/A",
       description: "Take the minimum number of coins such that your sum is strictly greater than the rest.",
-      keyConcept: "Greedy max selection in descending rank until threshold exceeded.",
       tags: ["Greedy", "Sort", "900"],
     },
     {
@@ -135,7 +124,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Easy",
       url: "https://atcoder.jp/contests/abc201/tasks/abc201_b",
       description: "Find the name of the mountain with the 2nd highest height among N mountains.",
-      keyConcept: "Second-order extremum selection and pair sorting.",
       tags: ["Implementation", "Sorting", "Beginner"],
     },
     {
@@ -146,7 +134,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Easy",
       url: "https://atcoder.jp/contests/abc113/tasks/abc113_b",
       description: "Find the location index with minimum absolute temperature difference.",
-      keyConcept: "Linear minimum scanning & selection index tracking.",
       tags: ["Math", "Selection Index", "Beginner"],
     },
   ],
@@ -160,7 +147,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Medium",
       url: "https://leetcode.com/problems/insertion-sort-list/",
       description: "Sort a linked list using the Insertion Sort algorithm step by step.",
-      keyConcept: "Maintaining a sorted prefix and inserting new elements into their correct position.",
       tags: ["Linked List", "Sorting", "Classic"],
     },
     {
@@ -171,7 +157,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Hard",
       url: "https://leetcode.com/problems/count-of-smaller-numbers-after-self/",
       description: "Count how many elements to the right of each array element are strictly smaller.",
-      keyConcept: "Tracking shift counts and insertion position / inversion counting.",
       tags: ["Binary Search", "Segment Tree", "Inversion"],
     },
     {
@@ -182,7 +167,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Easy",
       url: "https://codeforces.com/problemset/problem/405/A",
       description: "Box columns slide right under gravity to form an ascending staircase.",
-      keyConcept: "Elements slide rightward until hitting a larger block, mirroring insertion mechanics.",
       tags: ["Greedy", "Implementation", "900"],
     },
     {
@@ -193,7 +177,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Easy",
       url: "https://codeforces.com/problemset/problem/1360/B",
       description: "Divide athletes into two teams such that min skill difference between any two chosen is minimized.",
-      keyConcept: "Sorted adjacent difference checking after incremental insertion.",
       tags: ["Greedy", "Sorting", "800"],
     },
     {
@@ -204,7 +187,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Easy",
       url: "https://atcoder.jp/contests/abc130/tasks/abc130_b",
       description: "A ball bounces with step lengths L_1, L_2... Count bounces within coordinate X.",
-      keyConcept: "Sequential incremental accumulation & boundary insertion test.",
       tags: ["Math", "Simulation", "Beginner"],
     },
     {
@@ -215,7 +197,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Easy",
       url: "https://atcoder.jp/contests/abc067/tasks/abc067_b",
       description: "Choose K rods from N to maximize the total length.",
-      keyConcept: "Sorted sequence prefix selection and incremental summing.",
       tags: ["Greedy", "Sorting", "Beginner"],
     },
   ],
@@ -229,7 +210,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Easy",
       url: "https://leetcode.com/problems/merge-sorted-array/",
       description: "Merge two sorted arrays nums1 and nums2 into nums1 as one sorted array in O(m+n).",
-      keyConcept: "The fundamental two-pointer merge subroutine from the back.",
       tags: ["Two Pointers", "Array", "Core Subroutine"],
     },
     {
@@ -240,7 +220,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Medium",
       url: "https://leetcode.com/problems/sort-list/",
       description: "Given the head of a linked list, return the list after sorting it in O(n log n) time.",
-      keyConcept: "Divide and conquer list halving (fast/slow pointers) + recursive merge.",
       tags: ["Linked List", "Divide and Conquer", "Merge Sort"],
     },
     {
@@ -251,7 +230,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Hard",
       url: "https://leetcode.com/problems/reverse-pairs/",
       description: "Count index pairs (i, j) where i < j and nums[i] > 2 * nums[j].",
-      keyConcept: "Counting cross-subarray pairs during the conquer step of Merge Sort in O(n log n).",
       tags: ["Divide and Conquer", "Merge Sort", "Inversion Count"],
     },
     {
@@ -262,7 +240,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Hard",
       url: "https://codeforces.com/problemset/problem/1042/D",
       description: "Find number of non-empty subarrays with sum strictly less than t.",
-      keyConcept: "Prefix sum inversion counting using Merge Sort / Fenwick Tree.",
       tags: ["Divide and Conquer", "Data Structures", "1800"],
     },
     {
@@ -273,7 +250,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Medium",
       url: "https://codeforces.com/problemset/problem/1490/F",
       description: "Remove min elements so all remaining distinct numbers have equal frequency.",
-      keyConcept: "Sorting frequencies and divide-and-conquer optimal threshold evaluation.",
       tags: ["Greedy", "Binary Search", "1500"],
     },
     {
@@ -284,7 +260,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Medium",
       url: "https://atcoder.jp/contests/abc186/tasks/abc186_d",
       description: "Calculate sum of |A_i - A_j| for all 1 <= i < j <= N in O(N log N).",
-      keyConcept: "Sorting elements and combining prefix sum mathematics.",
       tags: ["Math", "Prefix Sum", "Sorting"],
     },
   ],
@@ -298,7 +273,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Medium",
       url: "https://leetcode.com/problems/sort-an-array/",
       description: "Implement in-place randomized 3-way partition QuickSort to pass strict anti-pivot test suites.",
-      keyConcept: "Randomized pivot selection & Dutch National Flag 3-way partition against duplicates.",
       tags: ["QuickSort", "3-Way Partition", "Randomized"],
     },
     {
@@ -309,7 +283,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Medium",
       url: "https://leetcode.com/problems/kth-largest-element-in-an-array/",
       description: "Find the kth largest element in expected O(n) average time using Quickselect (Hoare's Selection).",
-      keyConcept: "Partitioning array and discarding one branch to achieve O(n) expected time.",
       tags: ["Quickselect", "Divide and Conquer", "Partition"],
     },
     {
@@ -320,7 +293,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Medium",
       url: "https://leetcode.com/problems/k-closest-points-to-origin/",
       description: "Given points on X-Y plane, return the k closest points to origin (0, 0).",
-      keyConcept: "Quickselect partitioning around distance metrics.",
       tags: ["Geometry", "Quickselect", "Heap"],
     },
     {
@@ -331,7 +303,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Medium",
       url: "https://codeforces.com/problemset/problem/977/F",
       description: "Find the longest subsequence where consecutive elements increase by exactly 1.",
-      keyConcept: "Dynamic pivot tracking & coordinate partition hashing.",
       tags: ["DP", "Data Structures", "1700"],
     },
     {
@@ -342,7 +313,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Medium",
       url: "https://codeforces.com/problemset/problem/580/B",
       description: "Maximize friendship factor among guests whose money difference is under d.",
-      keyConcept: "QuickSort on money pairs followed by sliding window two-pointer scan.",
       tags: ["Two Pointers", "Sorting", "1500"],
     },
     {
@@ -353,7 +323,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Medium",
       url: "https://atcoder.jp/contests/abc217/tasks/abc217_e",
       description: "Process 3 query types: append, pop front, and sort entire array efficiently.",
-      keyConcept: "Two-buffer partitioning (Queue + Priority Queue) mirroring QuickSort pivot buffers.",
       tags: ["Data Structures", "Queue", "Intermediate"],
     },
   ],
@@ -366,7 +335,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Easy",
       url: "https://leetcode.com/problems/valid-parentheses/",
       description: "Given a string containing brackets '()[]{}', determine if the input string is valid.",
-      keyConcept: "LIFO matching: push opening brackets, pop and verify against closing brackets.",
       tags: ["Stack", "String", "Fundamentals"],
     },
     {
@@ -377,7 +345,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Medium",
       url: "https://leetcode.com/problems/min-stack/",
       description: "Design a stack that supports push, pop, top, and retrieving the minimum element in O(1) time.",
-      keyConcept: "Auxiliary minimum tracking stack mirroring main stack pushes and pops in O(1).",
       tags: ["Stack", "Design", "O(1) Auxiliary"],
     },
     {
@@ -388,7 +355,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Medium",
       url: "https://codeforces.com/problemset/problem/158/C",
       description: "Simulate UNIX cd (change directory) and pwd (print working directory) commands.",
-      keyConcept: "Directory path stack: push directory names on cd, pop on '..' in LIFO sequence.",
       tags: ["Implementation", "Stack", "1500"],
     },
     {
@@ -399,7 +365,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Medium",
       url: "https://atcoder.jp/contests/abc240/tasks/abc240_d",
       description: "Drop numbered balls into a cylinder; if k consecutive balls of value k stack up, they disappear.",
-      keyConcept: "Pair Stack {value, consecutiveCount} to collapse elements in O(1) amortized time.",
       tags: ["Data Structures", "Stack", "Simulation"],
     },
   ],
@@ -412,7 +377,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Easy",
       url: "https://leetcode.com/problems/implement-stack-using-queues/",
       description: "Implement a LIFO stack using only standard FIFO queue operations.",
-      keyConcept: "Circular rotation on enqueue or dual-queue push/pop simulation.",
       tags: ["Queue", "Stack", "Design"],
     },
     {
@@ -423,7 +387,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Hard",
       url: "https://leetcode.com/problems/sliding-window-maximum/",
       description: "Return the maximum element in each sliding window of size k moving from left to right.",
-      keyConcept: "Monotonic Double-Ended Queue (Deque) maintaining indices in descending value order.",
       tags: ["Queue", "Monotonic Deque", "Sliding Window"],
     },
     {
@@ -434,7 +397,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Easy",
       url: "https://codeforces.com/problemset/problem/1213/C",
       description: "Find the sum of the last digits of pages read that are divisible by m.",
-      keyConcept: "Periodic queue / circular pattern recognition on modular arithmetic.",
       tags: ["Math", "Queue", "1100"],
     },
     {
@@ -445,7 +407,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Medium",
       url: "https://atcoder.jp/contests/abc217/tasks/abc217_e",
       description: "Process append, pop-front, and sort-all queries across a streaming dynamic sequence.",
-      keyConcept: "FIFO queue for unsorted tail elements combined with priority queue for sorted head.",
       tags: ["Data Structures", "Queue", "Heap"],
     },
   ],
@@ -458,7 +419,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Easy",
       url: "https://leetcode.com/problems/binary-search/",
       description: "Given a sorted array of n integers and a target value, write a function to search target in O(log n) runtime complexity.",
-      keyConcept: "Logarithmic halving of candidate search range on every iteration.",
       tags: ["Binary Search", "Time Complexity", "O(log n)"],
     },
     {
@@ -469,7 +429,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Easy",
       url: "https://leetcode.com/problems/two-sum/",
       description: "Given an array of integers and a target, find indices of the two numbers such that they add up to target.",
-      keyConcept: "Optimizing quadratic O(n²) nested loop brute-force down to linear O(n) using hash table lookups.",
       tags: ["Hash Table", "Array", "O(n) Optimization"],
     },
     {
@@ -480,7 +439,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Medium",
       url: "https://leetcode.com/problems/maximum-subarray/",
       description: "Find the contiguous subarray with the largest sum and return its sum.",
-      keyConcept: "Kadane's single-pass O(n) greedy DP vs naive O(n²) all-pairs subarray checking.",
       tags: ["Dynamic Programming", "Array", "O(n)"],
     },
     {
@@ -491,7 +449,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Medium",
       url: "https://leetcode.com/problems/search-a-2d-matrix-ii/",
       description: "Search for a target value in an m x n matrix where rows and columns are sorted.",
-      keyConcept: "Staircase search starting from top-right in O(m + n) time instead of O(m × n) full matrix scan.",
       tags: ["Matrix", "Binary Search", "Two Pointers"],
     },
     {
@@ -502,7 +459,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Easy",
       url: "https://codeforces.com/problemset/problem/4/A",
       description: "Determine whether a watermelon of weight w can be divided into two parts with even weights.",
-      keyConcept: "O(1) constant time mathematical parity evaluation.",
       tags: ["Math", "O(1)", "800"],
     },
     {
@@ -513,7 +469,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Medium",
       url: "https://atcoder.jp/contests/abc202/tasks/abc202_c",
       description: "Given sequences A, B, C of length N, find pairs (i, j) such that A_i = B_{C_j}.",
-      keyConcept: "Frequency count array reducing an O(N²) nested loop to optimal O(N) linear time.",
       tags: ["Array", "Frequency Map", "O(n)"],
     },
   ],
@@ -526,7 +481,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Medium",
       url: "https://leetcode.com/problems/rotate-array/",
       description: "Given an integer array nums, rotate the array to the right by k steps using O(1) extra space.",
-      keyConcept: "Three-step in-place array reversal maintaining strict O(1) auxiliary space without extra buffers.",
       tags: ["Array", "Two Pointers", "O(1) Space"],
     },
     {
@@ -537,7 +491,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Medium",
       url: "https://leetcode.com/problems/set-matrix-zeroes/",
       description: "Given an m x n integer matrix, if an element is 0, set its entire row and column to 0's in-place.",
-      keyConcept: "Reusing the matrix's first row and column as memory flags to achieve O(1) extra space.",
       tags: ["Matrix", "In-Place", "Space Optimization"],
     },
     {
@@ -548,7 +501,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Easy",
       url: "https://leetcode.com/problems/reverse-linked-list/",
       description: "Reverse a singly linked list iteratively with O(1) space or recursively with O(n) stack space.",
-      keyConcept: "Comparing iterative O(1) auxiliary pointer traversal with recursive O(n) call stack memory.",
       tags: ["Linked List", "Recursion", "Stack Frames"],
     },
     {
@@ -559,7 +511,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Easy",
       url: "https://leetcode.com/problems/move-zeroes/",
       description: "Move all 0's to the end of an array while maintaining relative order in-place.",
-      keyConcept: "In-place non-zero pointer compaction using O(1) auxiliary space.",
       tags: ["Array", "Two Pointers", "In-Place"],
     },
     {
@@ -570,7 +521,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Easy",
       url: "https://codeforces.com/problemset/problem/1360/B",
       description: "Split athletes into two teams to minimize the difference between the strongest athletes on each team.",
-      keyConcept: "Sorting in-place with O(1) extra memory and scanning adjacent elements.",
       tags: ["Sorting", "Greedy", "800"],
     },
     {
@@ -581,7 +531,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Medium",
       url: "https://atcoder.jp/contests/abc193/tasks/abc193_c",
       description: "Count numbers between 1 and N that cannot be expressed as a^b for integers a >= 2, b >= 2.",
-      keyConcept: "Bounded hash set storing at most O(√N) powers to avoid memory limits.",
       tags: ["Math", "Hash Set", "Space Limits"],
     },
   ],
@@ -595,7 +544,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Easy",
       url: "https://leetcode.com/problems/find-target-indices-after-sorting-array/",
       description: "Find all indices where nums[i] == target in a collection after sorting.",
-      keyConcept: "Sequential scanning to collect all matching index occurrences in O(n).",
       tags: ["Array", "Linear Scan", "Target Matching"],
     },
     {
@@ -606,7 +554,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Easy",
       url: "https://leetcode.com/problems/find-numbers-with-even-number-of-digits/",
       description: "Given an array nums of integers, return how many of them contain an even number of digits.",
-      keyConcept: "Single-pass linear traversal checking per-element digit properties.",
       tags: ["Array", "Simulation", "Linear Search"],
     },
     {
@@ -617,7 +564,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Easy",
       url: "https://codeforces.com/problemset/problem/4/A",
       description: "Determine if watermelon of weight w can be divided into two even integer parts.",
-      keyConcept: "Boundary check and parity validation in O(1).",
       tags: ["Brute Force", "Math", "800"],
     },
     {
@@ -628,7 +574,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Easy",
       url: "https://atcoder.jp/contests/abc109/tasks/abc109_b",
       description: "Check if all words follow the Shiritori rule and contain no duplicate words.",
-      keyConcept: "Sequential linear verification of chain rules with early exit on violation.",
       tags: ["Strings", "Linear Scan", "Beginner"],
     },
   ],
@@ -642,7 +587,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Easy",
       url: "https://leetcode.com/problems/binary-search/",
       description: "Given an array of integers nums which is sorted in ascending order, search target in O(log n).",
-      keyConcept: "Standard monotonic interval halving using low + (high - low) / 2.",
       tags: ["Binary Search", "Array", "Monotonic"],
     },
     {
@@ -653,7 +597,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Easy",
       url: "https://leetcode.com/problems/search-insert-position/",
       description: "Given a sorted array and a target, return index if found or insertion index if absent.",
-      keyConcept: "Lower bound binary search: finding the first index where arr[i] >= target.",
       tags: ["Binary Search", "Lower Bound", "Array"],
     },
     {
@@ -664,7 +607,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Medium",
       url: "https://leetcode.com/problems/search-in-rotated-sorted-array/",
       description: "Search target in an array that has been rotated at an unknown pivot in O(log n) time.",
-      keyConcept: "Binary search with sub-interval sorting invariant detection.",
       tags: ["Binary Search", "Rotated Array", "Interview Classic"],
     },
     {
@@ -675,7 +617,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Easy",
       url: "https://leetcode.com/problems/sqrtx/",
       description: "Compute and return the integer square root of x using binary search on the answer space.",
-      keyConcept: "Binary search on monotonic answer space [1..x] avoiding integer overflow.",
       tags: ["Math", "Binary Search Answer", "O(log x)"],
     },
     {
@@ -686,7 +627,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Medium",
       url: "https://atcoder.jp/contests/abc146/tasks/abc146_c",
       description: "Find the maximum integer N <= 10^9 you can buy such that price(N) = A*N + B*d(N) <= X.",
-      keyConcept: "Monotonic function binary search over range [0, 10^9].",
       tags: ["Binary Search", "Math", "Beginner"],
     },
   ],
@@ -700,7 +640,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Easy",
       url: "https://leetcode.com/problems/reverse-linked-list/",
       description: "Given the head of a singly linked list, reverse the list, and return the reversed list.",
-      keyConcept: "Three-pointer iterative pointer reversal: prev, curr, next.",
       tags: ["Linked List", "Recursion", "Two Pointers"],
     },
     {
@@ -711,7 +650,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Easy",
       url: "https://leetcode.com/problems/merge-two-sorted-lists/",
       description: "Merge two sorted linked lists and return it as a new sorted list using pointer splicing.",
-      keyConcept: "Dummy head node pattern and pointer rewiring in O(m+n) time and O(1) extra space.",
       tags: ["Linked List", "Merge", "Two Pointers"],
     },
     {
@@ -722,7 +660,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Easy",
       url: "https://leetcode.com/problems/linked-list-cycle/",
       description: "Determine if the linked list has a cycle using O(1) memory.",
-      keyConcept: "Floyd's Cycle-Finding Algorithm (fast and slow pointer).",
       tags: ["Linked List", "Fast & Slow Pointers", "Two Pointers"],
     },
     {
@@ -733,7 +670,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Medium",
       url: "https://leetcode.com/problems/remove-nth-node-from-end-of-list/",
       description: "Given the head of a linked list, remove the nth node from the end of the list in one pass.",
-      keyConcept: "Two-pointer gap offset traversal and predecessor pointer splicing.",
       tags: ["Linked List", "Two Pointers", "One-Pass"],
     },
     {
@@ -744,7 +680,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Easy",
       url: "https://codeforces.com/problemset/problem/1514/A",
       description: "Determine if there exists a non-empty subsequence whose product is not a perfect square.",
-      keyConcept: "Linear pointer scan with property verification.",
       tags: ["Math", "Number Theory", "800"],
     },
   ],
@@ -758,7 +693,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Easy",
       url: "https://leetcode.com/problems/two-sum/",
       description: "Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.",
-      keyConcept: "Array indexing, hash mapping lookup in O(1) time per element.",
       tags: ["Array", "Hash Table", "Fundamentals"],
     },
     {
@@ -769,7 +703,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Easy",
       url: "https://leetcode.com/problems/remove-duplicates-from-sorted-array/",
       description: "Remove the duplicates in-place such that each unique element appears only once, maintaining relative order in O(1) extra memory.",
-      keyConcept: "Two-pointer in-place array modification and overwrite shifting.",
       tags: ["Array", "Two Pointers", "In-Place"],
     },
     {
@@ -780,7 +713,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Easy",
       url: "https://leetcode.com/problems/concatenation-of-array/",
       description: "Given an integer array nums of length n, create an array ans of length 2n where ans[i] == nums[i] and ans[i + n] == nums[i].",
-      keyConcept: "Contiguous array allocation, modulo index calculation, and linear buffer copying.",
       tags: ["Array", "Simulation", "Easy"],
     },
     {
@@ -791,7 +723,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Easy",
       url: "https://leetcode.com/problems/best-time-to-buy-and-sell-stock/",
       description: "Maximize your profit by choosing a single day to buy one stock and choosing a different day in the future to sell that stock.",
-      keyConcept: "Single pass linear scan tracking minimum seen so far.",
       tags: ["Array", "Dynamic Programming", "Sliding Window"],
     },
     {
@@ -802,7 +733,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Easy",
       url: "https://codeforces.com/problemset/problem/4/A",
       description: "Check if watermelon of weight w can be divided into two even parts.",
-      keyConcept: "Basic conditionals and arithmetic simulation.",
       tags: ["Math", "Brute Force", "800"],
     },
   ],
@@ -815,7 +745,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Easy",
       url: "https://leetcode.com/problems/valid-palindrome/",
       description: "A phrase is a palindrome if, after converting all uppercase letters into lowercase letters and removing all non-alphanumeric characters, it reads the same forward and backward.",
-      keyConcept: "Two-pointer inward scan skipping non-alphanumerics with O(1) space.",
       tags: ["String", "Two Pointers", "Easy"],
     },
     {
@@ -826,7 +755,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Easy",
       url: "https://leetcode.com/problems/reverse-string/",
       description: "Write a function that reverses a string in-place. The input string is given as an array of characters.",
-      keyConcept: "In-place symmetric swapping with two pointers left and right in O(n/2) steps.",
       tags: ["String", "Two Pointers", "In-Place"],
     },
     {
@@ -837,7 +765,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Medium",
       url: "https://leetcode.com/problems/longest-substring-without-repeating-characters/",
       description: "Given a string s, find the length of the longest substring without repeating characters.",
-      keyConcept: "Sliding window [L..R] expanding rightward and contracting leftward past duplicate indices in O(n).",
       tags: ["String", "Sliding Window", "Hash Table", "Medium"],
     },
     {
@@ -848,7 +775,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Easy",
       url: "https://leetcode.com/problems/valid-anagram/",
       description: "Given two strings s and t, return true if t is an anagram of s, and false otherwise.",
-      keyConcept: "26-bucket character frequency array in O(n) time and O(1) space.",
       tags: ["String", "Hash Table", "Sorting", "Easy"],
     },
     {
@@ -859,7 +785,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Hard",
       url: "https://leetcode.com/problems/minimum-window-substring/",
       description: "Given two strings s and t, return the minimum window substring of s such that every character in t (including duplicates) is included in the window.",
-      keyConcept: "Dynamic sliding window with frequency counting and condition satisfaction tracking in O(m+n).",
       tags: ["String", "Sliding Window", "Hard"],
     },
   ],
@@ -872,7 +797,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Hard",
       url: "https://leetcode.com/problems/sliding-window-maximum/",
       description: "You are given an array of integers nums, there is a sliding window of size k which is moving from the very left of the array to the very right. Return the max sliding window.",
-      keyConcept: "Monotonic decreasing deque storing candidate indices; front is always window maximum in O(n) total time.",
       tags: ["Array", "Deque", "Sliding Window", "Monotonic Queue", "Hard"],
     },
     {
@@ -883,7 +807,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Medium",
       url: "https://leetcode.com/problems/design-circular-deque/",
       description: "Design your implementation of the circular double-ended queue (deque) with insertFront, insertLast, deleteFront, deleteLast, getFront, getRear, isEmpty, and isFull.",
-      keyConcept: "Circular array buffer modulo index arithmetic (front - 1 + capacity) % capacity and (rear + 1) % capacity in O(1).",
       tags: ["Array", "Linked List", "Design", "Queue", "Medium"],
     },
     {
@@ -894,7 +817,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Easy",
       url: "https://leetcode.com/problems/number-of-recent-calls/",
       description: "You have a RecentCounter class which counts the number of recent requests within a certain time frame [t - 3000, t].",
-      keyConcept: "Popping expired timestamps from the front of the deque in O(1) amortized time.",
       tags: ["Design", "Queue", "Data Stream", "Easy"],
     },
     {
@@ -905,7 +827,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Hard",
       url: "https://leetcode.com/problems/shortest-subarray-with-sum-at-least-k/",
       description: "Given an integer array nums and an integer k, return the length of the shortest non-empty subarray of nums with a sum of at least k.",
-      keyConcept: "Prefix sums combined with a monotonic increasing deque to test valid subarray endpoints in O(n).",
       tags: ["Array", "Binary Search", "Queue", "Sliding Window", "Prefix Sum", "Monotonic Queue", "Hard"],
     },
     {
@@ -916,7 +837,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Hard",
       url: "https://leetcode.com/problems/constrained-subsequence-sum/",
       description: "Given an integer array nums and an integer k, return the maximum sum of a non-empty subsequence such that for every two consecutive integers in the subsequence, their index difference is at most k.",
-      keyConcept: "Dynamic programming DP[i] = nums[i] + max(0, max(DP[i-k..i-1])) optimized from O(nk) to O(n) via monotonic deque.",
       tags: ["Array", "Dynamic Programming", "Queue", "Sliding Window", "Monotonic Queue", "Hard"],
     },
   ],
@@ -929,7 +849,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Easy",
       url: "https://leetcode.com/problems/two-sum/",
       description: "Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.",
-      keyConcept: "Single-pass hash table lookup: compute complement = target - num and query hash table in O(1) time.",
       tags: ["Array", "Hash Table", "Easy"],
     },
     {
@@ -940,7 +859,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Medium",
       url: "https://leetcode.com/problems/group-anagrams/",
       description: "Given an array of strings strs, group the anagrams together. You can return the answer in any order.",
-      keyConcept: "Categorize strings by sorted character key or character frequency tuple in a hash map in O(N * K) time.",
       tags: ["Array", "Hash Table", "String", "Sorting", "Medium"],
     },
     {
@@ -951,7 +869,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Medium",
       url: "https://leetcode.com/problems/subarray-sum-equals-k/",
       description: "Given an array of integers nums and an integer k, return the total number of continuous subarrays whose sum equals to k.",
-      keyConcept: "Running prefix sum combined with a hash table recording prefix sum frequencies in O(n) time.",
       tags: ["Array", "Hash Table", "Prefix Sum", "Medium"],
     },
     {
@@ -962,7 +879,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Medium",
       url: "https://leetcode.com/problems/longest-consecutive-sequence/",
       description: "Given an unsorted array of integers nums, return the length of the longest consecutive elements sequence in O(n) time.",
-      keyConcept: "Hash Set membership checks: only initiate streak expansion from sequence roots where num - 1 is absent.",
       tags: ["Array", "Hash Table", "Union Find", "Medium"],
     },
     {
@@ -973,7 +889,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Easy",
       url: "https://leetcode.com/problems/design-hashmap/",
       description: "Design a HashMap without using any built-in hash table libraries, supporting put(key, value), get(key), and remove(key).",
-      keyConcept: "Direct addressing with separate chaining using linked list buckets and modular hashing.",
       tags: ["Array", "Hash Table", "Linked List", "Design", "Easy"],
     },
   ],
@@ -986,7 +901,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Easy",
       url: "https://leetcode.com/problems/maximum-depth-of-binary-tree/",
       description: "Given the root of a binary tree, return its maximum depth: the number of nodes along the longest path from the root node down to the farthest leaf node.",
-      keyConcept: "Recursive divide-and-conquer: 1 + max(maxDepth(root->left), maxDepth(root->right)) with base case if (!root) return 0.",
       tags: ["Tree", "Depth-First Search", "Breadth-First Search", "Binary Tree", "Easy"],
     },
     {
@@ -997,7 +911,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Easy",
       url: "https://leetcode.com/problems/invert-binary-tree/",
       description: "Given the root of a binary tree, invert the tree (mirror left and right subtrees recursively), and return its root.",
-      keyConcept: "Post-order or pre-order recursive swap: swap(root->left, root->right) and recurse on both subtrees.",
       tags: ["Tree", "Depth-First Search", "Breadth-First Search", "Binary Tree", "Easy"],
     },
     {
@@ -1008,7 +921,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Easy",
       url: "https://leetcode.com/problems/same-tree/",
       description: "Given the roots of two binary trees p and q, write a function to check if they are structurally identical and the nodes have the same value.",
-      keyConcept: "Simultaneous dual-tree DFS: compare values and recursively ensure isSameTree(p->left, q->left) && isSameTree(p->right, q->right).",
       tags: ["Tree", "Depth-First Search", "Breadth-First Search", "Binary Tree", "Easy"],
     },
     {
@@ -1019,7 +931,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Easy",
       url: "https://leetcode.com/problems/symmetric-tree/",
       description: "Given the root of a binary tree, check whether it is a mirror of itself (i.e., symmetric around its center).",
-      keyConcept: "Mirror recursion helper checking two nodes: t1->val == t2->val && isMirror(t1->left, t2->right) && isMirror(t1->right, t2->left).",
       tags: ["Tree", "Depth-First Search", "Breadth-First Search", "Binary Tree", "Easy"],
     },
     {
@@ -1030,7 +941,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Medium",
       url: "https://leetcode.com/problems/binary-tree-level-order-traversal/",
       description: "Given the root of a binary tree, return the level order traversal of its nodes' values (i.e., from left to right, level by level).",
-      keyConcept: "Breadth-First Search using a FIFO queue, capturing the level size queue.size() before processing each tier.",
       tags: ["Tree", "Breadth-First Search", "Binary Tree", "Medium"],
     },
   ],
@@ -1043,7 +953,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Easy",
       url: "https://leetcode.com/problems/search-in-a-binary-search-tree/",
       description: "You are given the root of a binary search tree (BST) and an integer val. Find the node in the BST that the node's value equals val and return the subtree rooted with that node.",
-      keyConcept: "Prune half the search space at each step: if val < root->val recurse left, if val > root->val recurse right. O(h) time.",
       tags: ["Tree", "Binary Search Tree", "Binary Tree", "Easy"],
     },
     {
@@ -1054,7 +963,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Medium",
       url: "https://leetcode.com/problems/insert-into-a-binary-search-tree/",
       description: "You are given the root node of a binary search tree (BST) and a value to insert into the tree. Return the root node of the BST after the insertion.",
-      keyConcept: "Navigate to the unique null pointer where val fits the BST invariant and attach new TreeNode(val).",
       tags: ["Tree", "Binary Search Tree", "Binary Tree", "Medium"],
     },
     {
@@ -1065,7 +973,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Medium",
       url: "https://leetcode.com/problems/delete-node-in-a-bst/",
       description: "Given a root node reference of a BST and a key, delete the node with the given key in the BST. Return the root node reference of the BST.",
-      keyConcept: "Handle 3 topological cases: Leaf (sever pointer), 1 child (splice child), 2 children (replace with in-order successor and delete successor from right subtree).",
       tags: ["Tree", "Binary Search Tree", "Binary Tree", "Medium"],
     },
     {
@@ -1076,7 +983,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Medium",
       url: "https://leetcode.com/problems/validate-binary-search-tree/",
       description: "Given the root of a binary tree, determine if it is a valid binary search tree (BST) by ensuring all left descendants are strictly less and right descendants strictly greater.",
-      keyConcept: "DFS with dynamic allowable range (minVal, maxVal) updated at each step, or in-order traversal ensuring strictly increasing previous value.",
       tags: ["Tree", "Depth-First Search", "Binary Search Tree", "Binary Tree", "Medium"],
     },
     {
@@ -1087,7 +993,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Medium",
       url: "https://leetcode.com/problems/kth-smallest-element-in-a-bst/",
       description: "Given the root of a binary search tree and an integer k, return the kth smallest value (1-indexed) of all the values of the nodes in the tree.",
-      keyConcept: "In-order traversal visits nodes in ascending sorted order. Decrement k at each visited node; return when k == 0.",
       tags: ["Tree", "Depth-First Search", "Binary Search Tree", "Binary Tree", "Medium"],
     },
   ],
@@ -1100,7 +1005,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Easy",
       url: "https://leetcode.com/problems/balanced-binary-tree/",
       description: "Given a binary tree, determine if it is height-balanced (the depth of the two subtrees of every node never differs by more than one).",
-      keyConcept: "Bottom-up DFS calculating heights; return -1 early as soon as any subtree violates |leftH - rightH| <= 1. Solves in O(n) time and O(h) space.",
       tags: ["Tree", "Depth-First Search", "Binary Tree", "AVL Tree", "Easy"],
     },
     {
@@ -1111,7 +1015,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Easy",
       url: "https://leetcode.com/problems/convert-sorted-array-to-binary-search-tree/",
       description: "Given an integer array nums sorted in ascending order, convert it to a height-balanced binary search tree.",
-      keyConcept: "Divide and conquer: pick the exact middle element as root, then recursively construct left and right subtrees. Strictly guarantees balanced AVL topology.",
       tags: ["Array", "Divide and Conquer", "Tree", "Binary Search Tree", "Easy"],
     },
     {
@@ -1122,7 +1025,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Medium",
       url: "https://leetcode.com/problems/balance-a-binary-search-tree/",
       description: "Given the root of an arbitrary binary search tree, return a balanced binary search tree with the same node values.",
-      keyConcept: "Extract sorted values via in-order traversal into a vector, then recursively rebuild a balanced BST by choosing the median of each subarray as the subtree root.",
       tags: ["Divide and Conquer", "Greedy", "Tree", "Binary Search Tree", "Medium"],
     },
     {
@@ -1133,7 +1035,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Medium",
       url: "https://leetcode.com/problems/convert-sorted-list-to-binary-search-tree/",
       description: "Given the head of a singly linked list where elements are sorted in ascending order, convert it to a height-balanced binary search tree.",
-      keyConcept: "Use slow/fast pointers to find the median node in O(n log n), or simulate in-order traversal using a sequential pointer in optimal O(n) time.",
       tags: ["Linked List", "Divide and Conquer", "Tree", "Binary Search Tree", "Medium"],
     },
     {
@@ -1144,7 +1045,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Hard",
       url: "https://leetcode.com/problems/count-of-smaller-numbers-after-self/",
       description: "Given an integer array nums, return an integer array counts where counts[i] is the number of smaller elements to the right of nums[i].",
-      keyConcept: "Order-Statistic AVL Tree: augment AVL nodes with subtree size counters to query element rank in O(log n) while rotations preserve balancing and subtree sizes.",
       tags: ["Binary Search", "Divide and Conquer", "Binary Indexed Tree", "Segment Tree", "AVL Tree", "Hard"],
     },
   ],
@@ -1157,7 +1057,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Medium",
       url: "https://leetcode.com/problems/kth-largest-element-in-an-array/",
       description: "Given an integer array nums and an integer k, return the kth largest element in the array without full sorting.",
-      keyConcept: "Maintain a Min-Heap of fixed size k. For every number, push it and pop the minimum if size exceeds k. At the end, the root holds the kth largest in O(n log k) time and O(k) memory.",
       tags: ["Array", "Divide and Conquer", "Sorting", "Heap (Priority Queue)", "Quickselect", "Medium"],
     },
     {
@@ -1168,7 +1067,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Easy",
       url: "https://leetcode.com/problems/kth-largest-element-in-a-stream/",
       description: "Design a class to find the kth largest element in a continuous data stream of incoming integers.",
-      keyConcept: "Store only the k largest numbers seen so far in a Min-Heap. The root always gives the kth largest in O(1) peek time, and each new incoming stream element updates the heap in O(log k).",
       tags: ["Tree", "Design", "Binary Search Tree", "Heap (Priority Queue)", "Binary Tree", "Data Stream", "Easy"],
     },
     {
@@ -1179,7 +1077,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Easy",
       url: "https://leetcode.com/problems/last-stone-weight/",
       description: "You are given an array of integers stones. In each step, smash the two heaviest stones together until at most one remains.",
-      keyConcept: "Max-Heap simulation: repeatedly extract the top two heaviest stones in O(log n). If they have different weights, push the difference back into the heap.",
       tags: ["Array", "Heap (Priority Queue)", "Simulation", "Easy"],
     },
     {
@@ -1190,7 +1087,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Hard",
       url: "https://leetcode.com/problems/find-median-from-data-stream/",
       description: "The median is the middle value in an ordered integer list. Design a data structure that supports adding numbers dynamically and finding the current median in O(1).",
-      keyConcept: "The Two-Heap Pattern: maintain a Max-Heap for the lower half of numbers and a Min-Heap for the upper half. Keep sizes balanced (|sizeDiff| <= 1). Median is instantly computed from the roots in O(1).",
       tags: ["Two Pointers", "Design", "Sorting", "Heap (Priority Queue)", "Data Stream", "Hard"],
     },
     {
@@ -1201,7 +1097,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Hard",
       url: "https://leetcode.com/problems/merge-k-sorted-lists/",
       description: "You are given an array of k linked-lists lists, each linked-list is sorted in ascending order. Merge all the linked-lists into one sorted linked-list and return it.",
-      keyConcept: "Insert the head node of each of the k lists into a Min-Heap. Repeatedly extract the minimum node in O(log k), append it to the result list, and push its next pointer into the heap. Total time: O(N log k).",
       tags: ["Linked List", "Divide and Conquer", "Heap (Priority Queue)", "Merge Sort", "Hard"],
     },
   ],
@@ -1214,7 +1109,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Medium",
       url: "https://leetcode.com/problems/top-k-frequent-elements/",
       description: "Given an integer array nums and an integer k, return the k most frequent elements in any order.",
-      keyConcept: "Count frequencies in a hash map, then push (count, val) pairs into a Min-Priority Queue of bounded size k. By ejecting low-frequency pairs whenever size > k, the PQ retains the top k frequent elements in O(n log k) time and O(n) space.",
       tags: ["Array", "Hash Table", "Divide and Conquer", "Sorting", "Heap (Priority Queue)", "Bucket Sort", "Medium"],
     },
     {
@@ -1225,7 +1119,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Medium",
       url: "https://leetcode.com/problems/task-scheduler/",
       description: "Given a characters array tasks representing CPU tasks and a cooling interval n, find the least number of CPU intervals needed to execute all tasks.",
-      keyConcept: "Max-Priority Queue with waiting queue: greedily dispatch the most frequent remaining tasks first using a Max-PQ. Tasks in their cooldown period enter a temporary waiting runway and re-enter the PQ once their cooling timer expires.",
       tags: ["Array", "Hash Table", "Greedy", "Sorting", "Heap (Priority Queue)", "Counting", "Medium"],
     },
     {
@@ -1236,7 +1129,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Medium",
       url: "https://leetcode.com/problems/network-delay-time/",
       description: "You are given a network of n nodes labeled 1 to n. Return the minimum time it takes for all n nodes to receive a signal sent from node k, or -1 if impossible.",
-      keyConcept: "Dijkstra's Shortest Path Algorithm: maintain a Min-Priority Queue of (distance, node). Pop the closest reachable unvisited node in O(log V), relax all outgoing edges, and push updated shortest distance estimates into the priority queue.",
       tags: ["Depth-First Search", "Breadth-First Search", "Graph", "Heap (Priority Queue)", "Shortest Path", "Medium"],
     },
     {
@@ -1247,7 +1139,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Medium",
       url: "https://leetcode.com/problems/find-k-pairs-with-smallest-sums/",
       description: "You are given two integer arrays nums1 and nums2 sorted in non-decreasing order and an integer k. Return the k pairs (u, v) with the smallest sums.",
-      keyConcept: "Multi-way frontier exploration: push initial candidate pairs (nums1[i] + nums2[0], i, 0) into a Min-Priority Queue. Extract the minimal sum pair and advance the pointer in nums2 for that row into the PQ, producing the top k pairs in O(k log k) time.",
       tags: ["Array", "Heap (Priority Queue)", "Medium"],
     },
     {
@@ -1258,7 +1149,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Medium",
       url: "https://leetcode.com/problems/meeting-rooms-ii/",
       description: "Given an array of meeting time intervals consisting of start and end times [[s1,e1],[s2,e2],...], find the minimum number of conference rooms required.",
-      keyConcept: "Min-Priority Queue of meeting end times: sort meetings by start time. For each meeting, check if the earliest finishing meeting in the Min-PQ has ended. If so, reuse that room (pop it); otherwise, allocate a new room. Push current meeting's end time into the PQ.",
       tags: ["Array", "Two Pointers", "Greedy", "Sorting", "Heap (Priority Queue)", "Prefix Sum", "Medium"],
     },
   ],
@@ -1271,7 +1161,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Medium",
       url: "https://leetcode.com/problems/number-of-provinces/",
       description: "There are n cities. If city a is connected directly with city b, and city b is connected with city c, then city a is connected indirectly with city c. Return the total number of connected provinces.",
-      keyConcept: "Initialize DSU with n independent components. Iterate through the upper triangle of the isConnected matrix; whenever isConnected[i][j] == 1, execute union(i, j). The final component count gives the number of provinces in O(n² · α(n)) time.",
       tags: ["Depth-First Search", "Breadth-First Search", "Union Find", "Graph", "Medium"],
     },
     {
@@ -1282,7 +1171,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Medium",
       url: "https://leetcode.com/problems/redundant-connection/",
       description: "Given an undirected graph that started as a tree with n nodes labeled 1 to n, with one additional edge added, return an edge that can be removed so that the resulting graph is a tree.",
-      keyConcept: "Process edges sequentially using Union-Find. For each edge (u, v), check if find(u) == find(v). If true, u and v already belong to the same component, meaning this edge introduces a cycle! Return that edge immediately in O(E · α(V)) time.",
       tags: ["Depth-First Search", "Breadth-First Search", "Union Find", "Graph", "Medium"],
     },
     {
@@ -1293,7 +1181,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Medium",
       url: "https://leetcode.com/problems/longest-consecutive-sequence/",
       description: "Given an unsorted array of integers nums, return the length of the longest consecutive elements sequence in O(n) runtime.",
-      keyConcept: "Map each number to its index in a hash map. For each number x, if x + 1 exists in the map, union their components. Track component sizes in the DSU size[] array; the maximum component size gives the answer in O(n · α(n)) time.",
       tags: ["Array", "Hash Table", "Union Find", "Medium"],
     },
     {
@@ -1304,7 +1191,6 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Medium",
       url: "https://leetcode.com/problems/number-of-islands/",
       description: "Given an m x n 2D binary grid grid which represents a map of '1's (land) and '0's (water), return the number of islands.",
-      keyConcept: "Flatten 2D grid coordinates (r, c) into 1D indices (r * n + c). Initialize DSU with count = total land cells. Scan the grid and union adjacent '1' cells to the right and down. Each successful union decrements the island count in O(m * n * α(mn)).",
       tags: ["Array", "Depth-First Search", "Breadth-First Search", "Union Find", "Matrix", "Medium"],
     },
     {
@@ -1315,10 +1201,62 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       difficulty: "Medium",
       url: "https://leetcode.com/problems/accounts-merge/",
       description: "Given a list of accounts where each element accounts[i] is a list of strings with the account name followed by emails, merge accounts that belong to the same person.",
-      keyConcept: "Assign an integer ID to each unique email. For each account, union the first email with all subsequent emails in that account. Group emails by their canonical root representative using find() to merge distinct account aliases in O(N log N · α(N)).",
       tags: ["Array", "Hash Table", "String", "Depth-First Search", "Breadth-First Search", "Union Find", "Sorting", "Medium"],
     },
   ],
+  "two-pointers": [
+    {
+      id: "tp-lc-167",
+      title: "Two Sum II - Input Array Is Sorted",
+      platform: "LeetCode",
+      problemCode: "167",
+      difficulty: "Medium",
+      url: "https://leetcode.com/problems/two-sum-ii-input-array-is-sorted/",
+      description: "Given a 1-indexed array of integers numbers that is already sorted in non-decreasing order, find two numbers such that they add up to a specific target number.",
+      tags: ["Array", "Two Pointers", "Binary Search", "Medium"],
+    },
+    {
+      id: "tp-lc-11",
+      title: "Container With Most Water",
+      platform: "LeetCode",
+      problemCode: "11",
+      difficulty: "Medium",
+      url: "https://leetcode.com/problems/container-with-most-water/",
+      description: "You are given an integer array height of length n. Find two lines that together with the x-axis form a container, such that the container contains the most water.",
+      tags: ["Array", "Two Pointers", "Greedy", "Medium"],
+    },
+    {
+      id: "tp-lc-26",
+      title: "Remove Duplicates from Sorted Array",
+      platform: "LeetCode",
+      problemCode: "26",
+      difficulty: "Easy",
+      url: "https://leetcode.com/problems/remove-duplicates-from-sorted-array/",
+      description: "Given an integer array nums sorted in non-decreasing order, remove duplicates in-place such that each unique element appears only once.",
+      tags: ["Array", "Two Pointers", "Easy"],
+    },
+    {
+      id: "tp-lc-15",
+      title: "3Sum",
+      platform: "LeetCode",
+      problemCode: "15",
+      difficulty: "Medium",
+      url: "https://leetcode.com/problems/3sum/",
+      description: "Given an integer array nums, return all the triplets [nums[i], nums[j], nums[k]] such that i != j, i != k, and j != k, and nums[i] + nums[j] + nums[k] == 0.",
+      tags: ["Array", "Two Pointers", "Sorting", "Medium"],
+    },
+    {
+      id: "tp-lc-42",
+      title: "Trapping Rain Water",
+      platform: "LeetCode",
+      problemCode: "42",
+      difficulty: "Hard",
+      url: "https://leetcode.com/problems/trapping-rain-water/",
+      description: "Given n non-negative integers representing an elevation map where the width of each bar is 1, compute how much water it can trap after raining.",
+      tags: ["Array", "Two Pointers", "Dynamic Programming", "Stack", "Monotonic Stack", "Hard"],
+    },
+  ],
 };
+
 
 

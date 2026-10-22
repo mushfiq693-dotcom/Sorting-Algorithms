@@ -92,6 +92,10 @@ const UnionFindVisualizer = dynamic(
   () => import("@/components/visualizer/UnionFindVisualizer").then((mod) => mod.UnionFindVisualizer),
   { ssr: false, loading: () => <TabLoading /> }
 );
+const TwoPointersVisualizer = dynamic(
+  () => import("@/components/visualizer/TwoPointersVisualizer").then((mod) => mod.TwoPointersVisualizer),
+  { ssr: false, loading: () => <TabLoading /> }
+);
 const BugHunt = dynamic(
   () => import("@/components/challenge/BugHunt").then((mod) => mod.BugHunt),
   { ssr: false, loading: () => <TabLoading /> }
@@ -169,6 +173,7 @@ export default function AlgorithmDetailPage() {
   const isHeap = meta.category === "heap";
   const isComplexity = meta.category === "complexity";
   const isSearching = meta.category === "searching";
+  const isTechnique = meta.category === "technique";
 
   const [activeStep, setActiveStep] = useState<number>(1);
   const [activePracticeTab, setActivePracticeTab] = useState<
@@ -256,7 +261,7 @@ export default function AlgorithmDetailPage() {
             <div className="flex items-center gap-2 mb-2">
               <span className="text-xs font-mono font-bold px-2.5 py-1 rounded-lg bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-500/20 flex items-center gap-1.5">
                 <span>
-                  {isTree ? "Tree Data Structure" : isDataStructure ? "Data Structure" : isComplexity ? "Complexity Analysis" : isSearching ? "Searching Algorithm" : "Sorting Algorithm"} • {stepData.order < 10 ? `0${stepData.order}` : stepData.order} of {LEARNING_PATH.length < 10 ? `0${LEARNING_PATH.length}` : LEARNING_PATH.length}
+                  {isTechnique ? "Algorithmic Technique" : isTree ? "Tree Data Structure" : isDataStructure ? "Data Structure" : isComplexity ? "Complexity Analysis" : isSearching ? "Searching Algorithm" : "Sorting Algorithm"} • {stepData.order < 10 ? `0${stepData.order}` : stepData.order} of {LEARNING_PATH.length < 10 ? `0${LEARNING_PATH.length}` : LEARNING_PATH.length}
                 </span>
               </span>
               <span className="text-xs font-mono text-muted-foreground flex items-center gap-1">
@@ -556,6 +561,8 @@ export default function AlgorithmDetailPage() {
                 <SpaceComplexityVisualizer />
               ) : algorithmId === "union-find" ? (
                 <UnionFindVisualizer />
+              ) : algorithmId === "two-pointers" ? (
+                <TwoPointersVisualizer />
               ) : (
                 <SortingVisualizer />
               )}
@@ -640,6 +647,22 @@ export default function AlgorithmDetailPage() {
                       <div key={i} className="p-3.5 rounded-xl border border-border bg-secondary/40 space-y-1">
                         <div className="font-mono font-bold text-xs text-foreground">{op.name}</div>
                         <div className="text-xs font-mono font-bold text-emerald-500">{op.time}</div>
+                        <div className="text-[11px] text-muted-foreground leading-tight">{op.description}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : isTechnique ? (
+                <div className="p-6 rounded-2xl border border-border bg-card space-y-4">
+                  <h3 className="text-sm font-mono font-bold uppercase tracking-wider text-foreground flex items-center gap-2">
+                    <Compass className="h-4 w-4 text-fuchsia-500" />
+                    <span>Two-Pointer Traversal &amp; Invariant Guarantee Matrix</span>
+                  </h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
+                    {meta.complexity.operations?.map((op, i) => (
+                      <div key={i} className="p-3.5 rounded-xl border border-border bg-secondary/40 space-y-1">
+                        <div className="font-mono font-bold text-xs text-foreground">{op.name}</div>
+                        <div className="text-xs font-mono font-bold text-fuchsia-400">{op.time}</div>
                         <div className="text-[11px] text-muted-foreground leading-tight">{op.description}</div>
                       </div>
                     ))}

@@ -464,4 +464,25 @@ void unite(int x, int y) {
 }`,
     highlightedLine: 3,
   },
+  "two-pointers": {
+    algorithmId: "two-pointers",
+    title: "Two Pointers — Invariant Search & Memory Compaction",
+    subtitle: "Pruning search spaces from O(n²) to O(n) and mutating linear structures in-place with O(1) auxiliary space.",
+    caption: "The foundational technique for Two Sum, Container With Most Water, 3Sum, In-Place Duplication Removal, and Floyd Cycle Detection.",
+    fixedArray: [1, 2, 4, 6, 8, 11, 15],
+    complexityFormula: "Time: O(n) Single Pass • Space: O(1) Auxiliary • Pruning: Eliminates O(n²) Brute Force",
+    complexityExplanation: "Monotonicity in sorted arrays guarantees that moving Left rightward strictly increases the sum while moving Right leftward strictly decreases it. Every comparison eliminates an entire row or column of the pair matrix.",
+    codeSnippet: `// Sorted Two Sum in O(n) Time & O(1) Space
+bool twoSum(vector<int>& arr, int target, int& l, int& r) {
+    l = 0; r = arr.size() - 1;
+    while (l < r) {
+        int sum = arr[l] + arr[r];
+        if (sum == target) return true;
+        if (sum < target) l++; // Need larger sum
+        else r--;              // Need smaller sum
+    }
+    return false;
+}`,
+    highlightedLine: 6,
+  },
 };

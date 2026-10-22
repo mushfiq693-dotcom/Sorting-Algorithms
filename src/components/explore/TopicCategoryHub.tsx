@@ -32,7 +32,7 @@ import {
   Boxes,
 } from "lucide-react";
 
-export type CategoryKey = "sorting" | "data-structure" | "tree" | "heap" | "searching" | "complexity";
+export type CategoryKey = "sorting" | "data-structure" | "tree" | "heap" | "searching" | "complexity" | "technique";
 
 export interface CategoryCardMeta {
   key: CategoryKey;
@@ -105,6 +105,16 @@ export const CATEGORY_CARDS: CategoryCardMeta[] = [
     iconColor: "text-purple-500 dark:text-purple-400",
     iconBorder: "border-purple-500/30",
     accentGlow: "group-hover:shadow-[0_0_24px_rgba(168,85,247,0.2)]",
+  },
+  {
+    key: "technique",
+    title: "Techniques",
+    countLabel: "1 Visualization",
+    icon: SlidersHorizontal,
+    iconBg: "bg-fuchsia-500/10 dark:bg-fuchsia-500/20",
+    iconColor: "text-fuchsia-500 dark:text-fuchsia-400",
+    iconBorder: "border-fuchsia-500/30",
+    accentGlow: "group-hover:shadow-[0_0_24px_rgba(217,70,239,0.2)]",
   },
 ];
 
@@ -255,6 +265,14 @@ const TOPIC_VISUALS: Record<AlgorithmId, TopicVisualMeta> = {
     iconColor: "text-purple-500 dark:text-purple-400",
     iconBorder: "border-purple-500/25",
   },
+
+  // Techniques (Fuchsia / Rose palette)
+  "two-pointers": {
+    icon: ArrowLeftRight,
+    iconBg: "bg-fuchsia-500/10 dark:bg-fuchsia-500/20",
+    iconColor: "text-fuchsia-500 dark:text-fuchsia-400",
+    iconBorder: "border-fuchsia-500/25",
+  },
 };
 
 // Descriptions from Coddy Tech screenshot for algorithms, plus matched descriptions for others
@@ -288,6 +306,9 @@ const TOPIC_DESCRIPTIONS: Record<AlgorithmId, string> = {
   // Complexity
   "time-complexity": "Watch operations scale from O(1) constant to O(2ⁿ) exponential growth.",
   "space-complexity": "See auxiliary memory allocation and recursion stack footprint scale with input.",
+
+  // Techniques
+  "two-pointers": "Watch converging and reader-writer pointers traverse sorted arrays and calculate water containers in O(n) time.",
 };
 
 interface SortingComparisonRow {
@@ -605,6 +626,50 @@ const COMPLEXITY_COMPARISON: ComplexityComparisonRow[] = [
     name: "Quadratic Time",
     growth: "Nested iterations over input",
     example: "Bubble sort, Selection sort, Insertion sort",
+  },
+];
+
+interface TechniqueComparisonRow {
+  pattern: string;
+  id: AlgorithmId;
+  time: string;
+  space: string;
+  prerequisite: string;
+  classicProblems: string;
+}
+
+const TECHNIQUE_COMPARISON: TechniqueComparisonRow[] = [
+  {
+    pattern: "Opposite Converging (L → ← R)",
+    id: "two-pointers",
+    time: "O(n)",
+    space: "O(1)",
+    prerequisite: "Sorted Array (Monotonicity)",
+    classicProblems: "Two Sum II, 3Sum, Valid Palindrome",
+  },
+  {
+    pattern: "Container With Most Water",
+    id: "two-pointers",
+    time: "O(n)",
+    space: "O(1)",
+    prerequisite: "Height Array (Bottleneck Invariant)",
+    classicProblems: "Container With Most Water, Trapping Rain",
+  },
+  {
+    pattern: "Fast & Slow (Reader-Writer)",
+    id: "two-pointers",
+    time: "O(n)",
+    space: "O(1)",
+    prerequisite: "Sequential Stream / In-Place Partition",
+    classicProblems: "Remove Duplicates, Move Zeroes",
+  },
+  {
+    pattern: "Floyd Cycle Detection (Tortoise & Hare)",
+    id: "two-pointers",
+    time: "O(n)",
+    space: "O(1)",
+    prerequisite: "Functional Graph / Linked List Loop",
+    classicProblems: "Linked List Cycle, Find Duplicate Number",
   },
 ];
 
@@ -1057,6 +1122,45 @@ export function TopicCategoryHub({
                         <td className="py-3.5 px-4 font-sans font-semibold text-foreground/90">{row.name}</td>
                         <td className="py-3.5 px-4 text-muted-foreground">{row.growth}</td>
                         <td className="py-3.5 px-4 sm:px-6 text-muted-foreground">{row.example}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {currentCategory === "technique" && (
+            <div className="mt-16 sm:mt-20 lg:mt-24">
+              <h3 className="text-xl sm:text-2xl font-bold font-heading text-foreground mb-5">
+                Two-pointer paradigms &amp; invariant comparison
+              </h3>
+              <div className="rounded-2xl border border-border/80 bg-card/60 backdrop-blur-sm overflow-x-auto shadow-sm">
+                <table className="w-full text-left text-sm border-collapse min-w-[580px]">
+                  <thead>
+                    <tr className="border-b border-border/70 text-xs font-semibold text-muted-foreground uppercase tracking-wider bg-muted/20">
+                      <th className="py-3.5 px-4 sm:px-6">Paradigm / Pattern</th>
+                      <th className="py-3.5 px-4">Time</th>
+                      <th className="py-3.5 px-4">Space</th>
+                      <th className="py-3.5 px-4">Prerequisite / Invariant</th>
+                      <th className="py-3.5 px-4 sm:px-6">Classic Problems</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-border/40 text-xs">
+                    {TECHNIQUE_COMPARISON.map((row, idx) => (
+                      <tr
+                        key={idx}
+                        className="hover:bg-muted/30 transition-colors group"
+                      >
+                        <td className="py-3.5 px-4 sm:px-6 font-sans font-semibold text-foreground group-hover:text-primary transition-colors">
+                          <Link href={`/visualizer?algo=${row.id}`} className="hover:underline">
+                            {row.pattern}
+                          </Link>
+                        </td>
+                        <td className="py-3.5 px-4 font-mono text-emerald-500 font-bold">{row.time}</td>
+                        <td className="py-3.5 px-4 font-mono text-cyan-400 font-bold">{row.space}</td>
+                        <td className="py-3.5 px-4 text-foreground/90 font-sans">{row.prerequisite}</td>
+                        <td className="py-3.5 px-4 sm:px-6 text-muted-foreground font-sans">{row.classicProblems}</td>
                       </tr>
                     ))}
                   </tbody>

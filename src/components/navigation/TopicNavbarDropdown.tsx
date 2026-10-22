@@ -13,6 +13,7 @@ import {
   Layers,
   GitFork,
   Boxes,
+  Sliders,
 } from "lucide-react";
 
 interface TopicNavbarDropdownProps {
@@ -105,6 +106,15 @@ const CATEGORIES: CategoryGroup[] = [
       { id: "insertion", num: "20", name: "Insertion Sort", badge: "O(n²)" },
       { id: "merge", num: "21", name: "Merge Sort", badge: "O(n log n)" },
       { id: "quick", num: "22", name: "Quick Sort", badge: "O(n log n)" },
+    ],
+  },
+  {
+    id: "techniques",
+    label: "PROBLEM-SOLVING TECHNIQUES",
+    icon: Sliders,
+    colorClass: "text-fuchsia-400",
+    items: [
+      { id: "two-pointers", num: "23", name: "Two Pointers", badge: "Pointers O(1)" },
     ],
   },
 ];

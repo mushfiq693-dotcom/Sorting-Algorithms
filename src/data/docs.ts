@@ -6,7 +6,7 @@ export interface DocsArticle {
   title: string;
   subtitle: string;
   estimatedReadTime: string;
-  category: "Fundamentals" | "Simple Algorithms" | "Divide and Conquer" | "Advanced Analysis" | "Decision Guide" | "Data Structures" | "Complexity" | "Searching";
+  category: "Fundamentals" | "Simple Algorithms" | "Divide and Conquer" | "Advanced Analysis" | "Decision Guide" | "Data Structures" | "Complexity" | "Searching" | "Techniques";
   content: string; // Markdown / prose structure
   banglaNote?: {
     topic: string;
@@ -3678,6 +3678,197 @@ int mid = (low + high) / 2; // মারাত্মক ভুল!
       label: "Binary Search Studio",
       algorithmId: "binary-search",
       path: "/algorithms/binary-search",
+    },
+  },
+  {
+    slug: "two-pointers-fundamentals",
+    level: 9,
+    levelTitle: "Tier 9: Algorithmic Techniques",
+    order: 23,
+    title: "Two Pointers: Search Invariants & In-Place Memory Compaction",
+    subtitle: "Master opposite converging pointers, same-direction reader-writer compaction, Container With Most Water, and Floyd cycle detection.",
+    estimatedReadTime: "18 min",
+    category: "Techniques",
+    content: `
+### Chapter 1: The Core Philosophy of Two Pointers
+
+The **Two Pointers** technique is one of the most versatile and powerful algorithmic paradigms in computer science. At its core, the technique replaces an inefficient exhaustive search over all pairs of indices $(i, j)$—which inherently costs $O(n^2)$ time in a nested loop—with two coordinated index markers that traverse the data structure in a single linear pass of $O(n)$ time.
+
+What makes this optimization mathematically sound? The answer is **Monotonicity**:
+1. When data possesses monotonic properties (such as being sorted in non-decreasing order), the effect of moving an index is strictly one-directional.
+2. In a sorted array, moving a left pointer to the right ($L \\to L + 1$) strictly non-decreases the value ($arr[L+1] \\ge arr[L]$).
+3. Conversely, moving a right pointer to the left ($R \\to R - 1$) strictly non-increases the value ($arr[R-1] \\le arr[R]$).
+
+Because each step allows us to definitively discard an entire row or column of the $n \\times n$ candidate pair matrix, the algorithm evaluates at most $n$ states.
+
+---
+
+### Chapter 2: Pattern 1 — Opposite-Direction Converging Pointers (Sorted Two Sum)
+
+In the classic **Two Sum on a Sorted Array** (LeetCode 167):
+- Given a sorted array $arr$ and target $T$, find two distinct indices $L < R$ such that $arr[L] + arr[R] = T$.
+- Initialize $L = 0$ at the smallest element and $R = n - 1$ at the largest element.
+- Calculate $S = arr[L] + arr[R]$:
+  - If $S == T$: Solution found. Terminate immediately.
+  - If $S < T$: The sum is too small. Because $arr[R]$ is the maximum remaining value in the active window, $arr[L] + arr[k] \\le arr[L] + arr[R] < T$ for all $k \\le R$. Thus, $arr[L]$ cannot pair with ANY element to achieve sum $T$. We safely increment $L \\to L + 1$, pruning the entire row.
+  - If $S > T$: The sum is too large. By identical reasoning, $arr[R]$ cannot pair with ANY element $\\ge arr[L]$. We safely decrement $R \\to R - 1$, pruning the entire column.
+
+#### The Matrix Pruning Invariant
+Consider the candidate pair grid:
+$$\\begin{matrix}
+(0,0) & (0,1) & \\cdots & (0, n-1) \\\\
+(1,0) & (1,1) & \\cdots & (1, n-1) \\\\
+\\vdots & \\vdots & \\ddots & \\vdots \\\\
+(n-1,0) & (n-1,1) & \\cdots & (n-1, n-1)
+\\end{matrix}$$
+At each comparison, either row $L$ or column $R$ is permanently discarded. Since there are only $n$ rows and $n$ columns, the algorithm terminates in at most $2n = O(n)$ steps.
+
+---
+
+### Chapter 3: Pattern 2 — Geometric Boundary Elimination (Container With Most Water)
+
+In **Container With Most Water** (LeetCode 11):
+- Given vertical lines $h[0], h[1], \\dots, h[n-1]$, the water contained between lines $L$ and $R$ is:
+  $$\\text{Area}(L, R) = (R - L) \\times \\min(h[L], h[R])$$
+- If we start at outer extremes ($L = 0, R = n - 1$), the width is maximized at $n - 1$.
+- Any subsequent step will decrease the width to $R - L - 1$.
+- **The Elimination Lemma:**
+  Assume $h[L] < h[R]$. If we keep $L$ and move $R$ inward to any $R' < R$:
+  $$\\text{Area}(L, R') = (R' - L) \\times \\min(h[L], h[R']) \\le (R' - L) \\times h[L] < (R - L) \\times h[L] = \\text{Area}(L, R)$$
+- **Theorem:** Moving the taller line can NEVER produce a larger area than current!
+- Therefore, all pairs $(L, R - 1), (L, R - 2), \\dots$ are provably inferior. The only move that could possibly discover a larger area is advancing the shorter line: $L \\to L + 1$.
+
+---
+
+### Chapter 4: Pattern 3 — Same-Direction Fast & Slow Pointers (Reader & Writer)
+
+Not all two-pointer techniques converge from opposite ends. In same-direction traversal:
+- **Fast Pointer (Reader):** Scans through the incoming elements of the array.
+- **Slow Pointer (Writer):** Maintains the boundary of the processed, unique, or compacted prefix.
+
+#### Application: Remove Duplicates from Sorted Array (LeetCode 26)
+\`\`\`cpp
+int removeDuplicates(vector<int>& nums) {
+    if (nums.empty()) return 0;
+    int slow = 0; // Writer index
+    for (int fast = 1; fast < nums.size(); fast++) { // Reader index
+        if (nums[fast] != nums[slow]) {
+            slow++;
+            nums[slow] = nums[fast]; // In-place overwrite
+        }
+    }
+    return slow + 1;
+}
+\`\`\`
+This achieves strict $O(n)$ time with $O(1)$ auxiliary space without allocating secondary dynamic buffers.
+
+---
+
+### Chapter 5: Pattern 4 — Floyd's Tortoise and Hare Cycle Detection
+
+In linked lists or functional iteration graphs, detecting cycles with $O(1)$ auxiliary memory is achieved via two pointers moving at different speeds:
+- Slow pointer advances 1 node per iteration ($v = 1$).
+- Fast pointer advances 2 nodes per iteration ($v = 2$).
+
+#### Phase 1: Meeting Detection
+- Let $F$ be distance from head to cycle entrance.
+- Let $C$ be cycle perimeter.
+- Let $a$ be distance from cycle entrance to meeting point.
+- When they collide:
+  $$\\text{Dist}(\\text{Fast}) = 2 \\times \\text{Dist}(\\text{Slow})$$
+  $$F + k \\cdot C + a = 2(F + a) \\implies F + a = k \\cdot C \\implies F = k \\cdot C - a$$
+
+#### Phase 2: Finding Cycle Entrance
+Because $F = (k - 1)C + (C - a)$, the distance from the list head to the cycle start ($F$) is identical to the distance from the collision point to the cycle start along the loop ($C - a$).
+- Reset one pointer to the head of the list.
+- Advance both pointers at speed 1.
+- They will collide precisely at the entrance node of the cycle!
+
+---
+
+### Chapter 6: Asymptotic Analysis & Monotonicity Proof
+
+| Pattern | Traversal Direction | Primary Invariant | Time Complexity | Auxiliary Space |
+| :--- | :--- | :--- | :--- | :--- |
+| **Sorted Two Sum** | Opposite (Inward) | Sorted Array Monotonicity | $O(n)$ | $O(1)$ |
+| **Container Water** | Opposite (Inward) | Shorter Boundary Lemma | $O(n)$ | $O(1)$ |
+| **Remove Duplicates** | Same Direction | Unique Prefix Monotonicity | $O(n)$ | $O(1)$ |
+| **Move Zeroes** | Same Direction | Non-Zero Placement Partition | $O(n)$ | $O(1)$ |
+| **Floyd Cycle Detection** | Same Direction | Relative Velocity $\\Delta v = 1$ | $O(n)$ | $O(1)$ |
+| **Dutch National Flag** | 3-Pointers (L, M, R) | Tri-Partition Boundaries | $O(n)$ | $O(1)$ |
+
+---
+
+### Chapter 7: Essential LeetCode Patterns
+
+1. **LeetCode 167 (Two Sum II - Input Array Is Sorted):**
+   - The canonical opposite-direction problem. Prunes search space in $O(n)$ without hash table memory.
+2. **LeetCode 11 (Container With Most Water):**
+   - Geometric boundary pruning. Maximize area by shifting the shorter vertical wall.
+3. **LeetCode 26 (Remove Duplicates from Sorted Array):**
+   - In-place writer vs reader compaction with zero extra allocations.
+4. **LeetCode 15 (3Sum):**
+   - Sort the array in $O(n \\log n)$, fix element $i$, then execute Two Pointers on remaining subarray $arr[i+1 \\dots n-1]$ in $O(n)$ time. Total: $O(n^2)$ vs brute-force $O(n^3)$.
+5. **LeetCode 42 (Trapping Rain Water):**
+   - Track running \`left_max\` and \`right_max\` pointers inward to compute trapped water volume in a single $O(n)$ pass.
+`,
+    banglaNote: {
+      topic: "Two Pointers টেকনিক সহজ বাংলায় গভীর ব্যাখ্যা",
+      englishContext:
+        "The Two Pointers technique coordinates two index markers traversing a sequence to prune quadratic O(n^2) search spaces into linear O(n) passes and mutate arrays in-place with O(1) auxiliary space.",
+      banglaText: `
+### ১. টু পয়েন্টার (Two Pointers) আসলে কী?
+
+প্রোগ্রামিংয়ে অনেক সময় আমাদের একটি তালিকার মধ্য থেকে দুইটি সংখ্যা খুঁজতে হয় যাদের যোগফল কোনো নির্দিষ্ট মানের সমান, অথবা তালিকার দুই প্রান্ত থেকে উপাদান মিলিয়ে দেখতে হয়।
+
+সাধারণভাবে আমরা যদি নেস্টেড লুপ (লুপের ভেতরে আরেকটি লুপ) ব্যবহার করি, তবে কম্পিউটারকে প্রতিটি উপাদানের সাথে বাকি সব উপাদানের তুলনা করতে হয়। এতে মোট অপারেশনের সংখ্যা দাঁড়ায় n স্কয়ার বা O(n^2), যা ১০ লাখ উপাদানের জন্য প্রায় ৫০ হাজার কোটি অপারেশন!
+
+কিন্তু যদি ডাটা আগে থেকেই সাজানো (Sorted) থাকে, তবে আমরা দুইটি পয়েন্টার বা নির্দেশক ব্যবহার করে মাত্র একটি সিঙ্গেল পাস বা O(n) সময়ে পুরো কাজ সম্পন্ন করতে পারি। একেই বলে টু পয়েন্টার টেকনিক।
+
+---
+
+### ২. বিপরীতমুখী পয়েন্টার (Opposite Direction) কীভাবে কাজ করে?
+
+একটি সর্টেড অ্যারে বিবেচনা করুন: [১, ২, ৪, ৬, ৮, ১১, ১৫], যেখানে আমাদের টার্গেট যোগফল হলো ১৪।
+
+১. আমরা বাম প্রান্তে একটি পয়েন্টার রাখি: Left = ০ (মান ১)।
+২. আমরা ডান প্রান্তে একটি পয়েন্টার রাখি: Right = ৬ (মান ১৫)।
+৩. এবার তাদের যোগফল দেখি: ১ + ১৫ = ১৬।
+৪. ১৬ সংখ্যাটি আমাদের টার্গেট ১৪ এর চেয়ে বড়। যেহেতু তালিকাটি ছোট থেকে বড় সাজানো, তাই ডানপাশের সংখ্যাটি খুব বড় হয়ে গেছে। ফলে আমরা ডানপাশের পয়েন্টার এক ধাপ বামে সরিয়ে আনি (Right--)!
+৫. এখন জোড় হলো ১ + ১১ = ১২। এটি ১৪ এর চেয়ে ছোট। এবার যোগফল বাড়াতে হলে বামপাশের পয়েন্টার এক ধাপ ডানে সরাতে হবে (Left++)!
+৬. এভাবে মাত্র কয়েকটি ধাপে আমরা ৬ এবং ৮ এর সঠিক জোড়টি খুঁজে পাই।
+
+কেন এটি কাজ করে?
+কারণ সর্টেড অ্যারেতে বাম থেকে ডানে গেলে মান সবসময় বাড়ে এবং ডান থেকে বামে গেলে মান কমে। ফলে প্রতি পদক্ষেপে আমরা পুরো একটি সারি বা কলামের সব ভুল সম্ভাবনাকে এক সেকেন্ডে বাদ দিয়ে দিতে পারি।
+
+---
+
+### ৩. সমমুখী ফাস্ট ও স্লো পয়েন্টার (Fast & Slow Pointers)
+
+সবসময় যে দুই প্রান্ত থেকে পয়েন্টার আসতে হবে এমন নয়। কিছু কিছু সমস্যায় দুইটি পয়েন্টার একই দিকে যায়:
+
+১. স্লো পয়েন্টার (Slow / Writer): এটি মেমরিতে লেখা বা নতুন ইউনিক উপাদান ধরে রাখার সীমান্ত হিসেবে কাজ করে।
+২. ফাস্ট পয়েন্টার (Fast / Reader): এটি দ্রুত সামনের দিকে দৌড়ে নতুন নতুন উপাদান খুঁজে দেখে।
+
+যেমন ডুপ্লিকেট সংখ্যা দূর করার ক্ষেত্রে:
+ফাস্ট পয়েন্টার একের পর এক উপাদান স্ক্যান করে। যখনই সে আগের উপাদানের চেয়ে ভিন্ন কোনো নতুন সংখ্যা পায়, তখনই স্লো পয়েন্টার এক ধাপ এগিয়ে সেই ঘরে নতুন সংখ্যাটি লিখে ফেলে।
+এতে কোনো বাড়তি নতুন অ্যারে তৈরি না করেই মূল অ্যারেকে সরাসরি ইন-প্লেস O(1) মেমরিতে কম্প্যাক্ট করা যায়!
+
+---
+
+### ৪. বাস্তব জীবনে ও ইন্টারভিউতে এর গুরুত্ব
+
+১. কনটেইনার উইথ মোস্ট ওয়াটার (Container With Most Water): দুইটি দেওয়ালের মধ্যে সবচেয়ে বেশি পানি ধরে রাখার গাণিতিক সমাধান।
+২. প্যালিনড্রোম যাচাই: কোনো লেখা বা শব্দ উল্টো করে পড়লেও একই কি না তা দুই প্রান্ত থেকে খুব দ্রুত যাচাই করা।
+৩. থ্রি-সাম (3Sum): তিনটি সংখ্যার যোগফল শূন্য বানানোর ইন্টারভিউ প্রশ্ন O(n^3) থেকে O(n^2) এ নামিয়ে আনা।
+৪. লিংকড লিস্টে সাইকেল শনাক্তকরণ (Floyd's Algorithm): মেমোরিতে কোনো লুপ বা সাইকেল তৈরি হয়েছে কি না তা অতিরিক্ত মেমোরি ছাড়া বের করা।
+      `,
+    },
+    quizTopicId: "two-pointers",
+    visualizerLink: {
+      label: "Two Pointers Studio",
+      algorithmId: "two-pointers",
+      path: "/algorithms/two-pointers",
     },
   },
 ];

@@ -23,11 +23,14 @@ export type DataStructureId = "array" | "string" | "deque" | "stack" | "queue" |
 
 export type ComplexityTopicId = "time-complexity" | "space-complexity";
 
+export type TechniqueId = "two-pointers";
+
 export type AlgorithmId =
   | SortingAlgorithmId
   | SearchingAlgorithmId
   | DataStructureId
-  | ComplexityTopicId;
+  | ComplexityTopicId
+  | TechniqueId;
 
 export interface AlgorithmComplexity {
   best: string;
@@ -48,7 +51,7 @@ export interface AlgorithmComplexity {
 export interface AlgorithmMetadata {
   id: AlgorithmId;
   name: string;
-  category?: "sorting" | "searching" | "data-structure" | "complexity" | "tree" | "heap";
+  category?: "sorting" | "searching" | "data-structure" | "complexity" | "tree" | "heap" | "technique";
   shortDescription: string;
   description: string;
   complexity: AlgorithmComplexity;

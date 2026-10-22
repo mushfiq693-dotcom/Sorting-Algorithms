@@ -1616,6 +1616,74 @@ export const QUIZZES: Record<string, QuizTopic> = {
         explanation: "If two vertices already share the same canonical root representative in the disjoint set forest, they already belong to the same connected component. Adding an edge between them immediately creates a cycle."
       }
     ]
+  },
+  "two-pointers": {
+    id: "two-pointers",
+    title: "Two Pointers Technique Mastery Quiz",
+    description: "Assess your mastery of opposite converging scans, reader-writer partition arrays, Container With Most Water invariants, and Floyd's cycle detection.",
+    questions: [
+      {
+        id: "tp1",
+        question: "Under what prerequisite can the Opposite Converging Two-Pointers pattern be applied to find a pair with a target sum in O(n) time and O(1) extra space?",
+        options: [
+          "The array must be sorted (monotonic order) so pointer movements reliably increment or decrement the pair sum",
+          "The array must contain only positive integers",
+          "The array size must be a power of two",
+          "The array must have distinct elements with no duplicates"
+        ],
+        correctIndex: 0,
+        explanation: "The two-pointer technique for pair sum relies fundamentally on monotonicity. When sorted, moving the left pointer rightward strictly increases the sum (or leaves it equal), and moving the right pointer leftward strictly decreases it, allowing each step to prune an entire row/column of candidates."
+      },
+      {
+        id: "tp2",
+        question: "In LeetCode 11 (Container With Most Water), why is it mathematically sound to advance the pointer pointing to the shorter vertical bar rather than the taller one?",
+        options: [
+          "Because container height is strictly bounded by the shorter line; keeping the shorter line while decreasing width cannot possibly yield a larger area",
+          "Because the taller line is always adjacent to the peak",
+          "Because moving both pointers at once would cause an out-of-bounds memory error",
+          "Because the area formula requires width to increase at every step"
+        ],
+        correctIndex: 0,
+        explanation: "Area = min(height[L], height[R]) * (R - L). If we move the pointer pointing to the taller bar inward, width shrinks and the bottleneck height is still bounded by the shorter bar (or worse), guaranteeing the area decreases. Only moving the shorter bar has the potential to find a taller bottleneck that compensates for lost width."
+      },
+      {
+        id: "tp3",
+        question: "In the Fast & Slow (Reader-Writer) pointer pattern for in-place array modification (such as LeetCode 26: Remove Duplicates from Sorted Array), what do the two pointers represent?",
+        options: [
+          "The slow pointer tracks the boundary of unique processed elements, while the fast pointer scans ahead inspecting every new candidate",
+          "The slow pointer traverses from the right end, while the fast pointer starts from the middle",
+          "The fast pointer deletes elements using dynamic allocation while the slow pointer pauses the thread",
+          "Both pointers move at identical speeds but read different memory channels"
+        ],
+        correctIndex: 0,
+        explanation: "The reader-writer pattern maintains an invariant: arr[0..slow] contains all verified, deduplicated elements. The fast pointer traverses every index of the raw input. Whenever arr[fast] reveals a new distinct value, slow increments and receives the value: arr[++slow] = arr[fast]."
+      },
+      {
+        id: "tp4",
+        question: "Floyd's Cycle-Finding Algorithm (Tortoise and Hare) uses two pointers moving at speed 1 and 2 respectively. If a linked list has a cycle of length C, what is the maximum number of steps required for the two pointers to meet inside the loop once both enter it?",
+        options: [
+          "At most C steps, because the relative distance between them decreases by exactly 1 on every iteration",
+          "O(n² log n) steps due to pointer hopping",
+          "Exactly 2C steps regardless of cycle entry point",
+          "They only meet if the cycle length is an odd number"
+        ],
+        correctIndex: 0,
+        explanation: "Relative to the slow pointer, the fast pointer closes the gap by exactly (2 - 1) = 1 step per iteration. In modular arithmetic modulo C, a gap of at most C - 1 takes at most C - 1 iterations to collapse to 0."
+      },
+      {
+        id: "tp5",
+        question: "How does sorting followed by the Two-Pointer technique reduce the time complexity of the 3Sum problem (LeetCode 15) compared to a brute force search?",
+        options: [
+          "Brute force checks O(n³) triplets; fixing one element and using opposite-converging two pointers on the remaining sorted sub-array checks pairs in O(n), achieving O(n²) total time",
+          "It reduces time complexity to O(n log n) by using binary search for all three indices simultaneously",
+          "It eliminates the need to inspect duplicate elements, reducing complexity to O(1)",
+          "It requires an auxiliary 2D hash table requiring O(n²) extra memory"
+        ],
+        correctIndex: 0,
+        explanation: "Sorting takes O(n log n). Then an outer loop fixes the first element nums[i] across n values. For each fixed element, two pointers L and R scan the remainder in O(n) time. Total time is O(n log n + n²) = O(n²), with O(1) auxiliary space beyond sorting."
+      }
+    ]
   }
 };
+
 

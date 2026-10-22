@@ -4,7 +4,7 @@ export interface LearningStep {
   id: AlgorithmId;
   order: number;
   name: string;
-  category: "sorting" | "searching" | "data-structure" | "complexity" | "tree" | "heap";
+  category: "sorting" | "searching" | "data-structure" | "complexity" | "tree" | "heap" | "technique";
   badge: string;
   estimatedTime: string;
   difficulty: "Beginner" | "Intermediate" | "Advanced";
@@ -1139,6 +1139,56 @@ export const LEARNING_PATH: LearningStep[] = [
       stability: "Not stable because partitioning swaps elements across wide distances over the pivot.",
     },
   },
+
+  // ==========================================
+  // TIER 9: PROBLEM-SOLVING TECHNIQUES (PHASE 2)
+  // ==========================================
+  {
+    id: "two-pointers",
+    order: 23,
+    name: "Two Pointers",
+    category: "technique",
+    badge: "Converging O(n)",
+    estimatedTime: "~20 min",
+    difficulty: "Intermediate",
+    reason: "Prune quadratic search spaces into linear single-pass scans and mutate arrays in-place with zero extra memory.",
+    hook: "Given a sorted array of 1 million numbers, how can you find two numbers that sum to a target without checking all 500 billion pairs?",
+    superpower: "O(n) Monotonic Search Pruning & O(1) In-Place Memory Compaction",
+    tradeoff: "Requires Monotonicity (Sorted Order) or Direct Geometric Boundaries",
+    mentalModel: "Two Inspectors Starting at Opposite Ends of a Hallway and Walking Toward the Center",
+    keyPrinciples: [
+      "Opposite-Direction: Pointers start at left (0) and right (n-1) and converge inward.",
+      "Search Space Pruning: In sorted sequences, if sum < target, advance left; if sum > target, decrement right.",
+      "Same-Direction (Fast/Slow): Slow pointer marks writer boundary; fast pointer reads ahead.",
+      "In-Place Compaction: Eliminates duplicates and partitions arrays with strict O(1) auxiliary space.",
+      "Container Lemma: Area is constrained by shorter wall; always advance the shorter pointer inward.",
+      "Cycle Detection: Fast pointer moves twice as fast as slow pointer to detect loops in O(n)."
+    ],
+    analogy: "Like two friends walking toward each other from opposite ends of a street: if they talk on the phone and their combined distance is too short, the person on the left walks forward; if too long, the person on the right steps back.",
+    idea: "The Two Pointers technique coordinates two index markers across an array. Monotonic properties allow eliminating entire rows and columns of candidate pairs on every step, transforming O(n²) brute-force problems into linear O(n) algorithms.",
+    sampleArray: [1, 2, 4, 6, 8, 11, 15],
+    codeBlocks: [
+      {
+        title: "Opposite-Direction (Sorted Two Sum)",
+        lines: "int l = 0, r = arr.size() - 1;\nwhile (l < r) {\n    int sum = arr[l] + arr[r];\n    if (sum == target) return {l, r};\n    if (sum < target) l++;\n    else r--;\n}",
+        explanation: "Monotonically prunes impossible pairs by advancing the left pointer or decrementing the right pointer in O(n) time.",
+      },
+      {
+        title: "Same-Direction (Remove Duplicates)",
+        lines: "int slow = 0;\nfor (int fast = 1; fast < n; fast++) {\n    if (arr[fast] != arr[slow]) {\n        arr[++slow] = arr[fast];\n    }\n}\nreturn slow + 1;",
+        explanation: "The fast reader skips duplicate entries while the slow writer records unique elements in-place.",
+      },
+      {
+        title: "Container With Most Water",
+        lines: "int l = 0, r = height.size() - 1, maxArea = 0;\nwhile (l < r) {\n    maxArea = max(maxArea, (r - l) * min(height[l], height[r]));\n    if (height[l] <= height[r]) l++;\n    else r--;\n}",
+        explanation: "Advances the shorter wall inward because keeping the shorter wall cannot possibly increase volume as width shrinks.",
+      },
+    ],
+    complexityWhy: {
+      time: "Strictly O(n) runtime because the distance between left and right decreases by at least 1 index on every single step.",
+      space: "Strictly O(1) auxiliary space as only two index variables are stored in CPU registers.",
+    },
+  },
 ];
 
 export const SORTING_PATH = LEARNING_PATH.filter((s) => s.category === "sorting");
@@ -1147,6 +1197,7 @@ export const DATA_STRUCTURES_PATH = LEARNING_PATH.filter((s) => s.category === "
 export const COMPLEXITY_PATH = LEARNING_PATH.filter((s) => s.category === "complexity");
 export const TREE_PATH = LEARNING_PATH.filter((s) => s.category === "tree");
 export const HEAP_PATH = LEARNING_PATH.filter((s) => s.category === "heap");
+export const TECHNIQUE_PATH = LEARNING_PATH.filter((s) => s.category === "technique");
 
 export interface GlossaryTerm {
   term: string;

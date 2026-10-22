@@ -45,7 +45,9 @@ This roadmap tracks the long-term sequence of production-quality Data Structure 
 
 | # | Topic | Status | Route / ID | Key Capabilities |
 |---|-------|--------|------------|------------------|
-| 11 | **Two Pointers** | 🟡 *Next Eligible* | `/algorithms/two-pointers` | Converging opposite-ends, same-direction fast/slow pointers, running target sum, cycle detection |
+| 11 | **Two Pointers** | ✅ *Completed* | `/algorithms/two-pointers` | Converging opposite-ends (Two Sum II, Palindrome), Container With Most Water (water tank simulation), fast/slow reader-writer in-place duplicate removal, Floyd cycle detection |
+| 12 | **Sliding Window** | 🟡 *Next Eligible* | `/algorithms/sliding-window` | Fixed-size window running sum, dynamic-size window with character frequencies, at-most-k condition shrinkage, monotonic deque max |
+
 
 ---
 
@@ -71,6 +73,9 @@ This roadmap tracks the long-term sequence of production-quality Data Structure 
 - `UnionFindEngine` (`src/algorithms/union-find.ts`): Pure step generator engine for Disjoint Set Union (DSU) supporting Make-Set, Find with Path Compression, Union by Rank and Union by Size, Connected queries, Cycle Detection in graphs, 4 domain presets (Singletons, Network Hubs, Redundant Cycle, Degenerate Chain), and 2D SVG tree coordinates.
 - `UnionFindVisualizer` (`src/components/visualizer/UnionFindVisualizer.tsx`): 7:5 Studio visualizer featuring interactive SVG forest canvas, 1D memory strip (`parent[]`, `rank[]`), component clusters shelf, cycle alert telemetry, optimization toggles, and operation hub.
 - `UnionFindDiagram` (`src/components/diagrams/UnionFindDiagram.tsx`): Blueprint architecture diagram with 4 interactive tabs (Forest & 1D Array Mapping, Path Compression, Union by Rank/Size, Cycle Detection & Kruskal MST).
+- `TwoPointersEngine` (`src/algorithms/two-pointers.ts`): State-machine engine supporting 4 two-pointer patterns (Opposite Converging Sorted Two Sum, Container With Most Water, Fast & Slow Reader-Writer deduplication, Palindrome Inward Scan) with snapshot generation and domain presets.
+- `TwoPointersVisualizer` (`src/components/visualizer/TwoPointersVisualizer.tsx`): 7:5 Studio visualizer with array cell track, animated `L`/`R` and `Slow`/`Fast` pointers, SVG water tank area simulation, target sum evaluation HUD, pattern switcher, target controls, and mathematical invariants card (strictly NO static C++ code box).
+- `TwoPointersDiagram` (`src/components/diagrams/TwoPointersDiagram.tsx`): Blueprint architecture diagram with 4 interactive tabs (Opposite Converging, Container Water, Fast & Slow, Floyd Cycle Detection).
 
 ---
 
@@ -202,6 +207,19 @@ This roadmap tracks the long-term sequence of production-quality Data Structure 
 - [x] Build succeeds (`npm run build` verified with full route generation)
 - [x] Navigation integration works (Navbar dropdown under DATA STRUCTURES order 17, learning path order 17, topic category hub Data Structures category with 8 visualizations, 5-step master learning path with Bengali accordion default collapsed, Quiz, Bug Hunt, LeetCode Problem Solving)
 
+---
 
-
-
+## 🔍 Quality Gate Checklist for Topic 11 (Two Pointers)
+- [x] Algorithm/technique logic is correct (Opposite Converging Sorted Two Sum, Container With Most Water, Fast & Slow Reader-Writer deduplication, Palindrome Inward Scan)
+- [x] Visualization accurately represents internal state (Interactive array cell track, animated `L`/`R` and `Slow`/`Fast` pointers, SVG water tank area simulation with max capacity record, target sum comparison HUD with `currentSum vs targetSum` telemetry)
+- [x] Main interactions work (Pattern selector, step-by-step playback, play/pause/reset, speed slider, target sum input adjustment)
+- [x] Input handling works (Domain presets, target sum input clamping, valid indices bounds)
+- [x] Reset works (Restores initial state or active pattern preset)
+- [x] Educational explanation is correct (Monotonicity pruning proof, Container area bottleneck invariant $\min(h_L, h_R) \times (R - L)$, Reader-Writer in-place partition array invariant $0 \dots \text{slow}$, Floyd cycle relative velocity closure $(2 - 1) = 1$)
+- [x] Complexity information is correct (Time: $O(n)$ single-pass linear scans, Space: $O(1)$ auxiliary constant space)
+- [x] UI matches AlgoHub design language (Studio 7:5 split layout, no Live Big-O cards, no duplicate legend bars, right column focused on interactive controls and mathematical invariants with strictly NO static C++ code box)
+- [x] Responsive layout works (Mobile horizontal scrolling, desktop responsive 7:5 grid layout)
+- [x] Accessibility is acceptable (Aria labels, distinct pointer badge colors, clear operational logs)
+- [x] No TypeScript errors (`npx tsc --noEmit` verified)
+- [x] Build succeeds (`npm run build` verified with full route generation)
+- [x] Navigation integration works (Navbar dropdown under PROBLEM-SOLVING TECHNIQUES order 23, learning path order 23, topic category hub Techniques category with 1 visualization and comparison table, 5-step master learning path with Bengali accordion default collapsed, Quiz, Bug Hunt, LeetCode Problem Solving strictly with ZERO `keyConcept`)
