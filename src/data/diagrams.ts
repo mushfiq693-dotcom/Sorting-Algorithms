@@ -441,4 +441,27 @@ Task extractTop() {
 }`,
     highlightedLine: 3,
   },
+  "union-find": {
+    algorithmId: "union-find",
+    title: "Union-Find (DSU) — Disjoint Set Forests & Path Compression",
+    subtitle: "Dynamic partitioning of n elements into equivalence classes with near-constant O(α(n)) amortized queries.",
+    caption: "Essential for Kruskal's Minimum Spanning Tree, dynamic network connectivity, image segmentation, and cycle detection.",
+    fixedArray: [0, 0, 0, 3, 3, 5],
+    complexityFormula: "Find: O(α(n)) ≈ O(1) • Union: O(α(n)) ≈ O(1) • Connected: O(α(n)) • Space: O(n)",
+    complexityExplanation: "Combining Union by Rank/Size with Path Compression achieves the theoretical lower bound: O(m · α(n)) total runtime for m operations across n elements, where α(n) ≤ 4 for any practical input.",
+    codeSnippet: `// Disjoint Set Union with Path Compression
+int find(int i) {
+    if (parent[i] == i) return i;
+    return parent[i] = find(parent[i]); // Path compression
+}
+
+void unite(int x, int y) {
+    int rx = find(x), ry = find(y);
+    if (rx == ry) return; // Cycle detected
+    if (rank[rx] < rank[ry]) swap(rx, ry);
+    parent[ry] = rx;
+    if (rank[rx] == rank[ry]) rank[rx]++;
+}`,
+    highlightedLine: 3,
+  },
 };

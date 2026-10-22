@@ -22,6 +22,7 @@ import {
   ArrowLeftRight,
   Hash,
   GitFork,
+  RotateCcw,
 } from "lucide-react";
 
 interface RoadmapTopicAnimationProps {
@@ -62,10 +63,22 @@ export function RoadmapTopicAnimation({ topicId }: RoadmapTopicAnimationProps) {
           {topicId === "linked-list" && <LinkedListMiniAnimation tick={tick} />}
           {topicId === "hash-table" && <HashTableMiniAnimation tick={tick} />}
           {topicId === "binary-tree" && <BinaryTreeMiniAnimation tick={tick} />}
+          {topicId === "bst" && <BstMiniAnimation tick={tick} />}
+          {topicId === "avl-tree" && <AvlTreeMiniAnimation tick={tick} />}
+          {topicId === "heap" && <HeapMiniAnimation tick={tick} />}
+          {topicId === "priority-queue" && <PriorityQueueMiniAnimation tick={tick} />}
+          {topicId === "union-find" && <UnionFindMiniAnimation tick={tick} />}
           {topicId === "linear-search" && <LinearSearchMiniAnimation tick={tick} />}
           {topicId === "binary-search" && <BinarySearchMiniAnimation tick={tick} />}
           {topicId === "time-complexity" && <TimeComplexityMiniAnimation tick={tick} />}
           {topicId === "space-complexity" && <SpaceComplexityMiniAnimation tick={tick} />}
+          {/* Universal fallback for future roadmap expansions */}
+          {![
+            "bubble", "selection", "insertion", "merge", "quick",
+            "array", "string", "deque", "stack", "queue", "linked-list", "hash-table",
+            "binary-tree", "bst", "avl-tree", "heap", "priority-queue", "union-find",
+            "linear-search", "binary-search", "time-complexity", "space-complexity"
+          ].includes(topicId) && <DefaultMiniAnimation topicId={topicId} />}
         </div>
 
         {/* Dynamic Micro Legend / Core Takeaway Badge */}
@@ -82,13 +95,25 @@ export function RoadmapTopicAnimation({ topicId }: RoadmapTopicAnimationProps) {
               {topicId === "string" && "Contiguous Chars: Instant 1-Byte offsets, in-place reversal, & sliding windows"}
               {topicId === "stack" && "Strict LIFO Order: PUSH ↓ and POP ↑ operations only at the TOP"}
               {topicId === "queue" && "First-In, First-Out: Continuous inflow at REAR and outflow at FRONT"}
+              {topicId === "deque" && "Double-Ended Queue: O(1) Push and Pop from both Front and Rear boundaries"}
               {topicId === "linked-list" && "Scattered Heap Nodes: Dynamic memory linked by pointer references"}
               {topicId === "hash-table" && "Direct Hashing: h(k) = k % M converts keys into instant O(1) memory slots"}
               {topicId === "binary-tree" && "Hierarchical Branching: Root branches into Left & Right child subtrees"}
+              {topicId === "bst" && "BST Property: Left (< Root) < Root < Right (> Root) with O(log n) Pruning"}
+              {topicId === "avl-tree" && "Self-Balancing Rotations: Strict |BF| ≤ 1 invariant restored via O(1) LL/RR/LR/RL pivots"}
+              {topicId === "heap" && "Pointerless Complete Tree: Contiguous RAM array mapping with O(log n) Sift-Up & Sift-Down"}
+              {topicId === "priority-queue" && "Priority Dispatch: O(1) Highest-priority peek with O(log n) dynamic heap triage"}
+              {topicId === "union-find" && "Disjoint Set Forests: Near-constant O(α(n)) connectivity with Path Compression & Union-by-Rank"}
               {topicId === "linear-search" && "Sequential Scan: Probes every slot 0..n-1 until target is found"}
               {topicId === "binary-search" && "Logarithmic Bisection: Cuts remaining search space by 50% each probe"}
               {topicId === "time-complexity" && "Asymptotic Scalability: O(1) vs O(log n) vs O(n) vs O(n²) growth"}
               {topicId === "space-complexity" && "Memory Bounds: Input storage vs transient recursion stack frames"}
+              {![
+                "bubble", "selection", "insertion", "merge", "quick",
+                "array", "string", "deque", "stack", "queue", "linked-list", "hash-table",
+                "binary-tree", "bst", "avl-tree", "heap", "priority-queue", "union-find",
+                "linear-search", "binary-search", "time-complexity", "space-complexity"
+              ].includes(topicId) && "Interactive Algorithmic Stage: Visual execution engine & step telemetry"}
             </span>
           </div>
 
@@ -791,3 +816,356 @@ function BinaryTreeMiniAnimation({ tick }: { tick: number }) {
   );
 }
 
+/* 14. BST (BINARY SEARCH TREE) MINI ANIMATION */
+function BstMiniAnimation({ tick }: { tick: number }) {
+  // Cycle between searching for 75 (right branch) and searching for 25 (left branch)
+  const step = tick % 4;
+  const isSearchRight = step < 2;
+  const targetKey = isSearchRight ? 75 : 25;
+  const isAtRoot = step === 0 || step === 2;
+  const isMatched = step === 1 || step === 3;
+
+  return (
+    <div className="flex items-center gap-3 sm:gap-4 text-xs font-mono">
+      {/* Target Key Indicator */}
+      <div className="flex flex-col items-center">
+        <span className="text-[8px] text-muted-foreground uppercase font-bold tracking-wider">Target</span>
+        <div className={`px-2 py-0.5 rounded-md border text-xs font-bold transition-all ${
+          isMatched
+            ? "bg-emerald-500/20 border-emerald-500/50 text-emerald-400 shadow-xs"
+            : "bg-amber-500/15 border-amber-500/40 text-amber-400"
+        }`}>
+          Key: {targetKey}
+        </div>
+        <span className="text-[8px] text-muted-foreground mt-0.5 font-medium">
+          {isAtRoot ? (isSearchRight ? "> 50 (Right)" : "< 50 (Left)") : "Match Found ✓"}
+        </span>
+      </div>
+
+      {/* Mini Tree Branching */}
+      <div className="relative w-32 sm:w-36 h-12 sm:h-14 flex items-center justify-center">
+        <svg className="w-full h-full" viewBox="0 0 144 56">
+          {/* Left Branch */}
+          <line
+            x1="72"
+            y1="14"
+            x2="36"
+            y2="42"
+            stroke={!isSearchRight ? (isMatched ? "#10b981" : "#f59e0b") : "#334155"}
+            strokeWidth={!isSearchRight ? "2.5" : "1.5"}
+            strokeDasharray={!isSearchRight && isAtRoot ? "3 3" : undefined}
+            className="transition-all duration-300"
+          />
+          {/* Right Branch */}
+          <line
+            x1="72"
+            y1="14"
+            x2="108"
+            y2="42"
+            stroke={isSearchRight ? (isMatched ? "#10b981" : "#f59e0b") : "#334155"}
+            strokeWidth={isSearchRight ? "2.5" : "1.5"}
+            strokeDasharray={isSearchRight && isAtRoot ? "3 3" : undefined}
+            className="transition-all duration-300"
+          />
+
+          {/* Root Node: 50 */}
+          <circle
+            cx="72"
+            cy="14"
+            r="10"
+            fill={isAtRoot ? "#d97706" : "#1e293b"}
+            stroke={isAtRoot ? "#fbbf24" : "#64748b"}
+            strokeWidth="2"
+            className="transition-all duration-300"
+          />
+          <text x="72" y="17.5" textAnchor="middle" fill="#f8fafc" fontSize="9" fontWeight="bold">
+            50
+          </text>
+
+          {/* Left Node: 25 (< 50) */}
+          <circle
+            cx="36"
+            cy="42"
+            r="9"
+            fill={!isSearchRight && isMatched ? "#047857" : "#1e293b"}
+            stroke={!isSearchRight && isMatched ? "#34d399" : "#64748b"}
+            strokeWidth="2"
+            className="transition-all duration-300"
+          />
+          <text x="36" y="45.5" textAnchor="middle" fill="#f8fafc" fontSize="8" fontWeight="bold">
+            25
+          </text>
+
+          {/* Right Node: 75 (> 50) */}
+          <circle
+            cx="108"
+            cy="42"
+            r="9"
+            fill={isSearchRight && isMatched ? "#047857" : "#1e293b"}
+            stroke={isSearchRight && isMatched ? "#34d399" : "#64748b"}
+            strokeWidth="2"
+            className="transition-all duration-300"
+          />
+          <text x="108" y="45.5" textAnchor="middle" fill="#f8fafc" fontSize="8" fontWeight="bold">
+            75
+          </text>
+        </svg>
+      </div>
+
+      {/* Decision Status */}
+      <div className="flex flex-col text-[10px]">
+        <span className="text-muted-foreground font-medium">BST Decision:</span>
+        <strong className={`font-bold ${isMatched ? "text-emerald-400" : "text-amber-400"}`}>
+          {isAtRoot ? (isSearchRight ? "75 > 50 (Prune Left)" : "25 < 50 (Prune Right)") : "O(log n) Leaf Hit!"}
+        </strong>
+      </div>
+    </div>
+  );
+}
+
+/* 15. AVL TREE (SELF-BALANCING ROTATION) MINI ANIMATION */
+function AvlTreeMiniAnimation({ tick }: { tick: number }) {
+  // Step 0: Skewed imbalance (BF = +2)
+  // Step 1: Right-Rotate pivot in O(1)
+  const isRotated = tick % 2 === 1;
+
+  return (
+    <div className="flex items-center gap-3 sm:gap-4 text-xs font-mono">
+      {/* Balance Factor Badge */}
+      <div className="flex flex-col items-center">
+        <span className="text-[8px] text-muted-foreground uppercase font-bold tracking-wider">Balance</span>
+        <div className={`px-2 py-0.5 rounded-md border text-xs font-bold transition-all ${
+          isRotated
+            ? "bg-emerald-500/15 border-emerald-500/40 text-emerald-400"
+            : "bg-rose-500/15 border-rose-500/40 text-rose-400 animate-pulse"
+        }`}>
+          {isRotated ? "BF = 0 (Balanced)" : "BF = +2 (Skew)"}
+        </div>
+        <span className="text-[8px] text-muted-foreground mt-0.5 font-medium">
+          {isRotated ? "|BF| ≤ 1 Invariant" : "Needs Rebalance"}
+        </span>
+      </div>
+
+      {/* Dynamic Balanced vs Skewed SVG Tree */}
+      <div className="relative w-32 sm:w-36 h-12 sm:h-14 flex items-center justify-center">
+        <svg className="w-full h-full" viewBox="0 0 144 56">
+          {isRotated ? (
+            /* Balanced Triangle: 20 at root, 10 at left, 30 at right */
+            <>
+              <line x1="72" y1="14" x2="36" y2="42" stroke="#10b981" strokeWidth="2" />
+              <line x1="72" y1="14" x2="108" y2="42" stroke="#10b981" strokeWidth="2" />
+
+              <circle cx="72" cy="14" r="10" fill="#047857" stroke="#34d399" strokeWidth="2" />
+              <text x="72" y="17.5" textAnchor="middle" fill="#f8fafc" fontSize="9" fontWeight="bold">20</text>
+
+              <circle cx="36" cy="42" r="9" fill="#1e293b" stroke="#34d399" strokeWidth="2" />
+              <text x="36" y="45.5" textAnchor="middle" fill="#f8fafc" fontSize="8" fontWeight="bold">10</text>
+
+              <circle cx="108" cy="42" r="9" fill="#1e293b" stroke="#34d399" strokeWidth="2" />
+              <text x="108" y="45.5" textAnchor="middle" fill="#f8fafc" fontSize="8" fontWeight="bold">30</text>
+            </>
+          ) : (
+            /* Imbalanced Left-Skewed Chain: 30 at root, 20 middle, 10 leaf */
+            <>
+              <line x1="100" y1="12" x2="68" y2="28" stroke="#f43f5e" strokeWidth="2" strokeDasharray="3 3" />
+              <line x1="68" y1="28" x2="36" y2="44" stroke="#f43f5e" strokeWidth="2" strokeDasharray="3 3" />
+
+              <circle cx="100" cy="12" r="9" fill="#881337" stroke="#f43f5e" strokeWidth="2" />
+              <text x="100" y="15" textAnchor="middle" fill="#f8fafc" fontSize="8" fontWeight="bold">30</text>
+
+              <circle cx="68" cy="28" r="9" fill="#1e293b" stroke="#f43f5e" strokeWidth="1.5" />
+              <text x="68" y="31" textAnchor="middle" fill="#f8fafc" fontSize="8" fontWeight="bold">20</text>
+
+              <circle cx="36" cy="44" r="9" fill="#1e293b" stroke="#f43f5e" strokeWidth="1.5" />
+              <text x="36" y="47" textAnchor="middle" fill="#f8fafc" fontSize="8" fontWeight="bold">10</text>
+            </>
+          )}
+        </svg>
+      </div>
+
+      {/* Rotation Status */}
+      <div className="flex flex-col text-[10px]">
+        <span className="text-muted-foreground font-medium">Rotation Action:</span>
+        <strong className={`font-bold flex items-center gap-1 ${isRotated ? "text-emerald-400" : "text-amber-400"}`}>
+          <RotateCcw className={`h-3 w-3 ${isRotated ? "" : "animate-spin"}`} />
+          <span>{isRotated ? "Right Rotation (LL)" : "Triggering Pivot ↻"}</span>
+        </strong>
+      </div>
+    </div>
+  );
+}
+
+/* 16. BINARY HEAP (POINTERLESS TREE & RAM ARRAY) MINI ANIMATION */
+function HeapMiniAnimation({ tick }: { tick: number }) {
+  const step = tick % 3;
+  const heapArray = [10, 20, 15, 35, 42];
+
+  return (
+    <div className="flex flex-col items-center gap-1 font-mono">
+      {/* Contiguous Array Slots */}
+      <div className="flex items-center gap-1 sm:gap-1.5">
+        {heapArray.map((val, idx) => {
+          const isRoot = idx === 0;
+          const isChildren = step === 1 && (idx === 1 || idx === 2);
+          return (
+            <div key={idx} className="flex flex-col items-center">
+              <span className={`text-[8px] font-bold ${
+                isRoot && step === 0 ? "text-emerald-400" : isChildren ? "text-amber-400" : "text-muted-foreground"
+              }`}>
+                {isRoot ? "ROOT [0]" : `[${idx}]`}
+              </span>
+              <motion.div
+                animate={{ scale: (isRoot && step === 0) || isChildren ? 1.08 : 1 }}
+                className={`w-7 sm:w-9 h-7 rounded-lg border font-mono text-xs font-bold flex items-center justify-center transition-all ${
+                  isRoot && step === 0
+                    ? "bg-emerald-500 text-slate-950 border-emerald-300 shadow-md shadow-emerald-500/30"
+                    : isChildren
+                    ? "bg-amber-500/20 text-amber-300 border-amber-400 animate-pulse"
+                    : "bg-secondary border-border text-foreground"
+                }`}
+              >
+                <span>{val}</span>
+              </motion.div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Duality & Zero Pointer Formula */}
+      <div className="text-[10px] text-amber-500 font-semibold flex items-center gap-1">
+        <Zap className="h-3 w-3 text-amber-400 fill-current" />
+        <span>
+          {step === 0 && "Min-Heap Root: O(1) Instant Minimum Access at arr[0]"}
+          {step === 1 && "Children Mapping: Left = 2i+1, Right = 2i+2 in contiguous RAM"}
+          {step === 2 && "Sift-Down / Sift-Up: O(log n) tree maintenance with zero pointers"}
+        </span>
+      </div>
+    </div>
+  );
+}
+
+/* 17. PRIORITY QUEUE MINI ANIMATION */
+function PriorityQueueMiniAnimation({ tick }: { tick: number }) {
+  const step = tick % 3;
+
+  const tasks = [
+    { id: "VIP", prio: 99, label: "Critical", isVip: true },
+    { id: "T2", prio: 75, label: "High", isVip: false },
+    { id: "T3", prio: 40, label: "Normal", isVip: false },
+    { id: "T4", prio: 15, label: "Low", isVip: false },
+  ];
+
+  return (
+    <div className="flex flex-col items-center gap-1 font-mono">
+      <div className="flex items-center gap-2">
+        {/* Front Exit */}
+        <div className="flex items-center text-[9px] font-bold text-emerald-400 gap-0.5">
+          <Sparkles className="h-3 w-3 text-emerald-400 animate-pulse" />
+          <span>DISPATCH O(1)</span>
+        </div>
+
+        {/* Priority Task Conveyor */}
+        <div className="flex items-center gap-1.5 p-1 rounded-xl border border-amber-500/40 bg-secondary/40 shadow-inner">
+          {tasks.map((task, i) => {
+            const isDispatched = step === 2 && i === 0;
+            const isPromoted = step === 1 && i === 0;
+            return (
+              <motion.div
+                key={task.id}
+                animate={{
+                  scale: isPromoted ? 1.08 : 1,
+                  opacity: isDispatched ? 0.4 : 1,
+                  y: isPromoted ? -2 : 0,
+                }}
+                className={`px-2 py-0.5 rounded-lg border font-mono text-[11px] font-bold flex flex-col items-center shadow-xs transition-all ${
+                  task.isVip
+                    ? "bg-amber-500 text-slate-950 border-amber-300 shadow-md shadow-amber-500/40"
+                    : "bg-card border-border text-foreground"
+                }`}
+              >
+                <div className="flex items-center gap-0.5">
+                  <span>P:{task.prio}</span>
+                </div>
+                <span className="text-[7px] uppercase tracking-wider font-semibold opacity-80">
+                  {task.label}
+                </span>
+              </motion.div>
+            );
+          })}
+        </div>
+
+        {/* Dynamic Action Indicator */}
+        <div className="text-[9px] font-bold text-cyan-400">
+          {step === 2 ? "POPPED ✓" : step === 1 ? "SIFT-UP ↑" : "ENQUEUE ⤹"}
+        </div>
+      </div>
+
+      <div className="text-[10px] text-cyan-500 font-semibold flex items-center gap-1">
+        <Clock className="h-3 w-3 text-cyan-400" />
+        <span>
+          {step === 0 && "Arrival: Tasks dispatched by Priority metric, never arrival order"}
+          {step === 1 && "Dynamic Triage: VIP Task (P:99) surges to front in O(log n)"}
+          {step === 2 && "Dispatch: O(1) peek extraction at root powers OS thread schedulers"}
+        </span>
+      </div>
+    </div>
+  );
+}
+
+/* 18. UNION-FIND (DISJOINT SET UNION) MINI ANIMATION */
+function UnionFindMiniAnimation({ tick }: { tick: number }) {
+  const isMerged = tick % 2 === 1;
+
+  return (
+    <div className="flex flex-col items-center gap-1 font-mono">
+      <div className="flex items-center gap-2.5">
+        {/* Set 1 */}
+        <div className="flex items-center gap-1 px-2.5 py-1 rounded-lg border border-cyan-500/40 bg-cyan-500/10 text-cyan-300 text-xs font-bold shadow-xs">
+          <span>Set A: [1, 2]</span>
+        </div>
+
+        <motion.div
+          animate={{ scale: isMerged ? 1.15 : 1 }}
+          className="text-amber-400 font-bold text-xs"
+        >
+          {isMerged ? "∪ Unite" : "vs"}
+        </motion.div>
+
+        {/* Set 2 */}
+        <div className="flex items-center gap-1 px-2.5 py-1 rounded-lg border border-purple-500/40 bg-purple-500/10 text-purple-300 text-xs font-bold shadow-xs">
+          <span>Set B: [3, 4]</span>
+        </div>
+      </div>
+
+      <div className="text-[10px] text-cyan-500 font-semibold flex items-center gap-1">
+        <GitBranch className="h-3 w-3 text-cyan-400" />
+        <span>
+          {isMerged
+            ? "Path Compression: Merged root in near-constant O(α(n)) inverse Ackermann time"
+            : "Disjoint Sets: find(x) verifies cycle-free partitions and component IDs in O(1)"}
+        </span>
+      </div>
+    </div>
+  );
+}
+
+/* 19. UNIVERSAL FALLBACK FOR UPCOMING EXPANSIONS */
+function DefaultMiniAnimation({ topicId }: { topicId: string }) {
+  return (
+    <div className="flex flex-col items-center justify-center gap-1.5 font-mono">
+      <div className="flex items-center gap-2 px-3 py-1 rounded-xl border border-cyan-500/30 bg-cyan-500/10 text-cyan-300 shadow-xs">
+        <Cpu className="h-3.5 w-3.5 text-cyan-400 animate-pulse" />
+        <span className="text-xs font-bold capitalize">
+          {topicId.replace(/-/g, " ")}
+        </span>
+        <span className="text-[9px] px-1.5 py-0.5 rounded bg-cyan-500/20 text-cyan-300 font-semibold">
+          Live Preview
+        </span>
+      </div>
+      <div className="text-[10px] text-muted-foreground flex items-center gap-1">
+        <Sparkles className="h-3 w-3 text-cyan-400" />
+        <span>Deterministic algorithmic simulation & execution studio</span>
+      </div>
+    </div>
+  );
+}

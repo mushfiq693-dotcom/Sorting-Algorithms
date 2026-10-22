@@ -33,6 +33,7 @@ Each topic in AlgoHub integrates into the application across 11 key touchpoints:
 | **Visualizer Component** | `src/components/visualizer/<Topic>Visualizer.tsx` | Main interactive canvas, play/pause/step controls, custom inputs, state monitors. |
 | **Diagram Component** | `src/components/diagrams/<Topic>Diagram.tsx` | Static/interactive architectural infographic (memory strip, pointer relations, etc.). |
 | **Page Route & Nav** | `src/app/algorithms/[algorithm]/page.tsx`<br>`src/components/navigation/TopicNavbarDropdown.tsx` | Dynamic route mapping, tab switches, and global navbar inclusion. |
+| **Roadmap Micro-Animation** | `src/components/learn/RoadmapTopicAnimation.tsx` | Mini interactive simulation `<Topic>MiniAnimation` and single-line takeaway badge in the `/learn` roadmap. |
 
 ---
 
@@ -56,6 +57,11 @@ Every topic must populate these high-engagement fields inside its `LearningStep`
 * `mentalModel`: A vivid cognitive anchor (e.g., "Locker Hallway", "Stack of Trays").
 * `keyPrinciples`: 3–4 bullet points formatted with bold leading tags for instant readability.
 * **No Text Analogy Boxes**: Text analogies (`💡 Analogy: ...`) are **completely removed from the UI** across all current and future topics. In the roadmap (`/learn`), the vacant space is elevated with a dedicated topic-specific micro-animation preview (`RoadmapTopicAnimation.tsx`).
+* **Mandatory Roadmap Micro-Animation (`src/components/learn/RoadmapTopicAnimation.tsx`)**:
+  * Every existing and newly added topic (including `bst`, `avl-tree`, `heap`, `priority-queue`, and upcoming expansions) **must** register a dedicated `<Topic>MiniAnimation` inside `RoadmapTopicAnimation.tsx`.
+  * Must specify a concise 1-line educational takeaway string in the dynamic micro-legend.
+  * Guarantees that roadmap cards in `/learn` feature live visual intuition with zero empty/gray placeholder chambers.
+  * A universal `<DefaultMiniAnimation />` safeguards any upcoming topics with a live algorithmic scanner fallback.
 
 #### 📐 Permanent Pedagogical Tier Framework (Beginner-First Ordering Standard)
 All existing and future topics in AlgoHub strictly follow this 8-tier pedagogical hierarchy to guarantee zero cognitive friction for newcomers:
@@ -263,6 +269,12 @@ Every topic must provide a complete 360° mastery suite:
   * **Zero Star / Sparkles Icons**: Removed `<Sparkles />` star icons from both the section header and `BanglaNote.tsx` footer (replaced with `<BookOpen />`).
   * **Elimination of Redundant C++ Implementation Code Blocks**: Stripped long static C++ implementation code blocks from the theory documentation (`src/data/docs.ts`) across all topics (Bubble Sort, Selection Sort, Insertion Sort, Merge Sort, Quick Sort, Array, String, Stack, Queue, Deque, Hash Table, Binary Tree, Linear Search, Binary Search), maintaining high pedagogical focus on core algorithmic invariants, traces, and complexity bounds.
 
+### 🔄 [2026-10-22] Universal Roadmap Micro-Animation Preview Standard Across All Topics
+* **Mandatory Micro-Animation for Every Topic in `/learn` Roadmap**:
+  * Added dedicated, high-fidelity micro-animations in `RoadmapTopicAnimation.tsx` for **Binary Search Tree** (`bst`), **AVL Tree** (`avl-tree`), **Binary Heap** (`heap`), and **Priority Queue** (`priority-queue`).
+  * Each card features live SVG or Framer-Motion step transitions (e.g., BST key pruning, AVL balance rotations, Heap array-to-tree duality, Priority Queue dynamic dispatch) and a tailored single-line takeaway badge.
+  * Added universal `<DefaultMiniAnimation />` fallback ensuring future expansions never display empty/blank gray boxes.
+
 ---
 
 ## 7. Step-by-Step Implementation Recipe for New Topics
@@ -285,7 +297,11 @@ When implementing subsequent topics from the roadmap (e.g., `String`, `Deque`, `
 7. **Wire Navigation**:
    * Add route mapping in `src/app/algorithms/[algorithm]/page.tsx` adhering to the **5-Step Flow** (`The Idea` → `In-Depth Theory` → `Watch It Work` → `Why It's Fast/Slow` → `Try It (Practice)`).
    * Update `src/components/navigation/TopicNavbarDropdown.tsx`.
-8. **Run Verification & Quality Gate**:
+8. **Register Roadmap Micro-Animation (`src/components/learn/RoadmapTopicAnimation.tsx`)**:
+   * Implement a dedicated `<Topic>MiniAnimation` fitting within ~60px height.
+   * Register the component in `RoadmapTopicAnimation`'s render switch.
+   * Add the topic's core takeaway string in the bottom dynamic micro-legend.
+9. **Run Verification & Quality Gate**:
    * `npx tsc --noEmit` (0 TypeScript errors)
    * `curl` check routes to ensure 200 OK.
    * Verify mobile and desktop viewports.

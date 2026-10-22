@@ -88,6 +88,10 @@ const SpaceComplexityVisualizer = dynamic(
   () => import("@/components/visualizer/SpaceComplexityVisualizer").then((mod) => mod.SpaceComplexityVisualizer),
   { ssr: false, loading: () => <TabLoading /> }
 );
+const UnionFindVisualizer = dynamic(
+  () => import("@/components/visualizer/UnionFindVisualizer").then((mod) => mod.UnionFindVisualizer),
+  { ssr: false, loading: () => <TabLoading /> }
+);
 const BugHunt = dynamic(
   () => import("@/components/challenge/BugHunt").then((mod) => mod.BugHunt),
   { ssr: false, loading: () => <TabLoading /> }
@@ -550,6 +554,8 @@ export default function AlgorithmDetailPage() {
                 <TimeComplexityVisualizer />
               ) : algorithmId === "space-complexity" ? (
                 <SpaceComplexityVisualizer />
+              ) : algorithmId === "union-find" ? (
+                <UnionFindVisualizer />
               ) : (
                 <SortingVisualizer />
               )}

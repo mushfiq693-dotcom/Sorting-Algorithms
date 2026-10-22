@@ -858,11 +858,61 @@ export const LEARNING_PATH: LearningStep[] = [
   },
 
   // ==========================================
+  // TIER 6.98: DISJOINT SET UNION (DSU) / UNION-FIND
+  // ==========================================
+  {
+    id: "union-find",
+    order: 17,
+    name: "Union-Find (DSU)",
+    category: "data-structure",
+    badge: "Partition α(n)",
+    estimatedTime: "~20 min",
+    difficulty: "Intermediate",
+    reason: "Dynamically track partitions and connected components with nearly O(1) amortized queries.",
+    hook: "In a social network with 1 billion users, how can you test if two strangers are connected through a friend chain in practically 1 CPU cycle?",
+    superpower: "Inverse Ackermann O(α(n)) Operations (Practically Instantaneous)",
+    tradeoff: "Cannot Easily Split or Disconnect Sets Once Merged",
+    mentalModel: "Rivers Merging into Common Drainage Basins / Friend Circles",
+    keyPrinciples: [
+      "Representative Invariant: Every disjoint set is represented by a unique root node where parent[root] == root.",
+      "Path Compression: During find(x), re-link all visited nodes directly to the root, collapsing tree height to 1 in O(1).",
+      "Union by Rank: Always attach the shallower tree under the deeper tree to strictly bound tree height by ⌊log₂ n⌋.",
+      "Union by Size: Alternatively, attach the smaller component under the larger component to minimize total node relocations.",
+      "Cycle Detection: If find(u) == find(v), adding edge (u, v) creates a cycle; otherwise, safe to unite without cycles.",
+      "Kruskal's MST Engine: Powers greedy Minimum Spanning Tree construction by filtering redundant edges in O(α(V))."
+    ],
+    analogy: "Like countries forming confederations: each citizen has a local leader pointing up to the head of state. When two nations merge, the smaller nation simply acknowledges the larger nation's leader.",
+    idea: "Union-Find maintains a collection of disjoint sets. Using Path Compression and Union by Rank, find and union operations run in practically O(1) amortized time, backed by simple flat integer arrays.",
+    sampleArray: [0, 0, 0, 3, 3, 5],
+    codeBlocks: [
+      {
+        title: "Find with Path Compression",
+        lines: "int find(int i) {\n    if (parent[i] == i) return i;\n    return parent[i] = find(parent[i]);\n}",
+        explanation: "Recursively finds the set representative and flattens the tree so all intermediate nodes connect directly to root.",
+      },
+      {
+        title: "Union by Rank",
+        lines: "void unite(int x, int y) {\n    int rx = find(x), ry = find(y);\n    if (rx == ry) return;\n    if (rank[rx] < rank[ry]) parent[rx] = ry;\n    else if (rank[rx] > rank[ry]) parent[ry] = rx;\n    else { parent[ry] = rx; rank[rx]++; }\n}",
+        explanation: "Merges two sets by attaching the shorter tree under the taller tree, incrementing rank only on ties.",
+      },
+      {
+        title: "Connected Query",
+        lines: "bool connected(int x, int y) {\n    return find(x) == find(y);\n}",
+        explanation: "Checks if two elements share the same root in O(α(n)) time.",
+      },
+    ],
+    complexityWhy: {
+      time: "Find, Union, and Connected operations all run in amortized O(α(n)) time, where α is the Inverse Ackermann function (α(n) ≤ 4 for n ≤ 10⁸⁰).",
+      space: "O(n) memory to store the parent[] and rank[] integer arrays.",
+    },
+  },
+
+  // ==========================================
   // TIER 7: ELEMENTARY QUADRATIC SORTING
   // ==========================================
   {
     id: "bubble",
-    order: 17,
+    order: 18,
     name: "Bubble Sort",
     category: "sorting",
     badge: "Adjacent Swaps",
@@ -907,7 +957,7 @@ export const LEARNING_PATH: LearningStep[] = [
   },
   {
     id: "selection",
-    order: 18,
+    order: 19,
     name: "Selection Sort",
     category: "sorting",
     badge: "Find Minimum",
@@ -952,7 +1002,7 @@ export const LEARNING_PATH: LearningStep[] = [
   },
   {
     id: "insertion",
-    order: 19,
+    order: 20,
     name: "Insertion Sort",
     category: "sorting",
     badge: "Hand-Sorting Cards",
@@ -1001,7 +1051,7 @@ export const LEARNING_PATH: LearningStep[] = [
   // ==========================================
   {
     id: "merge",
-    order: 20,
+    order: 21,
     name: "Merge Sort",
     category: "sorting",
     badge: "Divide & Conquer",
@@ -1046,7 +1096,7 @@ export const LEARNING_PATH: LearningStep[] = [
   },
   {
     id: "quick",
-    order: 21,
+    order: 22,
     name: "Quick Sort",
     category: "sorting",
     badge: "Pivot Partition",

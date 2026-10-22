@@ -607,6 +607,38 @@ public:
       },
     ],
   },
+  "union-find": {
+    algorithmId: "union-find",
+    title: "Union-Find: Missing Path Compression Assignment Degrading to O(n)",
+    description:
+      "This recursive find function successfully locates the root representative of an element. However, it returns the recursive call directly without assigning `parent[i] = ...`, failing to compress the path and causing the tree to degrade into an O(n) linear chain!",
+    buggyCode: `int find(int i, vector<int>& parent) {
+    if (parent[i] == i)
+        return i;
+    return find(parent[i], parent); // Bug: forgot parent[i] = assignment!
+}`,
+    buggyLineNumber: 4,
+    hint: "To flatten the tree in-place, the result of find(parent[i], parent) must be assigned back to parent[i] before returning it.",
+    explanation:
+      "Line 4 wrote `return find(parent[i], parent);`. While this returns the correct root, it fails to execute Path Compression because `parent[i]` is never updated! Without assigning `parent[i] = find(...)`, the chain remains uncompressed at height n, completely throwing away the O(α(n)) amortized guarantee. The fix is `return parent[i] = find(parent[i], parent);`.",
+    validateFix: (line: string) => {
+      const trimmed = line.replace(/\s+/g, "");
+      return (
+        trimmed.includes("parent[i]=find(") ||
+        trimmed.includes("parent[i]=find(parent[i]")
+      );
+    },
+    flawedRunner: () => [
+      {
+        type: "call-enter",
+        fn: "find",
+        args: [5],
+        description:
+          "Traversed 5 hops to find root 0, but parent[5] remained 4 without flattening!",
+      },
+    ],
+  },
 };
+
 
 

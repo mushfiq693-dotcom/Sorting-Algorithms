@@ -25,6 +25,7 @@ import { BstVisualizer } from "./BstVisualizer";
 import { AvlTreeVisualizer } from "./AvlTreeVisualizer";
 import { HeapVisualizer } from "./HeapVisualizer";
 import { PriorityQueueVisualizer } from "./PriorityQueueVisualizer";
+import { UnionFindVisualizer } from "./UnionFindVisualizer";
 import { Sparkles, ArrowLeft } from "lucide-react";
 
 const DEFAULT_INITIAL_ARRAY = [48, 15, 86, 34, 92, 28, 65, 12, 54, 78, 23, 95, 41, 60, 31];
@@ -409,6 +410,7 @@ export function SortingVisualizer({
           {selectedAlgorithm === "binary-search" && <BinarySearchVisualizer />}
           {selectedAlgorithm === "time-complexity" && <TimeComplexityVisualizer />}
           {selectedAlgorithm === "space-complexity" && <SpaceComplexityVisualizer />}
+          {selectedAlgorithm === "union-find" && <UnionFindVisualizer />}
         </div>
       </div>
     );

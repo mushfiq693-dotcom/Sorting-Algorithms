@@ -1549,6 +1549,73 @@ export const QUIZZES: Record<string, QuizTopic> = {
         explanation: "Without a priority queue, scanning all unsettled vertices to find the minimum distance takes O(V) per step, leading to O(V²) total runtime. A Min-PQ extracts the minimum in O(log V) and updates edges in O(log V), achieving optimal O((V + E) log V)."
       }
     ]
+  },
+  "union-find": {
+    id: "union-find",
+    title: "Union-Find (DSU) Knowledge Quiz",
+    description: "Assess your understanding of disjoint set forests, path compression mechanics, union by rank bounds, Inverse Ackermann complexity, and cycle detection.",
+    questions: [
+      {
+        id: "uf1",
+        question: "What condition mathematically defines that node x is the root representative of its disjoint set in a 0-indexed parent array?",
+        options: [
+          "parent[x] == x",
+          "parent[x] == -1",
+          "rank[x] == 0",
+          "parent[x] == size[x]"
+        ],
+        correctIndex: 0,
+        explanation: "In a standard Union-Find parent array, a node is its own representative if and only if its parent pointer points directly to itself (parent[x] == x)."
+      },
+      {
+        id: "uf2",
+        question: "What is the primary operational effect of Path Compression during a find(x) traversal?",
+        options: [
+          "It re-parents every node along the visited path directly to the root, flattening the tree to height 1 for instant future lookups",
+          "It deletes all visited nodes from the data structure to save memory",
+          "It sorts the elements in ascending order",
+          "It doubles the capacity of the parent array"
+        ],
+        correctIndex: 0,
+        explanation: "Path compression updates the parent pointer of every node visited on the way up to the root, pointing them directly to the root. Subsequent queries on those nodes execute in O(1) time."
+      },
+      {
+        id: "uf3",
+        question: "When using Union by Rank to merge two sets with roots r1 and r2, under what specific condition does the surviving root's rank increase?",
+        options: [
+          "Only when rank[r1] == rank[r2] (both trees have equal rank)",
+          "Whenever any two sets are united",
+          "Only when rank[r1] > rank[r2]",
+          "Rank never changes after initialization"
+        ],
+        correctIndex: 0,
+        explanation: "If the ranks are unequal, the shorter tree is placed beneath the deeper tree without increasing overall tree height. The height only increases by 1 when merging two trees of identical rank."
+      },
+      {
+        id: "uf4",
+        question: "Why is the amortized runtime O(α(n)) of Union-Find with Path Compression and Union by Rank considered practically O(1) constant time in software engineering?",
+        options: [
+          "Because the Inverse Ackermann function α(n) ≤ 4 for all input sizes n ≤ 10⁸⁰ (exceeding total atoms in the observable universe)",
+          "Because modern CPU cache lines automatically prefetch all nodes in O(1)",
+          "Because it uses a hash table with zero collisions",
+          "Because n is always constrained to less than 100 in practice"
+        ],
+        correctIndex: 0,
+        explanation: "The Ackermann function grows faster than tower-of-powers, so its inverse α(n) never exceeds 4 for any practical or cosmological value of n, making operations practically instantaneous."
+      },
+      {
+        id: "uf5",
+        question: "How is Union-Find used to detect whether adding an undirected edge (u, v) introduces a cycle into a graph?",
+        options: [
+          "Check if find(u) == find(v). If their roots are identical, a path already connects them, so adding (u, v) creates a cycle",
+          "Check if u > v",
+          "Check if rank[u] + rank[v] > n",
+          "By counting the total number of edges with DFS"
+        ],
+        correctIndex: 0,
+        explanation: "If two vertices already share the same canonical root representative in the disjoint set forest, they already belong to the same connected component. Adding an edge between them immediately creates a cycle."
+      }
+    ]
   }
 };
 

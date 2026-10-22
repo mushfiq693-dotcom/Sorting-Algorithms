@@ -37,7 +37,15 @@ This roadmap tracks the long-term sequence of production-quality Data Structure 
 | 07 | **AVL Tree** | ✅ *Completed* | `/algorithms/avl-tree` | Balance factor, LL/RR/LR/RL rotations, self-balancing |
 | 08 | **Heap (Min/Max)** | ✅ *Completed* | `/algorithms/heap` | Pointerless 1D array mapping, Sift-Up ($O(\log n)$), Sift-Down ($O(\log n)$), linear Bottom-Up Heapify ($O(n)$ summation proof), index arithmetic calculator |
 | 09 | **Priority Queue** | ✅ *Completed* | `/algorithms/priority-queue` | Priority extraction, task scheduling semantics, Dijkstra / A* frontier modeling, Decrease-Key |
-| 10 | **Union-Find / Disjoint Set** | 🟡 *Next Eligible* | `/algorithms/union-find` | Disjoint set forests, union by rank, path compression |
+| 10 | **Union-Find / Disjoint Set** | ✅ *Completed* | `/algorithms/union-find` | Disjoint set forests, 1D array memory strip (`parent[]` & `rank[]`), Union by Rank/Size, Path Compression, Cycle Detection & Kruskal MST, inverse Ackermann $\alpha(n) \le 4$ proof |
+
+---
+
+## 🚀 Phase 2 — Problem-Solving Techniques
+
+| # | Topic | Status | Route / ID | Key Capabilities |
+|---|-------|--------|------------|------------------|
+| 11 | **Two Pointers** | 🟡 *Next Eligible* | `/algorithms/two-pointers` | Converging opposite-ends, same-direction fast/slow pointers, running target sum, cycle detection |
 
 ---
 
@@ -60,6 +68,9 @@ This roadmap tracks the long-term sequence of production-quality Data Structure 
 - `PriorityQueueEngine` (`src/algorithms/priority-queue.ts`): Pure step generator engine for priority queues with Min-Priority & Max-Priority modes, Sift-Up on Enqueue, Sift-Down on Dequeue, Change-Priority (Decrease-Key / Increase-Key), 4 domain presets (OS Process Scheduler, Hospital ER Triage, Dijkstra Frontier, Network QoS), and 2D SVG tree coordinates.
 - `PriorityQueueVisualizer` (`src/components/visualizer/PriorityQueueVisualizer.tsx`): 7:5 Studio visualizer with Tree SVG + 1D Array strip + CPU Dispatch Runway with history shelf, interactive Enqueue, Dequeue, Peek, Change Priority controls, inline transport playback, speed slider, and synchronized C++ `PriorityQueue<Task>` CodeViewer.
 - `PriorityQueueDiagram` (`src/components/diagrams/PriorityQueueDiagram.tsx`): Comprehensive blueprint infographic with 4 interactive tabs (ADT vs Implementations, OS Process Scheduler Blueprint, Dijkstra Shortest Path Frontier, Change Priority/Decrease-Key).
+- `UnionFindEngine` (`src/algorithms/union-find.ts`): Pure step generator engine for Disjoint Set Union (DSU) supporting Make-Set, Find with Path Compression, Union by Rank and Union by Size, Connected queries, Cycle Detection in graphs, 4 domain presets (Singletons, Network Hubs, Redundant Cycle, Degenerate Chain), and 2D SVG tree coordinates.
+- `UnionFindVisualizer` (`src/components/visualizer/UnionFindVisualizer.tsx`): 7:5 Studio visualizer featuring interactive SVG forest canvas, 1D memory strip (`parent[]`, `rank[]`), component clusters shelf, cycle alert telemetry, optimization toggles, and operation hub.
+- `UnionFindDiagram` (`src/components/diagrams/UnionFindDiagram.tsx`): Blueprint architecture diagram with 4 interactive tabs (Forest & 1D Array Mapping, Path Compression, Union by Rank/Size, Cycle Detection & Kruskal MST).
 
 ---
 
@@ -173,6 +184,23 @@ This roadmap tracks the long-term sequence of production-quality Data Structure 
 - [x] No TypeScript errors (`npx tsc --noEmit` verified)
 - [x] Build succeeds (`npm run build` verified with full route generation)
 - [x] Navigation integration works (Navbar dropdown under HEAP STRUCTURES order 16, learning path order 16, topic category hub Heaps category with 2 visualizations, 5-step master learning path with Bengali accordion default collapsed, Quiz, Bug Hunt, LeetCode Problem Solving)
+ 
+---
+ 
+## 🔍 Quality Gate Checklist for Topic 10 (Union-Find / Disjoint Set)
+- [x] Algorithm/data-structure logic is correct (Make-Set, Find with recursive/iterative path compression, Union by Rank and Union by Size, Connected query, Cycle detection)
+- [x] Visualization accurately represents internal state (Interactive 2D SVG forest canvas with tree links, 1D contiguous memory strip showing `parent[]` and `rank[]`, connected components summary shelf, cycle alert telemetry)
+- [x] Main interactions work (Union(x, y), Find(x), Connected(x, y), Reset, Optimization mode toggles: Path Compression ON/OFF, Union Strategy: Rank vs Size vs Naive, Presets: Clean Singletons, Network Hubs, Redundant Cycle, Degenerate Chain)
+- [x] Input handling works (Valid node IDs 0 to n-1, custom union pair validation, preset selector)
+- [x] Reset works (Restores initial state or active domain preset)
+- [x] Educational explanation is correct (Disjoint set forest ADT, 1D array parent pointer representation, Union by Rank height bound $\le \lfloor\log_2 n\rfloor$, Path Compression flattening, combined inverse Ackermann $O(\alpha(n)) \le 4$ amortized time, Kruskal's MST cycle prevention)
+- [x] Complexity information is correct (Find: $O(\alpha(n))$ amortized, Union: $O(\alpha(n))$ amortized, Connected: $O(\alpha(n))$ amortized, Space: $O(n)$)
+- [x] UI matches AlgoHub design language (Studio 7:5 split layout, no Live Big-O cards, no duplicate legend bars, right column focused on interactive operations and mathematical invariants)
+- [x] Responsive layout works (Mobile horizontal scroll and desktop grid layout)
+- [x] Accessibility is acceptable (Aria labels, distinct color-coded node badges, clear telemetry)
+- [x] No TypeScript errors (`npx tsc --noEmit` verified)
+- [x] Build succeeds (`npm run build` verified with full route generation)
+- [x] Navigation integration works (Navbar dropdown under DATA STRUCTURES order 17, learning path order 17, topic category hub Data Structures category with 8 visualizations, 5-step master learning path with Bengali accordion default collapsed, Quiz, Bug Hunt, LeetCode Problem Solving)
 
 
 

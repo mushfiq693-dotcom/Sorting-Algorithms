@@ -2787,6 +2787,185 @@ With an indexed priority queue:
     },
   },
   {
+    slug: "union-find-fundamentals",
+    level: 5,
+    levelTitle: "Level 5: Advanced Non-Linear Data Structures",
+    order: 4,
+    title: "Disjoint Set Union (Union-Find) Comprehensive Guide",
+    subtitle:
+      "Mathematical foundations of equivalence partitions, disjoint set forests, path compression, union by rank, and the Inverse Ackermann runtime bound.",
+    estimatedReadTime: "18 min",
+    category: "Data Structures",
+    content: `
+### Chapter 1: The Core Philosophy of Disjoint Sets
+
+In computational graph theory, distributed systems, and network topology, a fundamental question emerges continuously: **Are two elements connected?**
+
+Consider a dynamic network where edges between vertices are added incrementally over time:
+- In a naive graph with Breadth-First Search (BFS) or Depth-First Search (DFS), answering a single connectivity query takes $O(V + E)$ time. For $M$ queries across large networks, total time balloons to $O(M \\cdot (V + E))$—completely impractical.
+- **Disjoint Set Union (Union-Find / DSU)** solves this problem with near-constant $O(\\alpha(n))$ time per operation, where $\\alpha$ is the Inverse Ackermann function.
+
+A Disjoint-Set data structure partitions a fixed universe of $n$ elements into dynamic, non-overlapping subsets. It provides two foundational primitives:
+1. **\`find(x)\`**: Determines which subset an element $x$ belongs to by returning the unique *canonical representative* (root) of that subset.
+2. **\`union(x, y)\`**: Merges the subset containing $x$ and the subset containing $y$ into a single unified equivalence class.
+
+---
+
+### Chapter 2: The Disjoint Set Forest Model
+
+Union-Find represents subsets as a **collection of directed trees** called a *Disjoint-Set Forest*:
+- Every element is represented as a node in a tree.
+- Every node stores a pointer to its parent: \`parent[i]\`.
+- The root of each tree is the canonical representative of the entire set, defined by the invariant:
+$$\\text{parent}[\\text{root}] = \\text{root}$$
+
+#### Pointerless 1D Physical Memory Storage
+Remarkably, Union-Find requires zero dynamic tree node objects, pointers, or linked lists. It maps entirely into flat 1D arrays:
+1. **\`parent[]\` Array:** Stores parent indices. If \`parent[i] == i\`, node $i$ is its own root.
+2. **\`rank[]\` Array:** Stores the upper-bound height of the subtree rooted at node $i$.
+3. **\`size[]\` Array:** Stores the total count of nodes belonging to the component rooted at node $i$.
+
+| Element Index $i$ | [0] | [1] | [2] | [3] | [4] | [5] | [6] | [7] |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **\`parent[i]\`** | 0 (Root) | 0 | 0 | 3 (Root) | 3 | 5 (Root) | 5 | 5 |
+| **Component** | Set {0, 1, 2} | Set {0, 1, 2} | Set {0, 1, 2} | Set {3, 4} | Set {3, 4} | Set {5, 6, 7} | Set {5, 6, 7} | Set {5, 6, 7} |
+
+---
+
+### Chapter 3: The Naive Flaw — Degenerate Linked List Chains
+
+If unions are performed arbitrarily (e.g. always setting \`parent[x] = y\` without strategy), the tree can degrade into a single skewed linked list of height $n$:
+- Example: \`union(0, 1)\`, then \`union(1, 2)\`, then \`union(2, 3)\`...
+- Tree structure becomes: $3 \\to 2 \\to 1 \\to 0$.
+- Calling \`find(3)\` now requires traversing through every predecessor, taking linear **$O(n)$ worst-case time**.
+- To prevent this degradation, two synergistic optimizations are applied: **Path Compression** and **Union by Rank**.
+
+---
+
+### Chapter 4: Optimization 1 — Path Compression (Tree Flattening)
+
+**Path Compression** flattens the tree structure during traversal. When searching for the root of node $x$, every node encountered along the path from $x$ up to the root is updated to point directly to the root:
+
+\`\`\`cpp
+// Elegant One-Line Recursive Path Compression
+int find(int i) {
+    if (parent[i] == i) return i;
+    return parent[i] = find(parent[i]); // Re-links parent[i] directly to root
+}
+\`\`\`
+
+#### Visual Transformation:
+- **Before:** Node $4 \\to 3 \\to 2 \\to 1 \\to 0$ (Height = 4, takes 4 hops).
+- **After find(4):** Nodes 4, 3, 2, and 1 all point directly to root 0 (Height = 1, star graph).
+- All subsequent calls to \`find(4)\`, \`find(3)\`, \`find(2)\`, or \`find(1)\` resolve in strictly **$O(1)$ constant time**!
+
+---
+
+### Chapter 5: Optimization 2 — Union by Rank vs Union by Size
+
+When merging two trees with roots $r_1$ and $r_2$, we must avoid making deep trees deeper:
+- **Union by Rank:** \`rank[r]\` represents an upper bound on tree height. We attach the root with smaller rank under the root with larger rank.
+- If $\\text{rank}[r_1] < \\text{rank}[r_2]$, set $\\text{parent}[r_1] = r_2$. The maximum height does not increase.
+- If $\\text{rank}[r_1] > \\text{rank}[r_2]$, set $\\text{parent}[r_2] = r_1$. The maximum height does not increase.
+- If $\\text{rank}[r_1] == \\text{rank}[r_2]$, attach arbitrarily (e.g., $r_2$ under $r_1$) and increment $\\text{rank}[r_1] \\leftarrow \\text{rank}[r_1] + 1$.
+
+**Mathematical Guarantee:** Union by Rank alone guarantees that tree height never exceeds $\\lfloor \\log_2 n \\rfloor$.
+
+---
+
+### Chapter 6: The Inverse Ackermann Function $\\alpha(n)$
+
+When Path Compression and Union by Rank are used simultaneously, Robert Tarjan proved that any sequence of $m$ operations on $n$ elements executes in:
+$$O(m \\cdot \\alpha(n))$$
+
+Here, $\\alpha(n)$ is the inverse of the rapidly growing Ackermann function $A(k, k)$. 
+The Ackermann function grows faster than exponential or tower functions:
+- $A(1, 1) = 3$
+- $A(2, 2) = 7$
+- $A(3, 3) = 61$
+- $A(4, 4) = 2^{2^{2^{65536}}} - 3$
+
+Because $A(4, 4)$ is vastly larger than the estimated number of subatomic particles in the observable universe (approximately $10^{80}$), its inverse satisfies:
+$$\\alpha(n) \\le 4 \\quad \\text{for all practical } n$$
+
+For all real-world engineering inputs, Union-Find operations run in **effectively constant time $O(1)$**!
+
+---
+
+### Chapter 7: Real-World Applications & Algorithmic Patterns
+
+1. **Kruskal's Minimum Spanning Tree (MST):**
+   - Sort all edges by weight.
+   - For each edge $(u, v)$, check if \`find(u) == find(v)\`. If different, unite them and include the edge in the MST.
+2. **Graph Cycle Detection:**
+   - In an undirected graph, an edge $(u, v)$ creates a cycle if and only if $u$ and $v$ already share the same root (\`find(u) == find(v)\`).
+3. **Dynamic Social Network Connectivity:**
+   - Check if two users belong to the same friend cluster in $O(1)$ amortized time.
+4. **Grid Percolation & Number of Islands (LeetCode 200, 130):**
+   - Union neighboring land cells with virtual boundary super-nodes to simulate fluid percolation.
+`,
+    banglaNote: {
+      topic: "Union-Find (Disjoint Set) সহজ বাংলায় গভীর ব্যাখ্যা",
+      englishContext:
+        "Union-Find manages non-overlapping partitions of elements, offering near-constant O(α(n)) find and union operations via Path Compression and Union by Rank.",
+      banglaText: `
+### ১. ইউনিয়ন-ফাইন্ড (Union-Find) আসলে কী?
+
+ধরুন একটি বিশাল ক্লাসরুমে ৫০ জন শিক্ষার্থী আছে। শুরুতে সবাই একা একা বসে আছে, অর্থাৎ প্রত্যেকে নিজের একটি ছোট দলের একমাত্র সদস্য।
+
+এখন যদি বলা হয়:
+- রহিম আর করিম বন্ধু হলো (Union) -> তারা একটি দলে এলো।
+- করিম আর সাজিদ বন্ধু হলো (Union) -> সাজিদও একই দলে যুক্ত হলো।
+- এখন যদি প্রশ্ন করা হয়: রহিম আর সাজিদ কি পরস্পরের সাথে কানেক্টেড? (Find) -> উত্তর হলো হ্যাঁ! কারণ তাদের সবার দলনেতা একজনই।
+
+এই ধরনের বিচ্ছিন্ন দল তৈরি করা (Union) এবং দুইজন একই দলের কি না তা যাচাই করার (Find) সবচেয়ে দ্রুততম ডাটা স্ট্রাকচার হলো ইউনিয়ন-ফাইন্ড বা ডিসজয়েন্ট সেট ইউনিয়ন (DSU)।
+
+---
+
+### ২. এটি মেমরিতে কীভাবে কাজ করে?
+
+কোনো জটিল ট্রি অবজেক্ট বা পয়েন্টার ছাড়াই একটি সাধারণ ১ডি অ্যারের মাধ্যমে পুরো সিস্টেম তৈরি করা যায়:
+১. প্রতিটি সদস্যের একটি প্যারেন্ট থাকে: parent[i]।
+২. যে সদস্য নিজেই নিজের দলের লিডার বা রুট, তার ক্ষেত্রে parent[i] সমান i হয়।
+৩. কোনো উপাদান কোন দলের তা জানতে শুধু প্যারেন্টের সূত্র ধরে রুট পর্যন্ত উপরে উঠতে হয়।
+
+---
+
+### ৩. দুইটি জাদুকরী অপটিমাইজেশন
+
+সাধারণভাবে দল যুক্ত করতে গেলে ট্রি লম্বা লাইনের মতো হয়ে যেতে পারে, যাতে খুঁজতে সময় বেশি লাগতে পারে। এর সমাধানে দুইটি চমৎকার কৌশল ব্যবহার করা হয়:
+
+১. পাথ কমপ্রেশন (Path Compression):
+যখনই আমরা কোনো সদস্যের আসল দলনেতা খুঁজে পাই, পথের সব সদস্যের প্যারেন্টকে সরাসরি আসল দলনেতার সাথে জুড়ে দেওয়া হয়। ফলে গাছটি একদম চ্যাপ্টা হয়ে যায় এবং পরবর্তীতে যেকোনো সদস্যকে খুঁজতে মাত্র ১ কদম সময় লাগে!
+
+২. ইউনিয়ন বাই র‍্যাংক (Union by Rank):
+দুইটি দলকে এক করার সময় যে দলের গাছ ছোট তাকে সবসময় বড় গাছের নিচে যুক্ত করা হয়। এতে গাছের উচ্চতা কখনো অযথা বাড়ে না।
+
+---
+
+### ৪. ইনভার্স একারম্যান ফাংশন আলফা(n) কী?
+
+পাথ কমপ্রেশন এবং ইউনিয়ন বাই র‍্যাংক একসাথে ব্যবহার করলে প্রতিটি অপারেশনে গড়ে যে সময় লাগে তাকে গণিতে বলা হয় O(alpha(n))।
+এই মানটি এতটাই ধীরে বাড়ে যে পুরো পৃথিবীর সব কম্পিউটার মেমোরি একত্র করলেও এর মান ৪ এর বেশি হয় না।
+তাই ব্যবহারিক ক্ষেত্রে ইউনিয়ন-ফাইন্ডের প্রতিটি অপারেশনকে প্রায় ওয়ান স্টেপ বা O(1) ধরা হয়!
+
+---
+
+### ৫. বাস্তব জীবনে কোথায় কাজে লাগে?
+
+১. ক্রুশক্যাল অ্যালগরিদম (Kruskal MST): সবচেয়ে কম খরচে বিদ্যুৎ বা ইন্টারনেট কেবল লাইন বিছাতে সাইকেল এড়াতে এটি ব্যবহৃত হয়।
+২. গ্রাফ সাইকেল ডিটেকশন: কোনো নেটওয়ার্কে লুপ বা সাইকেল তৈরি হয়েছে কি না তা এক নিমিষে ধরা যায়।
+৩. সোশ্যাল নেটওয়ার্ক কানেক্টিভিটি: দুইজন অচেনা মানুষ কোনো না কোনোভাবে ফ্রেন্ড সার্কেলে যুক্ত কি না তা তাৎক্ষণিক যাচাই করা যায়।
+      `,
+    },
+    quizTopicId: "union-find",
+    visualizerLink: {
+      label: "Union-Find Studio",
+      algorithmId: "union-find",
+      path: "/algorithms/union-find",
+    },
+  },
+  {
     slug: "time-complexity",
     level: 6,
     levelTitle: "Level 6: Algorithmic Complexity Analysis",

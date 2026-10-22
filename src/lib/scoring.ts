@@ -40,6 +40,7 @@ export const ORDERED_DATA_STRUCTURES: OrderedTopicItem[] = [
   { id: "avl-tree", name: "AVL Tree", category: "tree" },
   { id: "heap", name: "Binary Heap", category: "heap" },
   { id: "priority-queue", name: "Priority Queue", category: "heap" },
+  { id: "union-find", name: "Union-Find (DSU)", category: "data-structure" },
 ];
 
 export const ORDERED_COMPLEXITY_TOPICS: OrderedTopicItem[] = [
@@ -77,6 +78,7 @@ export const ALGORITHM_NAME_MAP: Record<AlgorithmId, string> = {
   "avl-tree": "AVL Tree",
   heap: "Binary Heap",
   "priority-queue": "Priority Queue",
+  "union-find": "Union-Find (DSU)",
   "time-complexity": "Time Complexity",
   "space-complexity": "Space Complexity",
 };
@@ -104,6 +106,7 @@ export const ALGORITHM_DOCS_MAP: Record<AlgorithmId, string[]> = {
   "avl-tree": ["avl-tree-fundamentals"],
   heap: ["heap-fundamentals"],
   "priority-queue": ["priority-queue-fundamentals"],
+  "union-find": ["union-find-fundamentals"],
   "time-complexity": ["time-complexity", "big-o-for-beginners"],
   "space-complexity": ["space-complexity", "in-place-and-space-complexity"],
 };

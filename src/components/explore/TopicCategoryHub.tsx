@@ -59,7 +59,7 @@ export const CATEGORY_CARDS: CategoryCardMeta[] = [
   {
     key: "data-structure",
     title: "Data Structures",
-    countLabel: "7 Visualizations",
+    countLabel: "8 Visualizations",
     icon: Network,
     iconBg: "bg-emerald-500/10 dark:bg-emerald-500/20",
     iconColor: "text-emerald-500 dark:text-emerald-400",
@@ -221,6 +221,12 @@ const TOPIC_VISUALS: Record<AlgorithmId, TopicVisualMeta> = {
     iconColor: "text-amber-500 dark:text-amber-400",
     iconBorder: "border-amber-500/25",
   },
+  "union-find": {
+    icon: Network,
+    iconBg: "bg-emerald-500/10 dark:bg-emerald-500/20",
+    iconColor: "text-emerald-500 dark:text-emerald-400",
+    iconBorder: "border-emerald-500/25",
+  },
 
   // Searching (Orange / Rust palette)
   "linear-search": {
@@ -273,6 +279,7 @@ const TOPIC_DESCRIPTIONS: Record<AlgorithmId, string> = {
   "avl-tree": "Watch self-balancing tree rotations (LL, RR, LR, RL) and Balance Factor telemetry keep height strictly O(log n).",
   heap: "Explore array-as-tree representation, O(1) peek, O(log n) sift-up/down, and linear O(n) heapify.",
   "priority-queue": "Watch priority-based task dispatching, O(1) peek, O(log n) enqueue/dequeue, and Decrease-Key priority mutations.",
+  "union-find": "Watch disjoint set forests merge, path compression flatten trees to O(1), and cycle detection protect networks.",
 
   // Searching
   "linear-search": "Watch linear search scan elements one by one from start to end for a match.",
@@ -414,6 +421,15 @@ const DATA_STRUCTURE_COMPARISON: DataStructureComparisonRow[] = [
     search: "O(1) avg / O(n) worst",
     insertion: "O(1) avg / O(n) worst",
     deletion: "O(1) avg / O(n) worst",
+    space: "O(n)",
+  },
+  {
+    name: "Union-Find (DSU)",
+    id: "union-find",
+    access: "O(α(n))",
+    search: "O(α(n)) [Find]",
+    insertion: "O(α(n)) [Union]",
+    deletion: "N/A",
     space: "O(n)",
   },
 ];

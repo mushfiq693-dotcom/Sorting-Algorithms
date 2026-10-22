@@ -1810,6 +1810,100 @@ public:
     bool empty() const { return heap.empty(); }
 };`,
   },
+  "union-find": {
+    id: "union-find",
+    name: "Union-Find (DSU)",
+    category: "data-structure",
+    shortDescription:
+      "A tree-based disjoint-set data structure delivering near-instantaneous O(α(n)) amortized set union and find operations.",
+    description:
+      "Union-Find (also known as Disjoint Set Union or DSU) manages a collection of non-overlapping partitions over a finite universe of elements. It supports two primary operations: find (which determines the unique representative or root of the set containing an element) and union (which merges two disjoint sets into a single unified partition). When augmented with the two classic optimizations—Path Compression (flattening tree branches during traversal) and Union by Rank or Size (attaching the shallower tree beneath the deeper tree)—any sequence of m operations on n elements executes in O(m · α(n)) time. Here, α is the Inverse Ackermann function, which grows so astoundingly slowly that α(n) ≤ 4 for all conceivable universe-scale inputs, making DSU operations effectively constant time O(1) in practice. Union-Find is indispensable for Kruskal's Minimum Spanning Tree algorithm, detecting cycles in undirected graphs, tracking connected components in dynamic networks, and simulating grid percolation.",
+    complexity: {
+      best: "O(1)",
+      average: "O(α(n))",
+      worst: "O(α(n))",
+      space: "O(n)",
+      stable: false,
+      inPlace: true,
+      operations: [
+        {
+          name: "Find (with Path Compression)",
+          time: "O(α(n)) ≈ O(1)",
+          space: "O(1)",
+          description: "Traverses to root representative and flattens all visited nodes directly to the root.",
+        },
+        {
+          name: "Union (by Rank/Size)",
+          time: "O(α(n)) ≈ O(1)",
+          space: "O(1)",
+          description: "Resolves roots of both elements and attaches the smaller tree under the larger tree.",
+        },
+        {
+          name: "Connected Query",
+          time: "O(α(n)) ≈ O(1)",
+          space: "O(1)",
+          description: "Checks if find(u) == find(v) to test whether two nodes share the same component.",
+        },
+        {
+          name: "Make Set (Initialization)",
+          time: "O(n)",
+          space: "O(n)",
+          description: "Initializes n disjoint singletons with parent[i] = i and rank[i] = 0.",
+        },
+      ],
+    },
+    cppCode: `// Production-Grade C++ Disjoint Set Union (DSU / Union-Find)
+#include <vector>
+#include <numeric>
+using namespace std;
+
+class DisjointSetUnion {
+    vector<int> parent;
+    vector<int> rank;
+    vector<int> size;
+    int components;
+
+public:
+    DisjointSetUnion(int n) : parent(n), rank(n, 0), size(n, 1), components(n) {
+        iota(parent.begin(), parent.end(), 0);
+    }
+
+    // Find with Path Compression: O(α(n))
+    int find(int i) {
+        if (parent[i] == i) return i;
+        return parent[i] = find(parent[i]); // Path compression
+    }
+
+    // Union by Rank: O(α(n))
+    bool unite(int x, int y) {
+        int rootX = find(x);
+        int rootY = find(y);
+        if (rootX == rootY) return false; // Cycle detected
+
+        if (rank[rootX] < rank[rootY]) {
+            parent[rootX] = rootY;
+            size[rootY] += size[rootX];
+        } else if (rank[rootX] > rank[rootY]) {
+            parent[rootY] = rootX;
+            size[rootX] += size[rootY];
+        } else {
+            parent[rootY] = rootX;
+            size[rootX] += size[rootY];
+            rank[rootX]++;
+        }
+        components--;
+        return true;
+    }
+
+    // Check connectivity in O(α(n))
+    bool connected(int x, int y) {
+        return find(x) == find(y);
+    }
+
+    int getComponents() const { return components; }
+    int getSize(int x) { return size[find(x)]; }
+};`,
+  },
 };
 
 // All 5 Sorting Algorithms
@@ -1836,6 +1930,7 @@ export const DATA_STRUCTURES: AlgorithmId[] = [
   "queue",
   "linked-list",
   "hash-table",
+  "union-find",
 ];
 
 // All Tree Data Structures
@@ -1878,6 +1973,7 @@ export const ALL_TOPICS: AlgorithmId[] = [
   "avl-tree",
   "heap",
   "priority-queue",
+  "union-find",
   "bubble",
   "selection",
   "insertion",

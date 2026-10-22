@@ -50,6 +50,7 @@ const CATEGORIES: CategoryGroup[] = [
       { id: "deque", num: "09", name: "Deque", badge: "Dual-End O(1)" },
       { id: "linked-list", num: "10", name: "Linked List", badge: "Nodes O(1)" },
       { id: "hash-table", num: "11", name: "Hash Table", badge: "Lookup O(1)" },
+      { id: "union-find", num: "17", name: "Union-Find (DSU)", badge: "Disjoint α(n)" },
     ],
   },
   {
@@ -99,11 +100,11 @@ const CATEGORIES: CategoryGroup[] = [
     icon: Cpu,
     colorClass: "text-cyan-400",
     items: [
-      { id: "bubble", num: "17", name: "Bubble Sort", badge: "O(n²)" },
-      { id: "selection", num: "18", name: "Selection Sort", badge: "O(n²)" },
-      { id: "insertion", num: "19", name: "Insertion Sort", badge: "O(n²)" },
-      { id: "merge", num: "20", name: "Merge Sort", badge: "O(n log n)" },
-      { id: "quick", num: "21", name: "Quick Sort", badge: "O(n log n)" },
+      { id: "bubble", num: "18", name: "Bubble Sort", badge: "O(n²)" },
+      { id: "selection", num: "19", name: "Selection Sort", badge: "O(n²)" },
+      { id: "insertion", num: "20", name: "Insertion Sort", badge: "O(n²)" },
+      { id: "merge", num: "21", name: "Merge Sort", badge: "O(n log n)" },
+      { id: "quick", num: "22", name: "Quick Sort", badge: "O(n log n)" },
     ],
   },
 ];
