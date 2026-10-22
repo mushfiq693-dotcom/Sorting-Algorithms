@@ -37,64 +37,6 @@ import {
   PQ_PRESET_DIJKSTRA_FRONTIER,
   PQ_PRESET_NETWORK_QOS,
 } from "@/algorithms/priority-queue";
-import { CodeViewer } from "@/components/code/CodeViewer";
-
-const CPP_PRIORITY_QUEUE_CODE = `template <typename T>
-class PriorityQueue {
-    vector<T> heap;
-    bool isMax;
-
-    bool compare(const T& a, const T& b) {
-        return isMax ? a.priority > b.priority : a.priority < b.priority;
-    }
-
-public:
-    PriorityQueue(bool maxPrio = true) : isMax(maxPrio) {}
-
-    // Enqueue task into priority queue: O(log n)
-    void push(T item) {
-        heap.push_back(item);
-        int i = heap.size() - 1;
-        while (i > 0 && compare(heap[i], heap[(i - 1) / 2])) {
-            swap(heap[i], heap[(i - 1) / 2]);
-            i = (i - 1) / 2;
-        }
-    }
-
-    // Dequeue highest priority task: O(log n)
-    T pop() {
-        if (heap.empty()) throw runtime_error("Empty queue");
-        T top = heap[0];
-        heap[0] = heap.back();
-        heap.pop_back();
-        siftDown(0);
-        return top;
-    }
-
-    // Sift down to maintain priority invariant: O(log n)
-    void siftDown(int i) {
-        int n = heap.size();
-        while (2 * i + 1 < n) {
-            int left = 2 * i + 1, right = 2 * i + 2, target = left;
-            if (right < n && compare(heap[right], heap[left])) target = right;
-            if (compare(heap[target], heap[i])) {
-                swap(heap[i], heap[target]);
-                i = target;
-            } else break;
-        }
-    }
-
-    // O(1) inspection of highest priority task
-    const T& peek() const { return heap.at(0); }
-
-    // Dynamic priority modification: O(log n)
-    void changePriority(int index, int newPrio) {
-        int oldPrio = heap[index].priority;
-        heap[index].priority = newPrio;
-        if (newPrio > oldPrio) siftUp(index);
-        else siftDown(index);
-    }
-};`;
 
 export function PriorityQueueVisualizer() {
   const [engine] = useState<PriorityQueueEngine>(
@@ -718,9 +660,9 @@ export function PriorityQueueVisualizer() {
         </div>
 
         {/* =====================================================================
-            RIGHT COLUMN (5 cols): Operation Controls & C++ Synchronized CodeViewer
+            RIGHT COLUMN (5 cols): Operation Controls & Action Hub
             ===================================================================== */}
-        <div className="lg:col-span-5 flex flex-col gap-4">
+        <div className="lg:col-span-5 flex flex-col gap-4 lg:sticky lg:top-20">
           {/* Action Hub Panel */}
           <div className="p-4 sm:p-5 rounded-2xl border border-border/80 bg-card/60 backdrop-blur-md shadow-sm space-y-4">
             <h4 className="font-heading font-bold text-xs uppercase tracking-wider text-foreground flex items-center gap-2">
@@ -859,25 +801,6 @@ export function PriorityQueueVisualizer() {
                 <span>Clear All Tasks</span>
               </button>
             </div>
-          </div>
-
-          {/* Synchronized C++ CodeViewer */}
-          <div className="rounded-2xl border border-border/80 bg-card/60 backdrop-blur-md p-4 shadow-sm space-y-2">
-            <div className="flex items-center justify-between border-b border-border/60 pb-2">
-              <span className="text-xs font-mono font-bold text-foreground flex items-center gap-2">
-                <span className="h-2 w-2 rounded-full bg-cyan-500" />
-                <span>C++ PriorityQueue Implementation</span>
-              </span>
-              <span className="text-[10px] font-mono text-muted-foreground">
-                Line: {currentStep?.cppLine || "--"}
-              </span>
-            </div>
-
-            <CodeViewer
-              code={CPP_PRIORITY_QUEUE_CODE}
-              activeLineNumber={currentStep?.cppLine ?? null}
-              algorithmName="Priority Queue (C++)"
-            />
           </div>
         </div>
       </div>
