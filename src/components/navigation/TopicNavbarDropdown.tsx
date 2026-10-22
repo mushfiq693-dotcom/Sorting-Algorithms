@@ -115,6 +115,7 @@ const CATEGORIES: CategoryGroup[] = [
     colorClass: "text-fuchsia-400",
     items: [
       { id: "two-pointers", num: "23", name: "Two Pointers", badge: "Pointers O(1)" },
+      { id: "sliding-window", num: "24", name: "Sliding Window", badge: "Window O(n)" },
     ],
   },
 ];

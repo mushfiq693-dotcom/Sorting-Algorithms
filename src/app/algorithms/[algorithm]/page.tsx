@@ -96,6 +96,10 @@ const TwoPointersVisualizer = dynamic(
   () => import("@/components/visualizer/TwoPointersVisualizer").then((mod) => mod.TwoPointersVisualizer),
   { ssr: false, loading: () => <TabLoading /> }
 );
+const SlidingWindowVisualizer = dynamic(
+  () => import("@/components/visualizer/SlidingWindowVisualizer").then((mod) => mod.SlidingWindowVisualizer),
+  { ssr: false, loading: () => <TabLoading /> }
+);
 const BugHunt = dynamic(
   () => import("@/components/challenge/BugHunt").then((mod) => mod.BugHunt),
   { ssr: false, loading: () => <TabLoading /> }
@@ -563,6 +567,8 @@ export default function AlgorithmDetailPage() {
                 <UnionFindVisualizer />
               ) : algorithmId === "two-pointers" ? (
                 <TwoPointersVisualizer />
+              ) : algorithmId === "sliding-window" ? (
+                <SlidingWindowVisualizer />
               ) : (
                 <SortingVisualizer />
               )}

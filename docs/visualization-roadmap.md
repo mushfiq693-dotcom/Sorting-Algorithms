@@ -46,7 +46,8 @@ This roadmap tracks the long-term sequence of production-quality Data Structure 
 | # | Topic | Status | Route / ID | Key Capabilities |
 |---|-------|--------|------------|------------------|
 | 11 | **Two Pointers** | ✅ *Completed* | `/algorithms/two-pointers` | Converging opposite-ends (Two Sum II, Palindrome), Container With Most Water (water tank simulation), fast/slow reader-writer in-place duplicate removal, Floyd cycle detection |
-| 12 | **Sliding Window** | 🟡 *Next Eligible* | `/algorithms/sliding-window` | Fixed-size window running sum, dynamic-size window with character frequencies, at-most-k condition shrinkage, monotonic deque max |
+| 12 | **Sliding Window** | ✅ *Completed* | `/algorithms/sliding-window` | Fixed-size window running sum ($K$-slide), dynamic-size window with character frequencies, at-most-k condition shrinkage, monotonic deque max |
+| 13 | **Prefix Sum & Difference Arrays** | 🟡 *Next Eligible* | `/algorithms/prefix-sum` | 1D prefix sum queries in $O(1)$, 2D matrix prefix sum (inclusion-exclusion), difference array range updates in $O(1)$, Kadane's algorithm connection |
 
 
 ---
@@ -76,6 +77,9 @@ This roadmap tracks the long-term sequence of production-quality Data Structure 
 - `TwoPointersEngine` (`src/algorithms/two-pointers.ts`): State-machine engine supporting 4 two-pointer patterns (Opposite Converging Sorted Two Sum, Container With Most Water, Fast & Slow Reader-Writer deduplication, Palindrome Inward Scan) with snapshot generation and domain presets.
 - `TwoPointersVisualizer` (`src/components/visualizer/TwoPointersVisualizer.tsx`): 7:5 Studio visualizer with array cell track, animated `L`/`R` and `Slow`/`Fast` pointers, SVG water tank area simulation, target sum evaluation HUD, pattern switcher, target controls, and mathematical invariants card (strictly NO static C++ code box).
 - `TwoPointersDiagram` (`src/components/diagrams/TwoPointersDiagram.tsx`): Blueprint architecture diagram with 4 interactive tabs (Opposite Converging, Container Water, Fast & Slow, Floyd Cycle Detection).
+- `SlidingWindowEngine` (`src/algorithms/sliding-window.ts`): State-machine engine supporting 4 sliding window patterns (Fixed-Size $K$-Slide, Dynamic Window Sum $\ge S$, Longest Unique Substring with auxiliary frequency hash, At-Most-$K$ Condition with 0-flip allowance) with snapshot generation, step telemetry, and domain presets.
+- `SlidingWindowVisualizer` (`src/components/visualizer/SlidingWindowVisualizer.tsx`): 7:5 Studio visualizer featuring interactive array/string track with animated `[L` and `R]` bracket overlays, live telemetry HUD (window sum, size, condition validity, max found), pattern switcher, interactive parameter sliders ($K$, $S$, flips), domain presets, and mathematical invariants card (strictly NO static C++ code box).
+- `SlidingWindowDiagram` (`src/components/diagrams/SlidingWindowDiagram.tsx`): Blueprint architecture diagram with 4 interactive tabs (Fixed-Size Window $K$-Slide, Dynamic Expand & Shrink, Frequency Hash Window, Monotonic Deque Window).
 
 ---
 
@@ -223,3 +227,20 @@ This roadmap tracks the long-term sequence of production-quality Data Structure 
 - [x] No TypeScript errors (`npx tsc --noEmit` verified)
 - [x] Build succeeds (`npm run build` verified with full route generation)
 - [x] Navigation integration works (Navbar dropdown under PROBLEM-SOLVING TECHNIQUES order 23, learning path order 23, topic category hub Techniques category with 1 visualization and comparison table, 5-step master learning path with Bengali accordion default collapsed, Quiz, Bug Hunt, LeetCode Problem Solving strictly with ZERO `keyConcept`)
+
+---
+
+## 🔍 Quality Gate Checklist for Topic 12 (Sliding Window)
+- [x] Algorithm/technique logic is correct (Fixed-Size $K$-Slide, Dynamic Window Sum $\ge S$, Longest Unique Substring with auxiliary frequency hash, At-Most-$K$ Condition with 0-flip allowance)
+- [x] Visualization accurately represents internal state (Interactive array/string track with animated `[L` and `R]` bracket overlays, live telemetry HUD with window sum, size, condition validity, max found, parameter sliders)
+- [x] Main interactions work (Pattern selector, step-by-step playback, play/pause/reset, speed slider, $K$ slider, target sum $S$ slider, max flips slider, domain presets)
+- [x] Input handling works (Domain presets, parameter sliders with dynamic bounds, valid indices bounds)
+- [x] Reset works (Restores initial state or active pattern preset)
+- [x] Educational explanation is correct (Fixed-size recurrence $W_{i} = W_{i-1} + a[R] - a[L-1]$, dynamic monotonicity condition $\sum \ge S$, reader-writer frequency hash table, monotonic deque extreme maintenance, amortized $2n$ steps proof)
+- [x] Complexity information is correct (Time: $O(n)$ amortized single-pass linear scans, Space: $O(1)$ to $O(k)$ auxiliary space)
+- [x] UI matches AlgoHub design language (Studio 7:5 split layout, no Live Big-O cards, no duplicate legend bars, right column focused on interactive controls and mathematical invariants with strictly NO static C++ code box)
+- [x] Responsive layout works (Mobile horizontal scrolling, desktop responsive 7:5 grid layout)
+- [x] Accessibility is acceptable (Aria labels, distinct window bracket colors, clear operational logs)
+- [x] No TypeScript errors (`npx tsc --noEmit` verified)
+- [x] Build succeeds (`npm run build` verified with full route generation)
+- [x] Navigation integration works (Navbar dropdown under PROBLEM-SOLVING TECHNIQUES order 24, learning path order 24, topic category hub Techniques category with 2 visualizations and comparison table, 5-step master learning path with Bengali accordion default collapsed with zero `*` characters, Quiz with 5 MCQs, Bug Hunt, LeetCode Problem Solving with 5 problems strictly with ZERO `keyConcept`)

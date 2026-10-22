@@ -485,4 +485,25 @@ bool twoSum(vector<int>& arr, int target, int& l, int& r) {
 }`,
     highlightedLine: 6,
   },
+  "sliding-window": {
+    algorithmId: "sliding-window",
+    title: "Sliding Window — Contiguous Frame Tracking & Delta Math",
+    subtitle: "Converting O(n·k) and O(n²) nested substring searches into O(n) linear single-pass amortized sweeps.",
+    caption: "The foundational paradigm for Fixed-Size Maximum Sum, Dynamic Subarray Sum >= S, Longest Substring Without Repeating Characters, and Sliding Window Maximum.",
+    fixedArray: [2, 1, 5, 1, 3, 2, 8, 4],
+    complexityFormula: "Time: O(n) Amortized (2n pointer moves) • Space: O(1) or O(k) • Optimization: Delta Math",
+    complexityExplanation: "By adding the newly included element at R and subtracting the excluded element at L-1, window states transition in O(1) time. Both pointers advance monotonically without backtracking.",
+    codeSnippet: `// Maximum Sum Subarray of Fixed Size K in O(n)
+int maxSumSubarray(const vector<int>& arr, int k) {
+    int windowSum = 0;
+    for (int i = 0; i < k; i++) windowSum += arr[i];
+    int maxSum = windowSum;
+    for (int r = k; r < arr.size(); r++) {
+        windowSum += arr[r] - arr[r - k]; // O(1) delta slide
+        maxSum = max(maxSum, windowSum);
+    }
+    return maxSum;
+}`,
+    highlightedLine: 7,
+  },
 };

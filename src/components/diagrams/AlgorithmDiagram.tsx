@@ -26,6 +26,7 @@ import { HeapDiagram } from "./HeapDiagram";
 import { PriorityQueueDiagram } from "./PriorityQueueDiagram";
 import { UnionFindDiagram } from "./UnionFindDiagram";
 import { TwoPointersDiagram } from "./TwoPointersDiagram";
+import { SlidingWindowDiagram } from "./SlidingWindowDiagram";
 import { Image } from "lucide-react";
 
 interface AlgorithmDiagramProps {
@@ -75,6 +76,8 @@ export function AlgorithmDiagram({ algorithmId }: AlgorithmDiagramProps) {
         return <UnionFindDiagram />;
       case "two-pointers":
         return <TwoPointersDiagram />;
+      case "sliding-window":
+        return <SlidingWindowDiagram />;
       case "linear-search":
         return <LinearSearchTimelineDiagram />;
       case "binary-search":

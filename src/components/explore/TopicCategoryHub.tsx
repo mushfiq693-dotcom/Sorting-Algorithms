@@ -109,7 +109,7 @@ export const CATEGORY_CARDS: CategoryCardMeta[] = [
   {
     key: "technique",
     title: "Techniques",
-    countLabel: "1 Visualization",
+    countLabel: "2 Visualizations",
     icon: SlidersHorizontal,
     iconBg: "bg-fuchsia-500/10 dark:bg-fuchsia-500/20",
     iconColor: "text-fuchsia-500 dark:text-fuchsia-400",
@@ -273,6 +273,12 @@ const TOPIC_VISUALS: Record<AlgorithmId, TopicVisualMeta> = {
     iconColor: "text-fuchsia-500 dark:text-fuchsia-400",
     iconBorder: "border-fuchsia-500/25",
   },
+  "sliding-window": {
+    icon: ScanLine,
+    iconBg: "bg-indigo-500/10 dark:bg-indigo-500/20",
+    iconColor: "text-indigo-500 dark:text-indigo-400",
+    iconBorder: "border-indigo-500/25",
+  },
 };
 
 // Descriptions from Coddy Tech screenshot for algorithms, plus matched descriptions for others
@@ -309,6 +315,7 @@ const TOPIC_DESCRIPTIONS: Record<AlgorithmId, string> = {
 
   // Techniques
   "two-pointers": "Watch converging and reader-writer pointers traverse sorted arrays and calculate water containers in O(n) time.",
+  "sliding-window": "Slide fixed and dynamic contiguous windows over arrays and strings, updating telemetry in amortized O(n) time.",
 };
 
 interface SortingComparisonRow {
@@ -670,6 +677,30 @@ const TECHNIQUE_COMPARISON: TechniqueComparisonRow[] = [
     space: "O(1)",
     prerequisite: "Functional Graph / Linked List Loop",
     classicProblems: "Linked List Cycle, Find Duplicate Number",
+  },
+  {
+    pattern: "Fixed-Size Window (K-Slide)",
+    id: "sliding-window",
+    time: "O(n)",
+    space: "O(1)",
+    prerequisite: "Known Subarray Length K",
+    classicProblems: "Max Average Subarray I, Permutation in String",
+  },
+  {
+    pattern: "Dynamic Window (Expand & Shrink)",
+    id: "sliding-window",
+    time: "O(n)",
+    space: "O(1) / O(k)",
+    prerequisite: "Monotonicity (Sum or Frequency Property)",
+    classicProblems: "Min Size Subarray Sum, Longest Substring Without Repeating",
+  },
+  {
+    pattern: "Monotonic Deque Window",
+    id: "sliding-window",
+    time: "O(n)",
+    space: "O(k)",
+    prerequisite: "Sliding Window Extrema (Min/Max)",
+    classicProblems: "Sliding Window Maximum (LC 239)",
   },
 ];
 

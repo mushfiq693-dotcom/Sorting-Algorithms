@@ -1683,6 +1683,73 @@ export const QUIZZES: Record<string, QuizTopic> = {
         explanation: "Sorting takes O(n log n). Then an outer loop fixes the first element nums[i] across n values. For each fixed element, two pointers L and R scan the remainder in O(n) time. Total time is O(n log n + n²) = O(n²), with O(1) auxiliary space beyond sorting."
       }
     ]
+  },
+  "sliding-window": {
+    id: "sliding-window",
+    title: "Sliding Window Technique Mastery Assessment",
+    description: "Assess your mastery of fixed-size delta math, dynamic condition-driven contraction, character frequency window hashing, and monotonic deque window tracking.",
+    questions: [
+      {
+        id: "sw1",
+        question: "In a fixed-size sliding window of length K, how does the delta update formula compute the sum of window [i..i+K-1] from the previous window [i-1..i+K-2] in O(1) time?",
+        options: [
+          "By adding the newly entering element arr[i+K-1] and subtracting the leaving element arr[i-1]",
+          "By dividing the entire array by K and computing a prefix product",
+          "By sorting the subarray [i..i+K-1] in ascending order",
+          "By resetting the sum variable to zero and re-adding all K elements"
+        ],
+        correctIndex: 0,
+        explanation: "Two consecutive windows of size K share exactly K - 1 elements in common. Therefore, newSum = prevSum - arr[i - 1] + arr[i + K - 1], taking exactly 1 addition and 1 subtraction in O(1) time."
+      },
+      {
+        id: "sw2",
+        question: "In a dynamic sliding window with an inner while loop nested inside an outer for loop (such as Minimum Size Subarray Sum), why is the total time complexity strictly O(n) instead of O(n²)?",
+        options: [
+          "Because both the right pointer R and left pointer L move strictly monotonically rightward, each advancing at most n times across the entire program (total ≤ 2n steps)",
+          "Because the compiler automatically vectorizes the while loop using AVX-512 instructions",
+          "Because the while loop only runs when the array size is a prime number",
+          "Because the inner loop uses binary search to find the left boundary"
+        ],
+        correctIndex: 0,
+        explanation: "The right pointer R increments at most n times in the outer loop, and the left pointer L increments at most n times in the inner loop. Because L is never reset to 0, total pointer advances are bounded by 2n, proving strict O(n) amortized linear time."
+      },
+      {
+        id: "sw3",
+        question: "When using an auxiliary hash map of last seen indices for LeetCode 3 (Longest Substring Without Repeating Characters), why is the left pointer update written as left = max(left, lastSeen[c] + 1) instead of left = lastSeen[c] + 1?",
+        options: [
+          "To prevent the left pointer from moving backward to an ancient duplicate that occurred outside the currently contracted window",
+          "To ensure the hash map never exceeds 256 keys",
+          "To round the index up to the nearest power of two",
+          "To avoid negative array indexing in 1-indexed languages"
+        ],
+        correctIndex: 0,
+        explanation: "If a duplicate character was observed at an index before the current left pointer (i.e. lastSeen[c] < left), setting left = lastSeen[c] + 1 would move left backward, incorrectly expanding the window to include characters that were already pruned. The max() guard guarantees left only advances monotonically."
+      },
+      {
+        id: "sw4",
+        question: "How does a Monotonic Deque achieve O(1) maximum queries per step for the Sliding Window Maximum problem (LeetCode 239)?",
+        options: [
+          "By maintaining candidate element indices in strictly decreasing order of their values, so the current maximum is always at the front of the deque",
+          "By storing all K elements in a self-balancing AVL tree",
+          "By hashing the window values using cryptographic SHA-256",
+          "By sorting the deque after every insertion using Quick Sort"
+        ],
+        correctIndex: 0,
+        explanation: "When adding arr[R], any older element in the deque with value ≤ arr[R] can never be the maximum again and is popped from the back. Thus, the deque remains sorted in strictly descending order, and deque.front() yields the maximum element in O(1) time."
+      },
+      {
+        id: "sw5",
+        question: "What is the common 'off-by-one' error when calculating the number of elements inside a 0-indexed contiguous window bounded by left index L and right index R inclusive?",
+        options: [
+          "Calculating the length as (R - L) instead of (R - L + 1)",
+          "Using R + L instead of R * L",
+          "Dividing (R - L) by 2",
+          "Forgetting that array indices start at 1 in C++"
+        ],
+        correctIndex: 0,
+        explanation: "In any inclusive range [L..R], the count of elements is (R - L + 1). For instance, window [2..4] contains indices 2, 3, and 4 (3 elements). Calculating (4 - 2) yields 2, which is an off-by-one bug."
+      }
+    ]
   }
 };
 

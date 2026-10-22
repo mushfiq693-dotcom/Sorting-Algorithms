@@ -673,7 +673,44 @@ public:
       },
     ],
   },
+  "sliding-window": {
+    algorithmId: "sliding-window",
+    title: "Sliding Window: Missing Excluded Element Subtraction in Fixed Window",
+    description:
+      "This fixed-size sliding window function calculates the maximum sum of any subarray of size K. However, as the window slides forward, the developer forgot to subtract the element falling out of the window (nums[i - k]). Instead of maintaining K elements, the sum accumulates all elements, producing an inflated result!",
+    buggyCode: `int maxSumSubarray(const vector<int>& nums, int k) {
+    int windowSum = 0;
+    for (int i = 0; i < k; i++) windowSum += nums[i];
+    int maxSum = windowSum;
+    for (int i = k; i < (int)nums.size(); i++) {
+        windowSum += nums[i]; // Bug: forgot to subtract nums[i - k]!
+        maxSum = max(maxSum, windowSum);
+    }
+    return maxSum;
+}`,
+    buggyLineNumber: 6,
+    hint: "When a new element nums[i] enters the right side of a fixed window of size K, which element leaves the left side and must be subtracted?",
+    explanation:
+      "Line 6 added the newly entering element with windowSum += nums[i], but failed to subtract the element exiting the left boundary (nums[i - k]). As a result, the window size continuously expands rather than sliding, turning windowSum into an uncontrolled prefix sum. The correct delta slide is windowSum += nums[i] - nums[i - k];.",
+    validateFix: (line: string) => {
+      const trimmed = line.replace(/\s+/g, "");
+      return (
+        trimmed.includes("nums[i-k]") ||
+        trimmed.includes("-nums[i-k]") ||
+        trimmed.includes("nums[i]-nums[i-k]")
+      );
+    },
+    flawedRunner: () => [
+      {
+        type: "compare",
+        indices: [3, 0],
+        description:
+          "Window slid to [1..3], but leaving element nums[0] was not subtracted. Window sum inflated instead of sliding!",
+      },
+    ],
+  },
 };
+
 
 
 

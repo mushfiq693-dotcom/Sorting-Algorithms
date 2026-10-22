@@ -50,6 +50,7 @@ export const ORDERED_COMPLEXITY_TOPICS: OrderedTopicItem[] = [
 
 export const ORDERED_TECHNIQUES: OrderedTopicItem[] = [
   { id: "two-pointers", name: "Two Pointers", category: "technique" },
+  { id: "sliding-window", name: "Sliding Window", category: "technique" },
 ];
 
 // Backwards compatibility list
@@ -87,6 +88,7 @@ export const ALGORITHM_NAME_MAP: Record<AlgorithmId, string> = {
   "time-complexity": "Time Complexity",
   "space-complexity": "Space Complexity",
   "two-pointers": "Two Pointers",
+  "sliding-window": "Sliding Window",
 };
 
 /**
@@ -116,6 +118,7 @@ export const ALGORITHM_DOCS_MAP: Record<AlgorithmId, string[]> = {
   "time-complexity": ["time-complexity", "big-o-for-beginners"],
   "space-complexity": ["space-complexity", "in-place-and-space-complexity"],
   "two-pointers": ["two-pointers-fundamentals"],
+  "sliding-window": ["sliding-window-fundamentals"],
 };
 
 export const TOPIC_DOCS_MAP = ALGORITHM_DOCS_MAP;

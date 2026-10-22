@@ -1989,6 +1989,93 @@ int removeDuplicates(vector<int>& nums) {
     return slow + 1;
 }`,
   },
+  "sliding-window": {
+    id: "sliding-window",
+    name: "Sliding Window",
+    category: "technique",
+    shortDescription: "Dynamic and fixed-size contiguous frame traversal for linear time subarray and substring problems.",
+    description:
+      "The Sliding Window technique is a fundamental optimization paradigm that maintains a contiguous subsegment (the window) of an array or string defined by two boundaries [L..R]. Instead of repeatedly recalculating properties over all O(n²) subarrays using nested loops, the window transitions dynamically: expanding by advancing the right boundary (R++) and contracting by advancing the left boundary (L++). In Fixed-Size windows of length K, state updates cost strictly O(1) time per slide by adding the newly included element and subtracting the excluded element. In Dynamic-Size windows, the right pointer expands greedily to satisfy problem constraints, and the left pointer contracts greedily to optimize the window size. Because both pointers advance monotonically across n elements, the total runtime is guaranteed to be strictly O(2n) = O(n) amortized with O(1) to O(k) auxiliary memory.",
+    complexity: {
+      best: "O(n)",
+      average: "O(n)",
+      worst: "O(n)",
+      space: "O(1) to O(k)",
+      inPlace: true,
+      spaceNote: "O(1) auxiliary space for numeric bounds; O(min(m, n)) when tracking alphabet frequencies in hash tables.",
+      operations: [
+        {
+          name: "Fixed-Size Slide (K)",
+          time: "O(1)",
+          space: "O(1)",
+          description: "O(1) delta addition of entering element and subtraction of leaving element.",
+        },
+        {
+          name: "Dynamic Expansion (R++)",
+          time: "O(1) amortized",
+          space: "O(1)",
+          description: "Absorbs arr[R] into active window aggregate until condition is satisfied.",
+        },
+        {
+          name: "Greedy Contraction (L++)",
+          time: "O(1) amortized",
+          space: "O(1)",
+          description: "Evicts arr[L] to minimize window length while preserving condition invariants.",
+        },
+        {
+          name: "Auxiliary Hash Lookup",
+          time: "O(1) avg",
+          space: "O(k)",
+          description: "Instant O(1) last-seen frequency lookups for non-repeating substring detection.",
+        },
+      ],
+    },
+    cppCode: `// Production C++ Sliding Window Subroutines
+#include <vector>
+#include <string>
+#include <unordered_map>
+#include <algorithm>
+using namespace std;
+
+// 1. Fixed-Size Window: Max Sum Subarray of Size K in O(n)
+int maxSumSubarray(const vector<int>& nums, int k) {
+    int windowSum = 0;
+    for (int i = 0; i < k; i++) windowSum += nums[i];
+    int maxSum = windowSum;
+    for (int r = k; r < (int)nums.size(); r++) {
+        windowSum += nums[r] - nums[r - k]; // O(1) delta slide
+        maxSum = max(maxSum, windowSum);
+    }
+    return maxSum;
+}
+
+// 2. Dynamic Window: Min Size Subarray Sum >= target in O(n)
+int minSubArrayLen(int target, const vector<int>& nums) {
+    int left = 0, sum = 0, minLen = INT_MAX;
+    for (int right = 0; right < (int)nums.size(); right++) {
+        sum += nums[right];
+        while (sum >= target) {
+            minLen = min(minLen, right - left + 1);
+            sum -= nums[left++];
+        }
+    }
+    return minLen == INT_MAX ? 0 : minLen;
+}
+
+// 3. Longest Substring Without Repeating Characters in O(n)
+int lengthOfLongestSubstring(const string& s) {
+    unordered_map<char, int> lastSeen;
+    int left = 0, maxLen = 0;
+    for (int right = 0; right < (int)s.size(); right++) {
+        if (lastSeen.count(s[right])) {
+            left = max(left, lastSeen[s[right]] + 1);
+        }
+        lastSeen[s[right]] = right;
+        maxLen = max(maxLen, right - left + 1);
+    }
+    return maxLen;
+}`,
+  },
 };
 
 // All 5 Sorting Algorithms
@@ -2040,6 +2127,7 @@ export const COMPLEXITY_TOPICS: AlgorithmId[] = [
 // All Problem-Solving Techniques (Phase 2)
 export const TECHNIQUE_TOPICS: AlgorithmId[] = [
   "two-pointers",
+  "sliding-window",
 ];
 
 // Backward compatibility alias for sorting visualizer
@@ -2065,6 +2153,7 @@ export const ALL_TOPICS: AlgorithmId[] = [
   "priority-queue",
   "union-find",
   "two-pointers",
+  "sliding-window",
   "bubble",
   "selection",
   "insertion",

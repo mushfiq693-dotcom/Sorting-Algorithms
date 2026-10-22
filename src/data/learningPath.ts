@@ -1189,6 +1189,52 @@ export const LEARNING_PATH: LearningStep[] = [
       space: "Strictly O(1) auxiliary space as only two index variables are stored in CPU registers.",
     },
   },
+  {
+    id: "sliding-window",
+    order: 24,
+    name: "Sliding Window",
+    category: "technique",
+    badge: "Window O(n)",
+    estimatedTime: "~25 min",
+    difficulty: "Intermediate",
+    reason: "Track contiguous subarrays and substrings in linear time by adding entering elements and subtracting leaving elements.",
+    hook: "In a stream of 1 million sensor readings, how do you find the maximum average reading over any 100-item window without doing 100 million additions?",
+    superpower: "O(1) Delta Frame Updates & O(n) Amortized Subarray Searches",
+    tradeoff: "Only Applies to Contiguous Elements with Monotonic Expansion/Contraction",
+    mentalModel: "A Magnifying Glass with Adjustable Left and Right Borders Sliding Across a Roll of Film",
+    keyPrinciples: [
+      "Fixed-Size Window: Size K remains constant; each slide adds arr[R] and subtracts arr[L-1] in O(1) time.",
+      "Dynamic-Size Window: Expands R to explore solutions, contracts L greedily to find minimal valid length.",
+      "Delta Math: Never recalculate window aggregates from scratch; use current = previous - leaving + entering.",
+      "Amortized Linear Time: R advances at most n times, L advances at most n times -> Total time is strictly O(2n) = O(n).",
+      "Auxiliary State Tracking: Hash maps or frequency arrays record character counts or last-seen indices for instant O(1) lookups.",
+      "Monotonic Deque Optimization: Keeps window maximum in O(1) by maintaining candidate indices in decreasing value order."
+    ],
+    analogy: "Like a passenger bus traveling down a highway: whenever the bus moves forward, a new passenger enters the front door and an old passenger exits the back door. The bus driver does not recount every passenger on board—they simply add 1 and subtract 1.",
+    idea: "The Sliding Window technique maintains a contiguous slice [L..R] over an array or string. By updating aggregates using delta math (adding entering elements and subtracting exiting elements) and moving boundaries monotonically, it converts O(n·K) and O(n²) nested loop searches into single-pass O(n) algorithms.",
+    sampleArray: [2, 1, 5, 1, 3, 2, 8, 4],
+    codeBlocks: [
+      {
+        title: "Fixed-Size Window (Max Sum Subarray)",
+        lines: "int windowSum = 0;\nfor (int i = 0; i < k; i++) windowSum += arr[i];\nint maxSum = windowSum;\nfor (int r = k; r < n; r++) {\n    windowSum += arr[r] - arr[r - k];\n    maxSum = max(maxSum, windowSum);\n}",
+        explanation: "Slides a fixed window of size K across the array in O(1) time per step by adding arr[r] and subtracting arr[r - k].",
+      },
+      {
+        title: "Dynamic Window (Min Subarray Sum >= S)",
+        lines: "int l = 0, sum = 0, minLen = INT_MAX;\nfor (int r = 0; r < n; r++) {\n    sum += arr[r];\n    while (sum >= target) {\n        minLen = min(minLen, r - l + 1);\n        sum -= arr[l++];\n    }\n}",
+        explanation: "R expands to satisfy the target sum, then L contracts greedily while sum >= target to find the minimal window length.",
+      },
+      {
+        title: "Longest Substring Without Repeating Characters",
+        lines: "unordered_map<char, int> lastSeen;\nint l = 0, maxLen = 0;\nfor (int r = 0; r < s.size(); r++) {\n    if (lastSeen.count(s[r])) l = max(l, lastSeen[s[r]] + 1);\n    lastSeen[s[r]] = r;\n    maxLen = max(maxLen, r - l + 1);\n}",
+        explanation: "Uses a hash map of last seen indices. When a duplicate is detected, L hops directly past the duplicate without backtracking.",
+      },
+    ],
+    complexityWhy: {
+      time: "Strictly O(n) amortized because both left and right pointers increment at most n times across the entire array.",
+      space: "O(1) auxiliary space for numeric arrays, or O(min(m, n)) when storing character frequencies for an alphabet of size m.",
+    },
+  },
 ];
 
 export const SORTING_PATH = LEARNING_PATH.filter((s) => s.category === "sorting");

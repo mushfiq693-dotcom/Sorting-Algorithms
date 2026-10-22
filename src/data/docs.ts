@@ -3871,6 +3871,205 @@ Because $F = (k - 1)C + (C - a)$, the distance from the list head to the cycle s
       path: "/algorithms/two-pointers",
     },
   },
+  {
+    slug: "sliding-window-fundamentals",
+    level: 9,
+    levelTitle: "Tier 9: Algorithmic Techniques",
+    order: 24,
+    title: "Sliding Window: Contiguous Frame Traversal & Delta Invariants",
+    subtitle: "Master fixed-size window delta updates, dynamic condition-driven contraction, character frequency hashing, and monotonic deque tracking.",
+    estimatedReadTime: "20 min",
+    category: "Techniques",
+    content: `
+### Chapter 1: The Core Philosophy of the Sliding Window
+
+In algorithmic problem solving, examining properties of contiguous subsegments—subarrays in arrays or substrings in text—is one of the most frequently occurring problem archetypes. The naive brute-force approach requires evaluating all possible pairs of endpoints $(i, j)$ where $0 \\le i \\le j < n$. Because there are $\\frac{n(n+1)}{2} = O(n^2)$ distinct contiguous slices, and calculating an aggregate (such as sum, average, maximum, or character distinctness) across each slice of length $k$ takes $O(k)$ time, the brute-force runtime scales as:
+
+$$T_{\\text{brute}}(n) = O(n^2 \\cdot k) \\implies O(n^3) \\text{ or } O(n^2)$$
+
+The **Sliding Window** technique fundamentally crushes this complexity to **strict linear time $O(n)$** by recognizing a critical architectural invariant:
+
+> **The Overlapping Frame Principle:** Consecutive windows of length $k$ starting at index $t$ and index $t+1$ share exactly $k - 1$ identical elements in common. It is an algorithmic sin to recount those identical elements from scratch.
+
+Instead of recalculating the window from index 0, we treat the window as a dynamic frame with two boundaries: a left boundary $L$ and a right boundary $R$. As the window moves across the array, we transition from state $t$ to state $t+1$ using **Delta Arithmetic**:
+
+$$S_{t+1} = S_t - \\text{arr}[L-1] + \\text{arr}[R]$$
+
+This single addition and single subtraction executes in **$O(1)$ constant time**, collapsing an $O(n \\cdot k)$ workload into a single $O(n)$ pass.
+
+---
+
+### Chapter 2: Paradigm 1 — Fixed-Size Window ($K$-Slide)
+
+In a fixed-size sliding window, the distance between the two boundaries is held strictly constant: $R - L + 1 = K$.
+
+#### 1. The Operational Lifecycle
+1. **Bootstrap Phase:** Sum the first $K$ elements (indices $0$ to $K - 1$). Initialize \`maxSum = currentSum\`.
+2. **Slide Phase:** Loop with a right pointer $R$ from $K$ up to $n - 1$:
+   - Identify the entering element: $\\text{entering} = \\text{arr}[R]$.
+   - Identify the leaving element: $\\text{leaving} = \\text{arr}[R - K]$.
+   - Update window aggregate: \`windowSum += entering - leaving\`.
+   - Update global maximum: \`maxSum = max(maxSum, windowSum)\`.
+
+\`\`\`cpp
+// Fixed Window: Maximum Sum Subarray of Size K
+int maxSumSubarray(const vector<int>& nums, int k) {
+    if (nums.size() < k) return 0;
+    int windowSum = 0;
+    for (int i = 0; i < k; i++) {
+        windowSum += nums[i];
+    }
+    int maxSum = windowSum;
+    for (int r = k; r < nums.size(); r++) {
+        windowSum += nums[r] - nums[r - k]; // O(1) delta transition
+        maxSum = max(maxSum, windowSum);
+    }
+    return maxSum;
+}
+\`\`\`
+
+---
+
+### Chapter 3: Paradigm 2 — Dynamic Window (Condition-Driven Contraction)
+
+Unlike fixed windows, dynamic windows allow the window size to expand and shrink in response to problem constraints. The canonical problem is **Minimum Size Subarray Sum $\\ge S$** (LeetCode 209).
+
+#### 1. The Two-Phased Loop Rhythm
+Dynamic sliding windows operate under an elegant two-phased rhythm:
+- **Greedy Expansion (R++):** The outer loop advances $R$ one index at a time, absorbing $\\text{arr}[R]$ into the active window sum. As long as $\\text{windowSum} < S$, we must continue expanding because no valid solution can end at $R$ with a smaller left index.
+- **Greedy Contraction (L++):** As soon as $\\text{windowSum} \\ge S$, a valid contiguous subarray has been found. We record its length ($\\min(\\text{minLen}, R - L + 1)$) and immediately test whether a smaller subarray also satisfies the condition by subtracting $\\text{arr}[L]$ and incrementing $L++$.
+
+\`\`\`cpp
+// Dynamic Window: Smallest Subarray with Sum >= target
+int minSubArrayLen(int target, const vector<int>& nums) {
+    int left = 0, sum = 0, minLen = INT_MAX;
+    for (int right = 0; right < nums.size(); right++) {
+        sum += nums[right];
+        while (sum >= target) {
+            minLen = min(minLen, right - left + 1);
+            sum -= nums[left++]; // Greedily shrink left boundary
+        }
+    }
+    return minLen == INT_MAX ? 0 : minLen;
+}
+\`\`\`
+
+---
+
+### Chapter 4: Paradigm 3 — Auxiliary Frequency & Hash State Windows
+
+Many sliding window problems operate on strings where the condition involves character uniqueness, frequency thresholds, or anagram matching (e.g. LeetCode 3: Longest Substring Without Repeating Characters).
+
+#### 1. The Last-Seen Index Monotonic Jump
+When scanning a string, we maintain a hash map storing the most recent 0-based index where each character appeared. If an incoming character $s[R]$ was already observed at index $p$:
+- If $p \\ge L$, the character is currently inside the active window, causing a duplicate violation.
+- Instead of contracting $L$ one step at a time, we execute an **instant monotonic hop**:
+  $$L = \\max(L, p + 1)$$
+- The $\\max()$ operator is vital: if $p < L$, the duplicate occurred in an ancient part of the string that has already been discarded from our window; $L$ must never move backward!
+
+\`\`\`cpp
+// Longest Substring Without Repeating Characters
+int lengthOfLongestSubstring(const string& s) {
+    unordered_map<char, int> lastSeen;
+    int left = 0, maxLen = 0;
+    for (int right = 0; right < s.size(); right++) {
+        if (lastSeen.count(s[right])) {
+            left = max(left, lastSeen[s[right]] + 1); // Monotonic forward hop
+        }
+        lastSeen[s[right]] = right;
+        maxLen = max(maxLen, right - left + 1);
+    }
+    return maxLen;
+}
+\`\`\`
+
+---
+
+### Chapter 5: Mathematical Runtime Proof — The $2n$ Pointer Traversal Bound
+
+A common source of confusion for engineers is the nested loop structure of dynamic sliding windows:
+\`\`\`cpp
+for (int right = 0; right < n; right++) {
+    while (condition) {
+        left++;
+    }
+}
+\`\`\`
+At first glance, a \`while\` loop nested inside a \`for\` loop suggests $O(n^2)$ quadratic complexity. Why is this mathematically false?
+
+#### Formal Amortized Analysis:
+1. **Right Pointer:** The variable \`right\` starts at 0 and increments exactly 1 time per iteration of the outer \`for\` loop. Across the entire function execution, \`right++\` occurs exactly $n$ times.
+2. **Left Pointer:** The variable \`left\` starts at 0. Inside the \`while\` loop, \`left++\` executes. Crucially, \`left\` is **never reset to 0**. It only moves monotonically to the right. Because $L \\le R + 1 \\le n$, the total number of times \`left++\` can execute across the **entire lifecycle of the program** is at most $n$.
+3. **Total Work:**
+   $$\\sum \\text{Pointer Moves} = (n \\text{ advances of } R) + (\\le n \\text{ advances of } L) \\le 2n$$
+   $$T(n) = O(2n) = O(n)$$
+
+Every element enters the window exactly once through $R$ and exits the window at most once through $L$. Therefore, the amortized cost per element is $O(1)$, proving strict linear time.
+
+---
+
+### Chapter 6: Architectural Comparison Matrix
+
+| Pattern Variant | Window Size | Invariant Maintained | Cost Per Step | Space Complexity | Canonical Problem |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **Fixed Window** | Fixed $K$ | Exactly $K$ elements in frame | $O(1)$ Delta Math | $O(1)$ | Max Average Subarray (LC 643) |
+| **Dynamic Window** | Variable | Window condition (Sum $\\ge S$) | $O(1)$ Amortized | $O(1)$ | Min Size Subarray Sum (LC 209) |
+| **Hash Frequency** | Variable | At most 1 of each char | $O(1)$ Map Lookup | $O(\\min(m, n))$ | Longest Unique Substring (LC 3) |
+| **At-Most-K Invariant** | Variable | Valid flips count $\\le K$ | $O(1)$ Amortized | $O(1)$ | Max Consecutive Ones III (LC 1004) |
+| **Monotonic Deque** | Fixed $K$ | Decreasing candidate indices | $O(1)$ Deque Pop | $O(K)$ | Sliding Window Maximum (LC 239) |
+
+---
+
+### Chapter 7: Common Pitfalls & Production Bug Traps
+
+1. **Off-by-One in Window Length:**
+   The number of elements between indices $L$ and $R$ inclusive is $(R - L + 1)$, NOT $(R - L)$. Forgetting the $+1$ is the number one cause of wrong answers in sliding window interview questions.
+2. **Integer Overflow on Large Sums:**
+   When summing arrays of large integers (e.g. $10^5$ elements each up to $10^9$), an ordinary 32-bit \`int\` overflows at $\\approx 2.14 \\times 10^9$. Always declare \`long long windowSum = 0;\` in C++.
+3. **Premature Left-Pointer Hopping:**
+   When using hash maps for duplicate character detection, forgetting the \`left = max(left, lastSeen[c] + 1)\` guard and writing \`left = lastSeen[c] + 1\` causes $L$ to jump backward to ancient characters, corrupting window integrity.
+4. **Recomputing Aggregates Inside Loops:**
+   Calling \`accumulate()\` or re-looping inside the window completely defeats the sliding window technique, degrading runtime from $O(n)$ back to $O(n \\cdot K)$.
+`,
+    banglaNote: {
+      topic: "স্লাইডিং উইন্ডো কৌশলের সহজ পাঠ (Sliding Window in Plain Bengali)",
+      englishContext:
+        "High-yield Bengali guide to Sliding Window invariants, fixed vs dynamic paradigms, O(1) delta arithmetic, and the amortized 2n pointer traversal proof.",
+      banglaText: `
+স্লাইডিং উইন্ডো (Sliding Window) হলো কম্পিউটার সায়েন্সের সবচেয়ে চমৎকার এবং শক্তিশালী অপ্টিমাইজেশন কৌশলগুলোর একটি। যখন কোনো অ্যারে বা স্ট্রিংয়ের পাশাপাশি থাকা উপাদানগুলোর (Contiguous Subarray or Substring) উপর কোনো হিসাব বা বিশ্লেষণ করতে হয়, তখন স্লাইডিং উইন্ডো ব্যবহার করে O(n^2) বা O(n·k) এর মতো ধীরগতির কোডকে এক নিমিষেই O(n) এর রকেট গতিতে রূপান্তর করা যায়।
+
+১. চলন্ত বাসের বাস্তব উদাহরণ (Bus Analogy):
+মনে করুন একটি বাস বিভিন্ন স্টপেজে থামছে। বাসের ধারণক্ষমতা ৩০ জন। প্রথম স্টপেজে ৩০ জন যাত্রী উঠলেন। পরের স্টপেজে ১ জন যাত্রী পেছনের দরজা দিয়ে নেমে গেলেন এবং ১ জন নতুন যাত্রী সামনের দরজা দিয়ে উঠলেন।
+এখন বাসের মোট যাত্রী সংখ্যা কত?
+একজন সাধারণ মানুষ কি আবার ১ থেকে ৩০ পর্যন্ত নতুন করে গুনে দেখবেন? কখনোই না! সাধারণ জ্ঞান বলে: আগের মোট ৩০ - ১ জন নামা যাত্রী + ১ জন ওঠা যাত্রী = ৩০ জন!
+ঠিক এই সাধারণ জ্ঞানটুকুই হলো ফিক্সড স্লাইডিং উইন্ডোর মূল ভিত্তি (O(1) Delta Math)।
+
+২. ফিক্সড বনাম ডাইনামিক উইন্ডো:
+- ফিক্সড উইন্ডো (Fixed-Size Window): উইন্ডোর দৈর্ঘ্য K নির্দিষ্ট থাকে। উদাহরণ: পরপর ৩টি সংখ্যার সর্বোচ্চ যোগফল বের করা। এখানে প্রতি ধাপে যোগফল বের করতে লুপ চালানোর দরকার নেই; নতুন উপাদান যোগ এবং পুরানো উপাদান বিয়োগ করলেই উত্তর চলে আসে।
+- ডাইনামিক উইন্ডো (Dynamic-Size Window): উইন্ডোর আকার ছোট বা বড় হতে পারে। উদাহরণ: যোগফল অন্তত ৭ হতে হবে এমন সবচেয়ে ছোট সাব-অ্যারে খুঁজে বের করা। এখানে শর্ত পূরণ না হওয়া পর্যন্ত ডান পাশের পয়েন্টার (R) বড় হতে থাকে, আর শর্ত পূরণ হওয়ামাত্রই উত্তর রেকর্ড করে বাম পাশের পয়েন্টার (L) ছোট করে দেখা হয় আরো ছোট উইন্ডোতে কাজ হয় কি না।
+
+৩. নেস্টেড হোয়াইল লুপ থাকা সত্ত্বেও সময় জটিলতা কেন O(n)?
+অনেক প্রোগ্রামার মনে করেন কোডে ফর-লুপের ভেতরে হোয়াইল-লুপ থাকা মানেই সময় জটিলতা O(n^2)। কিন্তু স্লাইডিং উইন্ডোর ক্ষেত্রে এটি সত্য নয়! কারণ:
+- ডান পাশের পয়েন্টার (R) ০ থেকে n পর্যন্ত একবারই ডানে যায় (সর্বোচ্চ n বার)।
+- বাম পাশের পয়েন্টারও (L) ০ থেকে শুরু করে কেবল ডানেই এগোয় (সর্বোচ্চ n বার)।
+যেহেতু বাম পয়েন্টার কখনো উল্টো ঘুরে শুরুতে ফিরে আসে না, তাই পুরো প্রোগ্রামে দুইটি পয়েন্টার মিলিয়ে মোট মুভমেন্ট হয় সর্বোচ্চ n + n = 2n বার। সুতরাং সামগ্রিক সময় জটিলতা নিখুঁত O(n)।
+
+৪. হ্যাশ ম্যাপ ও ফ্রিকোয়েন্সি উইন্ডো:
+LeetCode 3 এর মতো সমস্যায় ("সবচেয়ে লম্বা সাবস্ট্রিং যাতে কোনো ডুপ্লিকেট বর্ণ নেই") প্রতিটি অক্ষরের সর্বশেষ অবস্থান মনে রাখতে একটি হ্যাশ টেবিল ব্যবহার করা হয়। ডুপ্লিকেট দেখামাত্রই বামের পয়েন্টারকে সরাসরি লাফ দিয়ে ডুপ্লিকেটের পরের ঘরে বসিয়ে দেওয়া হয়।
+
+৫. ইন্টারভিউতে সাধারণ ভুল:
+- অফ-বাই-ওয়ান ভুল (Off-by-one Error): উইন্ডোর আকার R - L + 1 হিসাব না করে কেবল R - L লেখা।
+- উপাদান বিয়োগ করতে ভুলে যাওয়া: বাম পয়েন্টার সরানোর আগে মোট যোগফল থেকে আগের সংখ্যাটি বিয়োগ না করা।
+- ওভারফ্লো সতর্কতা: বড় সংখ্যার যোগফলে ৩২-বিট ইন্টিজারের বদলে ৬৪-বিট লং ইন্টিজার ব্যবহার না করা।
+      `,
+    },
+    quizTopicId: "sliding-window",
+    visualizerLink: {
+      label: "Sliding Window Studio",
+      algorithmId: "sliding-window",
+      path: "/algorithms/sliding-window",
+    },
+  },
 ];
 
 export const DOCS_LEVELS: DocsLevel[] = [
@@ -3921,5 +4120,11 @@ export const DOCS_LEVELS: DocsLevel[] = [
     title: "Level 7: Searching Algorithms",
     description: "Locating targets efficiently: Linear Search (O(n) on unsorted data) and Binary Search (O(log n) logarithmic halving on sorted data).",
     articles: DOCS_ARTICLES.filter((a) => a.level === 7)
+  },
+  {
+    level: 9,
+    title: "Level 9: Problem-Solving Techniques",
+    description: "Core competitive programming paradigms: Two Pointers (monotonic pruning) and Sliding Window (delta frame tracking).",
+    articles: DOCS_ARTICLES.filter((a) => a.level === 9)
   }
 ];

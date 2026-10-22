@@ -23,7 +23,7 @@ export type DataStructureId = "array" | "string" | "deque" | "stack" | "queue" |
 
 export type ComplexityTopicId = "time-complexity" | "space-complexity";
 
-export type TechniqueId = "two-pointers";
+export type TechniqueId = "two-pointers" | "sliding-window";
 
 export type AlgorithmId =
   | SortingAlgorithmId
