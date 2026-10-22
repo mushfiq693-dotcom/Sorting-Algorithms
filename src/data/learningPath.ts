@@ -1235,6 +1235,52 @@ export const LEARNING_PATH: LearningStep[] = [
       space: "O(1) auxiliary space for numeric arrays, or O(min(m, n)) when storing character frequencies for an alphabet of size m.",
     },
   },
+  {
+    id: "prefix-sum",
+    order: 25,
+    name: "Prefix Sum & Difference Arrays",
+    category: "technique",
+    badge: "Prefix O(1)",
+    estimatedTime: "~25 min",
+    difficulty: "Intermediate",
+    reason: "Precompute cumulative sums to evaluate arbitrary range queries in O(1) time and apply batch range updates in O(1) time.",
+    hook: "In a financial ledger of 10 million transactions, how do you calculate the exact net balance between day 100 and day 5,000 in a single nanosecond?",
+    superpower: "O(1) Range Queries & O(1) Boundary Range Updates",
+    tradeoff: "Requires Static Arrays; Incurs O(n) Rebuild Cost if Elements are Mutated Frequently",
+    mentalModel: "An Odometer on a Car: Total Mileage Since Inception Allows Distance Between Any Two Cities in 1 Subtraction",
+    keyPrinciples: [
+      "1D Cumulative Array: P[0] = 0, P[i] = P[i-1] + A[i-1]. Range sum(L, R) = P[R+1] - P[L] in strictly O(1) time.",
+      "1-Based Indexing Advantage: Setting P[0] = 0 prevents out-of-bounds branching when querying intervals starting at index 0.",
+      "2D Inclusion-Exclusion: Computes arbitrary rectangular subgrid sums in exactly 4 operations regardless of grid size.",
+      "Difference Array: Records changes between adjacent cells. Range update [L, R] += val requires only D[L] += val and D[R+1] -= val.",
+      "Batch Reconstruction: Sweeping a running prefix sum across the difference array materializes all batch updates in a single O(n) pass.",
+      "Hash Prefix Pattern (LC 560): sum(j, i) = P[i] - P[j-1] = K => P[j-1] = P[i] - K solves subarray sums even with negative numbers."
+    ],
+    analogy: "Like milestones along a highway: Milestone 50km and Milestone 130km. To find the driving distance between the two exits, you do not measure the highway foot by foot—you simply calculate 130 - 50 = 80km.",
+    idea: "Prefix Sum is a foundational algorithmic technique that trades O(N) precomputation time and memory to evaluate any contiguous range sum query in O(1) time. Its inverse, the Difference Array, reduces continuous range updates to two O(1) boundary writes, followed by an O(N) prefix sweep that materializes all changes simultaneously.",
+    sampleArray: [3, 1, 4, 1, 5, 9, 2, 6],
+    codeBlocks: [
+      {
+        title: "1D Prefix Sum Construction & O(1) Query",
+        lines: "vector<int> P(n + 1, 0);\nfor (int i = 0; i < n; i++) P[i + 1] = P[i] + nums[i];\nint query(int l, int r) { return P[r + 1] - P[l]; }",
+        explanation: "Builds a 1-based cumulative array in O(n) time. Any subarray sum [l, r] is answered in exactly one arithmetic subtraction.",
+      },
+      {
+        title: "2D Matrix Range Sum (Inclusion-Exclusion)",
+        lines: "int sumRegion(int r1, int c1, int r2, int c2) {\n    return P[r2+1][c2+1] - P[r1][c2+1] - P[r2+1][c1] + P[r1][c1];\n}",
+        explanation: "Evaluates the rectangular subgrid sum in 4 arithmetic operations by subtracting the top and left regions and restoring the double-subtracted top-left overlap.",
+      },
+      {
+        title: "Difference Array Range Update & Reconstruction",
+        lines: "void update(int l, int r, int val) {\n    diff[l] += val;\n    if (r + 1 < n) diff[r + 1] -= val;\n}\n// Reconstruct final array in O(n)\nfor (int i = 1; i < n; i++) res[i] = res[i - 1] + diff[i];",
+        explanation: "Each interval update alters only 2 boundary markers in O(1). A final cumulative sweep reconstructs the updated array in O(n) time.",
+      },
+    ],
+    complexityWhy: {
+      time: "Precomputation takes O(n) time once. Every subsequent range sum query or difference boundary update executes in strictly O(1) time.",
+      space: "Requires O(n) auxiliary memory for the prefix or difference array, or O(1) if cumulative sums are computed in-place.",
+    },
+  },
 ];
 
 export const SORTING_PATH = LEARNING_PATH.filter((s) => s.category === "sorting");

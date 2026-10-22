@@ -109,7 +109,7 @@ export const CATEGORY_CARDS: CategoryCardMeta[] = [
   {
     key: "technique",
     title: "Techniques",
-    countLabel: "2 Visualizations",
+    countLabel: "3 Visualizations",
     icon: SlidersHorizontal,
     iconBg: "bg-fuchsia-500/10 dark:bg-fuchsia-500/20",
     iconColor: "text-fuchsia-500 dark:text-fuchsia-400",
@@ -279,6 +279,12 @@ const TOPIC_VISUALS: Record<AlgorithmId, TopicVisualMeta> = {
     iconColor: "text-indigo-500 dark:text-indigo-400",
     iconBorder: "border-indigo-500/25",
   },
+  "prefix-sum": {
+    icon: Layers,
+    iconBg: "bg-emerald-500/10 dark:bg-emerald-500/20",
+    iconColor: "text-emerald-500 dark:text-emerald-400",
+    iconBorder: "border-emerald-500/25",
+  },
 };
 
 // Descriptions from Coddy Tech screenshot for algorithms, plus matched descriptions for others
@@ -316,6 +322,7 @@ const TOPIC_DESCRIPTIONS: Record<AlgorithmId, string> = {
   // Techniques
   "two-pointers": "Watch converging and reader-writer pointers traverse sorted arrays and calculate water containers in O(n) time.",
   "sliding-window": "Slide fixed and dynamic contiguous windows over arrays and strings, updating telemetry in amortized O(n) time.",
+  "prefix-sum": "Precompute cumulative prefix arrays for O(1) range sum queries and use difference arrays for O(1) batch interval updates.",
 };
 
 interface SortingComparisonRow {
@@ -701,6 +708,38 @@ const TECHNIQUE_COMPARISON: TechniqueComparisonRow[] = [
     space: "O(k)",
     prerequisite: "Sliding Window Extrema (Min/Max)",
     classicProblems: "Sliding Window Maximum (LC 239)",
+  },
+  {
+    pattern: "1D Range Sum Query (P[R+1] - P[L])",
+    id: "prefix-sum",
+    time: "O(1) query",
+    space: "O(n)",
+    prerequisite: "Static Array (Immutable Queries)",
+    classicProblems: "Range Sum Query Immutable, Subarray Sums Divisible by K",
+  },
+  {
+    pattern: "2D Matrix Inclusion-Exclusion",
+    id: "prefix-sum",
+    time: "O(1) query",
+    space: "O(m · n)",
+    prerequisite: "Static 2D Grid",
+    classicProblems: "Range Sum Query 2D Immutable, Matrix Block Sum",
+  },
+  {
+    pattern: "Difference Array (Batch Range Updates)",
+    id: "prefix-sum",
+    time: "O(1) update",
+    space: "O(n)",
+    prerequisite: "Offline Batch Interval Updates",
+    classicProblems: "Car Pooling, Corporate Flight Bookings",
+  },
+  {
+    pattern: "Prefix Sum + Frequency Hash Map",
+    id: "prefix-sum",
+    time: "O(n)",
+    space: "O(n)",
+    prerequisite: "Contiguous Subarray Target with Negative Numbers",
+    classicProblems: "Subarray Sum Equals K (LC 560), Contiguous Array",
   },
 ];
 

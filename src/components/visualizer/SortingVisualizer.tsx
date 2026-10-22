@@ -28,6 +28,7 @@ import { PriorityQueueVisualizer } from "./PriorityQueueVisualizer";
 import { UnionFindVisualizer } from "./UnionFindVisualizer";
 import { TwoPointersVisualizer } from "./TwoPointersVisualizer";
 import { SlidingWindowVisualizer } from "./SlidingWindowVisualizer";
+import { PrefixSumVisualizer } from "./PrefixSumVisualizer";
 import { Sparkles, ArrowLeft } from "lucide-react";
 
 const DEFAULT_INITIAL_ARRAY = [48, 15, 86, 34, 92, 28, 65, 12, 54, 78, 23, 95, 41, 60, 31];
@@ -415,6 +416,7 @@ export function SortingVisualizer({
           {selectedAlgorithm === "union-find" && <UnionFindVisualizer />}
           {selectedAlgorithm === "two-pointers" && <TwoPointersVisualizer />}
           {selectedAlgorithm === "sliding-window" && <SlidingWindowVisualizer />}
+          {selectedAlgorithm === "prefix-sum" && <PrefixSumVisualizer />}
         </div>
       </div>
     );

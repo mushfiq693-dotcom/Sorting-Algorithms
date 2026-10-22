@@ -116,6 +116,7 @@ const CATEGORIES: CategoryGroup[] = [
     items: [
       { id: "two-pointers", num: "23", name: "Two Pointers", badge: "Pointers O(1)" },
       { id: "sliding-window", num: "24", name: "Sliding Window", badge: "Window O(n)" },
+      { id: "prefix-sum", num: "25", name: "Prefix Sum", badge: "Prefix O(1)" },
     ],
   },
 ];

@@ -1750,6 +1750,73 @@ export const QUIZZES: Record<string, QuizTopic> = {
         explanation: "In any inclusive range [L..R], the count of elements is (R - L + 1). For instance, window [2..4] contains indices 2, 3, and 4 (3 elements). Calculating (4 - 2) yields 2, which is an off-by-one bug."
       }
     ]
+  },
+  "prefix-sum": {
+    id: "prefix-sum",
+    title: "Prefix Sum & Difference Arrays Mastery Quiz",
+    description: "Test your understanding of 1D/2D cumulative array construction, the Inclusion-Exclusion Principle, O(1) difference array boundary updates, and prefix hash map invariants.",
+    questions: [
+      {
+        id: "ps1",
+        question: "In a 1-based prefix sum array P of length N+1 where P[0] = 0 and P[i] = P[i-1] + A[i-1], what is the exact formula to compute the contiguous sum of elements from index L to R inclusive (0 ≤ L ≤ R < N)?",
+        options: [
+          "P[R + 1] - P[L]",
+          "P[R] - P[L]",
+          "P[R + 1] - P[L + 1]",
+          "P[R] - P[L - 1]"
+        ],
+        correctIndex: 0,
+        explanation: "P[R+1] stores the cumulative sum of the first R+1 elements A[0]...A[R]. P[L] stores the cumulative sum of the first L elements A[0]...A[L-1]. Subtracting P[L] removes the prefix before index L, leaving exactly A[L]...A[R] in O(1) time without requiring an if (L == 0) branch check."
+      },
+      {
+        id: "ps2",
+        question: "In 2D Matrix Prefix Sum, why is P[r1][c1] added back in the subgrid query formula: Subgrid(r1, c1, r2, c2) = P[r2+1][c2+1] - P[r1][c2+1] - P[r2+1][c1] + P[r1][c1]?",
+        options: [
+          "Because the top-left subgrid from (0,0) to (r1-1, c1-1) was subtracted twice—once by the top strip and once by the left strip—so adding it back restores mathematical balance (Inclusion-Exclusion Principle)",
+          "To adjust for 0-based memory indexing in the GPU frame buffer",
+          "Because matrix determinants require an alternating parity sign (+ - - +)",
+          "To ensure the result is always non-negative"
+        ],
+        correctIndex: 0,
+        explanation: "The top rectangle P[r1][c2+1] and the left rectangle P[r2+1][c1] both overlap over the top-left subgrid (0,0) to (r1-1, c1-1). Subtracting both terms subtracts that overlap region twice. Adding +P[r1][c1] compensates for the double-subtraction, giving the exact subgrid sum in O(1) time."
+      },
+      {
+        id: "ps3",
+        question: "Given an array A of size N, how does a Difference Array D execute a range update of adding +val to every element in the interval [L, R] in O(1) time?",
+        options: [
+          "By setting D[L] += val and D[R + 1] -= val (if R + 1 < N)",
+          "By looping through indices L to R and incrementing each cell by val",
+          "By multiplying D[L] by val and dividing D[R] by val",
+          "By shifting the array pointers rightward by val positions"
+        ],
+        correctIndex: 0,
+        explanation: "In a difference array D where A[i] is the running prefix sum of D, D[L] += val causes every subsequent accumulated sum from index L onward to increase by val. D[R+1] -= val cancels this increase as soon as the prefix sweep passes index R. Thus, only two array cells are written in O(1) time."
+      },
+      {
+        id: "ps4",
+        question: "Why does the Two Pointers / Sliding Window technique fail on LeetCode 560 (Subarray Sum Equals K) when the array contains negative numbers, and how does Prefix Sum + Hash Map solve it?",
+        options: [
+          "Negative numbers destroy the monotonicity of the running sum (expanding R might decrease sum, shrinking L might increase it), whereas Prefix Sum + Hash Map converts the problem into querying whether (currentSum - K) was recorded earlier in O(1) time",
+          "Negative numbers cause CPU integer arithmetic division by zero",
+          "Two pointers cannot handle arrays with more than 100 elements",
+          "Hash maps run in O(log n) time while two pointers take O(n²)"
+        ],
+        correctIndex: 0,
+        explanation: "Sliding window requires monotonicity to decide whether to advance L or R. When negative numbers exist, sum(j, i) can oscillate unpredictably. However, the algebraic identity sum(j, i) = P[i] - P[j-1] = K <=> P[j-1] = P[i] - K holds universally regardless of signs, allowing an O(n) single pass with an auxiliary frequency hash map."
+      },
+      {
+        id: "ps5",
+        question: "What is the primary operational trade-off of a static Prefix Sum array compared to a Fenwick Tree (Binary Indexed Tree) or Segment Tree?",
+        options: [
+          "Prefix Sum provides O(1) query time but updating any element costs O(n) to rebuild, whereas Fenwick/Segment Trees balance both queries and point updates in O(log n) time",
+          "Prefix Sum requires O(n²) memory while Segment Trees use O(1) memory",
+          "Prefix Sum only works on floating point numbers",
+          "Fenwick Trees can only be implemented in Assembly language"
+        ],
+        correctIndex: 0,
+        explanation: "Prefix sum arrays are optimized for static data: after O(n) preprocessing, range queries take strictly O(1) time. However, modifying a single element invalidates all subsequent prefix sums, requiring an O(n) update. For frequently mutating dynamic data, Fenwick Trees and Segment Trees provide O(log n) for both queries and updates."
+      }
+    ]
   }
 };
 

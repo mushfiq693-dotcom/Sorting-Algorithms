@@ -1308,7 +1308,60 @@ export const ALGORITHM_PROBLEMS: Record<AlgorithmId, PracticeProblem[]> = {
       tags: ["Array", "Queue", "Sliding Window", "Heap (Priority Queue)", "Monotonic Queue", "Hard"],
     },
   ],
+  "prefix-sum": [
+    {
+      id: "ps-lc-303",
+      title: "Range Sum Query - Immutable",
+      platform: "LeetCode",
+      problemCode: "303",
+      difficulty: "Easy",
+      url: "https://leetcode.com/problems/range-sum-query-immutable/",
+      description: "Given an integer array nums, handle multiple queries of calculating the sum of elements between indices left and right inclusive.",
+      tags: ["Array", "Design", "Prefix Sum", "Easy"],
+    },
+    {
+      id: "ps-lc-560",
+      title: "Subarray Sum Equals K",
+      platform: "LeetCode",
+      problemCode: "560",
+      difficulty: "Medium",
+      url: "https://leetcode.com/problems/subarray-sum-equals-k/",
+      description: "Given an array of integers nums and an integer k, return the total number of subarrays whose sum equals to k.",
+      tags: ["Array", "Hash Table", "Prefix Sum", "Medium"],
+    },
+    {
+      id: "ps-lc-238",
+      title: "Product of Array Except Self",
+      platform: "LeetCode",
+      problemCode: "238",
+      difficulty: "Medium",
+      url: "https://leetcode.com/problems/product-of-array-except-self/",
+      description: "Given an integer array nums, return an array answer such that answer[i] is equal to the product of all the elements of nums except nums[i] without using the division operation in O(n) time.",
+      tags: ["Array", "Prefix Sum", "Medium"],
+    },
+    {
+      id: "ps-lc-304",
+      title: "Range Sum Query 2D - Immutable",
+      platform: "LeetCode",
+      problemCode: "304",
+      difficulty: "Medium",
+      url: "https://leetcode.com/problems/range-sum-query-2d-immutable/",
+      description: "Given a 2D matrix, handle multiple queries of calculating the sum of the elements inside the rectangle defined by its upper left corner (row1, col1) and lower right corner (row2, col2).",
+      tags: ["Array", "Design", "Matrix", "Prefix Sum", "Medium"],
+    },
+    {
+      id: "ps-lc-1094",
+      title: "Car Pooling",
+      platform: "LeetCode",
+      problemCode: "1094",
+      difficulty: "Medium",
+      url: "https://leetcode.com/problems/car-pooling/",
+      description: "There is a car with capacity empty seats. Given an array of trips where trips[i] = [numPassengers, from, to], return true if it is possible to pick up and drop off all passengers for all the given trips without exceeding capacity.",
+      tags: ["Array", "Sorting", "Simulation", "Prefix Sum", "Difference Array", "Medium"],
+    },
+  ],
 };
+
 
 
 

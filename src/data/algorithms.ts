@@ -2076,6 +2076,125 @@ int lengthOfLongestSubstring(const string& s) {
     return maxLen;
 }`,
   },
+  "prefix-sum": {
+    id: "prefix-sum",
+    name: "Prefix Sum & Difference Arrays",
+    category: "technique",
+    shortDescription:
+      "A core algorithmic technique that precomputes cumulative array sums to answer range sum queries in O(1) time and applies batch range updates in O(1) time using difference arrays.",
+    description:
+      "Prefix Sum is an essential precomputation technique that trades O(N) linear setup time and auxiliary space to evaluate any contiguous subarray sum query in strictly O(1) time via P[R+1] - P[L]. Extended to 2D matrices, the Inclusion-Exclusion Principle enables arbitrary rectangular subgrid queries in exactly 4 operations. Inversely, Difference Arrays record step deltas at boundary indices D[L] += val and D[R+1] -= val, enabling batch range updates in O(1) time followed by an O(N) prefix reconstruction sweep. Combined with frequency hash maps (LC 560), prefix sums count target subarrays in arrays containing negative values where two pointers fail.",
+    complexity: {
+      best: "O(1)",
+      average: "O(1)",
+      worst: "O(1)",
+      space: "O(n)",
+      stable: true,
+      inPlace: false,
+      spaceNote: "O(n) auxiliary prefix/difference array, or O(1) if mutated in-place",
+      operations: [
+        {
+          name: "1D Prefix Precomputation",
+          time: "O(n)",
+          space: "O(n)",
+          description: "One-time sequential cumulative sweep P[i] = P[i-1] + A[i-1].",
+        },
+        {
+          name: "1D Range Sum Query",
+          time: "O(1)",
+          space: "O(1)",
+          description: "Evaluates sum(L, R) = P[R+1] - P[L] in exactly 1 subtraction.",
+        },
+        {
+          name: "2D Subgrid Query",
+          time: "O(1)",
+          space: "O(1)",
+          description: "4-term Inclusion-Exclusion Principle evaluation in strictly 4 operations.",
+        },
+        {
+          name: "Difference Array Range Update",
+          time: "O(1)",
+          space: "O(1)",
+          description: "Marks interval boundaries D[L] += val and D[R+1] -= val in O(1) writes.",
+        },
+        {
+          name: "Difference Array Reconstruction",
+          time: "O(n)",
+          space: "O(n)",
+          description: "Linear prefix sweep restores all batch updates simultaneously into final array.",
+        },
+      ],
+    },
+    cppCode: `// Production C++ Prefix Sum & Difference Array Utilities
+#include <vector>
+#include <unordered_map>
+using namespace std;
+
+// 1. 1D Prefix Sum Construction & O(1) Range Query
+class NumArray {
+    vector<int> P;
+public:
+    NumArray(const vector<int>& nums) {
+        int n = nums.size();
+        P.assign(n + 1, 0);
+        for (int i = 0; i < n; i++) P[i + 1] = P[i] + nums[i];
+    }
+    int sumRange(int left, int right) {
+        return P[right + 1] - P[left]; // O(1) instant subtraction
+    }
+};
+
+// 2. 2D Matrix Prefix Sum & Subgrid Query (Inclusion-Exclusion)
+class NumMatrix {
+    vector<vector<int>> P;
+public:
+    NumMatrix(const vector<vector<int>>& matrix) {
+        int m = matrix.size(), n = matrix[0].size();
+        P.assign(m + 1, vector<int>(n + 1, 0));
+        for (int r = 1; r <= m; r++) {
+            for (int c = 1; c <= n; c++) {
+                P[r][c] = matrix[r - 1][c - 1] + P[r - 1][c] + P[r][c - 1] - P[r - 1][c - 1];
+            }
+        }
+    }
+    int sumRegion(int r1, int c1, int r2, int c2) {
+        return P[r2 + 1][c2 + 1] - P[r1][c2 + 1] - P[r2 + 1][c1] + P[r1][c1];
+    }
+};
+
+// 3. Difference Array for Batch Range Updates in O(1)
+class DifferenceArray {
+    vector<int> diff;
+    int n;
+public:
+    DifferenceArray(const vector<int>& nums) : n(nums.size()), diff(nums.size() + 1, 0) {
+        diff[0] = nums[0];
+        for (int i = 1; i < n; i++) diff[i] = nums[i] - nums[i - 1];
+    }
+    void update(int l, int r, int val) {
+        diff[l] += val;
+        if (r + 1 < n) diff[r + 1] -= val;
+    }
+    vector<int> result() {
+        vector<int> res(n);
+        res[0] = diff[0];
+        for (int i = 1; i < n; i++) res[i] = res[i - 1] + diff[i];
+        return res;
+    }
+};
+
+// 4. Subarray Sum Equals K (LC 560): Prefix Sum + Hash Map
+int subarraySum(const vector<int>& nums, int k) {
+    unordered_map<int, int> prefixFreq = {{0, 1}};
+    int currentSum = 0, count = 0;
+    for (int num : nums) {
+        currentSum += num;
+        if (prefixFreq.count(currentSum - k)) count += prefixFreq[currentSum - k];
+        prefixFreq[currentSum]++;
+    }
+    return count;
+}`,
+  },
 };
 
 // All 5 Sorting Algorithms
@@ -2128,6 +2247,7 @@ export const COMPLEXITY_TOPICS: AlgorithmId[] = [
 export const TECHNIQUE_TOPICS: AlgorithmId[] = [
   "two-pointers",
   "sliding-window",
+  "prefix-sum",
 ];
 
 // Backward compatibility alias for sorting visualizer
@@ -2154,6 +2274,7 @@ export const ALL_TOPICS: AlgorithmId[] = [
   "union-find",
   "two-pointers",
   "sliding-window",
+  "prefix-sum",
   "bubble",
   "selection",
   "insertion",

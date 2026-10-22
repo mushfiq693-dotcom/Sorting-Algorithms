@@ -506,4 +506,25 @@ int maxSumSubarray(const vector<int>& arr, int k) {
 }`,
     highlightedLine: 7,
   },
+  "prefix-sum": {
+    algorithmId: "prefix-sum",
+    title: "Prefix Sum & Difference Arrays — Cumulative Precomputation & O(1) Boundary Sweeps",
+    subtitle: "Trading linear precomputation for O(1) arbitrary range queries and transforming batch updates from O(Q·N) into O(Q + N).",
+    caption: "The foundational paradigm for Immutable Range Sum Query (1D/2D), Subarray Sum Equals K (LC 560), Product Except Self, and Batch Difference Schedules.",
+    fixedArray: [3, 1, 4, 1, 5, 9, 2, 6],
+    complexityFormula: "Precompute: O(N) • Range Query: O(1) • Range Update: O(1) • Space: O(N) or O(1)",
+    complexityExplanation: "Cumulative prefix summation P[i] = P[i-1] + A[i-1] decouples query interval size from computation time: sum(L, R) evaluates in exactly 1 subtraction P[R+1] - P[L]. Difference arrays invert this relation, allowing batch range increments in O(1) boundary writes.",
+    codeSnippet: `// 1D Prefix Sum Construction & O(1) Query
+vector<int> buildPrefix(const vector<int>& A) {
+    int n = A.size();
+    vector<int> P(n + 1, 0);
+    for (int i = 0; i < n; i++) P[i + 1] = P[i] + A[i];
+    return P;
+}
+int queryRange(const vector<int>& P, int L, int R) {
+    return P[R + 1] - P[L]; // O(1) instant subtraction
+}`,
+    highlightedLine: 8,
+  },
 };
+

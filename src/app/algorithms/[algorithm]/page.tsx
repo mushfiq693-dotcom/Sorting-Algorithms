@@ -100,6 +100,10 @@ const SlidingWindowVisualizer = dynamic(
   () => import("@/components/visualizer/SlidingWindowVisualizer").then((mod) => mod.SlidingWindowVisualizer),
   { ssr: false, loading: () => <TabLoading /> }
 );
+const PrefixSumVisualizer = dynamic(
+  () => import("@/components/visualizer/PrefixSumVisualizer").then((mod) => mod.PrefixSumVisualizer),
+  { ssr: false, loading: () => <TabLoading /> }
+);
 const BugHunt = dynamic(
   () => import("@/components/challenge/BugHunt").then((mod) => mod.BugHunt),
   { ssr: false, loading: () => <TabLoading /> }
@@ -569,6 +573,8 @@ export default function AlgorithmDetailPage() {
                 <TwoPointersVisualizer />
               ) : algorithmId === "sliding-window" ? (
                 <SlidingWindowVisualizer />
+              ) : algorithmId === "prefix-sum" ? (
+                <PrefixSumVisualizer />
               ) : (
                 <SortingVisualizer />
               )}

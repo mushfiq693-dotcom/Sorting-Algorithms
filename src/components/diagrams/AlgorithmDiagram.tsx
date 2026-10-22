@@ -27,6 +27,7 @@ import { PriorityQueueDiagram } from "./PriorityQueueDiagram";
 import { UnionFindDiagram } from "./UnionFindDiagram";
 import { TwoPointersDiagram } from "./TwoPointersDiagram";
 import { SlidingWindowDiagram } from "./SlidingWindowDiagram";
+import { PrefixSumDiagram } from "./PrefixSumDiagram";
 import { Image } from "lucide-react";
 
 interface AlgorithmDiagramProps {
@@ -78,6 +79,8 @@ export function AlgorithmDiagram({ algorithmId }: AlgorithmDiagramProps) {
         return <TwoPointersDiagram />;
       case "sliding-window":
         return <SlidingWindowDiagram />;
+      case "prefix-sum":
+        return <PrefixSumDiagram />;
       case "linear-search":
         return <LinearSearchTimelineDiagram />;
       case "binary-search":

@@ -709,7 +709,46 @@ public:
       },
     ],
   },
+  "prefix-sum": {
+    algorithmId: "prefix-sum",
+    title: "Prefix Sum: Off-By-One Right Endpoint Exclusion in 1-Based Query",
+    description:
+      "This 1-based prefix sum implementation stores cumulative sums in P of size N+1. However, in `sumRange(left, right)`, the developer queried `P[right] - P[left]` instead of `P[right + 1] - P[left]`. As a result, the element at index `right` is completely omitted from the calculated sum!",
+    buggyCode: `class NumArray {
+    vector<int> P;
+public:
+    NumArray(vector<int>& nums) {
+        int n = nums.size();
+        P.assign(n + 1, 0);
+        for (int i = 0; i < n; i++) P[i + 1] = P[i] + nums[i];
+    }
+    int sumRange(int left, int right) {
+        return P[right] - P[left]; // Bug: P[right] omits nums[right]!
+    }
+};`,
+    buggyLineNumber: 10,
+    hint: "In a 1-based prefix sum array where P[0] = 0, which prefix index holds the cumulative sum including index right?",
+    explanation:
+      "Line 10 returned `P[right] - P[left]`. In a 1-based prefix sum array of size N+1 where P[i] = P[i-1] + nums[i-1], the cumulative sum of the first `right + 1` elements (indices 0 through right inclusive) is stored at index `right + 1`. Calling `P[right]` only accounts for elements up to index `right - 1`, completely dropping the rightmost element. The correct formula is `return P[right + 1] - P[left];`.",
+    validateFix: (line: string) => {
+      const trimmed = line.replace(/\s+/g, "");
+      return (
+        trimmed.includes("P[right+1]-P[left]") ||
+        trimmed.includes("P[right+1]-P[left];")
+      );
+    },
+    flawedRunner: () => [
+      {
+        type: "range",
+        left: 2,
+        right: 4,
+        description:
+          "Queried range [2..4]. P[4] - P[2] calculated nums[2] + nums[3] (sum 5), omitting nums[4] (value 5) and giving 5 instead of 10!",
+      },
+    ],
+  },
 };
+
 
 
 

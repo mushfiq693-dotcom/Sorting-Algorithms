@@ -4070,6 +4070,271 @@ LeetCode 3 এর মতো সমস্যায় ("সবচেয়ে ল
       path: "/algorithms/sliding-window",
     },
   },
+  {
+    slug: "prefix-sum-fundamentals",
+    level: 9,
+    levelTitle: "Tier 9: Algorithmic Techniques",
+    order: 25,
+    title: "Prefix Sum & Difference Arrays: Cumulative Precomputation & Boundary Deltas",
+    subtitle: "Master 1D/2D range query acceleration, the Inclusion-Exclusion Principle, O(1) batch interval updates with difference arrays, and the Subarray Sum Equals K hash pattern.",
+    estimatedReadTime: "22 min",
+    category: "Techniques",
+    content: `
+### Chapter 1: The Principle of Cumulative Aggregation
+
+In competitive programming and production systems engineering, querying the aggregate sum of arbitrary contiguous subsegments is an ubiquitous requirement. Consider an array $A$ of $N$ integers. If a system receives $Q$ independent range sum queries of the form $\\text{sum}(L, R) = \\sum_{i=L}^R A[i]$:
+
+1. **The Naive Approach:** Iterating over every index from $L$ to $R$ for each query takes $O(R - L + 1) = O(N)$ time. For $Q$ queries, the total workload scales as $O(Q \\cdot N)$. With $N = 10^5$ and $Q = 10^5$, this results in $10^{10}$ CPU operations—triggering an immediate Time Limit Exceeded (TLE) crash.
+2. **The Prefix Sum Breakthrough:** By dedicating a one-time linear preprocessing pass $O(N)$ to compute a cumulative prefix sum array $P$, **every subsequent range sum query is answered in strictly $O(1)$ constant time** using exactly one arithmetic subtraction:
+
+$$\\text{sum}(L, R) = P[R + 1] - P[L]$$
+
+The total runtime collapses from $O(Q \\cdot N)$ to $O(N + Q)$, transforming an intractable multi-second query loop into an instant microsecond response.
+
+---
+
+### Chapter 2: 1D Prefix Sum Construction & The 1-Based Indexing Invariant
+
+#### 1. Why 1-Based Indexing Eliminates Branch Hazards
+In classic 0-indexed prefix arrays, $P[i] = \\sum_{j=0}^i A[j]$. Under this formulation, querying from $L > 0$ yields $P[R] - P[L - 1]$. However, when $L = 0$, evaluating $P[-1]$ results in an illegal memory access or requires an explicit conditional branch: \`return L == 0 ? P[R] : P[R] - P[L - 1];\`.
+
+To eliminate this branch prediction penalty and make code mathematically bulletproof, **modern DSA implementations always allocate a prefix array of size $N + 1$ with $P[0] = 0$**:
+
+$$P[i] = \\begin{cases} 0 & \\text{if } i = 0 \\\\ P[i - 1] + A[i - 1] & \\text{for } 1 \\le i \\le N \\end{cases}$$
+
+Under this invariant, the sum of any contiguous slice $A[L \\dots R]$ (where $0 \\le L \\le R < N$) is given universally by:
+
+$$\\text{sum}(L, R) = P[R + 1] - P[L]$$
+
+\`\`\`cpp
+// Production C++ 1D Prefix Sum Class (LeetCode 303)
+class NumArray {
+    vector<long long> P;
+public:
+    NumArray(const vector<int>& nums) {
+        int n = nums.size();
+        P.assign(n + 1, 0);
+        for (int i = 0; i < n; i++) {
+            P[i + 1] = P[i] + nums[i]; // Sequential cumulative accumulation
+        }
+    }
+    
+    long long sumRange(int left, int right) {
+        return P[right + 1] - P[left]; // Strictly O(1) time
+    }
+};
+\`\`\`
+
+---
+
+### Chapter 3: 2D Matrix Prefix Sum & The Inclusion-Exclusion Principle
+
+When generalized to a two-dimensional grid of size $M \\times N$, a 2D prefix matrix allows computing the sum of **any rectangular subgrid** bounded between top-left $(r_1, c_1)$ and bottom-right $(r_2, c_2)$ in strictly $O(1)$ time.
+
+#### 1. Precomputation Recurrence (Size $(M+1) \\times (N+1)$)
+Every cell $P[r][c]$ represents the total sum of the rectangle from $(0, 0)$ down to $(r-1, c-1)$:
+
+$$P[r][c] = \\text{Grid}[r-1][c-1] + P[r-1][c] + P[r][c-1] - P[r-1][c-1]$$
+
+*Why subtract $P[r-1][c-1]$?* Because adding the top rectangle $P[r-1][c]$ and the left rectangle $P[r][c-1]$ counts the top-left diagonal overlap region twice. Subtracting it once restores mathematical balance.
+
+#### 2. Querying a Subgrid in O(1) via Inclusion-Exclusion
+To calculate the sum of the subgrid from $(r_1, c_1)$ to $(r_2, c_2)$:
+
+$$\\text{SubgridSum} = P[r_2+1][c_2+1] - P[r_1][c_2+1] - P[r_2+1][c_1] + P[r_1][c_1]$$
+
+1. **Term 1 (+):** $P[r_2+1][c_2+1]$ captures the full rectangle from the origin down to the bottom-right corner.
+2. **Term 2 (-):** $- P[r_1][c_2+1]$ removes the unwanted rectangular strip strictly above row $r_1$.
+3. **Term 3 (-):** $- P[r_2+1][c_1]$ removes the unwanted rectangular strip strictly to the left of column $c_1$.
+4. **Term 4 (+):** $+ P[r_1][c_1]$ adds back the top-left intersection that was subtracted twice by Terms 2 and 3!
+
+\`\`\`cpp
+// 2D Immutable Range Sum Query (LeetCode 304)
+class NumMatrix {
+    vector<vector<int>> P;
+public:
+    NumMatrix(const vector<vector<int>>& matrix) {
+        int m = matrix.size(), n = matrix[0].size();
+        P.assign(m + 1, vector<int>(n + 1, 0));
+        for (int r = 1; r <= m; r++) {
+            for (int c = 1; c <= n; c++) {
+                P[r][c] = matrix[r - 1][c - 1] 
+                        + P[r - 1][c] 
+                        + P[r][c - 1] 
+                        - P[r - 1][c - 1];
+            }
+        }
+    }
+    
+    int sumRegion(int r1, int c1, int r2, int c2) {
+        return P[r2 + 1][c2 + 1] - P[r1][c2 + 1] - P[r2 + 1][c1] + P[r1][c1];
+    }
+};
+\`\`\`
+
+---
+
+### Chapter 4: Difference Arrays — Converting $O(Q \\cdot N)$ Range Updates to $O(Q + N)$
+
+While Prefix Sums optimize **read queries** on static arrays, **Difference Arrays** optimize **batch write mutations** across ranges.
+
+#### 1. The Core Duality
+A Difference Array $D$ is the discrete derivative of an array $A$:
+$$D[0] = A[0], \\quad D[i] = A[i] - A[i-1] \\quad \\text{for } i \\ge 1$$
+Inversely, the original array $A$ is the discrete integral (prefix sum) of $D$:
+$$A[i] = \\sum_{j=0}^i D[j]$$
+
+#### 2. Range Update in O(1) Time
+Suppose we want to add $+v$ to every element in the interval $[L, R]$. Instead of looping across all $R - L + 1$ elements:
+1. $D[L] \\mathrel{+}= v$ (Signals that starting from index $L$, all subsequent prefix sums should be $v$ units higher).
+2. If $R + 1 < N$, $D[R + 1] \\mathrel{-}= v$ (Cancels the $+v$ boost once the prefix sweep moves past index $R$).
+
+#### 3. Single-Pass Reconstruction
+After applying all $Q$ range updates in $O(1)$ each, we run a single prefix sum sweep over $D$ in $O(N)$ time to produce the final modified array. Total time: **$O(Q + N)$** instead of naive $O(Q \\cdot N)$!
+
+\`\`\`cpp
+// Difference Array for Batch Range Updates (LeetCode 1109, 1094)
+class DifferenceArray {
+    vector<int> diff;
+    int n;
+public:
+    DifferenceArray(const vector<int>& nums) : n(nums.size()), diff(nums.size() + 1, 0) {
+        diff[0] = nums[0];
+        for (int i = 1; i < n; i++) diff[i] = nums[i] - nums[i - 1];
+    }
+    
+    // O(1) Range Update
+    void rangeAdd(int l, int r, int val) {
+        diff[l] += val;
+        if (r + 1 < n) diff[r + 1] -= val;
+    }
+    
+    // O(n) Final Reconstruction
+    vector<int> reconstruct() {
+        vector<int> res(n);
+        res[0] = diff[0];
+        for (int i = 1; i < n; i++) res[i] = res[i - 1] + diff[i];
+        return res;
+    }
+};
+\`\`\`
+
+---
+
+### Chapter 5: 2D Difference Arrays & Spatial Range Updates
+
+Just as 1D difference arrays mark two endpoints, a 2D difference array marks the **four vertices of a rectangular subgrid** $(r_1, c_1)$ to $(r_2, c_2)$ to execute an $O(1)$ batch update:
+
+1. $D[r_1][c_1] \\mathrel{+}= v$ (Starts $+v$ boost extending down and right).
+2. $D[r_1][c_2 + 1] \\mathrel{-}= v$ (Cancels boost to the right of $c_2$).
+3. $D[r_2 + 1][c_1] \\mathrel{-}= v$ (Cancels boost below row $r_2$).
+4. $D[r_2 + 1][c_2 + 1] \\mathrel{+}= v$ (Restores balance for the double-subtracted bottom-right area).
+
+Reconstructing the 2D grid takes a standard 2D prefix sum pass in $O(M \\cdot N)$ time.
+
+---
+
+### Chapter 6: Subarray Sum Equals $K$ (Prefix Sum + Frequency Hash Map — LC 560)
+
+One of the most celebrated algorithmic interview questions is **Subarray Sum Equals K** (LeetCode 560): Given an array containing both positive and negative numbers, count the total number of continuous subarrays whose sum equals $K$.
+
+#### Why Two Pointers / Sliding Window Fails
+Sliding window requires **monotonicity**: when all numbers are positive, expanding $R$ strictly increases the sum and incrementing $L$ strictly decreases it. With negative numbers, adding an element might decrease the sum, destroying the window contraction condition!
+
+#### The Prefix Hash Formulation
+Recall that any contiguous subarray sum from $j$ to $i$ can be expressed as:
+$$\\text{sum}(j, i) = P[i] - P[j - 1] = K \\implies P[j - 1] = P[i] - K$$
+
+As we sweep index $i$ from left to right maintaining a running prefix sum $P[i]$:
+1. The target earlier prefix sum we need to find is $\\text{needed} = P[i] - K$.
+2. We query a hash map $\\text{freq}[\\text{needed}]$: if it exists, there are that many valid starting indices $j$ such that the subarray ending at $i$ sums to $K$!
+3. We then record the current prefix sum: $\\text{freq}[P[i]]\\mathrel{++}$.
+
+\`\`\`cpp
+// Subarray Sum Equals K in O(n) Time & O(n) Space (LeetCode 560)
+int subarraySum(const vector<int>& nums, int k) {
+    unordered_map<long long, int> prefixCount;
+    prefixCount[0] = 1; // Base case: empty prefix before index 0
+    
+    long long currentSum = 0;
+    int totalCount = 0;
+    
+    for (int x : nums) {
+        currentSum += x;
+        long long needed = currentSum - k;
+        if (prefixCount.count(needed)) {
+            totalCount += prefixCount[needed];
+        }
+        prefixCount[currentSum]++;
+    }
+    return totalCount;
+}
+\`\`\`
+
+---
+
+### Chapter 7: Engineering Decision Matrix & Failure Modes
+
+| Technique | Primary Use Case | Precomputation | Query Time | Update Time | Auxiliary Space | Monotonicity Required? |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **Naive Loop** | Single ad-hoc range query | None | $O(N)$ | $O(1)$ | $O(1)$ | No |
+| **1D Prefix Sum** | Frequent queries on static data | $O(N)$ | $O(1)$ | $O(N)$ (Costly) | $O(N)$ | No |
+| **2D Prefix Sum** | Rectangular matrix sum queries | $O(M \\cdot N)$ | $O(1)$ | $O(M \\cdot N)$ | $O(M \\cdot N)$ | No |
+| **Difference Array** | Offline batch range updates | $O(N)$ | $O(N)$ sweep | $O(1)$ per update | $O(N)$ | No |
+| **Prefix + Hash Map** | Target sum with negative numbers | Single-pass | $O(1)$ avg | N/A | $O(N)$ | No |
+| **Fenwick / BIT** | Dynamic queries with online updates | $O(N)$ | $O(\\log N)$ | $O(\\log N)$ | $O(N)$ | No |
+
+#### Critical Failure Modes
+1. **Integer Overflow in Summation:** Summing $10^5$ elements each up to $10^9$ yields $10^{14}$, which overflows standard 32-bit signed integers (\`int\`). Always declare prefix arrays as \`long long\` in C++ or 64-bit integers.
+2. **Dynamic Mutations on Static Prefix Sums:** If the underlying array changes frequently between queries, rebuilding the prefix array costs $O(N)$ each time. For interleaved queries and updates, migrate to a **Binary Indexed Tree (Fenwick Tree)** or **Segment Tree** which achieve $O(\\log N)$ for both.
+3. **Missing Base Initialization in Hash Maps:** Forgetting \`prefixCount[0] = 1\` causes the algorithm to miss valid subarrays that start at index 0 where $P[i] = K$.
+    `,
+    banglaNote: {
+      topic: "সহজ ভাষায় প্রিফিক্স সাম ও ডিফারেন্স অ্যারে (Prefix Sum & Difference Arrays in Plain Bengali)",
+      englishContext:
+        "High-yield Bengali guide to 1D and 2D prefix sums, Inclusion-Exclusion geometry, O(1) difference array updates, and prefix hash map invariants.",
+      banglaText: `
+প্রিফিক্স সাম (Prefix Sum) হলো এমন একটি দারুণ কৌশল যা একবার হিসাব করে রাখলে পরবর্তীতে যেকোনো রেঞ্জের যোগফল চোখের পলকে অর্থাৎ মাত্র O(1) সময়ে বলে দিতে পারে।
+
+১. বাস্তব জীবনের উদাহরণ (মাইলস্টোন মেথড):
+ধরা যাক, আপনি ঢাকা থেকে চট্টগ্রাম হাইওয়ে দিয়ে যাচ্ছেন। রাস্তায় ৫০ কিলোমিটারের একটি ফলক আছে এবং ১৩০ কিলোমিটারের আরেকটি ফলক আছে।
+এখন কেউ যদি জিজ্ঞেস করে এই দুই ফলকের মধ্যবর্তী দূরত্ব কত, আপনি কি ফিতা দিয়ে মাপতে শুরু করবেন? অবশ্যই না! আপনি সরাসরি হিসাব করবেন: ১৩০ - ৫০ = ৮০ কিলোমিটার।
+প্রিফিক্স সাম ঠিক এই সহজ গণিতের ওপর কাজ করে।
+
+২. ১-বেসড ইনডেক্সিং কেন ব্যবহার করবেন?
+অ্যারেতে ০ থেকে শুরু না করে প্রিফিক্স অ্যারে P এর সাইজ N+1 রাখা হয় এবং P[0] = 0 ধরা হয়।
+এতে সুবিধা হলো:
+- কোনো শর্ত বা if-else চেক ছাড়াই sum(L, R) = P[R+1] - P[L] দিয়ে কাজ শেষ করা যায়।
+- L = 0 হলেও কোড কখনো ক্র্যাশ করে না।
+
+৩. ২-ডি ম্যাট্রিক্স এবং ইনক্লুশন-এক্সক্লুশন নীতি:
+একটি গ্রিডের যেকোনো আয়তাকার অংশের যোগফল বের করার জন্য চারটি বিন্দু ব্যবহার করা হয়:
+- মোট আয়তক্ষেত্র যোগ করুন: + P[r2+1][c2+1]
+- উপরের অপ্রয়োজনীয় অংশ বাদ দিন: - P[r1][c2+1]
+- বামের অপ্রয়োজনীয় অংশ বাদ দিন: - P[r2+1][c1]
+- কোনার যে অংশটি দুইবার বাদ দেওয়া হয়েছিল তা ফিরিয়ে আনুন: + P[r1][c1]
+ফলে ম্যাট্রিক্স যতই বিশাল হোক না কেন, মাত্র ৪টি যোগ-বিয়োগে উত্তর পাওয়া যায়।
+
+৪. ডিফারেন্স অ্যারে (Difference Array):
+যদি বলা হয়, একটি অ্যারের L থেকে R পর্যন্ত সব ঘরে ৫ যোগ করতে হবে এবং এরকম ১০,০০০টি আপডেট করতে হবে:
+- সাধারণ নিয়মে প্রতিটি ঘরে লুপ চালালে সময় লাগবে O(Q গুণ N)।
+- কিন্তু ডিফারেন্স অ্যারেতে শুধু দুইটি বিন্দু পরিবর্তন করা হয়: D[L] += 5 এবং D[R+1] -= 5। এতে প্রতিটি আপডেট হয় মাত্র O(1) সময়ে!
+- সব আপডেট শেষে একবার প্রিফিক্স যোগফল চালালেই পুরো পরিবর্তিত অ্যারে তৈরি হয়ে যায়।
+
+৫. সাবঅ্যারে সাম K এবং নেগেটিভ সংখ্যার সমাধান (LeetCode 560):
+অ্যারেতে যখন ঋণাত্মক (নেগেটিভ) সংখ্যা থাকে, তখন স্লাইডিং উইন্ডো কাজ করে না কারণ যোগফল সবসময় বাড়ে না।
+এখানে প্রিফিক্স সাম এবং হ্যাশ ম্যাপ ব্যবহার করা হয়।
+সূত্র: P[i] - P[j-1] = K, অর্থাৎ P[j-1] = P[i] - K।
+প্রতিটি ধাপে আমরা শুধু দেখি বর্তমান যোগফল থেকে K বিয়োগ করলে যে সংখ্যা হয়, তা আগের কোনো প্রিফিক্সে কয়বার পাওয়া গিয়েছিল।
+      `,
+    },
+    quizTopicId: "prefix-sum",
+    visualizerLink: {
+      label: "Prefix Sum & Difference Arrays Studio",
+      algorithmId: "prefix-sum",
+      path: "/algorithms/prefix-sum",
+    },
+  },
 ];
 
 export const DOCS_LEVELS: DocsLevel[] = [
@@ -4124,7 +4389,7 @@ export const DOCS_LEVELS: DocsLevel[] = [
   {
     level: 9,
     title: "Level 9: Problem-Solving Techniques",
-    description: "Core competitive programming paradigms: Two Pointers (monotonic pruning) and Sliding Window (delta frame tracking).",
+    description: "Core competitive programming paradigms: Two Pointers (monotonic pruning), Sliding Window (delta frame tracking), and Prefix Sum & Difference Arrays (O(1) range queries & batch updates).",
     articles: DOCS_ARTICLES.filter((a) => a.level === 9)
   }
 ];
