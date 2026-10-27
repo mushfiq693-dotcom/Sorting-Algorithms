@@ -21,6 +21,8 @@ import {
 const getCategoryMetaForAlgo = (algoId: AlgorithmId): { key: CategoryKey; label: string } => {
   const cat = (ALGORITHMS[algoId]?.category as CategoryKey) || "sorting";
   switch (cat) {
+    case "technique":
+      return { key: "technique", label: "Techniques" };
     case "data-structure":
       return { key: "data-structure", label: "Data Structures" };
     case "tree":

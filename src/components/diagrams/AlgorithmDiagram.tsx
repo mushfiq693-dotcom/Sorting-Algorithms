@@ -29,6 +29,7 @@ import { TwoPointersDiagram } from "./TwoPointersDiagram";
 import { SlidingWindowDiagram } from "./SlidingWindowDiagram";
 import { PrefixSumDiagram } from "./PrefixSumDiagram";
 import { BinarySearchPatternsDiagram } from "./BinarySearchPatternsDiagram";
+import { BacktrackingDiagram } from "./BacktrackingDiagram";
 import { Image } from "lucide-react";
 
 interface AlgorithmDiagramProps {
@@ -84,6 +85,8 @@ export function AlgorithmDiagram({ algorithmId }: AlgorithmDiagramProps) {
         return <PrefixSumDiagram />;
       case "binary-search-patterns":
         return <BinarySearchPatternsDiagram />;
+      case "backtracking":
+        return <BacktrackingDiagram />;
       case "linear-search":
         return <LinearSearchTimelineDiagram />;
       case "binary-search":

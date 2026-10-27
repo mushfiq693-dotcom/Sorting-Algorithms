@@ -110,7 +110,7 @@ export const CATEGORY_CARDS: CategoryCardMeta[] = [
   {
     key: "technique",
     title: "Techniques",
-    countLabel: "4 Visualizations",
+    countLabel: "5 Visualizations",
     icon: SlidersHorizontal,
     iconBg: "bg-fuchsia-500/10 dark:bg-fuchsia-500/20",
     iconColor: "text-fuchsia-500 dark:text-fuchsia-400",
@@ -788,6 +788,22 @@ const TECHNIQUE_COMPARISON: TechniqueComparisonRow[] = [
     prerequisite: "Local Slope Guarantee (A[mid] < A[mid+1])",
     classicProblems: "Find Peak Element (LC 162), Peak Index Mountain Array",
   },
+  {
+    pattern: "Constraint Satisfaction (Row/Col/Diag Prune)",
+    id: "backtracking",
+    time: "O(N!) worst",
+    space: "O(N) recursion",
+    prerequisite: "Partial Candidate Validation (|Δrow| == |Δcol|)",
+    classicProblems: "N-Queens (LC 51), Sudoku Solver (LC 37)",
+  },
+  {
+    pattern: "State-Space Decision Tree (Include/Exclude)",
+    id: "backtracking",
+    time: "O(2ⁿ)",
+    space: "O(n) subset buffer",
+    prerequisite: "Binary Choice at Each Universe Element",
+    classicProblems: "Subsets (LC 78), Combinations (LC 77), Permutations (LC 46)",
+  },
 ];
 
 interface TopicCategoryHubProps {
@@ -893,7 +909,9 @@ export function TopicCategoryHub({
                     </div>
 
                     <div className="mt-1.5 flex items-center text-xs font-mono text-muted-foreground/90 whitespace-nowrap">
-                      <span className="whitespace-nowrap">{cat.countLabel}</span>
+                      <span className="whitespace-nowrap">
+                        {LEARNING_PATH.filter((step) => step.category === cat.key).length} Visualizations
+                      </span>
                     </div>
                   </div>
                 </button>
@@ -1250,7 +1268,7 @@ export function TopicCategoryHub({
           {currentCategory === "technique" && (
             <div className="mt-16 sm:mt-20 lg:mt-24">
               <h3 className="text-xl sm:text-2xl font-bold font-heading text-foreground mb-5">
-                Two-pointer paradigms &amp; invariant comparison
+                Problem-solving technique paradigms &amp; invariant comparison
               </h3>
               <div className="rounded-2xl border border-border/80 bg-card/60 backdrop-blur-sm overflow-x-auto shadow-sm">
                 <table className="w-full text-left text-sm border-collapse min-w-[580px]">

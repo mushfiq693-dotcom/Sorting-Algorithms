@@ -11,6 +11,13 @@
  */
 
 export type BacktrackingMode = "n-queens" | "subsets";
+export type SubsetValue = string | number;
+
+export interface SubsetsCallFrame {
+  index: number;
+  element: SubsetValue;
+  decision: "include" | "exclude" | "pending";
+}
 
 export interface BacktrackStep {
   stepIndex: number;
@@ -24,8 +31,15 @@ export interface BacktrackStep {
   conflictCells?: [number, number][]; // board cells conflicting with trial placement
   validColumns?: number[]; // columns in current row that pass the constraint check
   // Subsets state
-  subset?: number[]; // current include/exclude accumulation
+  subset?: SubsetValue[]; // current include/exclude accumulation
   index?: number; // current element index being decided
+  choice?: "include" | "exclude" | "backtrack" | "start" | "leaf";
+  element?: SubsetValue;
+  callStack?: SubsetsCallFrame[];
+  decisionPath?: ("include" | "exclude")[];
+  nodeId?: string;
+  allDiscoveredSubsets?: SubsetValue[][];
+  totalExpectedSubsets?: number;
   // Status lifecycle
   status:
     | "idle"
@@ -44,7 +58,7 @@ export interface BacktrackingPreset {
   name: string;
   mode: BacktrackingMode;
   boardSize?: number;
-  set?: number[];
+  set?: SubsetValue[];
   description: string;
 }
 
@@ -65,9 +79,9 @@ export const BACKTRACKING_PRESETS: BacktrackingPreset[] = [
   },
   {
     id: "subsets-abc",
-    name: "Subsets of {A, B, C}",
+    name: "Subsets {A, B, C}",
     mode: "subsets",
-    set: [1, 2, 3],
+    set: ["A", "B", "C"],
     description: "Include/exclude decision tree generating all 2³ = 8 subsets via depth-first backtracking.",
   },
 ];
@@ -214,55 +228,156 @@ export class BacktrackingEngine {
    *   Time: O(2^n) — binary decision at each of n elements
    *   Space: O(n) recursion stack + O(n) subset buffer
    */
-  public static generateSubsetsSteps(set: number[]): BacktrackStep[] {
+  public static generateSubsetsSteps(set: SubsetValue[] = ["A", "B", "C"]): BacktrackStep[] {
     const steps: BacktrackStep[] = [];
-    const subset: number[] = [];
+    const subset: SubsetValue[] = [];
+    const allDiscoveredSubsets: SubsetValue[][] = [];
+    const callStack: SubsetsCallFrame[] = [];
+    const totalExpectedSubsets = Math.pow(2, set.length);
     let stepIndex = 0;
 
     const emit = (
       status: BacktrackStep["status"],
       idx: number | undefined,
+      choice: BacktrackStep["choice"],
+      element: SubsetValue | undefined,
       explanation: string,
-      invariantNote: string
+      invariantNote: string,
+      nodeId: string,
+      decisionPath: ("include" | "exclude")[]
     ): void => {
       steps.push({
         stepIndex: stepIndex++,
         mode: "subsets",
         subset: [...subset],
         index: idx,
+        choice,
+        element,
+        callStack: callStack.map((f) => ({ ...f })),
+        decisionPath: [...decisionPath],
+        nodeId,
+        allDiscoveredSubsets: allDiscoveredSubsets.map((s) => [...s]),
+        totalExpectedSubsets,
         status,
         explanation,
         invariantNote,
       });
     };
 
-    const decide = (i: number): void => {
+    // Step 0: Initial State
+    emit(
+      "idle",
+      0,
+      "start",
+      set[0],
+      `🌱 Starting Subsets generator for {${set.join(", ")}}. Power set will contain 2^${set.length} = ${totalExpectedSubsets} subsets.`,
+      "Initial State Invariant: Decision tree begins at root node with empty subset ∅ and recursion depth 0.",
+      "root",
+      []
+    );
+
+    const decide = (i: number, path: ("include" | "exclude")[]): void => {
       // Base case: all elements decided -> record complete subset
       if (i === set.length) {
-        emit("solved", undefined, `📦 Leaf reached: recorded subset [${subset.join(", ")}] (${subset.length} elements).`, "Leaf invariant: when every element has been decided, the accumulated subset is a complete solution of the power set.");
+        allDiscoveredSubsets.push([...subset]);
+        const subsetLabel = subset.length > 0 ? `{${subset.join(", ")}}` : "∅";
+        const leafNodeId = path.length > 0 ? "node-" + path.join("-") : "root";
+        emit(
+          "solved",
+          undefined,
+          "leaf",
+          undefined,
+          `🎯 Leaf reached: Discovered subset #${allDiscoveredSubsets.length} → ${subsetLabel} (${subset.length} elements).`,
+          "Leaf invariant: when every element has an include/exclude decision, record accumulated subset to power set.",
+          leafNodeId,
+          path
+        );
         return;
       }
 
       const val = set[i];
 
       // Branch 1: INCLUDE the current element
-      emit("placing", i, `🔀 Index ${i} (value ${val}): DECISION — INCLUDE ${val} in the subset and recurse deeper.`, "Decision tree invariant: at every index, two branches exist — include the element or exclude it. Both branches are explored depth-first.", );
-
+      callStack.push({ index: i, element: val, decision: "include" });
       subset.push(val);
-      decide(i + 1);
-      subset.pop(); // undo include (backtrack)
+      const incPath = [...path, "include" as const];
+      const incNodeId = "node-" + incPath.join("-");
 
-      emit("backtracking", i, `↩️ Index ${i}: backtracking from INCLUDE branch. Removed ${val} to explore the EXCLUDE alternative.`, "Backtrack invariant: after exhausting the include subtree, pop the last choice so the sibling exclude branch starts from a clean state.", );
+      emit(
+        "placing",
+        i,
+        "include",
+        val,
+        `🌿 Level ${i} ('${val}'): DECISION — INCLUDE '${val}' in subset. Running subset: [${subset.join(", ")}].`,
+        "Include invariant: push element onto subset stack and descend depth-first along left tree branch.",
+        incNodeId,
+        incPath
+      );
+
+      decide(i + 1, incPath);
+
+      // Backtrack from INCLUDE:
+      subset.pop();
+      callStack[callStack.length - 1].decision = "pending";
+      const backtrackNodeId = path.length > 0 ? "node-" + path.join("-") : "root";
+      emit(
+        "backtracking",
+        i,
+        "backtrack",
+        val,
+        `↩️ Level ${i}: BACKTRACK from INCLUDE '${val}'. Popped '${val}'. Restored subset to [${subset.join(", ") || "∅"}]. Preparing to explore EXCLUDE branch.`,
+        "Backtrack invariant: undo the choice (pop element) so sibling branch starts with pristine parent state.",
+        backtrackNodeId,
+        path
+      );
 
       // Branch 2: EXCLUDE the current element
-      emit("placing", i, `🔀 Index ${i} (value ${val}): DECISION — EXCLUDE ${val} from the subset and recurse deeper.`, "Exclusion branch: the element is skipped; subset remains unchanged as we descend to the next index.", );
+      callStack[callStack.length - 1].decision = "exclude";
+      const excPath = [...path, "exclude" as const];
+      const excNodeId = "node-" + excPath.join("-");
 
-      decide(i + 1);
+      emit(
+        "placing",
+        i,
+        "exclude",
+        val,
+        `🍂 Level ${i} ('${val}'): DECISION — EXCLUDE '${val}' from subset. Running subset: [${subset.join(", ") || "∅"}].`,
+        "Exclude invariant: skip element without modifying subset stack, descend depth-first along right tree branch.",
+        excNodeId,
+        excPath
+      );
 
-      emit("backtracking", i, `↩️ Index ${i}: returned from EXCLUDE branch. All descendants of this decision node have been explored.`, "Return invariant: once both include and exclude subtrees of index i are fully explored, control returns to index i-1's backtrack step.");
+      decide(i + 1, excPath);
+
+      // Backtrack from EXCLUDE:
+      callStack.pop();
+      const returnNodeId = path.length > 1 ? "node-" + path.slice(0, -1).join("-") : path.length === 1 ? "root" : "root";
+      emit(
+        "backtracking",
+        i,
+        "backtrack",
+        val,
+        `↩️ Level ${i}: Finished both INCLUDE and EXCLUDE subtrees for '${val}'. Popping call stack frame and returning up.`,
+        "Call Stack Invariant: when all descendant choices at depth i are complete, frame is popped from recursion stack.",
+        returnNodeId,
+        path.slice(0, -1)
+      );
     };
 
-    decide(0);
+    decide(0, []);
+
+    // Final Completion Step
+    emit(
+      "solved",
+      undefined,
+      "leaf",
+      undefined,
+      `🎉 Backtracking Complete! All ${totalExpectedSubsets} subsets of {${set.join(", ")}} successfully generated.`,
+      `Power Set Invariant: Explored all 2^${set.length} binary leaf paths depth-first in O(2ⁿ) time. Recursion stack returned to 0.`,
+      "root",
+      []
+    );
+
     return steps;
   }
 
@@ -273,6 +388,6 @@ export class BacktrackingEngine {
     if (preset.mode === "n-queens") {
       return this.generateNQueensSteps(preset.boardSize ?? 4);
     }
-    return this.generateSubsetsSteps(preset.set ?? [1, 2, 3]);
+    return this.generateSubsetsSteps(preset.set ?? ["A", "B", "C"]);
   }
 }
