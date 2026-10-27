@@ -1281,6 +1281,95 @@ export const LEARNING_PATH: LearningStep[] = [
       space: "Requires O(n) auxiliary memory for the prefix or difference array, or O(1) if cumulative sums are computed in-place.",
     },
   },
+  {
+    id: "binary-search-patterns",
+    order: 26,
+    name: "Binary Search Patterns",
+    category: "technique",
+    badge: "Binary O(log n)",
+    estimatedTime: "~25 min",
+    difficulty: "Intermediate",
+    reason: "Master logarithmic range partitioning beyond simple lookups: half-open bounds, rotated arrays, monotonic predicates, and gradient peak finding.",
+    hook: "In an ocean of 1 billion items, how do you locate the optimal configuration or peak inflection in fewer than 30 questions?",
+    superpower: "Logarithmic Space Halving on Any Monotonic Predicate",
+    tradeoff: "Requires Monotonicity or Invariant Partitioning; Flawed Pointer Logic Causes Infinite Loops",
+    mentalModel: "The 20-Questions Game: Each Smart Question Halves the Search Space Unconditionally",
+    keyPrinciples: [
+      "Half-Open Range [low, high): Setting high = n and testing arr[mid] >= target guarantees zero off-by-one errors.",
+      "Duplication Frequency: Count occurrences of target in exactly 2 O(log n) steps: UpperBound(target) - LowerBound(target).",
+      "One-Half-Always-Sorted Invariant: In rotated arrays, at least one half [low..mid] or [mid..high] is strictly monotonic.",
+      "Search on Answer: When evaluating feasibility f(k) is monotonic [F...F, T...T], binary search locates the minimal valid answer.",
+      "Integer Ceiling Trick: Calculate ceil(A / B) cleanly without floats using (A + B - 1) / B.",
+      "Gradient Slope Climbing: Binary search works on unsorted arrays if local gradient (arr[mid] < arr[mid+1]) guarantees a peak exists in the ascending half."
+    ],
+    analogy: "Finding a word in a 1,000-page dictionary: open to page 500. If your word comes earlier alphabetically, rip off pages 500-1000 and throw them away. In 10 page splits, you pinpoint the exact word.",
+    idea: "Binary Search Patterns elevate the standard lookup algorithm into a versatile framework. By testing midpoint invariants, you eliminate half of the search universe at every step, yielding O(log N) runtime across boundary finding, rotated pivots, optimization problems, and local maxima.",
+    sampleArray: [1, 3, 5, 5, 5, 8, 12, 19],
+    codeBlocks: [
+      {
+        title: "Lower Bound [low, high) Pattern",
+        lines: "int lowerBound(const vector<int>& nums, int target) {\n    int low = 0, high = nums.size();\n    while (low < high) {\n        int mid = low + (high - low) / 2;\n        if (nums[mid] >= target) high = mid;\n        else low = mid + 1;\n    }\n    return low;\n}",
+        explanation: "Maintains half-open interval. Converges when low == high to the first index where nums[i] >= target.",
+      },
+      {
+        title: "Rotated Sorted Array Search (LC 33)",
+        lines: "int mid = low + (high - low) / 2;\nif (nums[low] <= nums[mid]) {\n    if (target >= nums[low] && target < nums[mid]) high = mid - 1;\n    else low = mid + 1;\n} else {\n    if (target > nums[mid] && target <= nums[high]) low = mid + 1;\n    else high = mid - 1;\n}",
+        explanation: "Determines which half is strictly sorted, then checks target containment to safely discard the other half.",
+      },
+      {
+        title: "Search on Answer: Koko Bananas (LC 875)",
+        lines: "while (low <= high) {\n    int mid = low + (high - low) / 2;\n    long long hours = 0;\n    for (int p : piles) hours += (p + mid - 1) / mid;\n    if (hours <= h) { ans = mid; high = mid - 1; }\n    else low = mid + 1;\n}",
+        explanation: "Binary searches the answer space [1, maxPile] for the minimal speed satisfying the monotonic condition hours <= H.",
+      },
+    ],
+    complexityWhy: {
+      time: "Logarithmic O(log n) time complexity because candidate search interval size N is halved at every iteration. Search on Answer runs in O(N · log(Range)).",
+      space: "Strictly O(1) auxiliary space using standard iterative pointer management.",
+    },
+  },
+  // ==========================================
+  // TIER 9: PROBLEM-SOLVING TECHNIQUES (PHASE 2)
+  // ==========================================
+  {
+    id: "backtracking",
+    order: 27,
+    name: "Backtracking",
+    category: "technique",
+    badge: "Recursive O(2ⁿ)",
+    estimatedTime: "~25 min",
+    difficulty: "Intermediate",
+    reason: "Master the choose-explore-undo paradigm: build solutions incrementally, prune invalid branches early, and backtrack to explore alternatives.",
+    hook: "How do you solve a Sudoku, N-Queens, or generate every subset of a set without trying every single combination blindly?",
+    superpower: "Exponential Search Space with Constraint Pruning",
+    tradeoff: "Worst-case exponential time O(N!) / O(2ⁿ); recursion stack depth O(N)",
+    mentalModel: "A Maze with Dead Ends: Explore a Path, Hit a Wall, Backtrack and Try Another Turn",
+    keyPrinciples: [
+      "Choose → Explore → Undo: make a decision, recurse deeper, and reverse the choice on dead ends.",
+      "Constraint Pruning: reject a partial candidate immediately when it violates any rule.",
+      "Row-by-row placement (N-Queens): each row gets exactly one queen, eliminating row conflicts by construction.",
+      "Binary Include/Exclude tree (Subsets): each element doubles the branch count, yielding the full power set.",
+      "Base case: when all decisions are made, record the complete solution.",
+    ],
+    analogy: "Like exploring a maze: you walk down a corridor, and when you hit a dead end you return to the last junction and try a different turn.",
+    idea: "Backtracking builds candidates incrementally and abandons a partial candidate as soon as it determines that the candidate cannot possibly be completed to a valid solution.",
+    sampleArray: [1, 2, 3],
+    codeBlocks: [
+      {
+        title: "N-Queens Backtracking Skeleton",
+        lines: "bool solve(int row) {\n    if (row == n) return true;        // All queens placed\n    for (int col = 0; col < n; col++) {\n        if (isValid(row, col)) {\n            placeQueen(row, col);       // CHOOSE\n            if (solve(row + 1)) return true; // EXPLORE\n            removeQueen(row, col);      // UNDO / backtrack\n        }\n    }\n    return false;                     // Dead end",
+        explanation: "Try each column in the current row; if valid, recurse. If deeper recursion fails, undo and try the next column.",
+      },
+      {
+        title: "Subsets Include/Exclude Skeleton",
+        lines: "void decide(int i, vector<int>& subset) {\n    if (i == n) { record(subset); return; } // Leaf solution\n    subset.push_back(nums[i]);           // CHOOSE include\n    decide(i + 1, subset);               // EXPLORE include branch\n    subset.pop_back();                   // UNDO include\n    decide(i + 1, subset);               // EXPLORE exclude branch",
+        explanation: "At each element, branch into include and exclude; both are explored depth-first with state restoration between branches.",
+      },
+    ],
+    complexityWhy: {
+      time: "N-Queens: O(N!) worst case (each row tries up to N columns, pruned by constraints). Subsets: O(2ⁿ) (binary decision at each of n elements). Constraint pruning reduces the average case dramatically.",
+      space: "O(N) recursion stack depth for N-Queens; O(n) for Subsets, plus O(N²) board / O(n) subset buffer.",
+    },
+  },
 ];
 
 export const SORTING_PATH = LEARNING_PATH.filter((s) => s.category === "sorting");

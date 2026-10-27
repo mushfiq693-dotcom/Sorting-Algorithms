@@ -70,6 +70,7 @@ export function RoadmapTopicAnimation({ topicId }: RoadmapTopicAnimationProps) {
           {topicId === "union-find" && <UnionFindMiniAnimation tick={tick} />}
           {topicId === "linear-search" && <LinearSearchMiniAnimation tick={tick} />}
           {topicId === "binary-search" && <BinarySearchMiniAnimation tick={tick} />}
+          {topicId === "backtracking" && <BacktrackingMiniAnimation tick={tick} />}
           {topicId === "time-complexity" && <TimeComplexityMiniAnimation tick={tick} />}
           {topicId === "space-complexity" && <SpaceComplexityMiniAnimation tick={tick} />}
           {/* Universal fallback for future roadmap expansions */}
@@ -77,7 +78,7 @@ export function RoadmapTopicAnimation({ topicId }: RoadmapTopicAnimationProps) {
             "bubble", "selection", "insertion", "merge", "quick",
             "array", "string", "deque", "stack", "queue", "linked-list", "hash-table",
             "binary-tree", "bst", "avl-tree", "heap", "priority-queue", "union-find",
-            "linear-search", "binary-search", "time-complexity", "space-complexity"
+            "linear-search", "binary-search", "backtracking", "time-complexity", "space-complexity"
           ].includes(topicId) && <DefaultMiniAnimation topicId={topicId} />}
         </div>
 
@@ -106,13 +107,14 @@ export function RoadmapTopicAnimation({ topicId }: RoadmapTopicAnimationProps) {
               {topicId === "union-find" && "Disjoint Set Forests: Near-constant O(α(n)) connectivity with Path Compression & Union-by-Rank"}
               {topicId === "linear-search" && "Sequential Scan: Probes every slot 0..n-1 until target is found"}
               {topicId === "binary-search" && "Logarithmic Bisection: Cuts remaining search space by 50% each probe"}
+              {topicId === "backtracking" && "Choose → Explore → Undo: Build solutions incrementally and prune dead ends via constraint backtracking"}
               {topicId === "time-complexity" && "Asymptotic Scalability: O(1) vs O(log n) vs O(n) vs O(n²) growth"}
               {topicId === "space-complexity" && "Memory Bounds: Input storage vs transient recursion stack frames"}
               {![
                 "bubble", "selection", "insertion", "merge", "quick",
                 "array", "string", "deque", "stack", "queue", "linked-list", "hash-table",
                 "binary-tree", "bst", "avl-tree", "heap", "priority-queue", "union-find",
-                "linear-search", "binary-search", "time-complexity", "space-complexity"
+                "linear-search", "binary-search", "backtracking", "time-complexity", "space-complexity"
               ].includes(topicId) && "Interactive Algorithmic Stage: Visual execution engine & step telemetry"}
             </span>
           </div>
@@ -643,6 +645,50 @@ function BinarySearchMiniAnimation({ tick }: { tick: number }) {
 
       <span className="text-[10px] font-mono text-cyan-400 font-semibold">
         {isSecondHalf ? "50% Discarded ──▶ Narrowed to Right Sub-Interval" : "Probe MID ──▶ Compare Target"}
+      </span>
+    </div>
+  );
+}
+
+/* 11b. BACKTRACKING MINI ANIMATION */
+function BacktrackingMiniAnimation({ tick }: { tick: number }) {
+  const step = tick % 4;
+  const board = [
+    [1, 0, 0, 0],
+    [0, 0, 1, 0],
+    [0, 0, 0, 0],
+    [0, 0, 0, 0],
+  ][step % 1];
+  const activeCell = step % 2 === 0 ? [0, 0] : [1, 2];
+
+  return (
+    <div className="flex flex-col items-center gap-1 font-mono">
+      {/* Mini 4x4 board */}
+      <div className="grid grid-cols-4 gap-0.5">
+        {[0, 1, 2, 3].flatMap((r) =>
+          [0, 1, 2, 3].map((c) => {
+            const isQueen = (r === 0 && c === 0) || (r === 1 && c === 2);
+            const isActive = r === activeCell[0] && c === activeCell[1];
+            return (
+              <div
+                key={`${r}-${c}`}
+                className={`aspect-square min-w-[22px] sm:min-w-[26px] rounded border flex items-center justify-center font-mono text-[9px] font-bold transition-all ${
+                  isQueen
+                    ? "bg-emerald-500 text-slate-950 border-emerald-400 shadow-sm"
+                    : isActive
+                    ? "bg-amber-500/30 text-amber-400 border-amber-400 animate-pulse"
+                    : "bg-secondary/40 border-border/60 text-muted-foreground/50"
+                }`}
+              >
+                {isQueen ? "♛" : isActive ? "?" : ""}
+              </div>
+            );
+          })
+        )}
+      </div>
+
+      <span className="text-[10px] text-fuchsia-500 font-semibold">
+        {step % 2 === 0 ? "Place Queen ──▶ Validate Constraints" : "Backtrack ──▶ Undo & Try Next Column"}
       </span>
     </div>
   );

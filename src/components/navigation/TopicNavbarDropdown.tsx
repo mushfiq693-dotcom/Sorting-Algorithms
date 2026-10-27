@@ -117,6 +117,8 @@ const CATEGORIES: CategoryGroup[] = [
       { id: "two-pointers", num: "23", name: "Two Pointers", badge: "Pointers O(1)" },
       { id: "sliding-window", num: "24", name: "Sliding Window", badge: "Window O(n)" },
       { id: "prefix-sum", num: "25", name: "Prefix Sum", badge: "Prefix O(1)" },
+      { id: "binary-search-patterns", num: "26", name: "Binary Search Patterns", badge: "Binary O(log n)" },
+      { id: "backtracking", num: "27", name: "Backtracking", badge: "Recursive O(2ⁿ)" },
     ],
   },
 ];

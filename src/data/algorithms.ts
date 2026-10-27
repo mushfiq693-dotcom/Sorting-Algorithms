@@ -2195,6 +2195,155 @@ int subarraySum(const vector<int>& nums, int k) {
     return count;
 }`,
   },
+  "binary-search-patterns": {
+    id: "binary-search-patterns",
+    name: "Binary Search Patterns",
+    category: "technique",
+    shortDescription:
+      "Advanced binary search paradigms extending logarithmic halving to half-open bounds [L, R), rotated sorted arrays, monotonic predicate optimization, and gradient peak finding.",
+    description:
+      "Binary Search is far more than locating a target in a sorted list: it is a universal logarithmic decision engine that halves candidate search spaces whenever a monotonic elimination criterion exists. This comprehensive module covers the four foundational patterns: (1) Lower Bound and Upper Bound on half-open ranges [L, R) for exact frequency ranges; (2) Rotated Sorted Arrays (LC 33) exploiting the invariant that at least one half is always sorted; (3) Search on Answer (LC 875 Koko Eating Bananas, LC 410) where a feasibility predicate f(x) exhibits a monotonic boolean step function [F...F, T...T]; and (4) Peak Finding (LC 162) on unsorted arrays via local slope gradient climbing.",
+    complexity: {
+      best: "O(1)",
+      average: "O(log n)",
+      worst: "O(log n)",
+      space: "O(1)",
+      stable: true,
+      inPlace: true,
+      spaceNote: "O(1) auxiliary space for iterative implementations; O(N · log(Range)) for search on answer with O(N) predicate check",
+      operations: [
+        {
+          name: "Lower & Upper Bound [L, R)",
+          time: "O(log n)",
+          space: "O(1)",
+          description: "Locates first index >= target or > target via invariant half-open range partitioning.",
+        },
+        {
+          name: "Rotated Array Search (LC 33)",
+          time: "O(log n)",
+          space: "O(1)",
+          description: "Identifies sorted half (nums[low] <= nums[mid]) and eliminates half the search space.",
+        },
+        {
+          name: "Search on Answer (LC 875)",
+          time: "O(N · log(Range))",
+          space: "O(1)",
+          description: "Evaluates monotonic feasibility function f(k) to isolate minimal valid configuration.",
+        },
+        {
+          name: "Peak Element Search (LC 162)",
+          time: "O(log n)",
+          space: "O(1)",
+          description: "Ascends positive local slope gradient toward guaranteed peak without global sorting.",
+        },
+      ],
+    },
+    cppCode: `// Production C++ Binary Search Structural Patterns
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+// 1. Lower Bound: First index where nums[i] >= target
+int lowerBound(const vector<int>& nums, int target) {
+    int low = 0, high = nums.size(); // [low, high)
+    while (low < high) {
+        int mid = low + (high - low) / 2;
+        if (nums[mid] >= target) high = mid;
+        else low = mid + 1;
+    }
+    return low;
+}
+
+// 2. Search in Rotated Sorted Array (LC 33)
+int searchRotated(const vector<int>& nums, int target) {
+    int low = 0, high = nums.size() - 1;
+    while (low <= high) {
+        int mid = low + (high - low) / 2;
+        if (nums[mid] == target) return mid;
+        if (nums[low] <= nums[mid]) { // Left half sorted
+            if (target >= nums[low] && target < nums[mid]) high = mid - 1;
+            else low = mid + 1;
+        } else { // Right half sorted
+            if (target > nums[mid] && target <= nums[high]) low = mid + 1;
+            else high = mid - 1;
+        }
+    }
+    return -1;
+}
+
+// 3. Search on Answer: Koko Eating Bananas (LC 875)
+int minEatingSpeed(const vector<int>& piles, int h) {
+    int low = 1, high = *max_element(piles.begin(), piles.end());
+    int ans = high;
+    while (low <= high) {
+        int mid = low + (high - low) / 2;
+        long long hours = 0;
+        for (int p : piles) hours += (p + mid - 1) / mid; // ceil(p / mid)
+        if (hours <= h) {
+            ans = mid;
+            high = mid - 1; // Seek slower valid speed
+        } else {
+            low = mid + 1;
+        }
+    }
+    return ans;
+}
+
+// 4. Find Peak Element (LC 162): Slope Gradient Climb
+int findPeakElement(const vector<int>& nums) {
+    int low = 0, high = nums.size() - 1;
+    while (low < high) {
+        int mid = low + (high - low) / 2;
+        if (nums[mid] < nums[mid + 1]) low = mid + 1; // Climb right
+        else high = mid;                             // Peak is at mid or left
+    }
+    return low;
+}`,
+  },
+  "backtracking": {
+    id: "backtracking",
+    name: "Backtracking",
+    category: "technique",
+    shortDescription: "Recursive choose-explore-undo engine for constraint satisfaction and exhaustive decision trees.",
+    description:
+      "Backtracking is a systematic, depth-first search strategy for solving constraint-satisfaction problems by building a solution incrementally, one choice at a time, and abandoning (backtracking from) a partial candidate as soon as it is determined that the candidate cannot possibly be completed to a valid solution. The algorithm explores a decision tree recursively: at each node it makes a choice (choose), recurses into deeper decisions (explore), and if no valid completion exists, reverses the last choice and tries the next alternative (undo/backtrack). This pruning eliminates entire subtrees of the search space without visiting them, making backtracking exponentially faster than naive brute force while still guaranteeing completeness.",
+    complexity: {
+      best: "O(1)",
+      average: "Exponential",
+      worst: "O(N!) N-Queens / O(2ⁿ) Subsets",
+      space: "O(N) / O(n)",
+      stable: true,
+      inPlace: true,
+      spaceNote: "O(N) recursion stack depth plus O(N²) board for N-Queens, O(n) subset buffer for subsets.",
+      operations: [
+        {
+          name: "Choose (Place/Include)",
+          time: "O(1)",
+          space: "O(1)",
+          description: "Make a single decision: place a queen or include an element in the subset.",
+        },
+        {
+          name: "Validate Constraint",
+          time: "O(N) N-Queens / O(1) Subsets",
+          space: "O(1)",
+          description: "Check column/diagonal conflicts (N-Queens); no constraint for unconstrained subsets.",
+        },
+        {
+          name: "Undo / Backtrack",
+          time: "O(1)",
+          space: "O(1)",
+          description: "Remove the last-placed queen or pop the last included element to restore prior state.",
+        },
+        {
+          name: "Leaf Solution",
+          time: "O(N) to copy",
+          space: "O(N)",
+          description: "Record a complete valid placement or subset when all decisions are exhausted.",
+        },
+      ],
+    },
+    cppCode: "// Backtracking solver template",
+  },
 };
 
 // All 5 Sorting Algorithms
@@ -2248,6 +2397,8 @@ export const TECHNIQUE_TOPICS: AlgorithmId[] = [
   "two-pointers",
   "sliding-window",
   "prefix-sum",
+  "binary-search-patterns",
+  "backtracking",
 ];
 
 // Backward compatibility alias for sorting visualizer
@@ -2275,6 +2426,8 @@ export const ALL_TOPICS: AlgorithmId[] = [
   "two-pointers",
   "sliding-window",
   "prefix-sum",
+  "binary-search-patterns",
+  "backtracking",
   "bubble",
   "selection",
   "insertion",

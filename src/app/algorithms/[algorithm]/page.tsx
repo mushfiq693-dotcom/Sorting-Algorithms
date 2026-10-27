@@ -104,6 +104,14 @@ const PrefixSumVisualizer = dynamic(
   () => import("@/components/visualizer/PrefixSumVisualizer").then((mod) => mod.PrefixSumVisualizer),
   { ssr: false, loading: () => <TabLoading /> }
 );
+const BinarySearchPatternsVisualizer = dynamic(
+  () => import("@/components/visualizer/BinarySearchPatternsVisualizer").then((mod) => mod.BinarySearchPatternsVisualizer),
+  { ssr: false, loading: () => <TabLoading /> }
+);
+const BacktrackingVisualizer = dynamic(
+  () => import("@/components/visualizer/BacktrackingVisualizer").then((mod) => mod.BacktrackingVisualizer),
+  { ssr: false, loading: () => <TabLoading /> }
+);
 const BugHunt = dynamic(
   () => import("@/components/challenge/BugHunt").then((mod) => mod.BugHunt),
   { ssr: false, loading: () => <TabLoading /> }
@@ -575,6 +583,10 @@ export default function AlgorithmDetailPage() {
                 <SlidingWindowVisualizer />
               ) : algorithmId === "prefix-sum" ? (
                 <PrefixSumVisualizer />
+              ) : algorithmId === "binary-search-patterns" ? (
+                <BinarySearchPatternsVisualizer />
+              ) : algorithmId === "backtracking" ? (
+                <BacktrackingVisualizer />
               ) : (
                 <SortingVisualizer />
               )}

@@ -4335,6 +4335,452 @@ int subarraySum(const vector<int>& nums, int k) {
       path: "/algorithms/prefix-sum",
     },
   },
+  {
+    slug: "binary-search-patterns-fundamentals",
+    level: 9,
+    levelTitle: "Tier 9: Algorithmic Techniques",
+    order: 26,
+    title: "Binary Search Patterns: Logarithmic Halving, Monotonic Predicates & Invariants",
+    subtitle: "Master Lower/Upper bound half-open ranges, rotated array pivot invariants, monotonic answer space optimization (LC 875), and gradient peak finding (LC 162).",
+    estimatedReadTime: "24 min",
+    category: "Techniques",
+    content: `
+### Chapter 1: Beyond Simple Lookups: The Generalized Binary Search Engine
+
+In introductory computer science, binary search is taught as an algorithm for locating a target element inside a sorted array in $O(\\log N)$ time. While mathematically accurate, this elementary formulation severely obscures the true power of the technique.
+
+In competitive programming and production systems engineering, **binary search is a universal decision engine that eliminates half the candidate universe in $O(1)$ decisions**.
+
+#### The Core Halving Property
+Given a candidate search space $\\mathcal{S}$ of size $N$:
+1. Select a midpoint candidate $M \\in \\mathcal{S}$.
+2. Evaluate a predicate function $f(M) \\in \\{\\text{True}, \\text{False}\\}$.
+3. If $f(M)$ provides a directional guarantee that the target configuration cannot possibly lie in one of the two halves, that entire half is discarded unconditionally.
+4. The remaining candidate space size transitions as:
+
+$$N \\to \\frac{N}{2} \\to \\frac{N}{4} \\to \\dots \\to 1 \\implies \\text{Total Iterations} = \\lceil \\log_2 N \\rceil$$
+
+For a universe of $N = 10^9$ possibilities, binary search converges in **no more than 30 evaluation steps**.
+
+---
+
+### Chapter 2: Lower Bound, Upper Bound & Half-Open Range Invariants $[L, R)$
+
+#### 1. Why \`arr[mid] == target\` is Insufficient
+In real-world data structures and LeetCode problems (e.g., LC 34), elements frequently contain duplicates. A naive equality check (\`arr[mid] == target\`) stops at an arbitrary index without revealing:
+- The first occurrence of the target.
+- The last occurrence of the target.
+- The total frequency count of the target.
+- The insertion position that preserves sorted order.
+
+#### 2. The Half-Open Invariant: $[\\text{low}, \\text{high})$
+To eliminate off-by-one errors and infinite loops forever, advanced algorithmists standardize on the **half-open interval invariant $[\\text{low}, \\text{high})$**:
+- Initialize $\\text{low} = 0$, $\\text{high} = N$ (notice $\\text{high}$ is the length of the array, outside the valid index range).
+- The invariant holds: All elements strictly before index $\\text{low}$ are evaluated as False, and all elements at or after index $\\text{high}$ are evaluated as True.
+- Loop condition: \`while (low < high)\`.
+- Midpoint: \`mid = low + (high - low) / 2\`.
+- Termination: When $\\text{low} == \\text{high}$, the exact boundary index is isolated.
+
+\`\`\`cpp
+// 1. Lower Bound: First index i where nums[i] >= target (C++ std::lower_bound)
+int lowerBound(const vector<int>& nums, int target) {
+    int low = 0, high = nums.size(); // [low, high)
+    while (low < high) {
+        int mid = low + (high - low) / 2;
+        if (nums[mid] >= target) {
+            high = mid; // Candidate is at mid or to the left
+        } else {
+            low = mid + 1; // Must be strictly to the right
+        }
+    }
+    return low; // Exactly first index >= target, or nums.size()
+}
+
+// 2. Upper Bound: First index i where nums[i] > target (C++ std::upper_bound)
+int upperBound(const vector<int>& nums, int target) {
+    int low = 0, high = nums.size(); // [low, high)
+    while (low < high) {
+        int mid = low + (high - low) / 2;
+        if (nums[mid] > target) {
+            high = mid; // First strictly greater is at mid or left
+        } else {
+            low = mid + 1; // Must be strictly to the right
+        }
+    }
+    return low; // Exactly first index > target
+}
+\`\`\`
+
+#### 3. Exact Duplicate Range & Frequency Invariant
+The count of any element $X$ in a sorted array is determined in exactly two logarithmic passes:
+
+$$\\text{Frequency}(X) = \\text{upperBound}(X) - \\text{lowerBound}(X)$$
+
+If $X$ does not exist in the array, $\\text{lowerBound}(X) == \\text{upperBound}(X)$, producing an exact frequency of 0 with zero special-case branching.
+
+---
+
+### Chapter 3: Search in Rotated Sorted Arrays (LeetCode 33)
+
+#### The Inflection Invariant
+A sorted array rotated at an unknown pivot index retains a profound mathematical property: **For any chosen midpoint index $\\text{mid}$, at least one half of the array $[\\text{low} \\dots \\text{mid}]$ or $[\\text{mid} \\dots \\text{high}]$ is strictly sorted and monotonic.**
+
+#### The Decision Algorithm
+1. Check if \`nums[mid] == target\`. If true, return \`mid\`.
+2. Check if the left half is sorted: \`nums[low] <= nums[mid]\`.
+   - If **Left Half is Sorted**: Determine if \`target\` resides strictly within this sorted segment (\`target >= nums[low] && target < nums[mid]\`). If yes, search left: \`high = mid - 1\`. Otherwise, search right: \`low = mid + 1\`.
+   - Else **Right Half Must Be Sorted**: Determine if \`target\` resides strictly within the right sorted segment (\`target > nums[mid] && target <= nums[high]\`). If yes, search right: \`low = mid + 1\`. Otherwise, search left: \`high = mid - 1\`.
+
+\`\`\`cpp
+// LeetCode 33: Search in Rotated Sorted Array in O(log N) Time & O(1) Space
+int searchRotated(const vector<int>& nums, int target) {
+    int low = 0, high = (int)nums.size() - 1;
+    
+    while (low <= high) {
+        int mid = low + (high - low) / 2;
+        
+        if (nums[mid] == target) return mid;
+        
+        // Invariant: Determine which contiguous half is sorted
+        if (nums[low] <= nums[mid]) {
+            // Left half [low .. mid] is monotonically increasing
+            if (target >= nums[low] && target < nums[mid]) {
+                high = mid - 1; // Target lies within sorted left window
+            } else {
+                low = mid + 1;  // Target must be in right window
+            }
+        } else {
+            // Right half [mid .. high] is monotonically increasing
+            if (target > nums[mid] && target <= nums[high]) {
+                low = mid + 1;  // Target lies within sorted right window
+            } else {
+                high = mid - 1; // Target must be in left window
+            }
+        }
+    }
+    return -1; // Target not found
+}
+\`\`\`
+
+---
+
+### Chapter 4: Search on Answer: The Monotonic Predicate Paradigm
+
+#### 1. When the Array Does Not Exist
+The most powerful application of binary search occurs in optimization problems where **no sorted array is provided in the input**. Instead, the problem asks:
+*"Find the minimum capacity $C$..."*, or *"Find the minimum eating speed $K$ such that all bananas can be eaten within $H$ hours."*
+
+#### 2. The Monotonicity Criterion
+If an answer candidate $x$ is feasible (True), does that imply all $x' > x$ are also feasible?
+If yes, the predicate function $f(x)$ maps the candidate answer space to a monotonic boolean sequence:
+
+$$[\\text{False}, \\text{False}, \\dots, \\text{False}, \\mathbf{\\text{True}}, \\text{True}, \\dots, \\text{True}]$$
+
+The goal is to find the **first True** (minimal feasible answer) using binary search in $O(\\text{Cost}(f) \\cdot \\log(\\text{Range}))$.
+
+#### 3. Case Study: LeetCode 875 (Koko Eating Bananas)
+- Search Space for speed $k$: $[1, \\max(\\text{piles})]$.
+- Feasibility check: For a chosen speed $k$, does $\\sum \\lceil \\text{pile} / k \\rceil \\le H$?
+- **The Ceiling Trick:** To avoid slow and precision-prone floating-point operations (\`ceil((double)p / k)\`), use integer arithmetic: \`(p + k - 1) / k\`.
+
+\`\`\`cpp
+// LeetCode 875: Koko Eating Bananas
+int minEatingSpeed(const vector<int>& piles, int h) {
+    int low = 1;
+    int high = *max_element(piles.begin(), piles.end());
+    int ans = high;
+    
+    while (low <= high) {
+        int mid = low + (high - low) / 2;
+        
+        long long hours = 0;
+        for (int p : piles) {
+            hours += (p + mid - 1) / mid; // Integer ceiling division
+        }
+        
+        if (hours <= h) {
+            ans = mid;         // Feasible speed recorded
+            high = mid - 1;    // Invariant: Seek slower feasible speed to the left
+        } else {
+            low = mid + 1;     // Too slow; must speed up
+        }
+    }
+    return ans;
+}
+\`\`\`
+
+---
+
+### Chapter 5: Peak Finding via Gradient Slope Climbing (LeetCode 162)
+
+#### 1. Binary Search on Completely Unsorted Data
+A common misconception is that binary search strictly requires a sorted sequence. **This is false.** Binary search requires only an **elimination property**.
+
+In LeetCode 162 (*Find Peak Element*), the array is completely unsorted, with the boundary invariant that $A[-1] = A[N] = -\\infty$, and $A[i] \\ne A[i+1]$.
+
+#### 2. The Gradient Slope Invariant
+At midpoint index $\\text{mid}$, compare $\\text{nums}[\\text{mid}]$ with its immediate neighbor $\\text{nums}[\\text{mid} + 1]$:
+- **Ascending Slope:** $\\text{nums}[\\text{mid}] < \\text{nums}[\\text{mid} + 1]$.
+  Because the sequence is climbing upward and terminates at $-\\infty$ at index $N$, the sequence must either continue climbing until the end or turn downward somewhere to the right. In both cases, **at least one local peak is guaranteed to exist in the right half**. We discard the left half: \`low = mid + 1\`.
+- **Descending Slope:** $\\text{nums}[\\text{mid}] > \\text{nums}[\\text{mid} + 1]$.
+  We are on a downhill slope. Either $\\text{mid}$ itself is a peak, or a peak exists uphill to the left. We discard the right half: \`high = mid\`.
+
+\`\`\`cpp
+// LeetCode 162: Find Peak Element in O(log N) Time on Unsorted Data
+int findPeakElement(const vector<int>& nums) {
+    int low = 0, high = (int)nums.size() - 1;
+    
+    while (low < high) {
+        int mid = low + (high - low) / 2;
+        
+        if (nums[mid] < nums[mid + 1]) {
+            // Ascending gradient guarantees a peak exists to the right
+            low = mid + 1;
+        } else {
+            // Descending gradient guarantees a peak at mid or to the left
+            high = mid;
+        }
+    }
+    return low; // Converges on a guaranteed peak index
+}
+\`\`\`
+
+---
+
+### Chapter 6: The Midpoint Overflow Invariant & Boundary Pitfalls
+
+#### 1. The Integer Overflow Bug (Joshua Bloch's 2006 Discovery)
+Writing \`mid = (low + high) / 2\` is dangerous. In languages with fixed-width 32-bit signed integers (C++, Java), if $\\text{low} + \\text{high} > 2^{31} - 1$, the sum wraps around into a negative number, resulting in an immediate array indexing crash.
+
+**Universal Safe Idiom:**
+\`\`\`cpp
+int mid = low + (high - low) / 2;
+\`\`\`
+
+#### 2. Loop Condition & Pointer Update Symmetry
+| Pattern Type | Range Invariant | Loop Condition | Left Update | Right Update | Termination State |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **Exact Value Lookup** | $[L, R]$ Closed | \`while (low <= high)\` | \`low = mid + 1\` | \`high = mid - 1\` | Found at mid or \`low > high\` |
+| **Half-Open Lower Bound** | $[L, R)$ Half-Open | \`while (low < high)\` | \`low = mid + 1\` | \`high = mid\` | \`low == high\` at first valid |
+| **Search on Answer (Minimization)** | $[L, R]$ Answer Space | \`while (low <= high)\` | \`low = mid + 1\` | \`high = mid - 1\`, record \`ans\` | \`ans\` stores minimum valid |
+| **Peak Gradient Climb** | $[L, R]$ Hill Climb | \`while (low < high)\` | \`low = mid + 1\` | \`high = mid\` | \`low == high\` at peak |
+
+---
+
+### Chapter 7: Binary Search Architectural Decision Matrix
+
+| Problem Indicator | Algorithmic Pattern | Search Space | Complexity | LeetCode Archetypes |
+| :--- | :--- | :--- | :--- | :--- |
+| First/last occurrence, range frequency | **Lower / Upper Bound** | $[0, N)$ indices | $O(\\log N)$ | LC 34, LC 35, LC 704 |
+| Sorted array with unknown rotation point | **Rotated Sorted Invariant** | $[0, N - 1]$ indices | $O(\\log N)$ | LC 33, LC 81, LC 153 |
+| *"Find minimum/maximum valid parameter"* | **Search on Answer** | $[\\text{minVal}, \\text{maxVal}]$ | $O(N \\log R)$ | LC 875, LC 1011, LC 410 |
+| Local maximum/minimum on unsorted array | **Gradient Slope Climb** | $[0, N - 1]$ indices | $O(\\log N)$ | LC 162, LC 852 |
+| Median of two sorted arrays | **Partition Invariant** | Cut indices | $O(\\log(\\min(M, N)))$ | LC 4 |
+`,
+    banglaNote: {
+      topic: "বাইনারি সার্চের প্যাটার্ন এবং মনোটনিক ইনভ্যারিয়েন্ট",
+      englishContext: "Master Lower/Upper bounds, Rotated Array search, Search on Answer (Monotonic Predicates), and Peak finding.",
+      banglaText: `
+১. বাইনারি সার্চ শুধু সাজানো ডেটায় সংখ্যা খোঁজা নয়:
+সাধারণত আমরা ভাবি বাইনারি সার্চ মানে একটি সর্টেড অ্যারেতে কোনো সংখ্যা আছে কি না তা দেখা।
+কিন্তু প্রতিযোগিতামূলক প্রোগ্রামিংয়ে এটি যেকোনো মনোটনিক বা দ্বিবিভাজ্য স্পেসের অর্ধেক অংশকে এক ধাপে বাদ দেওয়ার একটি শক্তিশালী ইঞ্জিন।
+প্রতি ধাপে সার্চ স্পেস অর্ধেক হয়ে যায়: N থেকে N/2, তারপর N/4। ফলে ১ বিলিয়ন উপাদানের মধ্যেও মাত্র ৩০টি পদক্ষেপে সঠিক উত্তর পাওয়া সম্ভব।
+
+২. লোয়ার বাউন্ড এবং আপার বাউন্ড (Half-Open Invariant):
+যখন অ্যারেতে একই সংখ্যা একাধিকবার থাকে, তখন arr[mid] == target লিখে থামলে বোঝা যায় না সংখ্যাটি প্রথম কোথায় শুরু হয়েছে বা কয়বার আছে।
+- লোয়ার বাউন্ড: প্রথম কোন ইনডেক্সে সংখ্যাটি target এর সমান বা বড় (arr[i] >= target)।
+- আপার বাউন্ড: প্রথম কোন ইনডেক্সে সংখ্যাটি target এর চেয়ে কঠোরভাবে বড় (arr[i] > target)।
+- সংখ্যাটির মোট ফ্রিকোয়েন্সি = আপার বাউন্ড - লোয়ার বাউন্ড।
+হাফ-ওপেন রেঞ্জ [low, high) এবং high = N ব্যবহার করলে কোনো অফ-বাই-ওয়ান ভুল ছাড়াই low == high অবস্থায় লুপ শেষ হয়।
+
+৩. রোটেটেড সর্টেড অ্যারে (Rotated Sorted Array - LeetCode 33):
+একটি সর্টেড অ্যারেকে যেকোনো জায়গায় ভেঙে উল্টে দিলে একটি চমকপ্রদ নিয়ম তৈরি হয়:
+অ্যারের মাঝখানের বিন্দু mid নিলে বাম পাশের অংশ [low..mid] অথবা ডান পাশের অংশ [mid..high] এর যেকোনো একটি অবশ্যই পুরোপুরি সর্টেড থাকবে।
+আমরা শুধু পরীক্ষা করি টার্গেট সংখ্যাটি সেই সর্টেড অংশের মধ্যে আছে কি না। থাকলে অন্য অর্ধেক বাদ, না থাকলে এই অর্ধেক বাদ। ফলে জটিল ঘোরানো অ্যারেতেও সময় লাগে মাত্র O(log N)।
+
+৪. উত্তরের উপর বাইনারি সার্চ (Search on Answer - LeetCode 875 কোকো বানানা):
+অনেক সমস্যায় কোনো অ্যারে দেওয়া থাকে না। বলা হয়: সবচেয়ে কম কত গতি বা ক্ষমতায় কাজ করলে নির্দিষ্ট সময়ের মধ্যে শেষ হবে?
+এখানে গতি বাড়ালে সময় কমে। অর্থাৎ একটি গতি k দিয়ে কাজ শেষ হলে k এর চেয়ে বেশি যেকোনো গতি দিয়েই কাজ শেষ হবে।
+সম্ভাব্য উত্তরগুলো [False, False, ..., True, True] এভাবে সাজানো থাকে।
+আমরা সম্ভাব্য গতির সীমার উপর বাইনারি সার্চ চালিয়ে প্রথম True বা সর্বনিম্ন কার্যকরী গতি খুঁজে বের করি।
+
+৫. আনসর্টেড অ্যারেতে পিক এলিমেন্ট (Find Peak Element - LeetCode 162):
+অ্যারে সাজানো না থাকলেও যদি আমরা লোকাল স্লোপ বা ঢাল বুঝতে পারি, তবে বাইনারি সার্চ চালানো যায়।
+যদি arr[mid] < arr[mid + 1] হয়, তার মানে আমরা পাহাড়ের চূড়ার দিকে উঠছি।
+ডান দিকে যেহেতু পাহাড়ের ঢাল ঊর্ধ্বমুখী এবং শেষ সীমানা মাইনাস ইনফিনিটি, তাই ডান পাশে অন্তত একটি চূড়া বা পিক থাকা শতভাগ নিশ্চিত।
+এভাবে প্রতি ধাপে অর্ধেক অ্যারে বাতিল করে O(log N) সময়ে চূড়া খুঁজে পাওয়া যায়।
+      `,
+    },
+    quizTopicId: "binary-search-patterns",
+    visualizerLink: {
+      label: "Binary Search Patterns Studio",
+      algorithmId: "binary-search-patterns",
+      path: "/algorithms/binary-search-patterns",
+    },
+  },
+  {
+    slug: "backtracking-fundamentals",
+    level: 9,
+    levelTitle: "Tier 9: Algorithmic Techniques",
+    order: 27,
+    title: "Backtracking: Constraint Satisfaction & Recursive Decision Trees",
+    subtitle: "Master the choose-explore-undo paradigm: N-Queens constraint placement and Include/Exclude subset generation.",
+    estimatedReadTime: "26 min",
+    category: "Techniques",
+    content: `
+### Chapter 1: The Backtracking Paradigm
+
+Backtracking is a systematic, depth-first search strategy for solving **constraint-satisfaction** and **combinatorial** problems. Rather than exploring every possibility blindly (brute force), backtracking builds a solution incrementally—one decision at a time—and **prunes** a partial candidate the moment it can no longer lead to a valid solution.
+
+#### The Three-Step Loop: Choose → Explore → Undo
+
+At every decision node in the recursion tree, backtracking executes:
+
+1. **Choose:** Make a single decision (e.g., place a queen at column *c*, or include element *x* in the subset).
+2. **Explore:** Recurse to the next decision level with the current partial assignment.
+3. **Undo (Backtrack):** If the deeper recursion reports failure (dead end), reverse the last choice and try the next alternative.
+
+This choose-explore-undo cycle repeats until either a complete valid solution is found (leaf node) or all branches are exhausted (no solution).
+
+#### Why Backtracking Beats Brute Force
+
+Brute force enumerates the entire candidate space. Backtracking **prunes** subtrees early: as soon as a partial assignment violates a constraint, every descendant of that node is discarded without being visited. For N-Queens, this collapses the worst-case *O(N<sup>N</sup>)* board configurations down to roughly *O(N!)* constraint-checked placements, and constraint propagation reduces the average case dramatically further.
+
+---
+
+### Chapter 2: N-Queens Constraint Satisfaction
+
+#### The Problem
+
+Place *N* chess queens on an *N×N* board such that no two queens attack each other. A queen attacks along rows, columns, and both diagonals.
+
+**Constraints:**
+- **Row:** By construction, exactly one queen per row (we process rows sequentially).
+- **Column:** No two queens share the same column.
+- **Diagonal:** No two queens share a diagonal, i.e., for queens at (r1, c1) and (r2, c2), it must NOT be the case that |r1 - r2| == |c1 - c2|.
+
+#### The Backtracking Algorithm
+
+\`\`\`
+solve(row):
+    if row == N: return true          // All queens placed -> solution found
+    for col in 0 … N-1:
+        if isValid(row, col):
+            place queen at (row, col)   // CHOOSE
+            if solve(row + 1):          // EXPLORE
+                return true
+            remove queen at (row, col)  // UNDO / backtrack
+    return false                      // No valid column -> trigger parent backtrack
+\`\`\`
+
+#### Complexity
+
+- **Time:** *O(N!)* worst case (each row tries up to *N* columns, pruned by constraints).
+- **Space:** *O(N²)* for the board + *O(N)* recursion stack.
+
+---
+
+### Chapter 3: Subsets via Include/Exclude
+
+#### The Problem
+
+Given a set of *n* distinct elements, generate its **power set**—every possible subset (2ⁿ total, including the empty set ∅ and the full set).
+
+#### The Backtracking Algorithm
+
+At each element index *i*, branch into two recursive calls:
+
+\`\`\`
+decide(i, currentSubset):
+    if i == n:
+        record currentSubset            // Leaf: complete solution
+        return
+    // Branch 1: INCLUDE element i
+    currentSubset.push(nums[i])         // CHOOSE
+    decide(i + 1, currentSubset)        // EXPLORE
+    currentSubset.pop()                 // UNDO include
+
+    // Branch 2: EXCLUDE element i
+    decide(i + 1, currentSubset)        // EXPLORE alternate (subset unchanged)
+\`\`\`
+
+#### Complexity
+
+- **Time:** *O(2ⁿ)* — binary decision at each of *n* elements.
+- **Space:** *O(n)* recursion depth + *O(n)* subset buffer.
+
+---
+
+### Chapter 4: Architectural Decision Matrix
+
+| Aspect | N-Queens | Subsets |
+|--------|----------|---------|
+| Decision Unit | Column choice per row | Include/exclude per element |
+| Constraint | Column & diagonal conflict | None (unconstrained) |
+| Pruning Trigger | \`isValid()\` returns false | N/A |
+| Worst-Case Time | *O(N!)* | *O(2ⁿ)* |
+| Auxiliary Space | *O(N)* stack + *O(N²)* board | *O(n)* stack + *O(n)* subset |
+| Key Insight | Process row-by-row; row conflict impossible by construction | Both branches explored depth-first; undo restores state |
+
+---
+
+### Chapter 5: Common Learner Pitfalls
+
+1. **Forgetting to undo:** If you place a queen (or push an element) but never remove/pop it after the recursive call fails, subsequent branches start from a corrupted state and miss valid solutions.
+2. **Confusing "no valid move" with "no solution":** A row having no valid column means the *current partial assignment* is a dead end, not that the whole problem is unsolvable. Backtrack to the previous row.
+3. **Base case placement:** The leaf/solution check must happen *before* attempting decisions at the current level, otherwise you overshoot the valid state.
+4. **Diagonal math:** The diagonal condition \`|Δrow| == |Δcol|\` must use absolute values on both sides; missing one side produces false negatives.
+
+#### Bengali Explanation (বাংলা ব্যাখ্যা)
+
+ব্যাকট্র্যাকিং হলো একটি রিকারশন-ভিত্তিক কৌশল যেখানে আমরা ধীরে ধীরে একটি সমাধান তৈরি করি এবং যখন বুঝি যে বর্তমান পথ থেকে সঠিক উত্তর পাওয়া অসম্ভব, তখন শেষ সিদ্ধান্তটি বদল করে নতুন পথ চেষ্টা করি। এটি ন-board কুইন্স বা সাবসেটের মতো সমস্যার জন্য কার্যকর।
+
+ন-কুইন্স সমস্যেতে আমরা সারির আলাদা সারিতে কুইÎn رکھিয়ে কলাম ও ডায়াগনাল সংঘর্ষ পরীক্ষা করি। সংঘর্ষ হলে ওই কলামটি চ Sprague করে বাদ দিই। সাবসেটের ক্ষেত্রে প্রতিটি উপাদানের জন্য două শাখা থাকে—উপাদানটি অন্তর্ভুক্ত করব কি বহिष्कার করব; উভয় শাখাই রিকারশন দিয়ে খতিয়ে देखा যায়।
+
+---
+
+### Chapter 6: Worked Trace — 4-Queens
+
+Board 4×4. Process rows top to bottom:
+
+1. **Row 0:** Try col 0 → valid. Place Q at (0,0). Recurse.
+2. **Row 1:** Try col 0 → column conflict with (0,0). Try col 1 → diagonal conflict (|1−0| == |1−0|). Try col 2 → valid. Place Q at (1,2). Recurse.
+3. **Row 2:** Try col 0 → diagonal conflict with (1,2): |2−1| == |0−2|? 1 ≠ 2, ok; column conflict with (0,0): col 0 == 0 → conflict. Try col 1 → column conflict with none, diagonal with (1,2): |2−1| == |1−2| → 1 == 1 → conflict. Try col 2 → column conflict with (1,2). Try col 3 → diagonal with (1,2): |2−1| == |3−2| → 1 == 1 → conflict. **No valid column → backtrack.**
+4. **Backtrack:** Remove Q at (1,2). Row 1 tries col 3 → valid. Place Q at (1,3). Recurse.
+5. **Row 2:** Try col 0 → conflict with (0,0) col. Try col 1 → valid. Place Q at (2,1). Recurse.
+6. **Row 3:** Try col 0 → conflict (0,0). col 1 → conflict (2,1). col 2 → diagonal with (1,3): |3−1| == |2−3| → 2 ≠ 1 ok; diagonal with (2,1): |3−2| == |2−1| → 1 == 1 → conflict. col 3 → conflict (1,3). **No valid column → backtrack.**
+7. Continue backtracking … eventually row 0 tries col 1 → leads to solution: queens at (0,1), (1,3), (2,0), (3,2).
+
+✅ **Solution found:** [1, 3, 0, 2] (column per row 0..3).
+
+    `,
+    banglaNote: {
+      topic: "ব্যাকট্র্যাকিং: ন-কুইন্স ও সাবসেট জেনারেশন",
+      englishContext: "Master the choose-explore-undo backtracking paradigm with N-Queens constraint placement and Include/Exclude subset generation.",
+      banglaText: `
+১. ব্যাকট্র্যাকিং কীভাবে কাজ করে:
+ব্যাকট্র্যাকিং হলো একটি রিকারশন-ভিত্তিক কৌশল যেখানে আমরা ধীরে ধীরে একটি সমাধান তৈরি করি এবং যখন বুঝি যে বর্তমান পথ থেকে সঠিক উত্তর পাওয়া অসম্ভব, তখন শেষ সিদ্ধান্তটি বদল করে নতুন পথ চেষ্টা করি। এটি ন-বোর্ড কুইন্স বা সাবসেটের মতো সমস্যার জন্য কার্যকর।
+
+২. চুজ-এক্সপ্লোর-আন্ডো লুপ:
+প্রতিটি সিদ্ধান্ত নোডে আমরা একটি সিদ্ধান্ত নিই (উদাহরণস্বরূপ, কোন কলামে কুইন রাখব বা সাবসেটে উপাদান যোগ করব), তারপর গভীরে রিকারশন করি। যদি গভীর রিকারশন ব্যর্থ হয়, তবে আমরা শেষ সিদ্ধান্তটি উল্টে দিয়ে अगली বিকল্প চেষ্টা করি।
+
+৩. ন-কুইন্স সীমাবদ্ধতা:
+একই কলামে দুটি কুইন থাকতে পারবে না, এবং একই ডায়াগনালে থাকতেও পারবে না। ডায়াগনাল সংঘর্ষ হলে |র遠く1 − র遠く2| == |কলাম1 − কলাম2|। একটি সারিতে ঠিক একটি কুইন রাখা হয়, তাই সারির সংঘর্ষের possibility নেই।
+
+৪. সাবসেট জেনারেশন:
+একটি সেটের সকল সাবসেট পাওয়ার জন্য প্রতিটি উপাদানের জন্য দুইটি শাখা থাকে—উপাদানটি অন্তর্ভুক্ত করব কি বহिष्कার করব। উভয় শাখাই গভীরে অনুসন্ধান করা হয় এবং অন্তর্ভুক্ত শাখা শেষ होने के बाद উপাদানটি বাদ দিয়ে (পপ করা হয়) বাতিল শাখা শুরু করা হয়।
+
+৫. জটিলতা:
+ন-কুইন্সের জন্য ও cyclic worst case O(N!), সাবসেটের জন্য O(2ⁿ)। রিকারশন স্ট্যাক গভীরতা O(N) বা O(n)।
+      `,
+    },
+    quizTopicId: "backtracking",
+    visualizerLink: {
+      label: "Backtracking Studio",
+      algorithmId: "backtracking",
+      path: "/algorithms/backtracking",
+    },
+  },
 ];
 
 export const DOCS_LEVELS: DocsLevel[] = [
@@ -4389,7 +4835,7 @@ export const DOCS_LEVELS: DocsLevel[] = [
   {
     level: 9,
     title: "Level 9: Problem-Solving Techniques",
-    description: "Core competitive programming paradigms: Two Pointers (monotonic pruning), Sliding Window (delta frame tracking), and Prefix Sum & Difference Arrays (O(1) range queries & batch updates).",
+    description: "Core competitive programming paradigms: Two Pointers (monotonic pruning), Sliding Window (delta frame tracking), Prefix Sum & Difference Arrays (O(1) range queries & batch updates), and Binary Search Patterns (monotonic predicates & logarithmic invariants).",
     articles: DOCS_ARTICLES.filter((a) => a.level === 9)
   }
 ];

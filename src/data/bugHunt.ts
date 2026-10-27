@@ -747,6 +747,75 @@ public:
       },
     ],
   },
+  "binary-search-patterns": {
+    algorithmId: "binary-search-patterns",
+    title: "Binary Search: 32-Bit Signed Integer Midpoint Overflow",
+    description:
+      "A developer implemented standard binary search with `int mid = (low + high) / 2;`. When `low` and `high` are large positive integers (e.g., in search-on-answer or billion-element datasets), their sum exceeds 2,147,483,647 and wraps into negative values, crashing the application with a segmentation fault! Locate the flawed line and fix it.",
+    buggyCode: `int binarySearch(const vector<int>& nums, int target) {
+    int low = 0;
+    int high = nums.size() - 1;
+    while (low <= high) {
+        int mid = (low + high) / 2; // Bug: Integer overflow on large bounds!
+        if (nums[mid] == target) return mid;
+        if (nums[mid] < target) low = mid + 1;
+        else high = mid - 1;
+    }
+    return -1;
+}`,
+    buggyLineNumber: 5,
+    hint: "How do you calculate the exact midpoint without directly adding low and high together?",
+    explanation:
+      "Line 5 calculated `int mid = (low + high) / 2;`. When `low + high > 2^31 - 1`, signed integer arithmetic overflows to a negative integer, causing negative array indexing crashes. The mathematically equivalent, overflow-safe formula is `int mid = low + (high - low) / 2;`.",
+    validateFix: (line: string) => {
+      const trimmed = line.replace(/\s+/g, "");
+      return (
+        trimmed.includes("low+(high-low)/2") ||
+        trimmed.includes("low+((high-low)/2)") ||
+        trimmed.includes("low+(high-low)>>1")
+      );
+    },
+    flawedRunner: () => [
+      {
+        type: "compare",
+        indices: [0, 0],
+        description:
+          "Evaluating mid = (1,500,000,000 + 2,000,000,000) / 2 resulted in -397,483,648 due to 32-bit signed integer overflow! Fatal crash.",
+      },
+    ],
+  },
+  "backtracking": {
+    algorithmId: "backtracking",
+    title: "Backtracking: Missing Undo After Failed Recursion",
+    description:
+      "This N-Queens backtracking solver fails to undo the queen placement after a recursive call returns false. As a result, queens accumulate on the board and valid solutions are never found because the board state is never restored between column attempts.",
+    buggyCode: `bool solve(int row) {
+    if (row == n) return true;
+    for (int col = 0; col < n; col++) {
+        if (isValid(row, col)) {
+            board[row][col] = 1;
+            queens.push_back({row, col}); // CHOOSE
+            if (solve(row + 1)) return true; // EXPLORE
+            // BUG: missing board[row][col] = 0; and queens.pop_back();
+        }
+    }
+    return false;
+}`,
+    buggyLineNumber: 7,
+    hint: "After solve(row + 1) returns false, the placement at (row, col) led to a dead end. What must happen before trying col + 1?",
+    explanation:
+      "Line 7 places a queen and recurses, but when the deeper call fails, the queen is never removed. Without restoring board[row][col] = 0 and queens.pop_back(), every subsequent column attempt starts with a stale queen on the board, corrupting isValid checks and preventing any solution from being found.",
+    validateFix: (line: string) => {
+      const trimmed = line.replace(/\s+/g, "");
+      return (
+        trimmed.includes("board[row][col]=0;") &&
+        trimmed.includes("queens.pop_back();")
+      );
+    },
+    flawedRunner: () => [
+      { type: "compare", indices: [0, 0], description: "Queen placement not undone after failed recursion; board state corrupted" },
+    ],
+  },
 };
 
 

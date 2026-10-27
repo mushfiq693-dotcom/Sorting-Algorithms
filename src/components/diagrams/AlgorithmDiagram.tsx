@@ -28,6 +28,7 @@ import { UnionFindDiagram } from "./UnionFindDiagram";
 import { TwoPointersDiagram } from "./TwoPointersDiagram";
 import { SlidingWindowDiagram } from "./SlidingWindowDiagram";
 import { PrefixSumDiagram } from "./PrefixSumDiagram";
+import { BinarySearchPatternsDiagram } from "./BinarySearchPatternsDiagram";
 import { Image } from "lucide-react";
 
 interface AlgorithmDiagramProps {
@@ -81,6 +82,8 @@ export function AlgorithmDiagram({ algorithmId }: AlgorithmDiagramProps) {
         return <SlidingWindowDiagram />;
       case "prefix-sum":
         return <PrefixSumDiagram />;
+      case "binary-search-patterns":
+        return <BinarySearchPatternsDiagram />;
       case "linear-search":
         return <LinearSearchTimelineDiagram />;
       case "binary-search":

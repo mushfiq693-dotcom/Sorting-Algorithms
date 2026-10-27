@@ -526,5 +526,51 @@ int queryRange(const vector<int>& P, int L, int R) {
 }`,
     highlightedLine: 8,
   },
-};
+  "binary-search-patterns": {
+    algorithmId: "binary-search-patterns",
+    title: "Binary Search Patterns — Logarithmic Halving & Monotonic Invariants",
+    subtitle: "Generalizing binary search beyond simple lookups into boundary detection, rotated sorted arrays, monotone predicate optimization, and gradient climbing.",
+    caption: "The foundational paradigm for Lower/Upper Bound (LC 34), Rotated Sorted Array (LC 33), Koko Eating Bananas (LC 875), and Peak Element (LC 162).",
+    fixedArray: [1, 3, 5, 5, 5, 8, 12, 19],
+    complexityFormula: "Time: O(log N) Space Halving • Auxiliary Space: O(1) Iterative • Search on Answer: O(N · log(Range))",
+    complexityExplanation: "By testing a middle candidate against an invariant predicate, half the candidate space is eliminated unconditionally at each step. Works on any domain where the predicate f(x) exhibits a monotonic step [F...F, T...T].",
+    codeSnippet: `// Universal Binary Search Pattern on Monotonic Predicate [low, high]
+int binarySearchPredicate(int low, int high) {
+    int ans = -1;
+    while (low <= high) {
+        int mid = low + (high - low) / 2; // Prevent overflow
+        if (isValid(mid)) {
+            ans = mid;         // Record candidate
+            high = mid - 1;    // Seek smaller valid answer
+        } else {
+            low = mid + 1;     // Seek feasibility to the right
+        }
+    }
+    return ans;
+}`,
+    highlightedLine: 6,
+  },
+  "backtracking": {
+    algorithmId: "backtracking",
+    title: "Backtracking — Constraint Satisfaction & Decision Tree Architecture",
+    subtitle: "Depth-first choose-explore-undo search that prunes invalid branches and backtracks to explore alternatives.",
+    caption: "N-Queens places queens row-by-row with column/diagonal conflict checks; Subsets branch via include/exclude at every element.",
+    fixedArray: [1, 2, 3],
+    complexityFormula: "N-Queens: O(N!) worst | Subsets: O(2ⁿ) | Aux Space: O(N) recursion stack",
+    complexityExplanation: "Each row tries up to N columns (N-Queens) or each element doubles branches (Subsets). Constraint pruning discards entire subtrees without visiting them.",
+    codeSnippet: `// Backtracking Choose → Explore → Undo
+bool solve(int row) {
+    if (row == n) return true;           // Leaf: complete solution
+    for (int col = 0; col < n; col++) {
+        if (isValid(row, col)) {
+            placeQueen(row, col);        // CHOOSE
+            if (solve(row + 1)) return true; // EXPLORE
+            removeQueen(row, col);       // UNDO / backtrack
+        }
+    }
+    return false;                        // Dead end → backtrack
+}`,
+    highlightedLine: 6,
+  },
 
+};

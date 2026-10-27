@@ -1817,6 +1817,152 @@ export const QUIZZES: Record<string, QuizTopic> = {
         explanation: "Prefix sum arrays are optimized for static data: after O(n) preprocessing, range queries take strictly O(1) time. However, modifying a single element invalidates all subsequent prefix sums, requiring an O(n) update. For frequently mutating dynamic data, Fenwick Trees and Segment Trees provide O(log n) for both queries and updates."
       }
     ]
+  },
+  "binary-search-patterns": {
+    id: "binary-search-patterns",
+    title: "Binary Search Patterns Mastery Quiz",
+    description: "Test your deep understanding of half-open boundary invariants, rotated sorted arrays, monotonic predicate functions, and gradient peak finding.",
+    questions: [
+      {
+        id: "bsp1",
+        question: "In a sorted array with duplicates, how is the total frequency of occurrences of a target value X computed in strictly 2 × O(log N) operations?",
+        options: [
+          "upperBound(X) - lowerBound(X)",
+          "lowerBound(X) + upperBound(X)",
+          "upperBound(X) - lowerBound(X) + 1",
+          "linear scan between lowerBound(X) and the next distinct value"
+        ],
+        correctIndex: 0,
+        explanation: "lowerBound(X) finds the first index where arr[i] >= X (inclusive start of X). upperBound(X) finds the first index where arr[i] > X (exclusive end of X). Under the half-open interval [LB, UB), the total number of duplicate elements is precisely UB - LB. If X is absent, LB == UB, giving an exact count of 0."
+      },
+      {
+        id: "bsp2",
+        question: "In Search in Rotated Sorted Array (LeetCode 33), what invariant guarantees we can safely eliminate half the search space at each iteration?",
+        options: [
+          "For any chosen midpoint, at least one contiguous half (nums[low..mid] or nums[mid..high]) is strictly sorted and monotonic",
+          "The minimum element is always situated at index N / 2",
+          "Rotated arrays always have an even length",
+          "The array can be sorted in O(1) time prior to searching"
+        ],
+        correctIndex: 0,
+        explanation: "Rotating a sorted array cuts it into at most two sorted sub-sequences. At any midpoint, either nums[low] <= nums[mid] (left half is sorted) or nums[mid] <= nums[high] (right half is sorted). We inspect if the target lies within the boundaries of the guaranteed sorted half; if it does, we search that half, otherwise we discard it completely."
+      },
+      {
+        id: "bsp3",
+        question: "In the Search on Answer pattern (e.g., Koko Eating Bananas LC 875), what mathematical property must the feasibility predicate function f(x) possess?",
+        options: [
+          "Monotonicity: f(x) must evaluate to a step function of the form [False, ..., False, True, ..., True]",
+          "Symmetry: f(x) must equal f(-x) for all inputs",
+          "Differentiability: f(x) must have a continuous first derivative",
+          "Linearity: f(2x) must equal 2 * f(x)"
+        ],
+        correctIndex: 0,
+        explanation: "Binary search on answers works because feasibility is monotonic: if an eating speed K allows finishing within H hours, any speed K' > K will also finish within H hours. The search space is partitioned into an invalid zone and a valid zone [F...F, T...T], allowing binary search to locate the transition boundary in O(log(Range)) evaluations."
+      },
+      {
+        id: "bsp4",
+        question: "Why can Find Peak Element (LeetCode 162) guarantee locating a peak in O(log N) time on a completely unsorted array?",
+        options: [
+          "If nums[mid] < nums[mid + 1], climbing the upward slope toward the boundary (which is -∞) guarantees at least one peak must exist on the right side",
+          "Because peak finding secretly runs QuickSort in the background",
+          "Because arrays without duplicates always have their maximum in the exact middle",
+          "Because binary search only checks the first and last elements"
+        ],
+        correctIndex: 0,
+        explanation: "Binary search does not require total ordering; it requires an elimination rule. Since boundary elements outside the array are defined as -∞, walking in the direction of the strictly larger neighbor (nums[mid] < nums[mid+1] -> go right) guarantees that the sequence must either continue rising until the boundary or dip downward, creating a peak."
+      },
+      {
+        id: "bsp5",
+        question: "Why is mid = (low + high) / 2 dangerous in languages with fixed-width signed 32-bit integers, and how is it resolved?",
+        options: [
+          "If low + high exceeds 2^31 - 1, integer overflow wraps the sum to a negative number causing an out-of-bounds crash; write mid = low + (high - low) / 2 instead",
+          "It causes CPU floating-point exceptions on Intel processors",
+          "It rounds to the nearest even number instead of truncating toward zero",
+          "It executes twice as slow as bitwise right shifting"
+        ],
+        correctIndex: 0,
+        explanation: "In C++ and Java, signed 32-bit integers overflow at 2,147,483,647. If low and high are large (e.g., 1.5 billion each), their sum becomes negative, crashing array access. Writing mid = low + (high - low) / 2 mathematically computes the identical midpoint while keeping all intermediate terms strictly within the [low, high] interval."
+      }
+    ]
+  },
+  "backtracking": {
+    id: "backtracking",
+    title: "Backtracking Knowledge Quiz",
+    description: "Test your mastery of the choose-explore-undo paradigm, constraint pruning, dead-end detection, and recursion depth.",
+    questions: [
+      {
+        id: "bt1",
+        question: "What are the three phases of the backtracking loop at every decision node?",
+        options: [
+          "Choose → Explore → Undo",
+          "Sort → Partition → Merge",
+          "Push → Pop → Peek",
+          "Hash → Probe → Rehash"
+        ],
+        correctIndex: 0,
+        explanation: "Backtracking makes a choice, recurses to explore deeper decisions, and undoes (backtracks) the choice when a dead end is reached."
+      },
+      {
+        id: "bt2",
+        question: "In N-Queens backtracking, what does it mean when the current row has no valid column for placing a queen?",
+        options: [
+          "The entire problem has no solution",
+          "The current partial assignment is a dead end; backtrack to the previous row",
+          "Skip the row entirely and move to the next row",
+          "Randomly place a queen in any column"
+        ],
+        correctIndex: 1,
+        explanation: "No valid column in the current row means the placements made in previous rows cannot lead to a complete solution. Remove the last-placed queen (backtrack) and try the next column in the previous row."
+      },
+      {
+        id: "bt3",
+        question: "Why is forgetting to pop/remove the last choice after a recursive call a critical bug in backtracking?",
+        options: [
+          "It causes infinite recursion with no base case",
+          "Subsequent branches start from a corrupted state and miss valid solutions",
+          "It converts exponential time into polynomial time",
+          "It prevents the base case from ever being reached"
+        ],
+        correctIndex: 1,
+        explanation: "State must be restored before trying the sibling branch. Failing to undo (pop the element / remove the queen) leaves the data structure modified, corrupting all subsequent explorations."
+      },
+      {
+        id: "bt4",
+        question: "For a set of n distinct elements, how many total subsets does backtracking's Include/Exclude decision tree generate?",
+        options: [
+          "n²",
+          "n!",
+          "2ⁿ",
+          "n log n"
+        ],
+        correctIndex: 2,
+        explanation: "Each of n elements makes a binary include/exclude decision, doubling the branch count at every level: 2 × 2 × ... × 2 = 2ⁿ total subsets."
+      },
+      {
+        id: "bt5",
+        question: "What is the worst-case time complexity of N-Queens backtracking on an N×N board?",
+        options: [
+          "O(n²)",
+          "O(n log n)",
+          "O(N!)",
+          "O(1)"
+        ],
+        correctIndex: 2,
+        explanation: "In the worst case, each row may try up to N columns before finding a valid placement or exhausting options, leading to O(N!) constraint-checked placements. Constraint pruning sharply reduces the practical average case."
+      },
+      {
+        id: "bt6",
+        question: "Which of the following is NOT a valid conflict condition for two queens at positions (r1, c1) and (r2, c2)?",
+        options: [
+          "Same row: r1 == r2",
+          "Same column: c1 == c2",
+          "Same diagonal: |r1 − r2| == |c1 − c2|",
+          "Same color square: (r1 + c1) % 2 == (r2 + c2) % 2"
+        ],
+        correctIndex: 3,
+        explanation: "Queens attack along rows, columns, and diagonals. Same color square has no bearing on whether queens attack each other."
+      }
+    ]
   }
 };
 

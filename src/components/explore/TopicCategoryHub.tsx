@@ -6,6 +6,7 @@ import { AlgorithmId } from "@/types/sorting";
 import { LEARNING_PATH, LearningStep } from "@/data/learningPath";
 import { ALGORITHMS } from "@/data/algorithms";
 import {
+  Activity,
   BarChart3,
   Network,
   Search,
@@ -109,7 +110,7 @@ export const CATEGORY_CARDS: CategoryCardMeta[] = [
   {
     key: "technique",
     title: "Techniques",
-    countLabel: "3 Visualizations",
+    countLabel: "4 Visualizations",
     icon: SlidersHorizontal,
     iconBg: "bg-fuchsia-500/10 dark:bg-fuchsia-500/20",
     iconColor: "text-fuchsia-500 dark:text-fuchsia-400",
@@ -285,6 +286,18 @@ const TOPIC_VISUALS: Record<AlgorithmId, TopicVisualMeta> = {
     iconColor: "text-emerald-500 dark:text-emerald-400",
     iconBorder: "border-emerald-500/25",
   },
+  "binary-search-patterns": {
+    icon: Search,
+    iconBg: "bg-cyan-500/10 dark:bg-cyan-500/20",
+    iconColor: "text-cyan-500 dark:text-cyan-400",
+    iconBorder: "border-cyan-500/25",
+  },
+  backtracking: {
+    icon: Activity,
+    iconBg: "bg-fuchsia-500/10 dark:bg-fuchsia-500/20",
+    iconColor: "text-fuchsia-500 dark:text-fuchsia-400",
+    iconBorder: "border-fuchsia-500/25",
+  },
 };
 
 // Descriptions from Coddy Tech screenshot for algorithms, plus matched descriptions for others
@@ -323,6 +336,8 @@ const TOPIC_DESCRIPTIONS: Record<AlgorithmId, string> = {
   "two-pointers": "Watch converging and reader-writer pointers traverse sorted arrays and calculate water containers in O(n) time.",
   "sliding-window": "Slide fixed and dynamic contiguous windows over arrays and strings, updating telemetry in amortized O(n) time.",
   "prefix-sum": "Precompute cumulative prefix arrays for O(1) range sum queries and use difference arrays for O(1) batch interval updates.",
+  "binary-search-patterns": "Master logarithmic halving for lower/upper bounds [L, R), rotated sorted arrays, monotonic answer optimization, and gradient peak finding.",
+  backtracking: "Build solutions incrementally with choose-explore-undo, pruning invalid branches via constraint backtracking.",
 };
 
 interface SortingComparisonRow {
@@ -740,6 +755,38 @@ const TECHNIQUE_COMPARISON: TechniqueComparisonRow[] = [
     space: "O(n)",
     prerequisite: "Contiguous Subarray Target with Negative Numbers",
     classicProblems: "Subarray Sum Equals K (LC 560), Contiguous Array",
+  },
+  {
+    pattern: "Lower & Upper Bound [L, R)",
+    id: "binary-search-patterns",
+    time: "O(log n)",
+    space: "O(1)",
+    prerequisite: "Sorted Array (Monotonic Partition)",
+    classicProblems: "Find First and Last Position (LC 34), Search Insert",
+  },
+  {
+    pattern: "Rotated Sorted Array (Sorted Half)",
+    id: "binary-search-patterns",
+    time: "O(log n)",
+    space: "O(1)",
+    prerequisite: "Rotated Monotonic Sequence Without Duplicates",
+    classicProblems: "Search in Rotated Sorted Array (LC 33, LC 81)",
+  },
+  {
+    pattern: "Search on Answer (Monotonic Predicate)",
+    id: "binary-search-patterns",
+    time: "O(N · log R)",
+    space: "O(1)",
+    prerequisite: "Monotonic Feasibility Step Function [F...F, T...T]",
+    classicProblems: "Koko Eating Bananas (LC 875), Split Array Largest Sum (LC 410)",
+  },
+  {
+    pattern: "Gradient Slope Climb (Peak Finding)",
+    id: "binary-search-patterns",
+    time: "O(log n)",
+    space: "O(1)",
+    prerequisite: "Local Slope Guarantee (A[mid] < A[mid+1])",
+    classicProblems: "Find Peak Element (LC 162), Peak Index Mountain Array",
   },
 ];
 
